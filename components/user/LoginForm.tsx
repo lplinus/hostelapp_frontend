@@ -7,41 +7,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
 import Link from "next/link";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login, loading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error("Please fill all fields", {
-        description: "Email and password are required.",
+      toast.error("Missing fields", {
+        description: "Please enter both your email and password."
       });
       return;
     }
 
-    setLoading(true);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format", {
+        description: "Please provide a valid email address.",
+      });
+      return;
+    }
 
-    setTimeout(() => {
-      setLoading(false);
-
-      if (email === "demo@staynest.com") {
-        toast.success("Login Successful 🎉", {
-          description: "Welcome back to StayNest!",
-        });
-      } else {
-        toast.error("Invalid credentials", {
-          description: "Please check your email and password.",
-        });
-      }
-    }, 1500);
+    try {
+      await login({ username: email, password });
+    } catch {
+      // Error is handled by useAuth hook via toast
+    }
   };
 
   return (
@@ -122,9 +121,9 @@ export default function LoginForm() {
 
           <Separator className="my-6" />
 
-          <Link href="/owner/register">
+          <Link href="/user1/register">
             <p className="text-center text-sm text-gray-500">
-              Don’t have an account?{" "}
+              Don&apos;t have an account?{" "}
               <span className="text-blue-600 hover:underline cursor-pointer">
                 Sign up
               </span>

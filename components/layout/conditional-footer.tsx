@@ -1,0 +1,29 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Footer from "./footer";
+
+export default function ConditionalFooter() {
+    const pathname = usePathname();
+
+    // If we are on these dashboard-related routes, don't show the footer
+    const isDashboardRoute =
+        pathname === "/dashboard" ||
+        pathname.startsWith("/dashboard/") ||
+        pathname === "/profile" ||
+        pathname.startsWith("/profile/") ||
+        pathname === "/hostel" ||
+        pathname.startsWith("/hostel/") ||
+        pathname === "/rooms" ||
+        pathname.startsWith("/rooms/") ||
+        pathname === "/bookings" ||
+        pathname.startsWith("/bookings/") ||
+        pathname === "/subscription" ||
+        pathname.startsWith("/subscription/");
+
+    if (isDashboardRoute) {
+        return null;
+    }
+
+    return <Footer />;
+}

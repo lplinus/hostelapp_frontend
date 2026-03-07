@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
 import FeaturedCities from "@/components/home/featured-cities";
@@ -10,20 +12,34 @@ import SectionReveal from "@/components/ui/section-reveal";
 import { getHomePage } from "@/services/public.service";
 import type { HomePageResponse } from "@/types/public.types";
 
-export const metadata: Metadata = {
-  title: "Book Affordable Hostels Across India | LiveHub",
-  description:
-    "Find and book affordable hostels across India. Compare prices, read reviews, and reserve instantly with LiveHub.",
-  openGraph: {
-    title: "LiveHub - Affordable Hostel Booking",
-    description:
-      "Discover the best hostels in top cities. Book instantly with secure payment.",
-    type: "website",
-  },
-};
+import { getSEO } from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO("home");
+
+  return {
+    title: seo.meta_title,
+    description: seo.meta_description,
+    keywords: seo.meta_keywords,
+
+    openGraph: {
+      title: seo.og_title || seo.meta_title,
+      description: seo.og_description || seo.meta_description,
+      images: seo.og_image ? [seo.og_image] : [],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: seo.og_title || seo.meta_title,
+      description: seo.og_description || seo.meta_description,
+      images: seo.og_image ? [seo.og_image] : []
+    }
+  };
+}
 
 export default async function HomePage() {
   let homepageData: HomePageResponse | null = null;
+  const seo = await getSEO("home");
 
   try {
     homepageData = await getHomePage();
@@ -32,46 +48,58 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="flex flex-col overflow-hidden">
-      {/* Hero - no animation (keep LCP stable) */}
-      <Hero
-        title={homepageData?.hero_title}
-        subtitle={homepageData?.hero_subtitle}
-      />
+    <>
+      {seo?.structured_data && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: typeof seo.structured_data === 'string'
+              ? seo.structured_data
+              : JSON.stringify(seo.structured_data),
+          }}
+        />
+      )}
+      <main className="flex flex-col overflow-hidden">
+        {/* Hero - no animation (keep LCP stable) */}
+        <Hero
+          title={homepageData?.hero_title}
+          subtitle={homepageData?.hero_subtitle}
+        />
 
-      {/* Content sections with breathing room */}
-      <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">
-        <SectionReveal>
-          <FeaturedCities />
-        </SectionReveal>
+        {/* Content sections with breathing room */}
+        <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">
+          <SectionReveal>
+            <FeaturedCities />
+          </SectionReveal>
 
-        <SectionReveal delay={0.05}>
-          <FeaturedHostelTypes />
-        </SectionReveal>
+          <SectionReveal delay={0.05}>
+            <FeaturedHostelTypes />
+          </SectionReveal>
 
-        {/* <SectionReveal delay={0.1}>
+          {/* <SectionReveal delay={0.1}>
           <FeaturedHostels />
         </SectionReveal> */}
 
-        {/* <SectionReveal delay={0.15}>
+          {/* <SectionReveal delay={0.15}>
           <TopHostels />
         </SectionReveal> */}
 
+          <SectionReveal delay={0.2}>
+            <WhyUs
+              title={homepageData?.why_title}
+              items={homepageData?.why_items}
+            />
+          </SectionReveal>
+        </div>
+
         <SectionReveal delay={0.2}>
-          <WhyUs
-            title={homepageData?.why_title}
-            items={homepageData?.why_items}
+          <CTA
+            title={homepageData?.cta_title}
+            subtitle={homepageData?.cta_subtitle}
+            buttonText={homepageData?.cta_button_text}
           />
         </SectionReveal>
-      </div>
-
-      <SectionReveal delay={0.2}>
-        <CTA
-          title={homepageData?.cta_title}
-          subtitle={homepageData?.cta_subtitle}
-          buttonText={homepageData?.cta_button_text}
-        />
-      </SectionReveal>
-    </main>
+      </main>
+    </>
   );
 }

@@ -29,16 +29,38 @@ export class APIClient {
             }
         }
 
+        const isFormData = typeof FormData !== 'undefined' && customOptions.body instanceof FormData;
+
         const defaultHeaders: Record<string, string> = {
-            'Content-Type': 'application/json',
             Accept: 'application/json',
         };
 
+        if (!isFormData) {
+            defaultHeaders['Content-Type'] = 'application/json';
+        }
+
+        // Convert Headers instance to plain object (spreading a Headers instance yields {})
+        let incomingHeaders: Record<string, string> = {};
+        if (headers instanceof Headers) {
+            headers.forEach((value, key) => {
+                incomingHeaders[key] = value;
+            });
+        } else if (headers) {
+            incomingHeaders = headers as Record<string, string>;
+        }
+
         const config: RequestInit = {
             method,
-            headers: { ...defaultHeaders, ...headers },
+            headers: { ...defaultHeaders, ...incomingHeaders },
             ...customOptions,
         };
+
+        // If it's FormData, let the browser define the Content-Type header with the boundary
+        if (isFormData && config.headers) {
+            const h = config.headers as Record<string, string>;
+            delete h['Content-Type'];
+            delete h['content-type'];
+        }
 
         const response = await fetch(url, config);
 
@@ -59,23 +81,26 @@ export class APIClient {
     }
 
     public post<T>(endpoint: string, body?: any, options?: RequestOptions): Promise<T> {
+        const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
         return this.fetch<T>(endpoint, 'POST', {
             ...options,
-            body: body ? JSON.stringify(body) : undefined,
+            body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
         });
     }
 
     public put<T>(endpoint: string, body?: any, options?: RequestOptions): Promise<T> {
+        const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
         return this.fetch<T>(endpoint, 'PUT', {
             ...options,
-            body: body ? JSON.stringify(body) : undefined,
+            body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
         });
     }
 
     public patch<T>(endpoint: string, body?: any, options?: RequestOptions): Promise<T> {
+        const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
         return this.fetch<T>(endpoint, 'PATCH', {
             ...options,
-            body: body ? JSON.stringify(body) : undefined,
+            body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
         });
     }
 

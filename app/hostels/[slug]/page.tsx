@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getHostelBySlug, getHostels } from "@/services/hostel.service";
 import HostelDetailClient from "@/components/hostelclient/hostel-detail-client";
+import { generateHostelMetadata } from "@/lib/seo/hostelSeo";
+import { generateHostelJsonLd } from "@/lib/seo/structuredData";
 
 export async function generateStaticParams() {
     try {
@@ -22,12 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
     try {
         const hostel = await getHostelBySlug(slug);
-        return {
-            title: `${hostel.name} | StayNext`,
-            description: hostel.short_description,
-        };
+        return generateHostelMetadata(hostel);
     } catch {
-        return { title: "Hostel Not Found | StayNext" };
+        return {
+            title: "Hostel Not Found | StayNest",
+            description: "The hostel you are looking for could not be found.",
+            robots: "noindex,nofollow",
+        };
     }
 }
 
@@ -45,5 +48,17 @@ export default async function HostelDetailPage({ params }: Props) {
         notFound();
     }
 
-    return <HostelDetailClient hostel={hostel} />;
+    const jsonLd = generateHostelJsonLd(hostel);
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLd),
+                }}
+            />
+            <HostelDetailClient hostel={hostel} />
+        </>
+    );
 }

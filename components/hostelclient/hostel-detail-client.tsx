@@ -149,6 +149,10 @@ export default function HostelDetailClient({ hostel }: Props) {
     const allImages = hostelImages;
     const [activeImg, setActiveImg] = useState(0);
     const [saved, setSaved] = useState(false);
+    const [showAllRooms, setShowAllRooms] = useState(false);
+    const [showAllAmenities, setShowAllAmenities] = useState(false);
+    const INITIAL_ROOM_LIMIT = 4;
+    const INITIAL_AMENITY_LIMIT = 6;
 
     /* ---------- contact form ---------- */
     const [formData, setFormData] = useState({
@@ -338,6 +342,13 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     Premium
                                 </span>
                             )}
+
+                            {hostel.room_types && Array.from(new Set(hostel.room_types.map((r) => r.sharing_display).filter(Boolean))).map((sharing, idx) => (
+                                <span key={`sharing-${idx}`} className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">
+                                    <Users size={12} className="mr-1.5" />
+                                    {sharing}
+                                </span>
+                            ))}
                         </div>
 
                         {/* ---------- Description ---------- */}
@@ -352,7 +363,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     Amenities
                                 </h2>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {hostel.amenities.map((amenity) => {
+                                    {(showAllAmenities ? hostel.amenities : hostel.amenities.slice(0, INITIAL_AMENITY_LIMIT)).map((amenity) => {
                                         const IconComp = getAmenityIcon(
                                             amenity.name
                                         );
@@ -372,6 +383,21 @@ export default function HostelDetailClient({ hostel }: Props) {
                                         );
                                     })}
                                 </div>
+
+                                {hostel.amenities.length > INITIAL_AMENITY_LIMIT && (
+                                    <button
+                                        onClick={() => setShowAllAmenities(!showAllAmenities)}
+                                        className="mt-4 w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200 flex items-center justify-center gap-2"
+                                    >
+                                        {showAllAmenities ? (
+                                            "Show Less"
+                                        ) : (
+                                            <>
+                                                View All Amenities (+{hostel.amenities.length - INITIAL_AMENITY_LIMIT} more)
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         )}
 
@@ -382,12 +408,12 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     Room Types & Availability
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {hostel.room_types.map((room) => (
+                                    {(showAllRooms ? hostel.room_types : hostel.room_types.slice(0, INITIAL_ROOM_LIMIT)).map((room) => (
                                         <div
                                             key={room.id}
                                             className={`rounded-xl border p-4 transition-all duration-200 ${room.is_available
-                                                    ? "border-gray-200 bg-white hover:border-blue-200 hover:shadow-sm"
-                                                    : "border-gray-100 bg-gray-50 opacity-60"
+                                                ? "border-gray-200 bg-white hover:border-blue-200 hover:shadow-sm"
+                                                : "border-gray-100 bg-gray-50 opacity-60"
                                                 }`}
                                         >
                                             {/* Room category & sharing */}
@@ -441,6 +467,21 @@ export default function HostelDetailClient({ hostel }: Props) {
                                         </div>
                                     ))}
                                 </div>
+
+                                {hostel.room_types.length > INITIAL_ROOM_LIMIT && (
+                                    <button
+                                        onClick={() => setShowAllRooms(!showAllRooms)}
+                                        className="mt-4 w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200 flex items-center justify-center gap-2"
+                                    >
+                                        {showAllRooms ? (
+                                            "Show Less"
+                                        ) : (
+                                            <>
+                                                View More Rooms (+{hostel.room_types.length - INITIAL_ROOM_LIMIT} options available)
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         )}
 

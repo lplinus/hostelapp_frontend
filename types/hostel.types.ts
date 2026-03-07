@@ -108,6 +108,17 @@ export interface HostelListItem {
 
 export interface HostelDetail extends HostelListItem {
     readonly reviews: readonly HostelReview[];
+    // SEO fields (returned by backend HostelSerializer)
+    readonly meta_title: string | null;
+    readonly meta_description: string | null;
+    readonly meta_keywords: string | null;
+    readonly canonical_url: string | null;
+    readonly og_image: string | null;
+    readonly og_title: string | null;
+    readonly og_description: string | null;
+    readonly og_type: string;
+    readonly structured_data: Record<string, unknown> | null;
+    readonly is_indexed: boolean;
 }
 
 export interface CityHostel {

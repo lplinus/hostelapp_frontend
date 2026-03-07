@@ -1,4 +1,5 @@
 import { HostelListItem, HostelDetail, HostelImage, DefaultHostelImage } from "@/types/hostel.types";
+import { authApiClient } from "@/lib/api/auth-client";
 
 const API_BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
@@ -85,3 +86,29 @@ export async function getHostelBySlug(
         default_images: processDefaultImages(hostel.default_images),
     };
 }
+
+export async function getMyHostels(): Promise<HostelListItem[]> {
+    const hostels = await authApiClient.get<HostelListItem[]>("/api/hostels/hostels/my-hostels/");
+    return hostels.map((hostel) => ({
+        ...hostel,
+        images: processHostelImages(hostel.images || []),
+        default_images: processDefaultImages(hostel.default_images),
+    }));
+}
+
+export async function getMyHostelById(id: number | string): Promise<HostelListItem> {
+    return authApiClient.get<HostelListItem>(`/api/hostels/hostels/my-hostels/${id}/`);
+}
+
+export async function createHostel(data: FormData): Promise<any> {
+    return authApiClient.post("/api/hostels/hostels/", data);
+}
+
+export async function updateHostel(id: number | string, data: Record<string, any>): Promise<any> {
+    return authApiClient.patch(`/api/hostels/hostels/my-hostels/${id}/update/`, data);
+}
+
+export async function deleteHostel(id: number | string): Promise<void> {
+    return authApiClient.delete(`/api/hostels/hostels/my-hostels/${id}/delete/`);
+}
+

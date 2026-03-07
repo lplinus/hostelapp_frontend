@@ -22,18 +22,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const [loading, setLoading] = useState(false);
+  const { register, loading } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +43,14 @@ export default function RegisterForm() {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format", {
+        description: "Please provide a valid email address.",
+      });
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match", {
         description: "Please make sure both passwords are identical.",
@@ -52,21 +58,29 @@ export default function RegisterForm() {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       toast.error("Weak password", {
-        description: "Password must be at least 6 characters long.",
+        description: "Password must be at least 8 characters long.",
       });
       return;
     }
 
-    setLoading(true);
+    try {
+      // Derive username from email (before @)
+      const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+      const nameParts = name.trim().split(" ");
 
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Account created 🎉", {
-        description: "Welcome to StayNest! You can now log in.",
+      await register({
+        username,
+        email,
+        password,
+        confirm_password: confirmPassword,
+        first_name: nameParts[0] || "",
+        last_name: nameParts.slice(1).join(" ") || "",
       });
-    }, 1500);
+    } catch {
+      // Error is handled by useAuth hook via toast
+    }
   };
 
   return (
@@ -191,7 +205,7 @@ export default function RegisterForm() {
           <p className="text-center text-sm text-gray-500">
             Already have an account?{" "}
             <Link
-              href="/owner/login"
+              href="/login"
               className="text-indigo-600 hover:underline"
             >
               Login

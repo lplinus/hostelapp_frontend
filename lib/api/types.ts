@@ -17,15 +17,43 @@ export interface ErrorResponse {
     status: number;
 }
 
+export interface AuthUser {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    role: 'guest' | 'hostel_owner';
+    is_verified: boolean;
+    profile_picture?: string;
+    date_joined: string;
+}
+
 export interface AuthResponse {
     access: string;
-    refresh: string;
-    user: {
-        id: number;
-        email: string;
-        name: string;
-        role: string;
-    };
+    user: AuthUser;
+}
+
+export interface RegisterResponse {
+    message: string;
+    user: AuthUser;
+}
+
+export interface LoginCredentials {
+    username: string;
+    password: string;
+}
+
+export interface RegisterData {
+    username: string;
+    email: string;
+    password: string;
+    confirm_password: string;
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+    role?: 'guest' | 'hostel_owner';
 }
 
 export interface HomepageResponse {

@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -26,10 +27,31 @@ export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { isAuthenticated, isLoggingOut } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const isDashboardRoute =
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/profile" ||
+    pathname.startsWith("/profile/") ||
+    pathname === "/hostel" ||
+    pathname.startsWith("/hostel/") ||
+    pathname === "/rooms" ||
+    pathname.startsWith("/rooms/") ||
+    pathname === "/bookings" ||
+    pathname.startsWith("/bookings/");
+
+  if (isDashboardRoute) {
+    return null;
+  }
+
+  if (isMounted && (isAuthenticated || isLoggingOut)) {
+    return null;
+  }
 
   return (
     <header className="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
@@ -76,18 +98,22 @@ export default function Header() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/user1/login"
-              className="px-5 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
-            >
-              Owner Login
-            </Link>
-            <Link
-              href="/user1/register"
-              className="px-5 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
-            >
-              Owner Register
-            </Link>
+            {isMounted && !isAuthenticated && !isLoggingOut && (
+              <>
+                <Link
+                  href="/login"
+                  className="px-5 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                >
+                  Owner Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-5 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                >
+                  Owner Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -120,8 +146,12 @@ export default function Header() {
                       </Link>
                     ))}
                     <hr className="my-2" />
-                    <Link href="/owner/login" className="text-lg font-medium text-gray-700">Owner Login</Link>
-                    <Link href="/owner/register" className="text-lg font-medium text-gray-700">Owner Register</Link>
+                    {isMounted && !isAuthenticated && !isLoggingOut && (
+                      <>
+                        <Link href="/login" className="text-lg font-medium text-gray-700">Owner Login</Link>
+                        <Link href="/register" className="text-lg font-medium text-gray-700">Owner Register</Link>
+                      </>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
