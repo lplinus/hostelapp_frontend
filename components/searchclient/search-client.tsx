@@ -233,21 +233,23 @@ export default function SearchClient({
         }
 
         // Sort
-        if (appliedSortBy === "Price: Low to High") {
-            filtered.sort(
-                (a, b) =>
-                    (a.final_price ?? (Number(a.price) || 0)) -
-                    (b.final_price ?? (Number(b.price) || 0))
-            );
-        } else if (appliedSortBy === "Price: High to Low") {
-            filtered.sort(
-                (a, b) =>
-                    (b.final_price ?? (Number(b.price) || 0)) -
-                    (a.final_price ?? (Number(a.price) || 0))
-            );
-        } else if (appliedSortBy === "Highest Rated") {
-            filtered.sort((a, b) => b.rating - a.rating);
-        }
+        filtered.sort((a, b) => {
+            // Primary sort: Discounted first
+            const isADiscounted = !!a.is_discounted;
+            const isBDiscounted = !!b.is_discounted;
+            if (isADiscounted && !isBDiscounted) return -1;
+            if (!isADiscounted && isBDiscounted) return 1;
+
+            // Secondary sort: User selected sort
+            if (appliedSortBy === "Price: Low to High") {
+                return (a.final_price ?? (Number(a.price) || 0)) - (b.final_price ?? (Number(b.price) || 0));
+            } else if (appliedSortBy === "Price: High to Low") {
+                return (b.final_price ?? (Number(b.price) || 0)) - (a.final_price ?? (Number(a.price) || 0));
+            } else if (appliedSortBy === "Highest Rated") {
+                return b.rating - a.rating;
+            }
+            return 0;
+        });
 
         return filtered;
     }, [results, appliedCity, appliedArea, appliedHostelType, appliedPriceRange, appliedSortBy]);
@@ -584,8 +586,8 @@ export default function SearchClient({
                         onClick={handleApplyFilters}
                         disabled={!hasUnappliedChanges}
                         className={`text-sm font-semibold px-6 py-2 rounded-lg transition-colors ${hasUnappliedChanges
-                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
                             }`}
                     >
                         Apply Filters

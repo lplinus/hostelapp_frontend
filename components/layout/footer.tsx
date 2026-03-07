@@ -8,21 +8,25 @@ import {
   Lock,
   GraduationCap,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
+  const { isAuthenticated } = useAuth();
+  const homeHref = isAuthenticated ? "/dashboard" : "/";
+
   return (
     <footer className="bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
         {/* Brand */}
         <div className="flex flex-col items-start">
-          <div className="flex items-center gap-3 mb-5">
+          <Link href={homeHref} className="flex items-center gap-3 mb-5 group">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
               S
             </div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight">
+            <span className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
               StayNest
             </span>
-          </div>
+          </Link>
 
           <p className="text-gray-500 text-sm leading-relaxed mb-6 max-w-xs">
             Your trusted platform for discovering safe, affordable,

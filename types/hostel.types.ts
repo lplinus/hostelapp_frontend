@@ -67,6 +67,7 @@ export interface RoomType {
     readonly sharing_type: number;
     readonly sharing_display: string;
     readonly base_price: string | null;
+    readonly price_per_day: string | null;
     readonly is_available: boolean;
     readonly available_beds: number;
     readonly beds: readonly Bed[];
@@ -83,10 +84,13 @@ export interface HostelListItem {
     readonly description: string;
     readonly short_description: string;
     readonly price: string;
+    readonly price_per_day: string | null;
     readonly is_discounted: boolean | null;
     readonly discount_percentage: string | null;
     readonly discounted_price: string | null;
+    readonly discounted_price_per_day: string | null;
     readonly final_price: number | null;
+    readonly final_price_per_day: number | null;
     readonly room_types: readonly RoomType[];
     readonly address: string;
     readonly postal_code: string | null;
@@ -127,9 +131,11 @@ export interface CityHostel {
     readonly slug: string;
     readonly hostel_type: string;
     readonly price: string;
+    readonly price_per_day: string | null;
     readonly is_discounted: boolean | null;
     readonly discount_percentage: string | null;
     readonly final_price: number | null;
+    readonly final_price_per_day: number | null;
     readonly rating: number;
     readonly thumbnail: string | null;
     readonly area_name: string | null;

@@ -162,13 +162,23 @@ export default function CityClient({ data }: Props) {
         }
 
         // Sort
-        if (appliedFilters.sortBy === "Price: Low to High") {
-            results.sort((a, b) => (a.final_price ?? (Number(a.price) || 0)) - (b.final_price ?? (Number(b.price) || 0)));
-        } else if (appliedFilters.sortBy === "Price: High to Low") {
-            results.sort((a, b) => (b.final_price ?? (Number(b.price) || 0)) - (a.final_price ?? (Number(a.price) || 0)));
-        } else if (appliedFilters.sortBy === "Highest Rated") {
-            results.sort((a, b) => b.rating - a.rating);
-        }
+        results.sort((a, b) => {
+            // Primary sort: Discounted first
+            const isADiscounted = !!a.is_discounted;
+            const isBDiscounted = !!b.is_discounted;
+            if (isADiscounted && !isBDiscounted) return -1;
+            if (!isADiscounted && isBDiscounted) return 1;
+
+            // Secondary sort: User selected sort
+            if (appliedFilters.sortBy === "Price: Low to High") {
+                return (a.final_price ?? (Number(a.price) || 0)) - (b.final_price ?? (Number(b.price) || 0));
+            } else if (appliedFilters.sortBy === "Price: High to Low") {
+                return (b.final_price ?? (Number(b.price) || 0)) - (a.final_price ?? (Number(a.price) || 0));
+            } else if (appliedFilters.sortBy === "Highest Rated") {
+                return b.rating - a.rating;
+            }
+            return 0;
+        });
 
         return results;
     }, [data.results, appliedFilters]);

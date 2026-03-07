@@ -9,12 +9,38 @@ export interface RoomType {
     sharing_display?: string;
     price?: string | number;
     base_price?: string | number;
+    price_per_day?: string | number;
     total_beds?: number;
     available_beds?: number;
 }
 
+export interface GroupedRoom {
+    id: number;
+    sharing: string;
+    price: string | number;
+    price_per_day: string | number;
+    total_beds: number;
+    available_beds: number;
+    is_available: boolean;
+}
+
+export interface GroupedRoomCategory {
+    category_name: string;
+    rooms: GroupedRoom[];
+}
+
+export interface GroupedHostelRooms {
+    hostel_id: number;
+    hostel_name: string;
+    categories: GroupedRoomCategory[];
+}
+
 export const getMyRooms = async (): Promise<RoomType[]> => {
     return authApiClient.get<RoomType[]>("/api/rooms/room-types/my-rooms/");
+};
+
+export const getGroupedMyRooms = async (): Promise<GroupedHostelRooms[]> => {
+    return authApiClient.get<GroupedHostelRooms[]>("/api/rooms/room-types/grouped-my-rooms/");
 };
 
 export const createRoom = async (data: RoomType): Promise<RoomType> => {

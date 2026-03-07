@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, FormEvent } from "react";
+import Link from "next/link";
 import {
     Star,
     Heart,
@@ -153,6 +154,7 @@ export default function HostelDetailClient({ hostel }: Props) {
     const [showAllAmenities, setShowAllAmenities] = useState(false);
     const INITIAL_ROOM_LIMIT = 4;
     const INITIAL_AMENITY_LIMIT = 6;
+    const [priceMode, setPriceMode] = useState<"monthly" | "daily">("monthly");
 
     /* ---------- contact form ---------- */
     const [formData, setFormData] = useState({
@@ -434,12 +436,12 @@ export default function HostelDetailClient({ hostel }: Props) {
                                             </div>
 
                                             {/* Price */}
-                                            {room.base_price && (
+                                            {(priceMode === "monthly" ? room.base_price : room.price_per_day) && (
                                                 <div className="text-sm text-gray-700 mb-2">
                                                     <span className="font-semibold text-blue-600">
-                                                        ₹{Number(room.base_price).toLocaleString()}
+                                                        ₹{Number(priceMode === "monthly" ? room.base_price : room.price_per_day).toLocaleString()}
                                                     </span>
-                                                    <span className="text-gray-400"> /month</span>
+                                                    <span className="text-gray-400"> {priceMode === "monthly" ? "/month" : "/day"}</span>
                                                 </div>
                                             )}
 
@@ -463,6 +465,15 @@ export default function HostelDetailClient({ hostel }: Props) {
                                                 <div className="mt-2 text-xs text-red-500 font-medium">
                                                     Currently unavailable
                                                 </div>
+                                            )}
+
+                                            {room.is_available && (
+                                                <Link
+                                                    href={`/hostels/${hostel.slug}/book?roomId=${room.id}`}
+                                                    className="mt-3 w-full flex items-center justify-center py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-all"
+                                                >
+                                                    Book This Room
+                                                </Link>
                                             )}
                                         </div>
                                     ))}
@@ -596,34 +607,83 @@ export default function HostelDetailClient({ hostel }: Props) {
                         <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
                             {/* Price */}
                             <div className="text-center mb-4">
-                                {hostel.is_discounted && hostel.discounted_price ? (
-                                    <>
-                                        <div className="inline-flex items-center gap-2 mb-1">
-                                            <span className="text-lg text-gray-400 line-through">
+                                <div className="flex justify-center mb-3">
+                                    <div className="inline-flex p-1 bg-gray-100 rounded-lg">
+                                        <button
+                                            onClick={() => setPriceMode("monthly")}
+                                            className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${priceMode === "monthly" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                                        >
+                                            MONTHLY
+                                        </button>
+                                        <button
+                                            onClick={() => setPriceMode("daily")}
+                                            className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${priceMode === "daily" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                                        >
+                                            DAILY
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {priceMode === "monthly" ? (
+                                    hostel.is_discounted && hostel.discounted_price ? (
+                                        <>
+                                            <div className="inline-flex items-center gap-2 mb-1">
+                                                <span className="text-lg text-gray-400 line-through">
+                                                    ₹{Number(hostel.price).toLocaleString()}
+                                                </span>
+                                                <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                                                    {Math.round(Number(hostel.discount_percentage))}% OFF
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="text-3xl font-bold text-green-600">
+                                                    ₹{Number(hostel.discounted_price).toLocaleString()}
+                                                </span>
+                                                <span className="text-gray-500 text-sm">
+                                                    /month
+                                                </span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="text-3xl font-bold text-blue-600">
                                                 ₹{Number(hostel.price).toLocaleString()}
-                                            </span>
-                                            <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                                                {Math.round(Number(hostel.discount_percentage))}% OFF
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <span className="text-3xl font-bold text-green-600">
-                                                ₹{Number(hostel.discounted_price).toLocaleString()}
                                             </span>
                                             <span className="text-gray-500 text-sm">
                                                 /month
                                             </span>
-                                        </div>
-                                    </>
+                                        </>
+                                    )
                                 ) : (
-                                    <>
-                                        <span className="text-3xl font-bold text-blue-600">
-                                            ₹{Number(hostel.price).toLocaleString()}
-                                        </span>
-                                        <span className="text-gray-500 text-sm">
-                                            /month
-                                        </span>
-                                    </>
+                                    hostel.is_discounted && hostel.discounted_price_per_day ? (
+                                        <>
+                                            <div className="inline-flex items-center gap-2 mb-1">
+                                                <span className="text-lg text-gray-400 line-through">
+                                                    ₹{Number(hostel.price_per_day).toLocaleString()}
+                                                </span>
+                                                <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                                                    {Math.round(Number(hostel.discount_percentage))}% OFF
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span className="text-3xl font-bold text-green-600">
+                                                    ₹{Number(hostel.discounted_price_per_day).toLocaleString()}
+                                                </span>
+                                                <span className="text-gray-500 text-sm">
+                                                    /day
+                                                </span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="text-3xl font-bold text-blue-600">
+                                                ₹{Number(hostel.price_per_day || 0).toLocaleString()}
+                                            </span>
+                                            <span className="text-gray-500 text-sm">
+                                                /day
+                                            </span>
+                                        </>
+                                    )
                                 )}
                                 <div className="flex items-center justify-center gap-1 mt-1.5">
                                     <StarRating
@@ -637,10 +697,13 @@ export default function HostelDetailClient({ hostel }: Props) {
                             </div>
 
                             {/* Book Now Button */}
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 mb-5 shadow-md shadow-blue-600/20">
+                            <Link
+                                href={`/hostels/${hostel.slug}/book`}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 mb-5 shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+                            >
                                 <Phone size={16} />
                                 Book Now
-                            </button>
+                            </Link>
 
                             <div className="relative mb-5">
                                 <div className="absolute inset-0 flex items-center">

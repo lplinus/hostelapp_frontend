@@ -15,6 +15,7 @@ import { Pencil, Image as ImageIcon, Trash2 } from "lucide-react";
 export default function HostelsPage() {
     const queryClient = useQueryClient();
     const [currentPage, setCurrentPage] = useState(1);
+    const [priceView, setPriceView] = useState<"monthly" | "daily">("monthly");
     const pageSize = 8;
 
     const { data: hostels, isLoading } = useQuery({
@@ -324,8 +325,12 @@ export default function HostelsPage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor="create-price" className="block text-sm font-medium text-gray-700">Base Price</label>
+                                    <label htmlFor="create-price" className="block text-sm font-medium text-gray-700">Price (Per Month)</label>
                                     <input id="create-price" type="number" step="0.01" name="price" required className="w-full border p-2 rounded mt-1" />
+                                </div>
+                                <div>
+                                    <label htmlFor="create-price_day" className="block text-sm font-medium text-gray-700">Price (Per Day)</label>
+                                    <input id="create-price_day" type="number" step="0.01" name="price_per_day" className="w-full border p-2 rounded mt-1" />
                                 </div>
                                 <div>
                                     <label htmlFor="create-discount" className="block text-sm font-medium text-gray-700">Discount %</label>
@@ -454,8 +459,12 @@ export default function HostelsPage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700">Base Price</label>
+                                    <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700">Price (Per Month)</label>
                                     <input id="edit-price" type="number" step="0.01" name="price" defaultValue={editingHostel.price} className="w-full border p-2 rounded mt-1" />
+                                </div>
+                                <div>
+                                    <label htmlFor="edit-price_day" className="block text-sm font-medium text-gray-700">Price (Per Day)</label>
+                                    <input id="edit-price_day" type="number" step="0.01" name="price_per_day" defaultValue={editingHostel.price_per_day ?? ""} className="w-full border p-2 rounded mt-1" />
                                 </div>
                                 <div>
                                     <label htmlFor="edit-discount" className="block text-sm font-medium text-gray-700">Discount %</label>
@@ -721,7 +730,19 @@ export default function HostelsPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price (₹)</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    <div className="flex items-center gap-2">
+                                        Price (₹)
+                                        <select
+                                            className="ml-1 bg-transparent border-none text-[10px] font-bold text-blue-600 focus:ring-0 cursor-pointer outline-none uppercase bg-white px-1 py-0.5 rounded shadow-sm"
+                                            value={priceView}
+                                            onChange={(e) => setPriceView(e.target.value as "monthly" | "daily")}
+                                        >
+                                            <option value="monthly">/ Month</option>
+                                            <option value="daily">/ Day</option>
+                                        </select>
+                                    </div>
+                                </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Images</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -749,7 +770,16 @@ export default function HostelsPage() {
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-900 font-medium">{h.name}</td>
                                         <td className="px-6 py-4 text-sm text-gray-500">{h.city?.name ?? "N/A"}, {h.area?.name ?? "N/A"}</td>
-                                        <td className="px-6 py-4 text-sm font-semibold text-gray-700">₹{h.price}</td>
+                                        <td className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                            <div className="flex flex-col">
+                                                <span>₹{priceView === "monthly" ? h.price : (h.price_per_day || "N/A")}</span>
+                                                {h.is_discounted && (
+                                                    <span className="text-[10px] text-green-600 font-medium whitespace-nowrap">
+                                                        {priceView === "monthly" ? `(₹${h.final_price})` : (h.final_price_per_day ? `(₹${h.final_price_per_day})` : "")}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">{h.rating_avg > 0 ? h.rating_avg : "Unrated"}</td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
                                             <span className="text-gray-700 font-medium">{h.images?.length ?? 0}</span>

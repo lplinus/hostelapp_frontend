@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Building2, BedDouble, CalendarCheck, Settings, Menu, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Building2, BedDouble, CalendarCheck, Settings, Menu, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 
 export default function DashboardSidebar() {
   const [isOpenMobile, setIsOpenMobile] = useState(false);
@@ -17,7 +17,13 @@ export default function DashboardSidebar() {
   }, []);
 
   return (
-    <>
+    <div className="font-poppins">
+      <button
+        className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
+        onClick={() => setIsOpenMobile(!isOpenMobile)}
+      >
+        <Menu size={20} />
+      </button>
       {/* Mobile Overlay */}
       {isOpenMobile && (
         <div
@@ -38,16 +44,16 @@ export default function DashboardSidebar() {
       >
         <div className={`flex items-center h-20 px-4 ${isCollapsed ? "md:justify-center" : "justify-between"}`}>
 
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="bg-blue-500 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
+          <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden group">
+            <div className="bg-blue-500 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg shrink-0 shadow-sm group-hover:bg-blue-600 transition-colors">
               S
             </div>
             {(!isCollapsed || isOpenMobile) && (
-              <span className="font-bold text-xl text-gray-900 tracking-tight whitespace-nowrap">
+              <span className="font-bold text-xl text-gray-900 tracking-tight whitespace-nowrap group-hover:text-blue-600 transition-colors">
                 StayNest
               </span>
             )}
-          </div>
+          </Link>
 
           <button
             className="hidden md:flex p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full absolute -right-4 top-7 bg-white border shadow-sm z-50 transition-colors"
@@ -70,11 +76,12 @@ export default function DashboardSidebar() {
           <SidebarItem href="/hostel" icon={Building2} label="Hostels" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
           <SidebarItem href="/rooms" icon={BedDouble} label="Rooms" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
           <SidebarItem href="/bookings" icon={CalendarCheck} label="Bookings" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
-          <SidebarItem href="/subscription" icon={CalendarCheck} label="Subscription" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
+          <SidebarItem href="/subscription" icon={Zap} label="Subscription" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
+          <SidebarItem href="/settings" icon={Settings} label="Settings" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
 
         </nav>
       </aside>
-    </>
+    </div>
   );
 }
 

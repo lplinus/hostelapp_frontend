@@ -19,7 +19,9 @@ export default function ConditionalFooter() {
         pathname === "/bookings" ||
         pathname.startsWith("/bookings/") ||
         pathname === "/subscription" ||
-        pathname.startsWith("/subscription/");
+        pathname.startsWith("/subscription/") ||
+        pathname === "/settings" ||
+        pathname.startsWith("/settings/");
 
     if (isDashboardRoute) {
         return null;

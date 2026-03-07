@@ -17,7 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 const navLinks = [
   { name: "Home", href: "/" },
   // { name: "Hostels", href: "/hostels" },
-  { name: "Pricing", href: "/pricing" },
+  // { name: "Pricing", href: "/pricing" },
   { name: "Blog", href: "/blog" },
   { name: "About", href: "/about-us" },
   { name: "Contact", href: "/contact-us" },
@@ -38,8 +38,7 @@ export default function Header() {
     pathname.startsWith("/dashboard/") ||
     pathname === "/profile" ||
     pathname.startsWith("/profile/") ||
-    pathname === "/hostel" ||
-    pathname.startsWith("/hostel/") ||
+    (pathname.startsWith("/hostel") && !pathname.startsWith("/hostels")) ||
     pathname === "/rooms" ||
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
@@ -59,7 +58,7 @@ export default function Header() {
 
         {/* LEFT - Logo */}
         <div className="flex justify-start">
-          <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 shrink-0">
             <div className="w-10 h-10 rounded-xl bg-[#3B82F6] flex items-center justify-center text-white font-bold text-lg">
               S
             </div>
