@@ -3,6 +3,7 @@ import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardStats from "@/components/user/dashboard/dashboard-stats";
 import RecentBookings from "@/components/user/dashboard/recent-bookings";
 import QuickActions from "@/components/user/dashboard/quick-actions";
+import BookingChartWrapper from "../../../components/user/dashboard/booking-chart-wrapper";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,6 +22,11 @@ export default function DashboardPage() {
 
                 {/* Stats */}
                 <DashboardStats />
+
+                {/* Analytical Chart */}
+                <div className="grid gap-6">
+                    <BookingChartWrapper />
+                </div>
 
                 {/* Main Grid */}
                 <div className="grid lg:grid-cols-3 gap-6">

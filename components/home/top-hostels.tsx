@@ -30,7 +30,22 @@ function getPrimaryImage(hostel: HostelListItem): string | null {
 }
 
 export default async function TopHostels() {
-  const topHostels = await getTopRatedHostels();
+  let topHostels = await getTopRatedHostels();
+
+  // Priority Sort:
+  // 1. Both Verified & Discounted
+  // 2. Verified
+  // 3. Discounted
+  // 4. Others
+  topHostels = [...topHostels].sort((a, b) => {
+    const getPriority = (h: any) => {
+      if (h.is_verified && h.is_discounted) return 1;
+      if (h.is_verified) return 2;
+      if (h.is_discounted) return 3;
+      return 4;
+    };
+    return getPriority(a) - getPriority(b);
+  });
 
   if (topHostels.length === 0) {
     return null; // hide section if no top rated hostels

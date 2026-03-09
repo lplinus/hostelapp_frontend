@@ -15,7 +15,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
-  { name: "Home", href: "/" },
+  { name: "Home", href: "/home" },
   // { name: "Hostels", href: "/hostels" },
   // { name: "Pricing", href: "/pricing" },
   { name: "Blog", href: "/blog" },
@@ -34,6 +34,7 @@ export default function Header() {
   }, []);
 
   const isDashboardRoute =
+    pathname === "/" ||
     pathname === "/dashboard" ||
     pathname.startsWith("/dashboard/") ||
     pathname === "/profile" ||

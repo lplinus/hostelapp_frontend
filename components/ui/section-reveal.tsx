@@ -22,6 +22,7 @@ export default function SectionReveal({
         delay,
         ease: "easeOut",
       }}
+      suppressHydrationWarning
     >
       {children}
     </motion.div>

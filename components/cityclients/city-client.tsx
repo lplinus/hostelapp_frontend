@@ -162,12 +162,21 @@ export default function CityClient({ data }: Props) {
         }
 
         // Sort
-        results.sort((a, b) => {
-            // Primary sort: Discounted first
-            const isADiscounted = !!a.is_discounted;
-            const isBDiscounted = !!b.is_discounted;
-            if (isADiscounted && !isBDiscounted) return -1;
-            if (!isADiscounted && isBDiscounted) return 1;
+        results.sort((a: any, b: any) => {
+            // Primary sort: Priority based on Verified and Discounted status
+            const getPriority = (h: any) => {
+                if (h.is_verified && h.is_discounted) return 1;
+                if (h.is_verified) return 2;
+                if (h.is_discounted) return 3;
+                return 4;
+            };
+
+            const priorityA = getPriority(a);
+            const priorityB = getPriority(b);
+
+            if (priorityA !== priorityB) {
+                return priorityA - priorityB;
+            }
 
             // Secondary sort: User selected sort
             if (appliedFilters.sortBy === "Price: Low to High") {

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, addDays, differenceInDays, parseISO } from "date-fns";
-import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Activity, Info } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Activity, Info, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -139,6 +139,17 @@ export default function BookingContainer({ hostel }: Props) {
 
     return (
         <div className="max-w-5xl mx-auto py-10 px-4">
+            {/* Back Button */}
+            <button
+                onClick={() => router.back()}
+                className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors mb-6 group"
+            >
+                <div className="p-2 rounded-full border border-gray-200 group-hover:border-blue-200 group-hover:bg-blue-50 transition-all">
+                    <ArrowLeft size={18} />
+                </div>
+                <span className="font-medium">Back to Hostel</span>
+            </button>
+
             <div className="grid lg:grid-cols-[1fr_360px] gap-8">
                 {/* Left Column: Form */}
                 <div className="space-y-8">

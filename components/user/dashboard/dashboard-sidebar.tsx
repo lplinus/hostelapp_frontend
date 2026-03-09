@@ -18,12 +18,6 @@ export default function DashboardSidebar() {
 
   return (
     <div className="font-poppins">
-      <button
-        className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-100"
-        onClick={() => setIsOpenMobile(!isOpenMobile)}
-      >
-        <Menu size={20} />
-      </button>
       {/* Mobile Overlay */}
       {isOpenMobile && (
         <div
@@ -77,8 +71,8 @@ export default function DashboardSidebar() {
           <SidebarItem href="/rooms" icon={BedDouble} label="Rooms" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
           <SidebarItem href="/bookings" icon={CalendarCheck} label="Bookings" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
           <SidebarItem href="/subscription" icon={Zap} label="Subscription" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
+          <SidebarItem href="/help&support" icon={Settings} label="Help & Support" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
           <SidebarItem href="/settings" icon={Settings} label="Settings" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
-
         </nav>
       </aside>
     </div>

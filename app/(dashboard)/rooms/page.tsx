@@ -1,6 +1,6 @@
 import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import RoomsContainer from "@/components/rooms/rooms-container";
+import RoomsContainer from "@/components/user/rooms/rooms-container";
 import { getGroupedRoomsServer } from "@/lib/api/server-rooms";
 import type { Metadata } from "next";
 

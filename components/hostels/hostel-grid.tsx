@@ -25,9 +25,24 @@ function getPrimaryImage(hostel: HostelListItem): string | null {
 }
 
 export default function HostelGrid({ hostels }: HostelGridProps) {
+  // Apply priority sorting:
+  // 1. Discounts & Verified
+  // 2. Verified
+  // 3. Discounts
+  // 4. Others
+  const sortedHostels = [...hostels].sort((a, b) => {
+    const getPriority = (h: any) => {
+      if (h.is_verified && h.is_discounted) return 1;
+      if (h.is_verified) return 2;
+      if (h.is_discounted) return 3;
+      return 4;
+    };
+    return getPriority(a) - getPriority(b);
+  });
+
   return (
     <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
-      {hostels.map((hostel) => (
+      {sortedHostels.map((hostel) => (
         <HostelCard
           key={hostel.id}
           id={String(hostel.id)}

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getHostelBySlug } from "@/services/hostel.service";
-import BookingContainer from "@/components/hostelclient/booking-container";
+import BookingContainer from "@/components/user/booking/booking-container";
 
 interface Props {
     readonly params: Promise<{ slug: string }>;

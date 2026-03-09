@@ -187,7 +187,7 @@ export default function HostelDetailClient({ hostel }: Props) {
             : null;
 
     return (
-        <div className="hostel-detail-page bg-white min-h-screen">
+        <div className="hostel-detail-page bg-white min-h-screen pb-24 lg:pb-0">
             {/* ===== Breadcrumb ===== */}
             <nav className="max-w-[1200px] mx-auto px-5 py-3 text-sm text-gray-500">
                 <ol className="flex items-center gap-1.5 flex-wrap">
@@ -777,6 +777,35 @@ export default function HostelDetailClient({ hostel }: Props) {
                         </div>
                     </div>
                 </div>
+            </div>
+            {/* ===== Mobile Sticky Booking Bar ===== */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 px-6 py-5 z-[100] flex items-center justify-between shadow-[0_-15px_35px_-5px_rgba(0,0,0,0.1)]">
+                <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-1">
+                        <span className="text-2xl font-black text-blue-600 tracking-tight">
+                            ₹{Number(priceMode === "monthly"
+                                ? (hostel.is_discounted && hostel.discounted_price ? hostel.discounted_price : hostel.price)
+                                : (hostel.is_discounted && hostel.discounted_price_per_day ? hostel.discounted_price_per_day : (hostel.price_per_day || 0))
+                            ).toLocaleString()}
+                        </span>
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">
+                            /{priceMode === "monthly" ? "mo" : "day"}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <StarRating rating={hostel.rating_avg} size={11} />
+                        <span className="text-[11px] text-gray-400 font-bold">
+                            {hostel.rating_avg.toFixed(1)} ({hostel.rating_count})
+                        </span>
+                    </div>
+                </div>
+                <Link
+                    href={`/hostels/${hostel.slug}/book`}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-black px-8 py-4 rounded-2xl transition-all active:scale-[0.95] shadow-2xl shadow-blue-600/40 flex items-center justify-center gap-2 text-base ml-6 flex-shrink-0"
+                >
+                    <Phone size={18} fill="currentColor" />
+                    Book Now
+                </Link>
             </div>
         </div>
     );

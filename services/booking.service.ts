@@ -20,6 +20,7 @@ export interface Booking {
     guests_count: number;
     status: string;
     total_price: string;
+    created_at?: string;
 }
 
 export interface BookingRequest {

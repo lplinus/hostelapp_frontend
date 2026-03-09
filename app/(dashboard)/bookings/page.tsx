@@ -2,7 +2,7 @@
 
 import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import { getOwnerBookings, updateBookingStatus, deleteBooking, Booking } from "@/services/booking.service";
+import { getOwnerBookings, updateBookingStatus, deleteBooking } from "@/services/booking.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ export default function BookingsPage() {
         mutationFn: ({ id, status }: { id: string, status: string }) => updateBookingStatus(id, status),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["ownerBookings"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
             toast.success("Status updated successfully");
         },
         onError: () => {
@@ -30,6 +31,7 @@ export default function BookingsPage() {
         mutationFn: (id: string) => deleteBooking(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["ownerBookings"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
             toast.success("Booking deleted successfully");
         },
         onError: () => {
@@ -73,53 +75,67 @@ export default function BookingsPage() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {isLoading ? (<tr><td colSpan={6} className="px-6 py-4 text-center">Loading...</td></tr>) :
-                                bookings?.length === 0 ? (<tr><td colSpan={6} className="px-6 py-4 text-center">No bookings found.</td></tr>) :
-                                    bookings?.map((b) => (
-                                        <tr key={b.id}>
-                                            <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
-                                                STN-{b.id.substring(0, 6).toUpperCase()}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <div className="font-medium text-gray-900">{b.guest_name}</div>
-                                                <div className="text-gray-500">{b.guest_email}</div>
-                                                <div className="text-xs text-gray-400">Age: {b.guest_age}</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">{b.hostel_name || `Hostel ID: ${b.hostel}`}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                <div>{b.room_category || `Room Type: ${b.room_type}`}</div>
-                                                <div className="text-xs text-gray-400">{b.adults} Adults, {b.children} Children</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                {new Date(b.check_in).toLocaleDateString()} - <br />
-                                                {new Date(b.check_out).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <div className="flex items-center gap-3">
-                                                    <select
-                                                        value={b.status}
-                                                        onChange={(e) => handleStatusChange(e, b.id)}
-                                                        disabled={statusMutation.isPending}
-                                                        className="border rounded p-1 text-sm bg-white"
-                                                    >
-                                                        <option value="pending">Pending</option>
-                                                        <option value="confirmed">Confirmed</option>
-                                                        <option value="cancelled">Cancelled</option>
-                                                        <option value="completed">Completed</option>
-                                                    </select>
-                                                    <button
-                                                        onClick={() => handleDelete(b.id)}
-                                                        className="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
-                                                        title="Delete Booking"
-                                                        disabled={deleteMutation.isPending}
-                                                    >
-                                                        <Trash2 className="w-5 h-5" />
-                                                    </button>
-                                                </div>
-                                                <div className="mt-1 font-bold text-gray-900">₹{parseFloat(b.total_price).toLocaleString()}</div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                            {isLoading && (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                                        Loading bookings...
+                                    </td>
+                                </tr>
+                            )}
+                            {!isLoading && (!bookings || bookings.length === 0) && (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500 italic">
+                                        No bookings found.
+                                    </td>
+                                </tr>
+                            )}
+                            {!isLoading && [...(bookings || [])]
+                                .sort((a, b) => new Date(b.created_at ?? b.check_in).getTime() - new Date(a.created_at ?? a.check_in).getTime())
+                                .map((b) => (
+                                    <tr key={b.id}>
+                                        <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
+                                            STN-{b.id.substring(0, 6).toUpperCase()}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm">
+                                            <div className="font-medium text-gray-900">{b.guest_name}</div>
+                                            <div className="text-gray-500">{b.guest_email}</div>
+                                            <div className="text-xs text-gray-400">Age: {b.guest_age}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">{b.hostel_name || `Hostel ID: ${b.hostel}`}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            <div>{b.room_category || `Room Type: ${b.room_type}`}</div>
+                                            <div className="text-xs text-gray-400">{b.adults} Adults, {b.children} Children</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {new Date(b.check_in).toLocaleDateString()} - <br />
+                                            {new Date(b.check_out).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm">
+                                            <div className="flex items-center gap-3">
+                                                <select
+                                                    value={b.status}
+                                                    onChange={(e) => handleStatusChange(e, b.id)}
+                                                    disabled={statusMutation.isPending}
+                                                    className="border rounded p-1 text-sm bg-white"
+                                                >
+                                                    <option value="pending">Pending</option>
+                                                    <option value="confirmed">Confirmed</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                    <option value="completed">Completed</option>
+                                                </select>
+                                                <button
+                                                    onClick={() => handleDelete(b.id)}
+                                                    className="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
+                                                    title="Delete Booking"
+                                                    disabled={deleteMutation.isPending}
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                            <div className="mt-1 font-bold text-gray-900">₹{Number.parseFloat(b.total_price).toLocaleString()}</div>
+                                        </td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </div>

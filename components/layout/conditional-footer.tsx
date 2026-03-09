@@ -8,6 +8,7 @@ export default function ConditionalFooter() {
 
     // If we are on these dashboard-related routes, don't show the footer
     const isDashboardRoute =
+        pathname === "/" ||
         pathname === "/dashboard" ||
         pathname.startsWith("/dashboard/") ||
         pathname === "/profile" ||
@@ -21,7 +22,9 @@ export default function ConditionalFooter() {
         pathname === "/subscription" ||
         pathname.startsWith("/subscription/") ||
         pathname === "/settings" ||
-        pathname.startsWith("/settings/");
+        pathname.startsWith("/settings/") ||
+        pathname === "/help&support" ||
+        pathname.startsWith("/help&support/");
 
     if (isDashboardRoute) {
         return null;
