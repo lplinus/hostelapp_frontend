@@ -110,6 +110,7 @@ export const dynamic = "force-dynamic"
 
 import type { Metadata } from "next";
 import { getSEO } from "@/lib/seo";
+import { Suspense } from "react";
 
 // Landing Page Components
 import LandingHero from "@/components/landingpage/Landinghero";
@@ -126,7 +127,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: seo?.meta_title || "LiveHub | Verified Hostels for Students",
     description: seo?.meta_description || "Discover verified, affordable hostels across India. Trusted by 10,000+ students.",
-    keywords: seo?.meta_keywords,
 
     openGraph: {
       title: seo?.og_title || seo?.meta_title,
@@ -162,12 +162,14 @@ export default async function LandingPage() {
       <main className="antialiased font-poppins bg-white text-stone-900 overflow-hidden">
         {/* Full-width premium sections */}
         <LandingHero />
-        <LandingStats />
-        <LandingCities />
-        <LandingFeatures />
-        <LandingHowItWorks />
-        <LandingTestimonials />
-        <LandingCTA />
+        <Suspense fallback={null}>
+          <LandingStats />
+          <LandingCities />
+          <LandingFeatures />
+          <LandingHowItWorks />
+          <LandingTestimonials />
+          <LandingCTA />
+        </Suspense>
       </main>
     </>
   );

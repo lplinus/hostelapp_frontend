@@ -4,6 +4,8 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header";
 import ConditionalFooter from "@/components/layout/conditional-footer";
+import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/seo/schema";
+import JsonLd from "@/components/seo/JsonLd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <JsonLd data={generateOrganizationSchema()} />
+        <JsonLd data={generateWebsiteSchema()} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
       >

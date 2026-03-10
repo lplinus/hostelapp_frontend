@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { getHostelBySlug, getHostels } from "@/services/hostel.service";
 import HostelDetailClient from "@/components/hostelclient/hostel-detail-client";
 import { generateHostelMetadata } from "@/lib/seo/hostelSeo";
-import { generateHostelJsonLd } from "@/lib/seo/structuredData";
+import { generateHostelSchema, generateBreadcrumbSchema, generateReviewSchema } from "@/lib/seo/schema";
+import JsonLd from "@/components/seo/JsonLd";
 
 export async function generateStaticParams() {
     try {
@@ -48,16 +49,19 @@ export default async function HostelDetailPage({ params }: Props) {
         notFound();
     }
 
-    const jsonLd = generateHostelJsonLd(hostel);
-
     return (
         <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(jsonLd),
-                }}
+            <JsonLd data={generateHostelSchema(hostel)} />
+            <JsonLd
+                data={generateBreadcrumbSchema([
+                    { name: "Home", url: "https://staynest.in/" },
+                    { name: hostel.city?.name || "City", url: `https://staynest.in/city/${hostel.city?.slug || ""}` },
+                    { name: hostel.name }
+                ])}
             />
+            {hostel.reviews?.map((review) => (
+                <JsonLd key={review.id} data={generateReviewSchema(review, hostel.name)} />
+            ))}
             <HostelDetailClient hostel={hostel} />
         </>
     );

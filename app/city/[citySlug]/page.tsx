@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import CityClient from "../../../components/cityclients/city-client";
 import { CityHostelResponse } from "@/types/hostel.types";
+import { generateCityListingSchema, generateBreadcrumbSchema } from "@/lib/seo/schema";
+import JsonLd from "@/components/seo/JsonLd";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -63,6 +65,15 @@ export default async function CityPage({ params }: Props) {
 
     return (
         <div className="py-8 sm:py-10 lg:py-12 bg-gray-50 min-h-screen">
+            <JsonLd
+                data={generateBreadcrumbSchema([
+                    { name: "Home", url: "https://staynest.in/" },
+                    { name: cityName }
+                ])}
+            />
+            {safeData.results && safeData.results.length > 0 && (
+                <JsonLd data={generateCityListingSchema(citySlug, cityName, safeData.results)} />
+            )}
             <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12">
                 <CityClient data={safeData} />
             </div>

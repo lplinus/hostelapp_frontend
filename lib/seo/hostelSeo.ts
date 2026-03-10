@@ -54,7 +54,8 @@ export function generateHostelMetadata(hostel: HostelDetail): Metadata {
     const ogImageUrl =
         resolveImageUrl(hostel.og_image) ??
         resolveImageUrl(primaryImage?.image) ??
-        resolveImageUrl(hostel.default_images?.image1);
+        resolveImageUrl(hostel.default_images?.image1) ??
+        buildCanonicalUrl("/default-og-image.jpg");
 
     const ogTitle = hostel.og_title || title;
     const ogDescription = hostel.og_description || description;
@@ -62,7 +63,6 @@ export function generateHostelMetadata(hostel: HostelDetail): Metadata {
     return {
         title,
         description,
-        keywords: hostel.meta_keywords ?? undefined,
         robots: robotsDirective(hostel.is_indexed ?? true),
         alternates: {
             canonical,
@@ -76,7 +76,7 @@ export function generateHostelMetadata(hostel: HostelDetail): Metadata {
                 images: [
                     {
                         url: ogImageUrl,
-                        alt: hostel.name,
+                        alt: `${hostel.name} hostel in ${hostel.city.name}`,
                     },
                 ],
             }),
