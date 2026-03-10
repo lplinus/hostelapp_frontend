@@ -114,6 +114,7 @@ export default async function TopHostels() {
                     distance=""
                     isFeatured={hostel.is_featured}
                     isVerified={!!hostel.is_verified}
+                    isApproved={!!hostel.is_approved}
                     isTopRated={true}
                   />
                 </div>

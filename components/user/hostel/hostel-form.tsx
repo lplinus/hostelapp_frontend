@@ -1,8 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import type { HostelListItem } from "@/types/hostel.types";
 import HostelLocationSection from "../location/hostel-location-section";
+import { cn } from "@/lib/utils";
+
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { createCity, createArea } from "@/services/location.service";
 
 interface HostelFormProps {
     initialData?: HostelListItem | null;
@@ -11,6 +16,7 @@ interface HostelFormProps {
     isPending: boolean;
     cities: any[] | undefined;
     areas: any[] | undefined;
+    states: any[] | undefined;
     amenities: any[] | undefined;
 }
 
@@ -47,16 +53,55 @@ const HostelForm: React.FC<HostelFormProps> = ({
     isPending,
     cities,
     areas,
+    states,
     amenities,
 }) => {
+    const queryClient = useQueryClient();
     const [selectedCity, setSelectedCity] = useState<string>(
         initialData?.city?.id?.toString() || ""
     );
+    const [selectedArea, setSelectedArea] = useState<string>(
+        initialData?.area?.id?.toString() || ""
+    );
+
+    // New Location States
+    const [isAddingCity, setIsAddingCity] = useState(false);
+    const [newCityName, setNewCityName] = useState("");
+    const [newCityState, setNewCityState] = useState("");
+
+    const [isAddingArea, setIsAddingArea] = useState(false);
+    const [newAreaName, setNewAreaName] = useState("");
+
+    const createCityMutation = useMutation({
+        mutationFn: createCity,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["cities"] });
+            setSelectedCity(data.id.toString());
+            setIsAddingCity(false);
+            setNewCityName("");
+            setNewCityState("");
+            toast.success("New city added!");
+        },
+        onError: (err: any) => toast.error(err.message || "Failed to add city"),
+    });
+
+    const createAreaMutation = useMutation({
+        mutationFn: createArea,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["areas"] });
+            setSelectedArea(data.id.toString());
+            setIsAddingArea(false);
+            setNewAreaName("");
+            toast.success("New area added!");
+        },
+        onError: (err: any) => toast.error(err.message || "Failed to add area"),
+    });
 
     // Location States
     const [lat, setLat] = useState(initialData?.latitude?.toString() || "");
     const [lng, setLng] = useState(initialData?.longitude?.toString() || "");
     const [address, setAddress] = useState(initialData?.address || "");
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (initialData) {
@@ -66,6 +111,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
             setAddress(initialData.address || "");
         } else {
             setSelectedCity("");
+            setSelectedArea("");
             setLat("");
             setLng("");
             setAddress("");
@@ -75,6 +121,46 @@ const HostelForm: React.FC<HostelFormProps> = ({
     const filteredAreas = areas?.filter((a) => a.city === Number(selectedCity)) ?? [];
 
     const idPrefix = initialData ? "edit" : "create";
+
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newErrors: Record<string, string> = {};
+
+        const name = formData.get("name") as string;
+        const price = formData.get("price") as string;
+        const short_desc = formData.get("short_description") as string;
+        const city = formData.get("city") as string;
+        const postalCode = formData.get("postal_code") as string;
+
+        if (!name || name.trim().length < 3) {
+            newErrors.name = "Hostel name must be at least 3 characters long.";
+        }
+
+        if (!city) {
+            newErrors.city = "Please select a city.";
+        }
+
+        if (!price || Number(price) <= 0) {
+            newErrors.price = "Price must be a positive number.";
+        }
+
+        if (!short_desc || short_desc.trim().length < 10) {
+            newErrors.short_description = "Short description should be at least 10 characters.";
+        }
+
+        if (!postalCode || !/^\d{5,6}$/.test(postalCode)) {
+            newErrors.postal_code = "Please enter a valid 5 or 6 digit postal code.";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+        onSubmit(e);
+    };
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-100 mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
@@ -90,7 +176,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
                 </button>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-8">
+            <form onSubmit={handleFormSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
                     {/* Basic Info */}
                     <div className="space-y-3.5 transition-all">
@@ -101,8 +187,15 @@ const HostelForm: React.FC<HostelFormProps> = ({
                             name="name"
                             required
                             defaultValue={initialData?.name}
-                            className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none bg-white font-medium"
+                            onChange={() => {
+                                if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
+                            }}
+                            className={cn(
+                                "w-full border p-2.5 rounded-lg focus:ring-2 transition-all outline-none bg-white font-medium",
+                                errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            )}
                         />
+                        {errors.name && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.name}</p>}
                     </div>
 
                     <div className="space-y-3.5 transition-all">
@@ -127,34 +220,94 @@ const HostelForm: React.FC<HostelFormProps> = ({
 
                     <div className="space-y-3.5 transition-all">
                         <label htmlFor={`${idPrefix}-city`} className="block text-sm font-semibold text-gray-700">City</label>
-                        <select
-                            id={`${idPrefix}-city`}
-                            name="city"
-                            required
-                            className="w-full border border-gray-300 p-2.5 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none font-medium"
-                            value={selectedCity}
-                            onChange={(e) => setSelectedCity(e.target.value)}
-                        >
-                            <option value="" disabled>Select City</option>
-                            {cities?.map((c) => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                        </select>
+                        {isAddingCity ? (
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="New City Name"
+                                    value={newCityName}
+                                    onChange={(e) => setNewCityName(e.target.value)}
+                                    className="flex-1 border border-gray-300 p-2.5 rounded-lg text-sm outline-none font-medium text-gray-900"
+                                />
+                                <select
+                                    value={newCityState}
+                                    onChange={(e) => setNewCityState(e.target.value)}
+                                    className="border border-gray-300 p-2.5 rounded-lg text-sm outline-none bg-white font-medium text-gray-900"
+                                >
+                                    <option value="" disabled>Select State</option>
+                                    {states?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                </select>
+                                <button type="button" onClick={() => createCityMutation.mutate({ name: newCityName, state: Number(newCityState) })} disabled={!newCityName || !newCityState || createCityMutation.isPending} className="bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm disabled:opacity-50 transition-colors hover:bg-blue-700 whitespace-nowrap shadow-sm">Save</button>
+                                <button type="button" onClick={() => setIsAddingCity(false)} className="bg-gray-100 border border-gray-200 text-gray-700 font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-200 whitespace-nowrap">Cancel</button>
+                            </div>
+                        ) : (
+                            <select
+                                id={`${idPrefix}-city`}
+                                name="city"
+                                required
+                                className={cn(
+                                    "w-full border p-2.5 rounded-lg bg-white focus:ring-2 transition-all outline-none font-medium",
+                                    errors.city ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                )}
+                                value={selectedCity}
+                                onChange={(e) => {
+                                    if (e.target.value === "new") {
+                                        setIsAddingCity(true);
+                                    } else {
+                                        setSelectedCity(e.target.value);
+                                        if (errors.city) setErrors(prev => ({ ...prev, city: "" }));
+                                    }
+                                }}
+                            >
+                                <option value="" disabled>Select City</option>
+                                {cities?.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                                <option value="new" className="font-semibold text-blue-600 bg-blue-50">+ Add New City</option>
+                            </select>
+                        )}
+                        {errors.city && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.city}</p>}
                     </div>
 
                     <div className="space-y-3.5 transition-all">
                         <label htmlFor={`${idPrefix}-area`} className="block text-sm font-semibold text-gray-700">Area</label>
-                        <select
-                            id={`${idPrefix}-area`}
-                            name="area"
-                            defaultValue={initialData?.area?.id ?? ""}
-                            className="w-full border border-gray-300 p-2.5 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none font-medium"
-                        >
-                            <option value="">Select Area (Optional)</option>
-                            {filteredAreas.map((a) => (
-                                <option key={a.id} value={a.id}>{a.name}</option>
-                            ))}
-                        </select>
+                        {isAddingArea ? (
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="New Area Name"
+                                    value={newAreaName}
+                                    onChange={(e) => setNewAreaName(e.target.value)}
+                                    className="flex-1 border border-gray-300 p-2.5 rounded-lg text-sm outline-none font-medium text-gray-900"
+                                />
+                                <button type="button" onClick={() => createAreaMutation.mutate({ name: newAreaName, city: Number(selectedCity) })} disabled={!newAreaName || createAreaMutation.isPending} className="bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm disabled:opacity-50 transition-colors hover:bg-blue-700 whitespace-nowrap shadow-sm">Save</button>
+                                <button type="button" onClick={() => setIsAddingArea(false)} className="bg-gray-100 border border-gray-200 text-gray-700 font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-200 whitespace-nowrap">Cancel</button>
+                            </div>
+                        ) : (
+                            <select
+                                id={`${idPrefix}-area`}
+                                name="area"
+                                value={selectedArea}
+                                className="w-full border border-gray-300 p-2.5 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none font-medium"
+                                onChange={(e) => {
+                                    if (e.target.value === "new") {
+                                        if (!selectedCity) {
+                                            toast.error("Please select a city first.");
+                                        } else {
+                                            setIsAddingArea(true);
+                                        }
+                                    } else {
+                                        setSelectedArea(e.target.value);
+                                    }
+                                }}
+                            >
+                                <option value="">Select Area (Optional)</option>
+                                {filteredAreas.map((a) => (
+                                    <option key={a.id} value={a.id}>{a.name}</option>
+                                ))}
+                                {selectedCity && <option value="new" className="font-semibold text-blue-600 bg-blue-50">+ Add New Area</option>}
+                            </select>
+                        )}
                     </div>
 
                     {/* Pricing */}
@@ -167,8 +320,15 @@ const HostelForm: React.FC<HostelFormProps> = ({
                             name="price"
                             required
                             defaultValue={initialData?.price}
-                            className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none bg-white font-medium"
+                            onChange={() => {
+                                if (errors.price) setErrors(prev => ({ ...prev, price: "" }));
+                            }}
+                            className={cn(
+                                "w-full border p-2.5 rounded-lg focus:ring-2 transition-all outline-none bg-white font-medium",
+                                errors.price ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            )}
                         />
+                        {errors.price && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.price}</p>}
                     </div>
 
                     <div className="space-y-3.5 transition-all">
@@ -242,9 +402,16 @@ const HostelForm: React.FC<HostelFormProps> = ({
                             name="short_description"
                             required
                             defaultValue={initialData?.short_description}
-                            className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none bg-white font-medium"
+                            onChange={() => {
+                                if (errors.short_description) setErrors(prev => ({ ...prev, short_description: "" }));
+                            }}
+                            className={cn(
+                                "w-full border p-2.5 rounded-lg focus:ring-2 transition-all outline-none bg-white font-medium",
+                                errors.short_description ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            )}
                             rows={2}
                         />
+                        {errors.short_description && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.short_description}</p>}
                     </div>
 
                     <div className="col-span-1 md:col-span-2 space-y-3.5 transition-all">
@@ -281,8 +448,15 @@ const HostelForm: React.FC<HostelFormProps> = ({
                                     name="postal_code"
                                     required
                                     defaultValue={initialData?.postal_code ?? ""}
-                                    className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none bg-white font-medium"
+                                    onChange={() => {
+                                        if (errors.postal_code) setErrors(prev => ({ ...prev, postal_code: "" }));
+                                    }}
+                                    className={cn(
+                                        "w-full border p-2.5 rounded-lg focus:ring-2 transition-all outline-none bg-white font-medium",
+                                        errors.postal_code ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                    )}
                                 />
+                                {errors.postal_code && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.postal_code}</p>}
                             </div>
                         </div>
 

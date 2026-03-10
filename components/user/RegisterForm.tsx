@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
@@ -31,39 +32,44 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const { register, loading } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: Record<string, string> = {};
 
-    if (!name || !email || !password || !confirmPassword) {
-      toast.error("Missing fields", {
-        description: "Please complete all required information.",
-      });
-      return;
+    if (!name.trim()) {
+      newErrors.name = "Full name is required.";
+    } else if (name.trim().length < 3) {
+      newErrors.name = "Full name must be at least 3 characters long.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Invalid email format", {
-        description: "Please provide a valid email address.",
-      });
+    if (!email) {
+      newErrors.email = "Email address is required.";
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Please provide a valid email address.";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required.";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long.";
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password.";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match", {
-        description: "Please make sure both passwords are identical.",
-      });
-      return;
-    }
-
-    if (password.length < 8) {
-      toast.error("Weak password", {
-        description: "Password must be at least 8 characters long.",
-      });
-      return;
-    }
+    setErrors({});
 
     try {
       // Derive username from email (before @)
@@ -111,11 +117,19 @@ export default function RegisterForm() {
                 <Input
                   type="text"
                   placeholder="Your full name"
-                  className="pl-9 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 h-11 rounded-xl",
+                    errors.name ? "border-red-500 focus:ring-red-500" : name.trim().length >= 3 ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors(prev => ({ ...prev, name: "" }));
+                  }}
                 />
               </div>
+              {errors.name && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.name}</p>}
+              {!errors.name && name.trim().length >= 3 && <p className="text-[10px] text-green-600 font-bold ml-1">Looks great!</p>}
             </div>
 
             {/* Email */}
@@ -126,11 +140,19 @@ export default function RegisterForm() {
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="pl-9 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 h-11 rounded-xl",
+                    errors.email ? "border-red-500 focus:ring-red-500" : (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                  }}
                 />
               </div>
+              {errors.email && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.email}</p>}
+              {!errors.email && (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && <p className="text-[10px] text-green-600 font-bold ml-1">Valid email!</p>}
             </div>
 
             {/* Password */}
@@ -141,9 +163,15 @@ export default function RegisterForm() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Create password"
-                  className="pl-9 pr-10 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 pr-10 h-11 rounded-xl",
+                    errors.password ? "border-red-500 focus:ring-red-500" : password.length >= 8 ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors(prev => ({ ...prev, password: "" }));
+                  }}
                 />
                 <button
                   type="button"
@@ -157,6 +185,8 @@ export default function RegisterForm() {
                   )}
                 </button>
               </div>
+              {errors.password && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.password}</p>}
+              {!errors.password && password.length >= 8 && <p className="text-[10px] text-green-600 font-bold ml-1">Strong password!</p>}
             </div>
 
             {/* Confirm Password */}
@@ -167,9 +197,15 @@ export default function RegisterForm() {
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm password"
-                  className="pl-9 pr-10 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 pr-10 h-11 rounded-xl",
+                    errors.confirmPassword ? "border-red-500 focus:ring-red-500" : (confirmPassword && confirmPassword === password) ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: "" }));
+                  }}
                 />
                 <button
                   type="button"
@@ -185,6 +221,8 @@ export default function RegisterForm() {
                   )}
                 </button>
               </div>
+              {errors.confirmPassword && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.confirmPassword}</p>}
+              {!errors.confirmPassword && (confirmPassword && confirmPassword === password) && <p className="text-[10px] text-green-600 font-bold ml-1">Passwords match!</p>}
             </div>
 
             <Button

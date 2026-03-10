@@ -14,6 +14,7 @@ export async function getSEO(page: string) {
         // Map page to content_type since backend might just return the whole list
         const CONTENT_TYPE_MAP: Record<string, number> = {
             "home": 20,
+            "landing": 43,
             "about-us": 22,
             "contact-us": 26,
             "pricing": 30,
@@ -36,13 +37,17 @@ export async function getSEO(page: string) {
         console.error("SEO API Error:", error)
 
         return {
-            meta_title: "StayNest – Affordable Hostels Across India",
+            meta_title: "Affordable Student Hostels Across India | StayNest",
             meta_description:
-                "Find safe and verified hostels for students and professionals across India.",
-            meta_keywords: "hostels, student hostels, pg accommodation",
-            og_title: "StayNest",
-            og_description: "Affordable hostels across India",
-            og_image: "/default-og.jpg"
+                "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with StayNest.",
+            meta_keywords: "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, staynest hostels",
+            canonical_url: "https://staynest.in/",
+            og_title: "Affordable Student Hostels Across India | StayNest",
+            og_description: "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
+            og_image: "https://staynest.in/images/og-home.jpg",
+            robots_directives: "index, follow",
+            is_indexed: true,
+            structured_data: null
         }
     }
 }

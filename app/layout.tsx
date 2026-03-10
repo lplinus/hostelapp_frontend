@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import Header from "@/components/layout/header";
 import ConditionalFooter from "@/components/layout/conditional-footer";
 import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/seo/schema";

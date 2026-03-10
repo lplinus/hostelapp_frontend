@@ -1,111 +1,3 @@
-// export const dynamic = "force-dynamic"
-
-// import type { Metadata } from "next";
-// import Hero from "@/components/home/hero";
-// import FeaturedCities from "@/components/home/featured-cities";
-// import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
-// import TopHostels from "@/components/home/top-hostels";
-// import FeaturedHostels from "@/components/home/featured-hostels";
-// import WhyUs from "@/components/home/why-us";
-// import CTA from "@/components/home/cta";
-// import SectionReveal from "@/components/ui/section-reveal";
-// import { getHomePage } from "@/services/public.service";
-// import type { HomePageResponse } from "@/types/public.types";
-
-// import { getSEO } from "@/lib/seo";
-
-// export async function generateMetadata(): Promise<Metadata> {
-//   const seo = await getSEO("home");
-
-//   return {
-//     title: seo.meta_title,
-//     description: seo.meta_description,
-//     keywords: seo.meta_keywords,
-
-//     openGraph: {
-//       title: seo.og_title || seo.meta_title,
-//       description: seo.og_description || seo.meta_description,
-//       images: seo.og_image ? [seo.og_image] : [],
-//     },
-
-//     twitter: {
-//       card: "summary_large_image",
-//       title: seo.og_title || seo.meta_title,
-//       description: seo.og_description || seo.meta_description,
-//       images: seo.og_image ? [seo.og_image] : []
-//     }
-//   };
-// }
-
-// export default async function HomePage() {
-//   let homepageData: HomePageResponse | null = null;
-//   const seo = await getSEO("home");
-
-//   try {
-//     homepageData = await getHomePage();
-//   } catch (error) {
-//     console.error("Failed to fetch homepage data", error);
-//   }
-
-//   return (
-//     <>
-//       {seo?.structured_data && (
-//         <script
-//           type="application/ld+json"
-//           dangerouslySetInnerHTML={{
-//             __html: typeof seo.structured_data === 'string'
-//               ? seo.structured_data
-//               : JSON.stringify(seo.structured_data),
-//           }}
-//         />
-//       )}
-//       <main className="flex flex-col overflow-hidden">
-//         {/* Hero - no animation (keep LCP stable) */}
-//         <Hero
-//           title={homepageData?.hero_title}
-//           subtitle={homepageData?.hero_subtitle}
-//         />
-
-//         {/* Content sections with breathing room */}
-//         <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">
-//           <SectionReveal>
-//             <FeaturedCities />
-//           </SectionReveal>
-
-//           <SectionReveal delay={0.05}>
-//             <FeaturedHostelTypes />
-//           </SectionReveal>
-
-//           {/* <SectionReveal delay={0.1}>
-//           <FeaturedHostels />
-//         </SectionReveal> */}
-
-//           {/* <SectionReveal delay={0.15}>
-//           <TopHostels />
-//         </SectionReveal> */}
-
-//           <SectionReveal delay={0.2}>
-//             <WhyUs
-//               title={homepageData?.why_title}
-//               items={homepageData?.why_items}
-//             />
-//           </SectionReveal>
-//         </div>
-
-//         <SectionReveal delay={0.2}>
-//           <CTA
-//             title={homepageData?.cta_title}
-//             subtitle={homepageData?.cta_subtitle}
-//             buttonText={homepageData?.cta_button_text}
-//           />
-//         </SectionReveal>
-//       </main>
-//     </>
-//   );
-// }
-
-
-
 export const dynamic = "force-dynamic"
 
 import type { Metadata } from "next";
@@ -121,30 +13,48 @@ import LandingHowItWorks from "@/components/landingpage/Landinghowitworks";
 import LandingTestimonials from "@/components/landingpage/Landingtestimonials";
 import LandingCTA from "@/components/landingpage/Landingcta";
 
+import { landingService } from "@/services/landing.service";
+
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await getSEO("home");
+  const seo = await getSEO("landing");
 
   return {
-    title: seo?.meta_title || "LiveHub | Verified Hostels for Students",
-    description: seo?.meta_description || "Discover verified, affordable hostels across India. Trusted by 10,000+ students.",
-
-    openGraph: {
-      title: seo?.og_title || seo?.meta_title,
-      description: seo?.og_description || seo?.meta_description,
-      images: seo?.og_image ? [seo.og_image] : [],
+    title: seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
+    description: seo?.meta_description || "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with StayNest.",
+    keywords: seo?.meta_keywords || "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, staynest hostels",
+    alternates: {
+      canonical: seo?.canonical_url || "https://staynest.in/",
     },
-
+    robots: {
+      index: seo?.is_indexed ?? true,
+      follow: true,
+    },
+    openGraph: {
+      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
+      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
+      images: seo?.og_image ? [seo.og_image] : ["https://staynest.in/images/og-home.jpg"],
+      url: "https://staynest.in/",
+      siteName: "StayNest",
+      type: "website",
+    },
     twitter: {
       card: "summary_large_image",
-      title: seo?.og_title || seo?.meta_title,
-      description: seo?.og_description || seo?.meta_description,
-      images: seo?.og_image ? [seo.og_image] : []
+      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
+      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
+      images: seo?.og_image ? [seo.og_image] : ["https://staynest.in/images/og-home.jpg"],
     }
   };
 }
 
 export default async function LandingPage() {
-  const seo = await getSEO("home");
+  const seo = await getSEO("landing");
+  let landingData = null;
+
+  try {
+    landingData = await landingService.getLandingData();
+  } catch (error) {
+    console.error("Failed to fetch landing data:", error);
+  }
 
   return (
     <>
@@ -161,14 +71,14 @@ export default async function LandingPage() {
 
       <main className="antialiased font-poppins bg-white text-stone-900 overflow-hidden">
         {/* Full-width premium sections */}
-        <LandingHero />
+        <LandingHero data={landingData} />
         <Suspense fallback={null}>
-          <LandingStats />
-          <LandingCities />
-          <LandingFeatures />
-          <LandingHowItWorks />
-          <LandingTestimonials />
-          <LandingCTA />
+          <LandingStats stats={landingData?.stats} />
+          <LandingCities data={landingData} />
+          <LandingFeatures data={landingData} />
+          <LandingHowItWorks data={landingData} />
+          <LandingTestimonials data={landingData} />
+          <LandingCTA data={landingData} />
         </Suspense>
       </main>
     </>

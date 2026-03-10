@@ -114,6 +114,7 @@ export default async function FeaturedHostels() {
                                         distance=""
                                         isFeatured={hostel.is_featured}
                                         isVerified={!!hostel.is_verified}
+                                        isApproved={!!hostel.is_approved}
                                     />
                                 </div>
                             </CarouselItem>

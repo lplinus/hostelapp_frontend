@@ -10,31 +10,38 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const { login, loading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: Record<string, string> = {};
 
-    if (!email || !password) {
-      toast.error("Missing fields", {
-        description: "Please enter both your email and password."
-      });
+    if (!email) {
+      newErrors.email = "Email address is required.";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        newErrors.email = "Please provide a valid email address.";
+      }
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Invalid email format", {
-        description: "Please provide a valid email address.",
-      });
-      return;
-    }
+    setErrors({});
 
     try {
       await login({ username: email, password });
@@ -71,11 +78,18 @@ export default function LoginForm() {
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="pl-9 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 h-11 rounded-xl",
+                    errors.email ? "border-red-500 focus:ring-red-500" : (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors(prev => ({ ...prev, email: "" }));
+                  }}
                 />
               </div>
+              {errors.email && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.email}</p>}
             </div>
 
             {/* Password */}
@@ -87,9 +101,15 @@ export default function LoginForm() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="pl-9 pr-10 h-11 rounded-xl"
+                  className={cn(
+                    "pl-9 pr-10 h-11 rounded-xl",
+                    errors.password ? "border-red-500 focus:ring-red-500" : password.length > 0 ? "border-green-500 focus:ring-green-500" : ""
+                  )}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors(prev => ({ ...prev, password: "" }));
+                  }}
                 />
 
                 <button
@@ -104,6 +124,7 @@ export default function LoginForm() {
                   )}
                 </button>
               </div>
+              {errors.password && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.password}</p>}
             </div>
 
             <Button

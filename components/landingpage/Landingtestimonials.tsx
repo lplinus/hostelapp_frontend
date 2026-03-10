@@ -1,33 +1,34 @@
 
 import SectionReveal from "@/components/ui/section-reveal";
 import { Star, Quote } from "lucide-react";
+import { LandingPageResponse } from "@/lib/api/types";
 
-const testimonials = [
+interface LandingTestimonialsProps {
+    data: LandingPageResponse | null;
+}
+
+const defaultTestimonials = [
     {
         text: "Found an amazing hostel in Hyderabad within 10 minutes. The verification gave me real confidence booking from another city.",
         name: "Rahul S.",
-        role: "Engineering Student, Hyderabad",
+        role: "Engineering Student",
         initial: "R",
     },
     {
         text: "Unbeatable prices and a smooth process. My hostel has everything — WiFi, meals, AC. Exactly what was promised.",
         name: "Priya M.",
-        role: "MBA Student, Bangalore",
+        role: "MBA Student",
         initial: "P",
-    },
-    {
-        text: "Finally a platform built for hostel search. No more sketchy Facebook groups or endless phone calls.",
-        name: "Arjun K.",
-        role: "CA Aspirant, Pune",
-        initial: "A",
     },
 ];
 
-export default function LandingTestimonials() {
+export default function LandingTestimonials({ data }: LandingTestimonialsProps) {
+    const displayTestimonials = data?.testimonials && data.testimonials.length > 0 ? data.testimonials : defaultTestimonials;
+
     return (
         <section id="reviews" className="py-24 sm:py-32 bg-white font-poppins relative overflow-hidden">
 
-            {/* Decorative Quote Mark (UNCHANGED) */}
+            {/* Decorative Quote Mark */}
             <div className="absolute top-16 right-16 opacity-[0.04] pointer-events-none hidden lg:block">
                 <Quote size={180} strokeWidth={1.5} />
             </div>
@@ -39,13 +40,13 @@ export default function LandingTestimonials() {
                     <div className="max-w-6xl mx-auto text-center">
 
                         <span className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[0.35em] uppercase text-amber-600 block mb-8">
-                            Real Experiences
+                            {data?.testimonials_eyebrow || "Real Experiences"}
                         </span>
 
                         <h2 className="text-7xl sm:text-8xl lg:text-9xl font-black tracking-tighter text-stone-900 leading-[1.02]">
-                            Trusted by{" "}
+                            {data?.testimonials_title_main || "Trusted by"}{" "}
                             <span className="text-stone-400 italic font-semibold">
-                                Thousands
+                                {data?.testimonials_title_italic || "Thousands"}
                             </span>
                         </h2>
 
@@ -59,9 +60,9 @@ export default function LandingTestimonials() {
                 <SectionReveal delay={0.2}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-14">
 
-                        {testimonials.map((t) => (
+                        {displayTestimonials.map((t, idx) => (
                             <figure
-                                key={t.name}
+                                key={idx}
                                 className="group flex flex-col bg-[#fafaf9] rounded-[3rem] p-12 hover:bg-white hover:shadow-2xl hover:shadow-stone-200/50 transition-all duration-700 active:scale-95 border border-stone-100"
                             >
 
@@ -81,7 +82,7 @@ export default function LandingTestimonials() {
                                 <figcaption className="flex items-center gap-4 mt-auto">
 
                                     <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-lg font-bold text-amber-600 flex-shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-sm">
-                                        {t.initial}
+                                        {t.initial || t.name.charAt(0)}
                                     </div>
 
                                     <div className="flex flex-col">

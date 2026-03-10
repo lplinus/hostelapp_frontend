@@ -550,6 +550,7 @@ export default function TypeClient({ data }: Props) {
                             distance=""
                             isFeatured={false}
                             isVerified={!!hostel.is_verified}
+                            isApproved={!!hostel.is_approved}
                         />
                     ))}
                 </div>

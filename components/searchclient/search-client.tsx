@@ -644,6 +644,7 @@ export default function SearchClient({
                             distance=""
                             isFeatured={false}
                             isVerified={!!hostel.is_verified}
+                            isApproved={!!hostel.is_approved}
                         />
                     ))}
                 </div>

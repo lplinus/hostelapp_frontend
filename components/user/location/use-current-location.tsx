@@ -20,18 +20,30 @@ const UseCurrentLocation: React.FC<UseCurrentLocationProps> = ({ onLocationDetec
 
         setIsLoading(true);
 
+        // Try getting location with high accuracy first
         navigator.geolocation.getCurrentPosition(
             async (position) => {
-                const { latitude, longitude } = position.coords;
+                const { latitude, longitude, accuracy } = position.coords;
+
+                // If accuracy is worse than 5km, the result is likely unreliable (wrong city/country)
+                if (accuracy > 5000) {
+                    toast.warning(
+                        `Location accuracy is ~${Math.round(accuracy / 1000)}km (unreliable). Please use "Select on Map" for precise results.`,
+                        { duration: 6000 }
+                    );
+                }
 
                 try {
                     const formattedAddress = await reverseGeocode(latitude, longitude);
                     onLocationDetected(latitude, longitude, formattedAddress);
-                    toast.success("Precise location detected successfully");
+
+                    if (accuracy <= 5000) {
+                        toast.success(`Location detected (accuracy: ~${accuracy < 1000 ? Math.round(accuracy) + 'm' : Math.round(accuracy / 1000) + 'km'})`);
+                    }
                 } catch (error) {
                     console.error("Reverse geocoding error:", error);
                     onLocationDetected(latitude, longitude, "");
-                    toast.warning("Coordinates detected, but failed to fetch detailed address.");
+                    toast.warning("Coordinates detected, but failed to fetch detailed address. Try the Map Picker.");
                 } finally {
                     setIsLoading(false);
                 }
@@ -40,22 +52,22 @@ const UseCurrentLocation: React.FC<UseCurrentLocationProps> = ({ onLocationDetec
                 setIsLoading(false);
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        toast.error("User denied the request for Geolocation. Please check browser settings.");
+                        toast.error("Location permission denied. Please allow location access in your browser settings, or use the Map Picker.");
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        toast.error("Location information is unavailable. Try the Map Picker.");
+                        toast.error("Location unavailable. Please use 'Select on Map' to pick your location manually.");
                         break;
                     case error.TIMEOUT:
-                        toast.error("The request to get user location timed out.");
+                        toast.error("Location request timed out. Please use 'Select on Map' instead.");
                         break;
                     default:
-                        toast.error("An unknown error occurred while detecting location.");
+                        toast.error("Failed to detect location. Please use 'Select on Map' instead.");
                         break;
                 }
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 15000,
                 maximumAge: 0
             }
         );

@@ -1,47 +1,46 @@
-"use client";
-
 import SectionReveal from "@/components/ui/section-reveal";
-import { ShieldCheck, Zap, Heart, Globe, Wifi, Wallet } from "lucide-react";
+import { ShieldCheck, Zap, Heart, Globe, Wifi, Wallet, LucideIcon } from "lucide-react";
+import { LandingPageResponse } from "@/lib/api/types";
 
 /**
  * LANDING FEATURES SECTION
  * Premium grid showcasing USP with high-contrast icons and elegant cards.
  */
 
-const features = [
+interface LandingFeaturesProps {
+    data: LandingPageResponse | null;
+}
+
+const ICON_MAP: Record<string, LucideIcon> = {
+    ShieldCheck,
+    Zap,
+    Heart,
+    Globe,
+    Wifi,
+    Wallet,
+};
+
+const defaultFeatures = [
     {
-        icon: <ShieldCheck size={32} />,
+        icon_name: "ShieldCheck",
         title: "Verified Listings",
         text: "Every property is physically inspected for safety, quality, and accuracy by our regional teams."
     },
     {
-        icon: <Zap size={32} />,
+        icon_name: "Zap",
         title: "Instant Booking",
         text: "Reserve your ideal stay in minutes. No paperwork, no hidden calls, no stress."
     },
     {
-        icon: <Heart size={32} />,
+        icon_name: "Heart",
         title: "Student-Centric",
         text: "Designed specifically for student needs—community vibes, study spaces, and high connectivity."
     },
-    {
-        icon: <Wifi size={32} />,
-        title: "Smart Amenities",
-        text: "High-speed internet, nutritious meals, and 24/7 security come standard with our picks."
-    },
-    {
-        icon: <Wallet size={32} />,
-        title: "Total Transparency",
-        text: "Clear pricing, verified reviews, and secure payments with zero hidden extra costs."
-    },
-    {
-        icon: <Globe size={32} />,
-        title: "Massive Network",
-        text: "Access 500+ premium hostels across India's top 25+ education and tech hubs."
-    },
 ];
 
-export default function LandingFeatures() {
+export default function LandingFeatures({ data }: LandingFeaturesProps) {
+    const displayFeatures = data?.features && data.features.length > 0 ? data.features : defaultFeatures;
+
     return (
         <section id="features" className="py-28 sm:py-36 bg-[#fafaf9] font-poppins relative overflow-hidden">
 
@@ -56,54 +55,56 @@ export default function LandingFeatures() {
 
                         {/* Eyebrow */}
                         <p className="text-[11px] tracking-[0.35em] font-semibold text-amber-600 uppercase mb-6">
-                            The LiveHub Advantage
+                            {data?.features_eyebrow || "The LiveHub Advantage"}
                         </p>
 
                         {/* Main Heading */}
                         <h2 className="text-4xl sm:text-6xl font-extrabold text-stone-900 leading-[1.1] tracking-tight mb-6">
-                            Everything You Need,
+                            {data?.features_title_main || "Everything You Need,"}
                             <br />
                             <span className="italic text-stone-500 font-medium">
-                                Nothing You Don't.
+                                {data?.features_title_italic || "Nothing You Don't."}
                             </span>
                         </h2>
 
                         {/* Description */}
                         <p className="text-base sm:text-lg text-stone-500 leading-relaxed max-w-2xl mx-auto">
-                            We've re-imagined the hostel experience from the ground up,
-                            focusing only on what truly matters to students.
+                            {data?.features_subtitle || "We've re-imagined the hostel experience from the ground up, focusing only on what truly matters to students."}
                         </p>
 
                     </div>
                 </SectionReveal>
 
-                {/* Feature Grid (UNCHANGED) */}
+                {/* Feature Grid */}
                 <SectionReveal delay={0.2}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                        {features.map((f) => (
-                            <div
-                                key={f.title}
-                                className="group relative p-12 bg-white rounded-[3rem] border border-stone-100/50 hover:bg-stone-900 hover:border-stone-900 transition-all duration-700 shadow-xl shadow-stone-200/20 active:scale-[0.98]"
-                            >
-                                {/* Icon Container */}
-                                <div className="mb-10 w-20 h-20 rounded-[2rem] bg-amber-50 flex items-center justify-center text-amber-600 shadow-lg shadow-amber-900/5 group-hover:bg-amber-500 group-hover:text-white group-hover:rotate-[10deg] transition-all duration-700">
-                                    {f.icon}
-                                </div>
+                        {displayFeatures.map((f, idx) => {
+                            const Icon = ICON_MAP[f.icon_name] || ShieldCheck;
+                            return (
+                                <div
+                                    key={idx}
+                                    className="group relative p-12 bg-white rounded-[3rem] border border-stone-100/50 hover:bg-stone-900 hover:border-stone-900 transition-all duration-700 shadow-xl shadow-stone-200/20 active:scale-[0.98]"
+                                >
+                                    {/* Icon Container */}
+                                    <div className="mb-10 w-20 h-20 rounded-[2rem] bg-amber-50 flex items-center justify-center text-amber-600 shadow-lg shadow-amber-900/5 group-hover:bg-amber-500 group-hover:text-white group-hover:rotate-[10deg] transition-all duration-700">
+                                        <Icon size={32} />
+                                    </div>
 
-                                {/* Content */}
-                                <h3 className="text-2xl font-black text-stone-900 group-hover:text-white mb-4 tracking-tight transition-colors">
-                                    {f.title}
-                                </h3>
-                                <p className="text-base leading-relaxed text-stone-500 group-hover:text-stone-400 font-medium transition-colors">
-                                    {f.text}
-                                </p>
+                                    {/* Content */}
+                                    <h3 className="text-2xl font-black text-stone-900 group-hover:text-white mb-4 tracking-tight transition-colors">
+                                        {f.title}
+                                    </h3>
+                                    <p className="text-base leading-relaxed text-stone-500 group-hover:text-stone-400 font-medium transition-colors">
+                                        {f.text}
+                                    </p>
 
-                                {/* Decorative Visual Flair */}
-                                <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                                    {/* Decorative Visual Flair */}
+                                    <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </SectionReveal>
 

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, addDays, differenceInDays, parseISO } from "date-fns";
-import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Activity, Info, ArrowLeft } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Phone, Activity, Info, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -33,12 +33,15 @@ export default function BookingContainer({ hostel }: Props) {
     const [form, setForm] = useState({
         guest_name: "",
         guest_email: "",
+        mobile_number: "",
         guest_age: "20",
         adults: "1",
         children: "0",
         check_in: new Date(),
         check_out: addDays(new Date(), 1),
     });
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const selectedRoom = useMemo(() =>
         hostel.room_types?.find(r => r.id.toString() === selectedRoomId),
@@ -68,12 +71,52 @@ export default function BookingContainer({ hostel }: Props) {
         }
     });
 
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+
+        if (!form.guest_name.trim()) {
+            newErrors.guest_name = "Full name is required.";
+        } else if (form.guest_name.trim().length < 3) {
+            newErrors.guest_name = "Name must be at least 3 characters long.";
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!form.guest_email) {
+            newErrors.guest_email = "Email address is required.";
+        } else if (!emailRegex.test(form.guest_email)) {
+            newErrors.guest_email = "Please enter a valid email address.";
+        }
+
+        const phoneRegex = /^\+?[\d\s-]{10,}$/;
+        if (!form.mobile_number) {
+            newErrors.mobile_number = "Mobile number is required.";
+        } else if (!phoneRegex.test(form.mobile_number)) {
+            newErrors.mobile_number = "Please enter a valid mobile number (at least 10 digits).";
+        }
+
+        const age = Number.parseInt(form.guest_age);
+        if (!form.guest_age) {
+            newErrors.guest_age = "Age is required.";
+        } else if (Number.isNaN(age) || age < 10 || age > 100) {
+            newErrors.guest_age = "Please enter a valid age (10-100).";
+        }
+
+        if (!selectedRoomId) {
+            toast.error("Please select a room type."); // Still use toast for global/hidden field errors if necessary, but try to avoid
+            return false;
+        }
+
+        if (nights <= 0) {
+            newErrors.dates = "Check-out date must be after check-in date.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleNext = () => {
         if (step === "details") {
-            if (!form.guest_name || !form.guest_email || !selectedRoomId) {
-                toast.error("Please fill in all required fields.");
-                return;
-            }
+            if (!validateForm()) return;
             setStep("payment");
         }
     };
@@ -86,12 +129,13 @@ export default function BookingContainer({ hostel }: Props) {
             room_type: selectedRoom.id,
             guest_name: form.guest_name,
             guest_email: form.guest_email,
-            guest_age: parseInt(form.guest_age),
-            adults: parseInt(form.adults),
-            children: parseInt(form.children),
+            mobile_number: form.mobile_number,
+            guest_age: Number.parseInt(form.guest_age),
+            adults: Number.parseInt(form.adults),
+            children: Number.parseInt(form.children),
             check_in: format(form.check_in, "yyyy-MM-dd"),
             check_out: format(form.check_out, "yyyy-MM-dd"),
-            guests_count: parseInt(form.adults) + parseInt(form.children),
+            guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
             total_price: totalPrice,
         };
 
@@ -184,9 +228,17 @@ export default function BookingContainer({ hostel }: Props) {
                                             id="name"
                                             placeholder="John Doe"
                                             value={form.guest_name}
-                                            onChange={(e) => setForm({ ...form, guest_name: e.target.value })}
-                                            className="rounded-xl border-gray-200 focus:ring-blue-500"
+                                            onChange={(e) => {
+                                                setForm({ ...form, guest_name: e.target.value });
+                                                if (errors.guest_name) setErrors(prev => ({ ...prev, guest_name: "" }));
+                                            }}
+                                            className={cn(
+                                                "rounded-xl border-gray-200 focus:ring-blue-500",
+                                                errors.guest_name ? "border-red-500 focus:ring-red-500" : form.guest_name.length > 2 ? "border-green-500 focus:ring-green-500" : ""
+                                            )}
                                         />
+                                        {errors.guest_name && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_name}</p>}
+                                        {!errors.guest_name && form.guest_name.length > 2 && <p className="text-[10px] text-green-600 font-bold mt-1 ml-1">Perfect!</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="flex items-center gap-2 text-gray-700">
@@ -197,10 +249,40 @@ export default function BookingContainer({ hostel }: Props) {
                                             type="email"
                                             placeholder="john@example.com"
                                             value={form.guest_email}
-                                            onChange={(e) => setForm({ ...form, guest_email: e.target.value })}
-                                            className="rounded-xl border-gray-200 focus:ring-blue-500"
+                                            onChange={(e) => {
+                                                setForm({ ...form, guest_email: e.target.value });
+                                                if (errors.guest_email) setErrors(prev => ({ ...prev, guest_email: "" }));
+                                            }}
+                                            className={cn(
+                                                "rounded-xl border-gray-200 focus:ring-blue-500",
+                                                errors.guest_email ? "border-red-500 focus:ring-red-500" : form.guest_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guest_email) ? "border-green-500 focus:ring-green-500" : ""
+                                            )}
                                         />
+                                        {errors.guest_email && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_email}</p>}
+                                        {!errors.guest_email && form.guest_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guest_email) && <p className="text-[10px] text-green-600 font-bold mt-1 ml-1">Email looks good!</p>}
                                     </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="mobile" className="flex items-center gap-2 text-gray-700">
+                                        <Phone size={14} className="text-blue-600" /> Mobile Number
+                                    </Label>
+                                    <Input
+                                        id="mobile"
+                                        type="tel"
+                                        placeholder="+91 9876543210"
+                                        value={form.mobile_number}
+                                        onChange={(e) => {
+                                            setForm({ ...form, mobile_number: e.target.value });
+                                            if (errors.mobile_number) setErrors(prev => ({ ...prev, mobile_number: "" }));
+                                        }}
+                                        className={cn(
+                                            "rounded-xl border-gray-200 focus:ring-blue-500",
+                                            errors.mobile_number ? "border-red-500 focus:ring-red-500" : form.mobile_number && /^\+?[\d\s-]{10,}$/.test(form.mobile_number) ? "border-green-500 focus:ring-green-500" : ""
+                                        )}
+                                    />
+                                    {errors.mobile_number && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.mobile_number}</p>}
+                                    {!errors.mobile_number && form.mobile_number && /^\+?[\d\s-]{10,}$/.test(form.mobile_number) && <p className="text-[10px] text-green-600 font-bold mt-1 ml-1">Valid number!</p>}
                                 </div>
 
                                 <div className="grid sm:grid-cols-3 gap-4">
@@ -212,9 +294,16 @@ export default function BookingContainer({ hostel }: Props) {
                                             id="age"
                                             type="number"
                                             value={form.guest_age}
-                                            onChange={(e) => setForm({ ...form, guest_age: e.target.value })}
-                                            className="rounded-xl border-gray-200 focus:ring-blue-500"
+                                            onChange={(e) => {
+                                                setForm({ ...form, guest_age: e.target.value });
+                                                if (errors.guest_age) setErrors(prev => ({ ...prev, guest_age: "" }));
+                                            }}
+                                            className={cn(
+                                                "rounded-xl border-gray-200 focus:ring-blue-500",
+                                                errors.guest_age ? "border-red-500 focus:ring-red-500" : (Number(form.guest_age) >= 10 && Number(form.guest_age) <= 100) ? "border-green-500 focus:ring-green-500" : ""
+                                            )}
                                         />
+                                        {errors.guest_age && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_age}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="adults" className="flex items-center gap-2 text-gray-700">
@@ -267,12 +356,19 @@ export default function BookingContainer({ hostel }: Props) {
                                             <Input
                                                 type="date"
                                                 value={format(form.check_out, "yyyy-MM-dd")}
-                                                onChange={(e) => setForm({ ...form, check_out: parseISO(e.target.value) })}
+                                                onChange={(e) => {
+                                                    setForm({ ...form, check_out: parseISO(e.target.value) });
+                                                    if (errors.dates) setErrors(prev => ({ ...prev, dates: "" }));
+                                                }}
                                                 min={format(addDays(form.check_in, 1), "yyyy-MM-dd")}
-                                                className="border-none bg-transparent font-bold text-lg p-0 h-auto focus-visible:ring-0"
+                                                className={cn(
+                                                    "border-none bg-transparent font-bold text-lg p-0 h-auto focus-visible:ring-0",
+                                                    errors.dates ? "text-red-500" : nights > 0 ? "text-green-600" : ""
+                                                )}
                                             />
                                         </div>
                                     </div>
+                                    {errors.dates && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.dates}</p>}
                                     <p className="text-xs text-muted-foreground mt-1">
                                         Selected: <strong>{nights} {nights === 1 ? 'night' : 'nights'}</strong> stay.
                                     </p>

@@ -29,6 +29,7 @@ export interface HostelCardProps {
   readonly distance: string;
   readonly isFeatured?: boolean;
   readonly isVerified?: boolean;
+  readonly isApproved?: boolean;
   readonly isTopRated?: boolean;
 }
 
@@ -48,6 +49,7 @@ export default function HostelCard({
   distance,
   isFeatured = false,
   isVerified = false,
+  isApproved = false,
   isTopRated = false,
 }: HostelCardProps) {
   return (
@@ -95,6 +97,8 @@ export default function HostelCard({
                 ✔ Verified
               </Badge>
             )}
+
+
           </div>
 
           {/* Top Right Icons */}

@@ -1,5 +1,14 @@
+import { tokenManager } from "@/lib/token";
+
 const API_BASE_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+
+export interface StateItem {
+    id: number;
+    name: string;
+    slug: string;
+    country: number;
+}
 
 export interface CityItem {
     id: number;
@@ -14,6 +23,12 @@ export interface AreaItem {
     city: number;
 }
 
+export async function getStates(): Promise<StateItem[]> {
+    const res = await fetch(`${API_BASE_URL}/api/locations/states/`);
+    if (!res.ok) throw new Error("Failed to fetch states");
+    return res.json();
+}
+
 export async function getCities(): Promise<CityItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/locations/cities/`);
     if (!res.ok) throw new Error("Failed to fetch cities");
@@ -23,5 +38,49 @@ export async function getCities(): Promise<CityItem[]> {
 export async function getAreas(): Promise<AreaItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/locations/areas/`);
     if (!res.ok) throw new Error("Failed to fetch areas");
+    return res.json();
+}
+
+export async function createCity(data: { name: string; state: number }): Promise<CityItem> {
+    const token = tokenManager.getAccessToken();
+    const headers: HeadersInit = {
+        "Content-Type": "application/json",
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE_URL}/api/locations/cities/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw { message: "Failed to create city", errors: errorData };
+    }
+    return res.json();
+}
+
+export async function createArea(data: { name: string; city: number }): Promise<AreaItem> {
+    const token = tokenManager.getAccessToken();
+    const headers: HeadersInit = {
+        "Content-Type": "application/json",
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE_URL}/api/locations/areas/`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw { message: "Failed to create area", errors: errorData };
+    }
     return res.json();
 }

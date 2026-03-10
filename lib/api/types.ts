@@ -77,3 +77,65 @@ export interface HostelResponse {
     location: string;
     price_per_night: number;
 }
+
+export interface LandingPageResponse {
+    hero_badge: string;
+    hero_title_main: string;
+    hero_title_italic: string;
+    hero_title_footer: string;
+    hero_description: string;
+    hero_primary_cta_text: string;
+    hero_primary_cta_url: string;
+    hero_secondary_cta_text: string;
+    hero_secondary_cta_url: string;
+    cities_eyebrow: string;
+    cities_title_main: string;
+    cities_title_italic: string;
+    features_eyebrow: string;
+    features_title_main: string;
+    features_title_italic: string;
+    features_subtitle: string;
+    how_eyebrow: string;
+    how_title_main: string;
+    how_title_italic: string;
+    how_subtitle: string;
+    testimonials_eyebrow: string;
+    testimonials_title_main: string;
+    testimonials_title_italic: string;
+    cta_bottom_eyebrow: string;
+    cta_bottom_title_main: string;
+    cta_bottom_title_italic: string;
+    cta_bottom_subtitle: string;
+    cta_bottom_button_text: string;
+    cta_bottom_button_url: string;
+    stats: Array<{
+        number: string;
+        label: string;
+        icon_name: string;
+        color_gradient: string;
+    }>;
+    cities: Array<{
+        city_name: string;
+        count_text: string;
+        image: string | null;
+        span_large: boolean;
+        gradient: string;
+    }>;
+    features: Array<{
+        icon_name: string;
+        title: string;
+        text: string;
+    }>;
+    steps: Array<{
+        step_number: string;
+        icon_name: string;
+        title: string;
+        text: string;
+    }>;
+    testimonials: Array<{
+        text: string;
+        name: string;
+        role: string;
+        initial: string;
+    }>;
+}

@@ -1,6 +1,7 @@
 export const API_ENDPOINTS = {
     PUBLIC: {
         HOMEPAGE: '/api/publicpages/homepage/',
+        LANDING: '/api/publicpages/landingpage/',
         ABOUT: '/api/publicpages/about/',
         CONTACT: '/api/publicpages/contact/',
         CONTACT_MESSAGE: '/api/publicpages/contact/message/',

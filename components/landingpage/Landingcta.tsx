@@ -1,8 +1,13 @@
 import Link from "next/link";
 import SectionReveal from "@/components/ui/section-reveal";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { LandingPageResponse } from "@/lib/api/types";
 
-export default function LandingCTA() {
+interface LandingCTAProps {
+    data: LandingPageResponse | null;
+}
+
+export default function LandingCTA({ data }: LandingCTAProps) {
     return (
         <section className="relative py-24 sm:py-40 overflow-hidden bg-white font-poppins">
 
@@ -20,34 +25,33 @@ export default function LandingCTA() {
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full border border-stone-200 mb-6 sm:mb-8 shadow-sm">
                         <Sparkles size={18} className="text-stone-900" />
                         <span className="text-sm sm:text-base font-black tracking-[0.32em] uppercase text-stone-900">
-                            Start your journey
+                            {data?.cta_bottom_eyebrow || "Start your journey"}
                         </span>
                     </div>
 
                     {/* Heading */}
                     <div className="flex items-center justify-center">
                         <h2 className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-stone-900 leading-[1.05] mb-8">
-                            Ready for your
+                            {data?.cta_bottom_title_main || "Ready for your"}
                             <br />
                             <span className="italic text-amber-500 font-bold">
-                                next chapter?
+                                {data?.cta_bottom_title_italic || "next chapter?"}
                             </span>
                         </h2>
                     </div>
 
                     {/* Description */}
                     <p className="text-lg sm:text-xl text-stone-500 font-medium max-w-xl mx-auto leading-relaxed mb-12">
-                        Join 10,000+ students living their best life in verified spaces.
-                        Secure your spot in minutes.
+                        {data?.cta_bottom_subtitle || "Join 10,000+ students living their best life in verified spaces. Secure your spot in minutes."}
                     </p>
 
                     {/* CTA Button */}
                     <div className="flex items-center justify-center w-full px-6 sm:px-0">
                         <Link
-                            href="/home"
+                            href={data?.cta_bottom_button_url || "/home"}
                             className="group inline-flex items-center justify-center gap-3 bg-white text-stone-900 border-2 border-stone-200 px-8 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg shadow-xl shadow-stone-200/50 hover:bg-stone-50 hover:border-stone-300 transition-all hover:-translate-y-1 active:scale-95 w-full sm:w-auto whitespace-nowrap overflow-hidden outline-none focus:ring-2 focus:ring-stone-900 focus:ring-offset-2"
                         >
-                            Start Exploring
+                            {data?.cta_bottom_button_text || "Start Exploring"}
                             <ArrowRight
                                 size={22}
                                 className="group-hover:translate-x-1.5 transition-transform shrink-0"

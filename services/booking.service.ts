@@ -12,6 +12,7 @@ export interface Booking {
     room_category?: string;
     guest_name: string;
     guest_email: string;
+    mobile_number: string;
     guest_age: number;
     adults: number;
     children: number;
@@ -28,6 +29,7 @@ export interface BookingRequest {
     room_type: number;
     guest_name: string;
     guest_email: string;
+    mobile_number: string;
     guest_age: number;
     adults: number;
     children: number;

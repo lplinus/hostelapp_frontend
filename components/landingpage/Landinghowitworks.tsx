@@ -1,28 +1,41 @@
 import SectionReveal from "@/components/ui/section-reveal";
-import { Search, ListChecks, CheckCircle2 } from "lucide-react";
+import { Search, ListChecks, CheckCircle2, LucideIcon } from "lucide-react";
+import { LandingPageResponse } from "@/lib/api/types";
 
-const steps = [
+interface LandingHowItWorksProps {
+    data: LandingPageResponse | null;
+}
+
+const ICON_MAP: Record<string, LucideIcon> = {
+    Search,
+    ListChecks,
+    CheckCircle2,
+};
+
+const defaultSteps = [
     {
-        n: "01",
-        icon: <Search className="w-7 h-7" />,
+        step_number: "01",
+        icon_name: "Search",
         title: "Pick Your Hub",
         text: "Select from 25+ verified cities. Use smart filters for budget, location, and amenities.",
     },
     {
-        n: "02",
-        icon: <ListChecks className="w-7 h-7" />,
+        step_number: "02",
+        icon_name: "ListChecks",
         title: "Compare & Select",
         text: "Browse verified photos and genuine student reviews. Compare the best options side by side.",
     },
     {
-        n: "03",
-        icon: <CheckCircle2 className="w-7 h-7" />,
+        step_number: "03",
+        icon_name: "CheckCircle2",
         title: "Move In Swiftly",
         text: "Book instantly with secure deposits. Get confirmed in hours and move in without the stress.",
     },
 ];
 
-export default function LandingHowItWorks() {
+export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
+    const displaySteps = data?.steps && data.steps.length > 0 ? data.steps : defaultSteps;
+
     return (
         <section
             id="how"
@@ -36,21 +49,20 @@ export default function LandingHowItWorks() {
 
                         {/* Eyebrow */}
                         <p className="text-xs tracking-[0.35em] uppercase font-semibold text-amber-600 mb-6">
-                            The LiveHub Journey
+                            {data?.how_eyebrow || "The LiveHub Journey"}
                         </p>
 
                         {/* Main Heading */}
                         <h2 className="text-6xl lg:text-7xl font-black text-stone-900 tracking-tight leading-[1.05] mb-6">
-                            Booking Made{" "}
+                            {data?.how_title_main || "Booking Made"}{" "}
                             <span className="italic text-amber-500">
-                                Simple.
+                                {data?.how_title_italic || "Simple."}
                             </span>
                         </h2>
 
                         {/* Sub Heading */}
                         <p className="text-lg text-stone-500 leading-relaxed max-w-xl mx-auto">
-                            Finding the right hostel shouldn't take weeks.
-                            LiveHub simplifies the entire process into three effortless steps.
+                            {data?.how_subtitle || "Finding the right hostel shouldn't take weeks. LiveHub simplifies the entire process into three effortless steps."}
                         </p>
 
                     </div>
@@ -64,33 +76,36 @@ export default function LandingHowItWorks() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-10">
 
-                        {steps.map((s, i) => (
-                            <SectionReveal key={s.n} delay={i * 0.1}>
-                                <div className="flex flex-col items-center text-center group max-w-[320px] mx-auto">
+                        {displaySteps.map((s, i) => {
+                            const Icon = ICON_MAP[s.icon_name] || Search;
+                            return (
+                                <SectionReveal key={i} delay={i * 0.1}>
+                                    <div className="flex flex-col items-center text-center group max-w-[320px] mx-auto">
 
-                                    {/* Step Number */}
-                                    <div className="text-[60px] font-black text-stone-200 group-hover:text-amber-400 transition-colors duration-500 mb-4">
-                                        {s.n}
+                                        {/* Step Number */}
+                                        <div className="text-[60px] font-black text-stone-200 group-hover:text-amber-400 transition-colors duration-500 mb-4">
+                                            {s.step_number}
+                                        </div>
+
+                                        {/* Icon Bubble */}
+                                        <div className="w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-amber-600 group-hover:bg-stone-900 group-hover:text-white transition-all duration-500 mb-6">
+                                            <Icon className="w-7 h-7" />
+                                        </div>
+
+                                        {/* Title */}
+                                        <h3 className="text-2xl font-extrabold text-stone-900 mb-4 tracking-tight">
+                                            {s.title}
+                                        </h3>
+
+                                        {/* Description */}
+                                        <p className="text-stone-500 font-medium leading-relaxed max-w-[260px]">
+                                            {s.text}
+                                        </p>
+
                                     </div>
-
-                                    {/* Icon Bubble */}
-                                    <div className="w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-amber-600 group-hover:bg-stone-900 group-hover:text-white transition-all duration-500 mb-6">
-                                        {s.icon}
-                                    </div>
-
-                                    {/* Title */}
-                                    <h3 className="text-2xl font-extrabold text-stone-900 mb-4 tracking-tight">
-                                        {s.title}
-                                    </h3>
-
-                                    {/* Description */}
-                                    <p className="text-stone-500 font-medium leading-relaxed max-w-[260px]">
-                                        {s.text}
-                                    </p>
-
-                                </div>
-                            </SectionReveal>
-                        ))}
+                                </SectionReveal>
+                            );
+                        })}
 
                     </div>
 

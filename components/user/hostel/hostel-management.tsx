@@ -5,7 +5,7 @@ import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
 import { getMyHostels, createHostel, updateHostel, deleteHostel } from "@/services/hostel.service";
 import { uploadHostelImages, deleteHostelImage, updateHostelImages } from "@/services/hostel-image.service";
-import { getCities, getAreas } from "@/services/location.service";
+import { getCities, getAreas, getStates } from "@/services/location.service";
 import { getAmenities } from "@/services/amenity.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelListItem } from "@/types/hostel.types";
@@ -37,6 +37,11 @@ export default function HostelManagement() {
     const { data: amenities } = useQuery({
         queryKey: ["amenities"],
         queryFn: getAmenities,
+    });
+
+    const { data: states } = useQuery({
+        queryKey: ["states"],
+        queryFn: getStates,
     });
 
     const [isCreating, setIsCreating] = useState(false);
@@ -90,7 +95,7 @@ export default function HostelManagement() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["myHostels"] });
             setIsCreating(false);
-            toast.success("Hostel created successfully!");
+            toast.success("Hostel created successfully! Please wait for admin verification.");
         },
         onError: (error: any) => {
             const message = error.errors ? Object.values(error.errors).flat().join(", ") : error.message;
@@ -275,6 +280,7 @@ export default function HostelManagement() {
                         isPending={createMutation.isPending}
                         cities={cities}
                         areas={areas}
+                        states={states}
                         amenities={amenities}
                     />
                 )}
@@ -287,6 +293,7 @@ export default function HostelManagement() {
                         isPending={updateMutation.isPending}
                         cities={cities}
                         areas={areas}
+                        states={states}
                         amenities={amenities}
                     />
                 )}
@@ -480,6 +487,7 @@ export default function HostelManagement() {
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Images</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -523,6 +531,11 @@ export default function HostelManagement() {
                                                     <td className="px-6 py-4 text-sm text-gray-500">{h.rating_avg > 0 ? h.rating_avg : "Unrated"}</td>
                                                     <td className="px-6 py-4 text-sm text-gray-500">
                                                         <span className="text-gray-700 font-medium">{h.images?.length ?? 0}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm">
+                                                        <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${h.is_approved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                            {h.is_approved ? 'Verified' : 'Pending Verification'}
+                                                        </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium">
                                                         <div className="flex flex-wrap gap-2">

@@ -104,6 +104,7 @@ export interface HostelListItem {
     readonly is_featured: boolean;
     readonly is_toprated: boolean | null;
     readonly is_verified: boolean | null;
+    readonly is_approved: boolean | null;
     readonly amenities: readonly HostelAmenity[];
     readonly images: readonly HostelImage[];
     readonly default_images: DefaultHostelImage | null;
@@ -141,6 +142,7 @@ export interface CityHostel {
     readonly area_name: string | null;
     readonly city_name: string;
     readonly is_verified: boolean | null;
+    readonly is_approved: boolean | null;
 }
 
 export interface CityHostelResponse {

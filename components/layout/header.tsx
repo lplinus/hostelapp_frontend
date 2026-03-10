@@ -39,7 +39,7 @@ export default function Header() {
     pathname.startsWith("/dashboard/") ||
     pathname === "/profile" ||
     pathname.startsWith("/profile/") ||
-    (pathname.startsWith("/hostel") && !pathname.startsWith("/hostels")) ||
+    (pathname.startsWith("/hostel") && !pathname.startsWith("/hostels") && !pathname.startsWith("/hostel-type")) ||
     pathname === "/rooms" ||
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
