@@ -1,18 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import { getOwnerBookings, updateBookingStatus, deleteBooking } from "@/services/booking.service";
+import { getOwnerBookings, updateBookingStatus, deleteBooking, checkInBooking } from "@/services/booking.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2 } from "lucide-react";
+import { Trash2, QrCode } from "lucide-react";
 import { toast } from "sonner";
+import BookingQRScanner from "@/components/user/qr/BookingQRScanner";
 
 export default function BookingsPage() {
     const queryClient = useQueryClient();
+    const [isScanning, setIsScanning] = useState(false);
 
     const { data: bookings, isLoading } = useQuery({
         queryKey: ["ownerBookings"],
         queryFn: getOwnerBookings,
+        refetchInterval: 5000,
+    });
+
+    const checkInMutation = useMutation({
+        mutationFn: (booking_id: string) => checkInBooking(booking_id),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["ownerBookings"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+            toast.success(data.message || "Guest checked in successfully!");
+            setIsScanning(false);
+        },
+        onError: (error: any) => {
+            setIsScanning(false);
+            toast.error(error.response?.data?.error || "Failed to check in guest.");
+        }
     });
 
     const statusMutation = useMutation({
@@ -53,6 +71,24 @@ export default function BookingsPage() {
         });
     };
 
+    const handleQRScan = (decodedText: string) => {
+        // Look for BOOKING:<id>
+        const match = decodedText.match(/BOOKING:([^ \n]+)/);
+        if (match && match[1]) {
+            setIsScanning(false); // Close scanner first
+            const bookingId = match[1];
+            
+            toast.promise(checkInMutation.mutateAsync(bookingId), {
+                loading: "Checking in guest...",
+                success: "Guest checked in successfully!",
+                error: "Failed to check in guest via QR code."
+            });
+        } else {
+            toast.error("Invalid QR Code. Could not find booking ID.");
+            setIsScanning(false);
+        }
+    };
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             <DashboardSidebar />
@@ -60,6 +96,14 @@ export default function BookingsPage() {
                 <DashboardHeader />
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">Manage Bookings</h2>
+                    
+                    <button
+                        onClick={() => setIsScanning(true)}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm font-semibold transition-colors"
+                    >
+                        <QrCode size={18} />
+                        Scan QR specifically
+                    </button>
                 </div>
 
                 <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -94,7 +138,7 @@ export default function BookingsPage() {
                                 .map((b) => (
                                     <tr key={b.id}>
                                         <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
-                                            STN-{b.id.substring(0, 6).toUpperCase()}
+                                            STN-{b.id.substring(0, 8).toUpperCase()}
                                         </td>
                                         <td className="px-6 py-4 text-sm">
                                             <div className="font-medium text-gray-900">{b.guest_name}</div>
@@ -115,8 +159,8 @@ export default function BookingsPage() {
                                                 <select
                                                     value={b.status}
                                                     onChange={(e) => handleStatusChange(e, b.id)}
-                                                    disabled={statusMutation.isPending}
-                                                    className="border rounded p-1 text-sm bg-white"
+                                                    disabled={statusMutation.isPending || b.status === "completed"}
+                                                    className="border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                                                 >
                                                     <option value="pending">Pending</option>
                                                     <option value="confirmed">Confirmed</option>
@@ -139,6 +183,13 @@ export default function BookingsPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {isScanning && (
+                    <BookingQRScanner
+                        onScan={handleQRScan}
+                        onClose={() => setIsScanning(false)}
+                    />
+                )}
             </main>
         </div>
     );

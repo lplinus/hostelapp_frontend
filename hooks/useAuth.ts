@@ -74,9 +74,9 @@ export const useAuth = () => {
             try {
                 const data = await registerUser(userData);
                 toast.success('Account created 🎉', {
-                    description: 'Welcome to StayNest! You can now log in.',
+                    description: 'Please check your email for the verification code.',
                 });
-                router.push('/login');
+                router.push(`/verify-email?email=${encodeURIComponent(userData.email)}`);
                 return data;
             } catch (error: any) {
                 toast.error('Registration failed', {

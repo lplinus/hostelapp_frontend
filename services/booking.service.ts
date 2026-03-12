@@ -64,3 +64,7 @@ export const createBooking = async (data: BookingRequest): Promise<Booking> => {
     // Use apiClient instead of authApiClient to avoid automatic redirects on auth failure
     return apiClient.post<Booking>("/api/bookings/", data, options);
 };
+
+export const checkInBooking = async (booking_id: string): Promise<{ message: string, booking_id: string }> => {
+    return authApiClient.post<{ message: string, booking_id: string }>("/api/bookings/checkin/", { booking_id });
+};

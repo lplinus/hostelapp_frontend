@@ -9,6 +9,8 @@ export interface UserProfile {
     phone: string;
     profile_picture?: string;
     role: string;
+    is_email_verified: boolean;
+    is_phone_verified: boolean;
 }
 
 export const getUserProfile = async (): Promise<UserProfile> => {

@@ -24,6 +24,7 @@ export default function DashboardStats() {
     const { data, isLoading } = useQuery<DashboardStats>({
         queryKey: ["dashboardStats"],
         queryFn: () => authApiClient.get("/api/dashboard/stats/"),
+        refetchInterval: 5000,
     });
 
     const formatRevenue = (value: number | undefined) => {

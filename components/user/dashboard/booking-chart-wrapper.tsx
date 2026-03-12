@@ -13,6 +13,7 @@ export default function BookingChartWrapper() {
     const { data, isLoading } = useQuery<DashboardStats>({
         queryKey: ["dashboardStats"],
         queryFn: () => authApiClient.get("/api/dashboard/stats/"),
+        refetchInterval: 5000,
     });
 
     return (

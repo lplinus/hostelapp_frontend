@@ -45,7 +45,8 @@ export async function getBlogPosts(): Promise<BlogPostListItem[]> {
         throw new Error("Failed to fetch blog posts");
     }
 
-    const posts: BlogPostListItem[] = await res.json();
+    const data = await res.json();
+    const posts: BlogPostListItem[] = Array.isArray(data) ? data : data.results || [];
 
     return posts.map((post) => ({
         ...post,
@@ -85,6 +86,7 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
         throw new Error("Failed to fetch blog categories");
     }
 
-    return res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data : data.results || [];
 }
 

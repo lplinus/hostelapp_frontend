@@ -6,8 +6,11 @@ import DashboardHeader from "@/components/user/dashboard/dashboard-header";
 import { getUserProfile, updateUserProfile, UserProfile } from "@/services/user.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfilePage() {
+    const { user } = useAuth();
     const queryClient = useQueryClient();
     const { data: profile, isLoading } = useQuery({
         queryKey: ["userProfile"],
@@ -17,6 +20,7 @@ export default function ProfilePage() {
     const [formData, setFormData] = useState<Partial<UserProfile>>({});
     const [profilePic, setProfilePic] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [showOtpModal, setShowOtpModal] = useState(false);
 
     useEffect(() => {
         if (profile) {
@@ -62,6 +66,13 @@ export default function ProfilePage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Check for phone verification if phone is changed or not verified
+        if (profile && !profile.is_phone_verified && formData.phone) {
+            setShowOtpModal(true);
+            return;
+        }
+
         const data = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -122,14 +133,45 @@ export default function ProfilePage() {
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-                                <input
-                                    id="phone"
-                                    type="text"
-                                    name="phone"
-                                    value={formData.phone || ""}
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-                                />
+                                <div className="mt-1 flex items-center gap-2">
+                                    <input
+                                        id="phone"
+                                        type="tel"
+                                        name="phone"
+                                        maxLength={10}
+                                        value={formData.phone || ""}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replaceAll(/\D/g, "");
+                                            if (val.length <= 10) {
+                                                setFormData({ ...formData, phone: val });
+                                            }
+                                        }}
+                                        placeholder="10-digit mobile number"
+                                        className="flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+                                    />
+                                    {profile?.is_phone_verified && profile.phone && formData.phone === profile.phone ? (
+                                        <span className="inline-flex items-center px-3 py-2 rounded-md bg-green-50 text-green-700 border border-green-200 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
+                                            ✓ Verified
+                                        </span>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (!formData.phone || formData.phone.length < 10) {
+                                                    toast.error("Please enter a valid 10-digit phone number first.");
+                                                    return;
+                                                }
+                                                setShowOtpModal(true);
+                                            }}
+                                            className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                                        >
+                                            Verify
+                                        </button>
+                                    )}
+                                </div>
+                                {formData.phone && formData.phone.length > 0 && formData.phone.length < 10 && (
+                                    <p className="mt-1 text-xs text-red-500 font-semibold">Please enter a valid 10-digit phone number.</p>
+                                )}
                             </div>
                             {/* Avatar File Upload Dummy Field */}
                             <div className="flex flex-col items-center mb-6">
@@ -162,6 +204,14 @@ export default function ProfilePage() {
                     )}
                 </div>
             </main>
+            <OtpVerificationModal
+                isOpen={showOtpModal}
+                onClose={() => setShowOtpModal(false)}
+                onSuccess={() => {
+                    toast.success("Phone verified! You can now save your profile.");
+                    queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+                }}
+            />
         </div>
     );
 }

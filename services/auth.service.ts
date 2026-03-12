@@ -35,4 +35,16 @@ export const authService = {
     me: () => {
         return authApiClient.get<AuthUser>(API_ENDPOINTS.AUTH.ME);
     },
+
+    verifyEmail: (data: { email: string; code: string }) => {
+        return apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, data);
+    },
+
+    sendOtp: () => {
+        return authApiClient.post(API_ENDPOINTS.AUTH.SEND_OTP);
+    },
+
+    verifyOtp: (code: string) => {
+        return authApiClient.post(API_ENDPOINTS.AUTH.VERIFY_OTP, { code });
+    },
 };

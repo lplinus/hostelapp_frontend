@@ -9,6 +9,7 @@ export default function RecentBookings() {
   const { data: bookings, isLoading } = useQuery<Booking[]>({
     queryKey: ["recentBookings"],
     queryFn: () => authApiClient.get("/api/bookings/"),
+    refetchInterval: 5000,
   });
 
   const recentBookings = [...(bookings || [])]

@@ -142,7 +142,7 @@ export default function LoginForm() {
 
           <Separator className="my-6" />
 
-          <Link href="/user1/register">
+          <Link href="/register">
             <p className="text-center text-sm text-gray-500">
               Don&apos;t have an account?{" "}
               <span className="text-blue-600 hover:underline cursor-pointer">

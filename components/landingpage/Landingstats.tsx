@@ -59,7 +59,7 @@ export default function LandingStats({ stats }: LandingStatsProps) {
     const displayStats = stats && stats.length > 0 ? stats : defaultStats;
 
     return (
-        <section className="bg-white py-16 lg:py-24 font-poppins relative">
+        <section className="bg-white py-16 lg:py-24 mt-12 lg:mt-24 font-poppins relative">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 <SectionReveal>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
@@ -68,25 +68,25 @@ export default function LandingStats({ stats }: LandingStatsProps) {
                             return (
                                 <div
                                     key={idx}
-                                    className="group relative flex flex-col items-center justify-center p-10 sm:p-12 text-center bg-[#fafaf9] rounded-[2.5rem] border border-stone-100/50 hover:bg-white hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 active:scale-95"
+                                    className="group relative flex flex-col items-center justify-center p-10 sm:p-12 text-center bg-slate-50 rounded-[2.5rem] border border-slate-200 hover:bg-white hover:border-orange-200 hover:shadow-xl hover:shadow-orange-200/40 transition-all duration-500 active:scale-95"
                                 >
                                     {/* Icon Circle */}
-                                    <div className="mb-6 w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-stone-900 group-hover:bg-stone-900 group-hover:text-white transition-all duration-500">
+                                    <div className="mb-6 w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-700 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500">
                                         <Icon className="w-5 h-5" />
                                     </div>
 
                                     {/* Stat Number */}
-                                    <dt className="text-4xl sm:text-5xl font-black tracking-tight text-stone-900 mb-2">
+                                    <dt className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 mb-2">
                                         {s.number}
                                     </dt>
 
                                     {/* Stat Label */}
-                                    <dd className="text-[10px] sm:text-[11px] uppercase font-black tracking-[0.2em] text-stone-400 group-hover:text-stone-900 transition-colors">
+                                    <dd className="text-[10px] sm:text-[11px] uppercase font-black tracking-[0.2em] text-slate-500 group-hover:text-orange-600 transition-colors">
                                         {s.label}
                                     </dd>
 
                                     {/* Corner accent */}
-                                    <div className="absolute top-6 right-6 w-2 h-2 rounded-full bg-stone-100 group-hover:bg-amber-500 transition-colors" />
+                                    <div className="absolute top-6 right-6 w-2 h-2 rounded-full bg-slate-200 group-hover:bg-orange-500 transition-colors" />
                                 </div>
                             );
                         })}

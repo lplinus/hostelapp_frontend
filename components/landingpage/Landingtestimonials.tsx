@@ -39,13 +39,13 @@ export default function LandingTestimonials({ data }: LandingTestimonialsProps) 
                 <SectionReveal>
                     <div className="max-w-6xl mx-auto text-center">
 
-                        <span className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[0.35em] uppercase text-amber-600 block mb-8">
+                        <span className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[0.35em] uppercase text-orange-500 block mb-8">
                             {data?.testimonials_eyebrow || "Real Experiences"}
                         </span>
 
-                        <h2 className="text-7xl sm:text-8xl lg:text-9xl font-black tracking-tighter text-stone-900 leading-[1.02]">
+                        <h2 className="text-7xl sm:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 leading-[1.02]">
                             {data?.testimonials_title_main || "Trusted by"}{" "}
-                            <span className="text-stone-400 italic font-semibold">
+                            <span className="text-slate-400 italic font-semibold">
                                 {data?.testimonials_title_italic || "Thousands"}
                             </span>
                         </h2>
@@ -63,33 +63,33 @@ export default function LandingTestimonials({ data }: LandingTestimonialsProps) 
                         {displayTestimonials.map((t, idx) => (
                             <figure
                                 key={idx}
-                                className="group flex flex-col bg-[#fafaf9] rounded-[3rem] p-12 hover:bg-white hover:shadow-2xl hover:shadow-stone-200/50 transition-all duration-700 active:scale-95 border border-stone-100"
+                                className="group flex flex-col bg-white rounded-[3rem] p-12 hover:bg-slate-50 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-700 active:scale-95 border border-slate-200"
                             >
 
                                 {/* Stars */}
-                                <div className="flex gap-1.5 text-amber-400 mb-8 group-hover:scale-110 transition-transform origin-left">
+                                <div className="flex gap-1.5 text-orange-400 mb-8 group-hover:scale-110 transition-transform origin-left">
                                     {[...Array(5)].map((_, i) => (
                                         <Star key={i} size={18} fill="currentColor" />
                                     ))}
                                 </div>
 
                                 {/* Quote */}
-                                <blockquote className="flex-1 text-lg sm:text-xl font-medium leading-relaxed text-stone-700 mb-12 group-hover:text-amber-600 transition-colors duration-500">
+                                <blockquote className="flex-1 text-lg sm:text-xl font-medium leading-relaxed text-slate-700 mb-12 group-hover:text-orange-600 transition-colors duration-500">
                                     “{t.text}”
                                 </blockquote>
 
                                 {/* Author */}
                                 <figcaption className="flex items-center gap-4 mt-auto">
 
-                                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-lg font-bold text-amber-600 flex-shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-sm">
+                                    <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-lg font-bold text-orange-500 flex-shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm">
                                         {t.initial || t.name.charAt(0)}
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <p className="text-base font-semibold text-stone-900">
+                                        <p className="text-base font-semibold text-slate-900">
                                             {t.name}
                                         </p>
-                                        <p className="text-sm text-stone-500">
+                                        <p className="text-sm text-slate-500">
                                             {t.role}
                                         </p>
                                     </div>

@@ -14,21 +14,21 @@ const defaultCities = [
     count_text: "120+ Verified",
     image: "/images/hero1.webp",
     span_large: true,
-    gradient: "from-blue-600/70 to-indigo-900/70",
+    gradient: "from-orange-600/70 to-slate-900/70",
   },
   {
     city_name: "Bangalore",
     count_text: "95+ Hostels",
     image: "/images/hero2.jpg",
     span_large: false,
-    gradient: "from-amber-500/70 to-orange-700/70",
+    gradient: "from-orange-500/70 to-amber-700/70",
   },
   {
     city_name: "Pune",
     count_text: "74+ Hostels",
     image: "/images/heroimage.jpg",
     span_large: false,
-    gradient: "from-emerald-500/70 to-teal-800/70",
+    gradient: "from-teal-500/70 to-slate-900/70",
   },
 ];
 
@@ -43,7 +43,7 @@ export default function LandingCities({ data }: LandingCitiesProps) {
         <SectionReveal>
           <div className="flex flex-col items-center text-center mb-20">
 
-            <div className="flex items-center gap-3 text-blue-600 mb-5">
+            <div className="flex items-center gap-3 text-orange-500 mb-5">
               <Navigation size={18} className="animate-pulse" />
               <span className="text-[11px] font-black tracking-[0.25em] uppercase">
                 {data?.cities_eyebrow || "Discover Your Hub"}
@@ -52,14 +52,14 @@ export default function LandingCities({ data }: LandingCitiesProps) {
 
             <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 leading-[1.05] mb-6">
               {data?.cities_title_main || "Most Popular"}<br className="hidden sm:block" />
-              <span className="italic underline decoration-blue-400/40 underline-offset-8">
+              <span className="italic underline decoration-orange-400/40 underline-offset-8">
                 {data?.cities_title_italic || "Destinations"}
               </span>
             </h2>
 
             <Link
               href="/home"
-              className="group inline-flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold text-sm shadow-xl hover:bg-blue-700 transition-all active:scale-95 min-w-[180px]"
+              className="group inline-flex items-center justify-center gap-3 bg-orange-500 text-white px-8 py-4 rounded-xl font-semibold text-sm shadow-xl hover:bg-orange-600 transition-all active:scale-95 min-w-[180px]"
             >
               See All Cities
               <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
@@ -100,7 +100,7 @@ export default function LandingCities({ data }: LandingCitiesProps) {
                 {/* CONTENT */}
                 <div className="absolute inset-x-6 bottom-6 z-20 p-8 rounded-[2rem] bg-black/40 backdrop-blur-xl border border-white/10 flex flex-col gap-2">
 
-                  <p className="font-bold text-[11px] uppercase tracking-[0.2em] text-blue-300 shadow-sm">
+                  <p className="font-bold text-[11px] uppercase tracking-[0.2em] text-orange-200 shadow-sm">
                     {c.count_text}
                   </p>
 

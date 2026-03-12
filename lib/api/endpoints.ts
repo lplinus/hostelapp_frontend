@@ -13,6 +13,9 @@ export const API_ENDPOINTS = {
         REFRESH: '/api/auth/refresh/',
         LOGOUT: '/api/auth/logout/',
         ME: '/api/auth/me/',
+        VERIFY_EMAIL: '/api/auth/verify-email/',
+        SEND_OTP: '/api/auth/send-otp/',
+        VERIFY_OTP: '/api/auth/verify-otp/',
     },
     HOSTELS: {
         LIST: '/api/hostels/',

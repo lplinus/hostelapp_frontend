@@ -2,9 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
 import { createBooking, BookingRequest } from "@/services/booking.service";
+import { getUserProfile } from "@/services/user.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelDetail } from "@/types/hostel.types";
+import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -29,6 +32,25 @@ export default function BookingContainer({ hostel }: Props) {
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
         hostel.room_types?.[0]?.id.toString() || null
     );
+    const { user } = useAuth();
+    const queryClient = useQueryClient();
+    const { data: profile } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        enabled: !!user,
+    });
+
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [showGuestOtp, setShowGuestOtp] = useState(false);
+    const [guestOtp, setGuestOtp] = useState("");
+    const [isGuestOtpVerifying, setIsGuestOtpVerifying] = useState(false);
+    const [isGuestOtpSent, setIsGuestOtpSent] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [termsError, setTermsError] = useState(false);
+
+    const [legalModalContent, setLegalModalContent] = useState<{title: string, content: string, effective_date?: string} | null>(null);
+    const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
+    const [legalLoading, setLegalLoading] = useState(false);
 
     const [form, setForm] = useState({
         guest_name: "",
@@ -65,6 +87,10 @@ export default function BookingContainer({ hostel }: Props) {
             setConfirmedBookingId(data.id);
             setStep("confirmation");
             toast.success("Booking submitted successfully!");
+            queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+            queryClient.invalidateQueries({ queryKey: ["recentBookings"] });
+            queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+            queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         },
         onError: (error: any) => {
             toast.error(error.response?.data?.message || "Failed to create booking. Please try again.");
@@ -110,14 +136,71 @@ export default function BookingContainer({ hostel }: Props) {
             newErrors.dates = "Check-out date must be after check-in date.";
         }
 
+        if (!termsAccepted) {
+            setTermsError(true);
+        } else {
+            setTermsError(false);
+        }
+
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        return Object.keys(newErrors).length === 0 && termsAccepted;
     };
 
     const handleNext = () => {
         if (step === "details") {
             if (!validateForm()) return;
+
+            // Verification check
+            if (profile) {
+                if (!profile.is_phone_verified) {
+                    setShowOtpModal(true);
+                    return;
+                }
+            } else {
+                // Mobile verification for guest booking
+                setShowGuestOtp(true);
+                return;
+            }
+
             setStep("payment");
+        }
+    };
+
+    const handleGuestOtpSend = () => {
+        setIsGuestOtpSent(true);
+        toast.success(`OTP sent to ${form.mobile_number}`);
+    };
+
+    const handleGuestOtpVerify = () => {
+        if (guestOtp.length < 6) return;
+        setIsGuestOtpVerifying(true);
+        setTimeout(() => {
+            setIsGuestOtpVerifying(false);
+            toast.success("Mobile number verified successfully!");
+            setShowGuestOtp(false);
+            setStep("payment");
+        }, 800);
+    };
+
+    const openLegalDocument = async (type: 'terms' | 'privacy', e: React.MouseEvent) => {
+        e.preventDefault();
+        setIsLegalModalOpen(true);
+        setLegalLoading(true);
+        setLegalModalContent(null);
+        try {
+            const endpoint = type === 'terms' ? 'terms-and-conditions' : 'privacy-policy';
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+            const res = await fetch(`${baseUrl}/api/cms/${endpoint}/`);
+            if (res.ok) {
+                const data = await res.json();
+                setLegalModalContent(data);
+            } else {
+                setLegalModalContent({ title: "Error", content: "Failed to load content. Please try again later." });
+            }
+        } catch (error) {
+            setLegalModalContent({ title: "Error", content: "Failed to load content. Please try again later." });
+        } finally {
+            setLegalLoading(false);
         }
     };
 
@@ -162,15 +245,35 @@ export default function BookingContainer({ hostel }: Props) {
                         <Info size={18} className="text-blue-600" />
                         Booking Summary
                     </h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="text-muted-foreground">Booking ID</div>
-                        <div className="font-medium text-right font-mono">STN-{confirmedBookingId ? confirmedBookingId.substring(0, 6).toUpperCase() : ""}</div>
-                        <div className="text-muted-foreground">Guest</div>
-                        <div className="font-medium text-right">{form.guest_name}</div>
-                        <div className="text-muted-foreground">Dates</div>
-                        <div className="font-medium text-right">{format(form.check_in, "PP")} - {format(form.check_out, "PP")}</div>
-                        <div className="text-muted-foreground">Total Paid</div>
-                        <div className="font-bold text-right text-green-600 text-lg">₹{totalPrice.toLocaleString()}</div>
+                    <div className="flex flex-col sm:flex-row gap-6">
+                        <div className="flex-1 grid grid-cols-2 gap-4 text-sm content-start">
+                            <div className="text-muted-foreground">Booking ID</div>
+                            <div className="font-medium text-right font-mono">STN-{confirmedBookingId ? confirmedBookingId.substring(0, 8).toUpperCase() : ""}</div>
+                            <div className="text-muted-foreground">Guest</div>
+                            <div className="font-medium text-right">{form.guest_name}</div>
+                            <div className="text-muted-foreground">Age</div>
+                            <div className="font-medium text-right">{form.guest_age}</div>
+                            <div className="text-muted-foreground">Hostel</div>
+                            <div className="font-medium text-right">{hostel.name}</div>
+                            <div className="text-muted-foreground">Dates</div>
+                            <div className="font-medium text-right">{format(form.check_in, "PP")} - {format(form.check_out, "PP")}</div>
+                            <div className="text-muted-foreground">Total Paid</div>
+                            <div className="font-bold text-right text-green-600 text-lg">₹{totalPrice.toLocaleString()}</div>
+                        </div>
+                        <div className="shrink-0 flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl border border-gray-100 min-w-[160px]">
+                            {confirmedBookingId ? (
+                                <>
+                                    <img 
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nAge: ${form.guest_age}\nHostel: ${hostel.name}\nDates: ${format(form.check_in, "PP")} - ${format(form.check_out, "PP")}\nBOOKING:${confirmedBookingId}`)}`}
+                                        alt="Booking QR Code" 
+                                        className="w-32 h-32 rounded-lg bg-white p-2 border border-gray-200"
+                                    />
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-3 text-center">Scan to verify</span>
+                                </>
+                            ) : (
+                                <div className="w-32 h-32 bg-gray-200 animate-pulse rounded-lg" />
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="flex gap-4 justify-center">
@@ -373,6 +476,31 @@ export default function BookingContainer({ hostel }: Props) {
                                         Selected: <strong>{nights} {nights === 1 ? 'night' : 'nights'}</strong> stay.
                                     </p>
                                 </div>
+
+                                <Separator className="bg-gray-100 my-4" />
+
+                                <div className="space-y-2">
+                                    <div className="flex items-start gap-3">
+                                        <input
+                                            type="checkbox"
+                                            id="terms"
+                                            checked={termsAccepted}
+                                            onChange={(e) => {
+                                                setTermsAccepted(e.target.checked);
+                                                if (e.target.checked) setTermsError(false);
+                                            }}
+                                            className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <div className="space-y-1">
+                                            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700">
+                                                I accept the <button type="button" onClick={(e) => openLegalDocument('terms', e)} className="text-blue-600 hover:underline">Terms and Conditions</button> and <button type="button" onClick={(e) => openLegalDocument('privacy', e)} className="text-blue-600 hover:underline">Privacy Policy</button>
+                                            </Label>
+                                            {termsError && (
+                                                <p className="text-[12px] text-red-500 font-bold mt-1">Accept terms and conditions to proceed</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     )}
@@ -497,6 +625,92 @@ export default function BookingContainer({ hostel }: Props) {
                         <p className="text-xs text-orange-800 leading-relaxed font-medium">
                             Free cancellation available 24 hours before check-in. Book with confidence.
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            <OtpVerificationModal
+                isOpen={showOtpModal}
+                onClose={() => setShowOtpModal(false)}
+                onSuccess={() => {
+                    toast.success("Phone verified! You can now proceed to payment.");
+                    queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+                    setStep("payment");
+                }}
+            />
+
+            {/* Guest OTP Modal */}
+            <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-all", showGuestOtp ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")}>
+                <div className={cn("bg-white rounded-3xl shadow-xl w-full max-w-[400px] p-6 transition-transform duration-300", showGuestOtp ? "scale-100 translate-y-0" : "scale-95 translate-y-8")}>
+                    <div className="text-center space-y-2 mb-6">
+                        <h2 className="text-2xl font-bold">Verify Phone</h2>
+                        <p className="text-gray-500 text-sm">We'll send a 6-digit verification code to your mobile number.</p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={handleGuestOtpSend}
+                            disabled={isGuestOtpSent || isGuestOtpVerifying}
+                            className="w-full h-11 rounded-xl border-blue-100 hover:bg-blue-50 hover:text-blue-600 transition-all font-semibold"
+                        >
+                            {isGuestOtpSent ? "Verification Code Sent" : "Send Verification Code"}
+                        </Button>
+
+                        <div className="w-full space-y-2 mt-2">
+                            <Input
+                                type="text"
+                                placeholder="Enter 6-digit code"
+                                maxLength={6}
+                                value={guestOtp}
+                                onChange={(e) => setGuestOtp(e.target.value.replace(/\D/g, ""))}
+                                className="h-12 text-center text-xl tracking-[0.3em] font-bold rounded-xl bg-gray-50 border-gray-100"
+                            />
+                        </div>
+
+                        <div className="w-full mt-4 flex gap-3">
+                            <Button
+                                variant="ghost"
+                                onClick={() => setShowGuestOtp(false)}
+                                className="flex-1 h-11 rounded-xl"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleGuestOtpVerify}
+                                disabled={isGuestOtpVerifying || guestOtp.length < 6}
+                                className="flex-1 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all font-semibold"
+                            >
+                                {isGuestOtpVerifying ? "Verifying..." : "Verify & Proceed"}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Legal Modal */}
+            <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-all", isLegalModalOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")}>
+                <div className={cn("bg-white rounded-3xl shadow-xl w-full max-w-[600px] max-h-[80vh] flex flex-col p-6 transition-transform duration-300", isLegalModalOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-8")}>
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b">
+                        <h2 className="text-xl font-bold">{legalModalContent?.title || (legalLoading ? "Loading..." : "")}</h2>
+                        <button onClick={() => setIsLegalModalOpen(false)} className="text-gray-500 hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition-colors">✕</button>
+                    </div>
+                    {legalLoading ? (
+                        <div className="flex-1 flex justify-center items-center py-10">
+                            <span className="text-gray-500 font-medium">Loading Document...</span>
+                        </div>
+                    ) : legalModalContent ? (
+                        <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                            {legalModalContent.effective_date && (
+                                <p className="text-sm text-gray-500 font-medium tracking-wide border-b pb-2">
+                                    Effective Date: <span className="text-gray-900 font-bold">{legalModalContent.effective_date}</span>
+                                </p>
+                            )}
+                            <div className="text-gray-700 text-sm whitespace-pre-line leading-relaxed" dangerouslySetInnerHTML={{ __html: legalModalContent.content }} />
+                        </div>
+                    ) : null}
+                    <div className="mt-4 pt-4 border-t flex justify-end">
+                        <Button onClick={() => setIsLegalModalOpen(false)} className="h-10 rounded-xl px-6 bg-blue-600 hover:bg-blue-700 text-white shadow-md font-semibold">Done</Button>
                     </div>
                 </div>
             </div>
