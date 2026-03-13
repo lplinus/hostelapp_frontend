@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createBooking, BookingRequest } from "@/services/booking.service";
 import { getUserProfile } from "@/services/user.service";
@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, addDays, differenceInDays, parseISO } from "date-fns";
+import { format, addDays, differenceInDays, parseISO, addMonths } from "date-fns";
 import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Phone, Activity, Info, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -62,6 +62,7 @@ export default function BookingContainer({ hostel }: Props) {
         check_in: new Date(),
         check_out: addDays(new Date(), 1),
         booking_type: "stay" as "stay" | "visit",
+        stay_duration: "none",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -76,9 +77,28 @@ export default function BookingContainer({ hostel }: Props) {
 
     const totalPrice = useMemo(() => {
         if (!selectedRoom || nights <= 0) return 0;
-        const pricePerDay = Number(selectedRoom.price_per_day || selectedRoom.base_price || 0);
-        return pricePerDay * nights;
-    }, [selectedRoom, nights]);
+        if (form.booking_type === "visit") return 0;
+
+        const baseMonthly = Number(selectedRoom.base_price || 0);
+        // Fallback to monthly/30 if daily rate is not provided
+        const dailyRate = Number(selectedRoom.price_per_day || (baseMonthly / 30));
+
+        // 1. If a fixed monthly duration is selected, use monthly rate
+        if (form.stay_duration && form.stay_duration !== "none") {
+            let months = 0;
+            if (form.stay_duration === "1_month") months = 1;
+            else if (form.stay_duration === "2_months") months = 2;
+            else if (form.stay_duration === "3_months") months = 3;
+            else if (form.stay_duration === "4_months") months = 4;
+            else if (form.stay_duration === "5_months") months = 5;
+            else if (form.stay_duration === "gt_5_months") months = 6;
+            
+            if (months > 0) return baseMonthly * months;
+        }
+
+        // 2. If no duration selected (Custom Dates) or fallback, use daily rate
+        return Math.ceil(dailyRate * nights);
+    }, [selectedRoom, nights, form.stay_duration, form.booking_type]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
 
@@ -231,6 +251,7 @@ export default function BookingContainer({ hostel }: Props) {
             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
             total_price: form.booking_type === "visit" ? 0 : totalPrice,
             booking_type: form.booking_type,
+            stay_duration: form.stay_duration as any,
         };
 
         bookingMutation.mutate(bookingData);
@@ -336,6 +357,7 @@ export default function BookingContainer({ hostel }: Props) {
                             </CardHeader>
                             <CardContent className="space-y-6 pt-6">
                                 {/* Booking Type Toggle */}
+                                {/* Booking Type Toggle (Commented out as requested)
                                 <div className="space-y-2">
                                     <Label className="text-sm font-bold text-gray-700 uppercase tracking-widest">Booking For</Label>
                                     <div className="flex p-1 bg-gray-100/80 rounded-2xl w-full sm:w-fit">
@@ -368,6 +390,7 @@ export default function BookingContainer({ hostel }: Props) {
                                             : "Choose 'Visit' to check out the hostel facilities before booking."}
                                     </p>
                                 </div>
+                                */}
 
                                 <div className="grid sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
@@ -523,6 +546,47 @@ export default function BookingContainer({ hostel }: Props) {
                                         Selected: <strong>{nights} {nights === 1 ? 'night' : 'nights'}</strong> stay.
                                     </p>
                                 </div>
+
+                                {form.booking_type === "stay" && (
+                                    <div className="space-y-2">
+                                        <Label className="flex items-center gap-2 text-gray-700">
+                                            <CalendarIcon size={14} className="text-blue-600" /> Preferred Duration (Optional)
+                                        </Label>
+                                        <Select 
+                                            value={form.stay_duration} 
+                                            onValueChange={(v) => {
+                                                let newCheckOut = form.check_out;
+                                                const checkIn = form.check_in;
+                                                
+                                                if (v === "1_month") newCheckOut = addMonths(checkIn, 1);
+                                                else if (v === "2_months") newCheckOut = addMonths(checkIn, 2);
+                                                else if (v === "3_months") newCheckOut = addMonths(checkIn, 3);
+                                                else if (v === "4_months") newCheckOut = addMonths(checkIn, 4);
+                                                else if (v === "5_months") newCheckOut = addMonths(checkIn, 5);
+                                                else if (v === "gt_5_months") newCheckOut = addMonths(checkIn, 6); // Defaulting to 6 for "More than 5"
+
+                                                setForm({ ...form, stay_duration: v, check_out: newCheckOut });
+                                                if (errors.dates) setErrors(prev => ({ ...prev, dates: "" }));
+                                            }}
+                                        >
+                                            <SelectTrigger className="rounded-xl border-gray-200">
+                                                <SelectValue placeholder="Select duration" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">Custom Dates</SelectItem>
+                                                <SelectItem value="1_month">1 Month</SelectItem>
+                                                <SelectItem value="2_months">2 Months</SelectItem>
+                                                <SelectItem value="3_months">3 Months</SelectItem>
+                                                <SelectItem value="4_months">4 Months</SelectItem>
+                                                <SelectItem value="5_months">5 Months</SelectItem>
+                                                <SelectItem value="gt_5_months">More than 5 Months</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-[10px] text-muted-foreground ml-1 italic">
+                                            Selecting a duration will automatically set your check-out date.
+                                        </p>
+                                    </div>
+                                )}
 
                                 <Separator className="bg-gray-100 my-4" />
 

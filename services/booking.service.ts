@@ -22,6 +22,7 @@ export interface Booking {
     status: string;
     total_price: string;
     booking_type: 'stay' | 'visit';
+    stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
     created_at?: string;
 }
 
@@ -39,6 +40,7 @@ export interface BookingRequest {
     guests_count: number;
     total_price: number;
     booking_type: 'stay' | 'visit';
+    stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
 }
 
 export const getOwnerBookings = async (): Promise<Booking[]> => {
