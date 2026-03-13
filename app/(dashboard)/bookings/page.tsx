@@ -160,12 +160,16 @@ export default function BookingsPage() {
                                                     value={b.status}
                                                     onChange={(e) => handleStatusChange(e, b.id)}
                                                     disabled={statusMutation.isPending || b.status === "completed"}
-                                                    className="border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                                    className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                                                        b.status === "completed" 
+                                                            ? "text-green-600 border-green-200 bg-green-50 font-bold" 
+                                                            : "text-gray-700"
+                                                    }`}
                                                 >
                                                     <option value="pending">Pending</option>
                                                     <option value="confirmed">Confirmed</option>
                                                     <option value="cancelled">Cancelled</option>
-                                                    <option value="completed">Completed</option>
+                                                    <option value="completed" className="text-green-600 font-bold">Completed</option>
                                                 </select>
                                                 <button
                                                     onClick={() => handleDelete(b.id)}

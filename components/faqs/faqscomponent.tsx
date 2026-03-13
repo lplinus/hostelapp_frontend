@@ -9,39 +9,66 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronRight, HelpCircle } from "lucide-react";
+import { Search, ChevronRight, HelpCircle, Loader2 } from "lucide-react";
+import { getFAQs, searchFAQs } from "@/services/cms.service";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface FAQsComponentProps {
     faqs: FAQ[];
     categories: FAQCategory[];
 }
 
-export const FAQsComponent: React.FC<FAQsComponentProps> = ({ faqs, categories }) => {
-    const [activeCategoryId, setActiveCategoryId] = useState<number>(categories[0]?.id || 0);
+export const FAQsComponent: React.FC<FAQsComponentProps> = ({ faqs: initialFaqs, categories }) => {
+    const [activeCategoryId, setActiveCategoryId] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState("");
+    const [displayFaqs, setDisplayFaqs] = useState<FAQ[]>(initialFaqs);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const debouncedSearch = useDebounce(searchQuery, 300);
 
     // Filter categories that have FAQs
     const activeCategories = categories.filter(cat => cat.is_active);
 
-    const filteredFaqs = faqs.filter((faq) => {
-        const matchesCategory = faq.category === activeCategoryId;
-        const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-        
-        return matchesSearch && matchesCategory;
-    });
+    React.useEffect(() => {
+        const fetchFaqs = async () => {
+            setIsLoading(true);
+            try {
+                let data;
+                if (debouncedSearch && debouncedSearch.trim()) {
+                    // Use dedicated search endpoint if searching
+                    data = await searchFAQs(debouncedSearch);
+                } else {
+                    // Use standard list with category filter
+                    data = await getFAQs("", activeCategoryId);
+                }
+                setDisplayFaqs(data);
+            } catch (error) {
+                console.error("Error fetching filtered FAQs:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFaqs();
+    }, [debouncedSearch, activeCategoryId]);
+
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+    };
+
+    const filteredFaqs = displayFaqs;
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-16">
             <div className="text-center mb-16">
-                <motion.h1 
+                <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
                 >
                     Frequently Asked Questions
                 </motion.h1>
-                <motion.p 
+                <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
@@ -53,14 +80,18 @@ export const FAQsComponent: React.FC<FAQsComponentProps> = ({ faqs, categories }
 
             <div className="relative max-w-2xl mx-auto mb-12">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-slate-400" />
+                    {isLoading ? (
+                        <Loader2 className="h-5 w-5 text-orange-500 animate-spin" />
+                    ) : (
+                        <Search className="h-5 w-5 text-slate-400" />
+                    )}
                 </div>
                 <input
                     type="text"
                     placeholder="Search for questions..."
                     className="block w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-slate-900"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleSearch(e.target.value)}
                 />
             </div>
 
@@ -69,6 +100,22 @@ export const FAQsComponent: React.FC<FAQsComponentProps> = ({ faqs, categories }
                 <div className="lg:col-span-1">
                     <div className="sticky top-24 space-y-2">
                         <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4 px-4">Categories</h3>
+                        
+                        <button
+                            onClick={() => {
+                                setActiveCategoryId(0);
+                                setSearchQuery("");
+                            }}
+                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all ${
+                                activeCategoryId === 0
+                                    ? "bg-orange-50 text-orange-600 font-medium border-l-4 border-orange-500"
+                                    : "text-slate-600 hover:bg-slate-50 border-l-4 border-transparent"
+                            }`}
+                        >
+                            <span>All Questions</span>
+                            <ChevronRight className={`h-4 w-4 transition-transform ${activeCategoryId === 0 ? "rotate-90" : ""}`} />
+                        </button>
+
                         {activeCategories.map((category) => (
                             <button
                                 key={category.id}
@@ -99,8 +146,8 @@ export const FAQsComponent: React.FC<FAQsComponentProps> = ({ faqs, categories }
                             <Accordion type="single" collapsible className="space-y-4">
                                 {filteredFaqs.length > 0 ? (
                                     filteredFaqs.map((faq, index) => (
-                                        <AccordionItem 
-                                            key={faq.slug} 
+                                        <AccordionItem
+                                            key={faq.slug}
                                             value={faq.slug}
                                             className="border border-slate-200 rounded-2xl bg-white px-6 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                                         >
