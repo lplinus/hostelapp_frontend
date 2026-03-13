@@ -19,6 +19,7 @@ const navLinks = [
   // { name: "Hostels", href: "/hostels" },
   // { name: "Pricing", href: "/pricing" },
   { name: "Blog", href: "/blog" },
+  { name: "Faqs", href: "/faqs" },
   { name: "About", href: "/about-us" },
   { name: "Contact", href: "/contact-us" },
 ];

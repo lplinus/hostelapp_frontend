@@ -277,7 +277,7 @@ export default function BookingContainer({ hostel }: Props) {
                     </div>
                 </div>
                 <div className="flex gap-4 justify-center">
-                    <Button variant="outline" onClick={() => router.push("/")}>Browse More</Button>
+                    <Button variant="outline" onClick={() => router.push("/home")}>Browse More</Button>
                     <Button onClick={() => router.push("/dashboard")}>View in Dashboard</Button>
                 </div>
             </div>
