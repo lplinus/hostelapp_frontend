@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
 import { Booking } from "@/services/booking.service";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function RecentBookings() {
   const { data: bookings, isLoading } = useQuery<Booking[]>({
@@ -53,6 +54,14 @@ export default function RecentBookings() {
               <p className="text-xs text-gray-500 truncate mt-0.5">
                 {booking.hostel_name || `Hostel ID: ${booking.hostel}`}
               </p>
+              <div className="mt-1">
+                <span className={cn(
+                  "text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider",
+                  booking.booking_type === "visit" ? "bg-orange-100 text-orange-700" : "bg-purple-100 text-purple-700"
+                )}>
+                  {booking.booking_type}
+                </span>
+              </div>
             </div>
 
             <div className="text-right flex-shrink-0">

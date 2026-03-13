@@ -21,6 +21,7 @@ export interface Booking {
     guests_count: number;
     status: string;
     total_price: string;
+    booking_type: 'stay' | 'visit';
     created_at?: string;
 }
 
@@ -37,6 +38,7 @@ export interface BookingRequest {
     check_out: string;
     guests_count: number;
     total_price: number;
+    booking_type: 'stay' | 'visit';
 }
 
 export const getOwnerBookings = async (): Promise<Booking[]> => {

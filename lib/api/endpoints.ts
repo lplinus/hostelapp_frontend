@@ -26,4 +26,9 @@ export const API_ENDPOINTS = {
         WHY_US: '/api/publicpages/admin/whyus/',
         WHY_US_DETAIL: (id: string | number) => `/api/publicpages/admin/whyus/${id}/`,
     },
+    PAYMENTS: {
+        SUBSCRIPTIONS: '/api/payments/subscriptions/',
+        CURRENT_SUBSCRIPTION: '/api/payments/subscriptions/current/',
+        LIST: '/api/payments/',
+    },
 } as const;

@@ -139,6 +139,15 @@ export default function BookingsPage() {
                                     <tr key={b.id}>
                                         <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
                                             STN-{b.id.substring(0, 8).toUpperCase()}
+                                            <div className="mt-1">
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                                                    b.booking_type === 'visit' 
+                                                        ? 'bg-orange-100 text-orange-700' 
+                                                        : 'bg-indigo-100 text-indigo-700'
+                                                }`}>
+                                                    {b.booking_type}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 text-sm">
                                             <div className="font-medium text-gray-900">{b.guest_name}</div>

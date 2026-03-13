@@ -61,6 +61,7 @@ export default function BookingContainer({ hostel }: Props) {
         children: "0",
         check_in: new Date(),
         check_out: addDays(new Date(), 1),
+        booking_type: "stay" as "stay" | "visit",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -162,6 +163,11 @@ export default function BookingContainer({ hostel }: Props) {
                 return;
             }
 
+            if (form.booking_type === "visit") {
+                handleConfirmBooking();
+                return;
+            }
+
             setStep("payment");
         }
     };
@@ -178,7 +184,11 @@ export default function BookingContainer({ hostel }: Props) {
             setIsGuestOtpVerifying(false);
             toast.success("Mobile number verified successfully!");
             setShowGuestOtp(false);
-            setStep("payment");
+            if (form.booking_type === "visit") {
+                handleConfirmBooking();
+            } else {
+                setStep("payment");
+            }
         }, 800);
     };
 
@@ -219,7 +229,8 @@ export default function BookingContainer({ hostel }: Props) {
             check_in: format(form.check_in, "yyyy-MM-dd"),
             check_out: format(form.check_out, "yyyy-MM-dd"),
             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-            total_price: totalPrice,
+            total_price: form.booking_type === "visit" ? 0 : totalPrice,
+            booking_type: form.booking_type,
         };
 
         bookingMutation.mutate(bookingData);
@@ -257,8 +268,10 @@ export default function BookingContainer({ hostel }: Props) {
                             <div className="font-medium text-right">{hostel.name}</div>
                             <div className="text-muted-foreground">Dates</div>
                             <div className="font-medium text-right">{format(form.check_in, "PP")} - {format(form.check_out, "PP")}</div>
-                            <div className="text-muted-foreground">Total Paid</div>
-                            <div className="font-bold text-right text-green-600 text-lg">₹{totalPrice.toLocaleString()}</div>
+                            <div className="text-muted-foreground">{form.booking_type === "visit" ? "Status" : "Total Paid"}</div>
+                            <div className="font-bold text-right text-green-600 text-lg">
+                                {form.booking_type === "visit" ? "VISIT REQUESTED" : `₹${totalPrice.toLocaleString()}`}
+                            </div>
                         </div>
                         <div className="shrink-0 flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl border border-gray-100 min-w-[160px]">
                             {confirmedBookingId ? (
@@ -322,6 +335,40 @@ export default function BookingContainer({ hostel }: Props) {
                                 <CardDescription>We'll use this information to process your booking at {hostel.name}.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6 pt-6">
+                                {/* Booking Type Toggle */}
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-bold text-gray-700 uppercase tracking-widest">Booking For</Label>
+                                    <div className="flex p-1 bg-gray-100/80 rounded-2xl w-full sm:w-fit">
+                                        <button
+                                            onClick={() => setForm({ ...form, booking_type: "stay" })}
+                                            className={cn(
+                                                "flex-1 sm:flex-none px-8 py-2.5 rounded-xl text-sm font-bold transition-all",
+                                                form.booking_type === "stay" 
+                                                    ? "bg-white text-blue-600 shadow-sm" 
+                                                    : "text-gray-500 hover:text-gray-700"
+                                            )}
+                                        >
+                                            Stay
+                                        </button>
+                                        <button
+                                            onClick={() => setForm({ ...form, booking_type: "visit" })}
+                                            className={cn(
+                                                "flex-1 sm:flex-none px-8 py-2.5 rounded-xl text-sm font-bold transition-all",
+                                                form.booking_type === "visit" 
+                                                    ? "bg-white text-blue-600 shadow-sm" 
+                                                    : "text-gray-500 hover:text-gray-700"
+                                            )}
+                                        >
+                                            Visit
+                                        </button>
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground ml-1">
+                                        {form.booking_type === "stay" 
+                                            ? "Choose 'Stay' for overnight accommodation with full amenities." 
+                                            : "Choose 'Visit' to check out the hostel facilities before booking."}
+                                    </p>
+                                </div>
+
                                 <div className="grid sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="name" className="flex items-center gap-2 text-gray-700">
@@ -597,7 +644,7 @@ export default function BookingContainer({ hostel }: Props) {
                                 <div className="space-y-3">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-muted-foreground">{selectedRoom?.category_display} × {nights} nights</span>
-                                        <span className="font-medium">₹{totalPrice.toLocaleString()}</span>
+                                        <span className="font-medium">₹{(form.booking_type === "visit" ? 0 : totalPrice).toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-muted-foreground">Service Charge</span>
@@ -606,15 +653,29 @@ export default function BookingContainer({ hostel }: Props) {
                                     <Separator className="bg-blue-50" />
                                     <div className="flex justify-between items-center text-lg">
                                         <span className="font-bold text-gray-900">Total Price</span>
-                                        <span className="font-black text-blue-600">₹{totalPrice.toLocaleString()}</span>
+                                        <span className="font-black text-blue-600">₹{(form.booking_type === "visit" ? 0 : totalPrice).toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>
                         </CardContent>
                         {step === "details" && (
                             <CardFooter className="p-6 bg-gray-50/50">
-                                <Button className="w-full py-6 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100" onClick={handleNext}>
-                                    Confirm Details <ChevronRight size={18} className="ml-1" />
+                                <Button 
+                                    className={cn(
+                                        "w-full py-6 rounded-xl font-bold shadow-lg transition-all",
+                                        form.booking_type === "visit" 
+                                            ? "bg-green-600 hover:bg-green-700 shadow-green-100" 
+                                            : "bg-blue-600 hover:bg-blue-700 shadow-blue-100"
+                                    )} 
+                                    onClick={handleNext}
+                                    disabled={bookingMutation.isPending}
+                                >
+                                    {bookingMutation.isPending 
+                                        ? "Sending..." 
+                                        : form.booking_type === "visit" 
+                                            ? "Send Visit Request" 
+                                            : "Confirm Details"} 
+                                    <ChevronRight size={18} className="ml-1" />
                                 </Button>
                             </CardFooter>
                         )}
@@ -633,9 +694,13 @@ export default function BookingContainer({ hostel }: Props) {
                 isOpen={showOtpModal}
                 onClose={() => setShowOtpModal(false)}
                 onSuccess={() => {
-                    toast.success("Phone verified! You can now proceed to payment.");
+                    toast.success("Phone verified! Proceeding...");
                     queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-                    setStep("payment");
+                    if (form.booking_type === "visit") {
+                        handleConfirmBooking();
+                    } else {
+                        setStep("payment");
+                    }
                 }}
             />
 

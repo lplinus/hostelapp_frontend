@@ -108,6 +108,7 @@ export interface PricingFeature {
 }
 
 export interface PricingPlan {
+    id: number;
     name: string;
     description: string;
     price: string;
