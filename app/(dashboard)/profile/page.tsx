@@ -211,6 +211,7 @@ export default function ProfilePage() {
                     toast.success("Phone verified! You can now save your profile.");
                     queryClient.invalidateQueries({ queryKey: ["userProfile"] });
                 }}
+                phone={formData.phone}
             />
         </div>
     );

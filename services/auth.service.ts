@@ -40,11 +40,11 @@ export const authService = {
         return apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, data);
     },
 
-    sendOtp: () => {
-        return authApiClient.post(API_ENDPOINTS.AUTH.SEND_OTP);
+    sendOtp: (phone?: string) => {
+        return authApiClient.post(API_ENDPOINTS.AUTH.SEND_OTP, { phone });
     },
 
-    verifyOtp: (code: string) => {
-        return authApiClient.post(API_ENDPOINTS.AUTH.VERIFY_OTP, { code });
+    verifyOtp: (code: string, phone?: string) => {
+        return authApiClient.post(API_ENDPOINTS.AUTH.VERIFY_OTP, { code, phone });
     },
 };

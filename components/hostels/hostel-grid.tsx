@@ -1,5 +1,9 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import HostelCard from "@/components/hostels/hostel-card";
 import { HostelListItem } from "@/types/hostel.types";
+import { Button } from "@/components/ui/button";
 
 interface HostelGridProps {
   readonly hostels: readonly HostelListItem[];
@@ -25,44 +29,70 @@ function getPrimaryImage(hostel: HostelListItem): string | null {
 }
 
 export default function HostelGrid({ hostels }: HostelGridProps) {
+  const [visibleCount, setVisibleCount] = useState<number>(6);
+
   // Apply priority sorting:
   // 1. Discounts & Verified
   // 2. Verified
   // 3. Discounts
   // 4. Others
-  const sortedHostels = [...hostels].sort((a, b) => {
-    const getPriority = (h: any) => {
-      if (h.is_verified && h.is_discounted) return 1;
-      if (h.is_verified) return 2;
-      if (h.is_discounted) return 3;
-      return 4;
-    };
-    return getPriority(a) - getPriority(b);
-  });
+  const sortedHostels = useMemo(() => {
+    return [...hostels].sort((a, b) => {
+      const getPriority = (h: any) => {
+        if (h.is_verified && h.is_discounted) return 1;
+        if (h.is_verified) return 2;
+        if (h.is_discounted) return 3;
+        return 4;
+      };
+      return getPriority(a) - getPriority(b);
+    });
+  }, [hostels]);
+
+  const paginatedHostels = useMemo(() => {
+    return sortedHostels.slice(0, visibleCount);
+  }, [sortedHostels, visibleCount]);
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => prev + 6);
+  };
 
   return (
-    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
-      {sortedHostels.map((hostel) => (
-        <HostelCard
-          key={hostel.id}
-          id={String(hostel.id)}
-          slug={hostel.slug}
-          name={hostel.name}
-          location={`${hostel.area?.name || ""}, ${hostel.city.name}`}
-          price={hostel.final_price ?? (Number(hostel.price) || 0)}
-          originalPrice={hostel.is_discounted ? Number(hostel.price) || 0 : undefined}
-          isDiscounted={!!hostel.is_discounted}
-          discountPercentage={hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined}
-          rating={hostel.rating_avg}
-          reviewsCount={hostel.rating_count}
-          image={getPrimaryImage(hostel)}
-          gender={hostel.hostel_type || "coed"}
-          features={hostel.amenities.slice(0, 3).map((a) => a.name)}
-          distance=""
-          isFeatured={hostel.is_featured}
-          isVerified={!!hostel.is_verified}
-        />
-      ))}
+    <div className="flex flex-col gap-8 w-full">
+      <div className="grid grid-cols-1 gap-6 w-full">
+        {paginatedHostels.map((hostel) => (
+          <HostelCard
+            key={hostel.id}
+            id={String(hostel.id)}
+            slug={hostel.slug}
+            name={hostel.name}
+            location={`${hostel.area?.name || ""}, ${hostel.city.name}`}
+            price={hostel.final_price ?? (Number(hostel.price) || 0)}
+            originalPrice={hostel.is_discounted ? Number(hostel.price) || 0 : undefined}
+            isDiscounted={!!hostel.is_discounted}
+            discountPercentage={hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined}
+            rating={hostel.rating_avg}
+            reviewsCount={hostel.rating_count}
+            image={getPrimaryImage(hostel)}
+            gender={hostel.hostel_type || "coed"}
+            features={hostel.amenities.slice(0, 3).map((a) => a.name)}
+            distance=""
+            isFeatured={hostel.is_featured}
+            isVerified={!!hostel.is_verified}
+            availableRooms={hostel.available_rooms}
+          />
+        ))}
+      </div>
+
+      {visibleCount < sortedHostels.length && (
+        <div className="flex justify-center mt-4">
+          <Button 
+            onClick={handleLoadMore}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 px-10 rounded-xl shadow-lg active:scale-95 transition-all"
+          >
+            Load More Hostels
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

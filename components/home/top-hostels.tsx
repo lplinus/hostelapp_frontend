@@ -116,6 +116,7 @@ export default async function TopHostels() {
                     isVerified={!!hostel.is_verified}
                     isApproved={!!hostel.is_approved}
                     isTopRated={true}
+                    layout="grid"
                   />
                 </div>
               </CarouselItem>

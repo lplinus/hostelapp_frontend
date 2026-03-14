@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, FormEvent } from "react";
 import Link from "next/link";
+import HostelMap from "@/components/hostelclient/hostelmaps";
 import {
     Star,
     Heart,
@@ -177,12 +178,26 @@ export default function HostelDetailClient({ hostel }: Props) {
     };
 
     /* ---------- map ---------- */
-    const hasCoords = hostel.latitude && hostel.longitude;
+    // const hasCoords = hostel.latitude && hostel.longitude;
+    // const mapSrc = hasCoords
+    //     ? `https://maps.google.com/maps?q=${hostel.latitude},${hostel.longitude}&z=15&output=embed`
+    //     : hostel.address
+    //         ? `https://maps.google.com/maps?q=${encodeURIComponent(
+    //             hostel.address + ", " + hostel.city.name
+    //         )}&z=15&output=embed`
+    //         : null;
+
+    const hasCoords =
+        hostel.latitude !== null &&
+        hostel.latitude !== undefined &&
+        hostel.longitude !== null &&
+        hostel.longitude !== undefined;
+
     const mapSrc = hasCoords
-        ? `https://maps.google.com/maps?q=${hostel.latitude},${hostel.longitude}&z=15&output=embed`
+        ? `https://www.google.com/maps?q=${hostel.latitude},${hostel.longitude}&z=16&output=embed`
         : hostel.address
-            ? `https://maps.google.com/maps?q=${encodeURIComponent(
-                hostel.address + ", " + hostel.city.name
+            ? `https://www.google.com/maps?q=${encodeURIComponent(
+                `${hostel.address}, ${hostel.city?.name ?? ""}`
             )}&z=15&output=embed`
             : null;
 

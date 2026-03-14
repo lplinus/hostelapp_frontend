@@ -19,12 +19,14 @@ interface OtpVerificationModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    phone?: string;
 }
 
 export function OtpVerificationModal({
     isOpen,
     onClose,
     onSuccess,
+    phone,
 }: OtpVerificationModalProps) {
     const [otp, setOtp] = useState("");
     const [isPending, setIsPending] = useState(false);
@@ -33,7 +35,7 @@ export function OtpVerificationModal({
     const handleSendOtp = async () => {
         setIsSending(true);
         try {
-            await authService.sendOtp();
+            await authService.sendOtp(phone);
             toast.success("OTP sent to your phone number");
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to send OTP");
@@ -46,7 +48,7 @@ export function OtpVerificationModal({
         if (otp.length < 6) return;
         setIsPending(true);
         try {
-            await authService.verifyOtp(otp);
+            await authService.verifyOtp(otp, phone);
             toast.success("Phone number verified!");
             onSuccess();
             onClose();

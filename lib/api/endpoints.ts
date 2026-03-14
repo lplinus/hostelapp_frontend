@@ -31,4 +31,10 @@ export const API_ENDPOINTS = {
         CURRENT_SUBSCRIPTION: '/api/payments/subscriptions/current/',
         LIST: '/api/payments/',
     },
+    BOOKINGS: {
+        CREATE: '/api/bookings/',
+        LIST: '/api/bookings/',
+        SEND_OTP: '/api/bookings/send_otp/',
+        VERIFY_OTP: '/api/bookings/verify_otp/',
+    },
 } as const;

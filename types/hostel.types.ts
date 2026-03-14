@@ -108,6 +108,7 @@ export interface HostelListItem {
     readonly amenities: readonly HostelAmenity[];
     readonly images: readonly HostelImage[];
     readonly default_images: DefaultHostelImage | null;
+    readonly available_rooms?: number;
     readonly created_at: string;
 }
 
@@ -141,6 +142,7 @@ export interface CityHostel {
     readonly thumbnail: string | null;
     readonly area_name: string | null;
     readonly city_name: string;
+    readonly available_rooms?: number;
     readonly is_verified: boolean | null;
     readonly is_approved: boolean | null;
 }
