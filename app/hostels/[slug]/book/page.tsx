@@ -27,8 +27,11 @@ export default async function BookingPage({ params }: Props) {
 
     let hostel;
     try {
+        console.log("Fetching hostel for slug:", slug);
         hostel = await getHostelBySlug(slug);
-    } catch {
+        console.log("Hostel found:", hostel.name);
+    } catch (error) {
+        console.error("Error fetching hostel:", error);
         notFound();
     }
 
