@@ -293,7 +293,7 @@ export default function BookingContainer({ hostel }: Props) {
                                         {step !== "details" ? <CheckCircle2 size={16} /> : "1"}
                                     </div>
                                     <div>
-                                        <CardTitle className="text-xl text-gray-900 font-bold">Log in or sign up</CardTitle>
+                                        <CardTitle className="text-xl text-gray-900 font-bold">Confirm Booking details</CardTitle>
                                         {step !== "details" && (
                                             <p className="text-xs text-gray-500 mt-1 font-medium">{form.guest_name} • {form.mobile_number}</p>
                                         )}
