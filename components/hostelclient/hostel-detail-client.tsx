@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, FormEvent } from "react";
+import { sendContactMessage } from "@/services/public.service";
+import { toast } from "sonner";
 import Link from "next/link";
 import HostelMap from "@/components/hostelclient/hostelmaps";
 import {
@@ -29,6 +31,10 @@ import {
     Users,
     Snowflake,
     Fan,
+    LayoutGrid,
+    X,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 import type { HostelDetail } from "@/types/hostel.types";
 
@@ -121,6 +127,8 @@ const DEFAULT_REVIEWS = [
 /* ------------------------------------------------------------------ */
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
+import { toLocalMediaPath } from "@/lib/utils";
+
 interface Props {
     hostel: HostelDetail;
 }
@@ -128,24 +136,35 @@ interface Props {
 export default function HostelDetailClient({ hostel }: Props) {
     /* ---------- images ---------- */
     const hostelImages: { src: string; alt: string }[] = [];
+    
+    // Process hostel's specific images (up to 10 fields per image object)
     for (const img of hostel.images) {
-        if (img.image) hostelImages.push({ src: img.image, alt: img.alt_text });
-        if (img.image2)
-            hostelImages.push({ src: img.image2, alt: `${img.alt_text} 2` });
-        if (img.image3)
-            hostelImages.push({ src: img.image3, alt: `${img.alt_text} 3` });
-        if (img.image4)
-            hostelImages.push({ src: img.image4, alt: `${img.alt_text} 4` });
+        for (let i = 1; i <= 10; i++) {
+            const field = (i === 1 ? "image" : `image${i}`) as keyof typeof img;
+            const src = img[field];
+            if (typeof src === "string" && src) {
+              hostelImages.push({ 
+                src: toLocalMediaPath(src) || src, 
+                alt: i === 1 ? img.alt_text : `${img.alt_text} ${i}` 
+              });
+            }
+        }
     }
 
     // Fallback to default images from backend when hostel has no images
     if (hostelImages.length === 0 && hostel.default_images) {
         const d = hostel.default_images;
         const altText = d.alt_text || "Default hostel image";
-        if (d.image1) hostelImages.push({ src: d.image1, alt: altText });
-        if (d.image2) hostelImages.push({ src: d.image2, alt: `${altText} 2` });
-        if (d.image3) hostelImages.push({ src: d.image3, alt: `${altText} 3` });
-        if (d.image4) hostelImages.push({ src: d.image4, alt: `${altText} 4` });
+        for (let i = 1; i <= 10; i++) {
+            const field = `image${i}` as keyof typeof d;
+            const src = d[field];
+            if (typeof src === "string" && src) {
+              hostelImages.push({ 
+                src: toLocalMediaPath(src) || src, 
+                alt: i === 1 ? altText : `${altText} ${i}`
+              });
+            }
+        }
     }
 
     const allImages = hostelImages;
@@ -156,6 +175,7 @@ export default function HostelDetailClient({ hostel }: Props) {
     const INITIAL_ROOM_LIMIT = 4;
     const INITIAL_AMENITY_LIMIT = 6;
     const [priceMode, setPriceMode] = useState<"monthly" | "daily">("monthly");
+    const [showGallery, setShowGallery] = useState(false);
 
     /* ---------- contact form ---------- */
     const [formData, setFormData] = useState({
@@ -169,12 +189,22 @@ export default function HostelDetailClient({ hostel }: Props) {
     const handleFormSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setFormSending(true);
-        // Simulate API call
-        await new Promise((r) => setTimeout(r, 1000));
-        setFormSending(false);
-        setFormSent(true);
-        setFormData({ name: "", phone: "", message: "" });
-        setTimeout(() => setFormSent(false), 3000);
+        try {
+            await sendContactMessage({
+                name: formData.name,
+                phone: formData.phone,
+                message: formData.message || "Requesting callback from hostel page",
+                hostel: hostel.id,
+            });
+            setFormSent(true);
+            setFormData({ name: "", phone: "", message: "" });
+            setTimeout(() => setFormSent(false), 3000);
+        } catch (error) {
+            console.error("Failed to send callback request:", error);
+            toast.error("Failed to send request. Please try again.");
+        } finally {
+            setFormSending(false);
+        }
     };
 
     /* ---------- map ---------- */
@@ -229,115 +259,234 @@ export default function HostelDetailClient({ hostel }: Props) {
 
             {/* ===== Main Layout ===== */}
             <div className="max-w-[1200px] mx-auto px-5 pb-16">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
-                    {/* ===== LEFT COLUMN ===== */}
-                    <div>
-                        {/* ---------- Image Gallery ---------- */}
-                        <div className="mb-6">
-                            {/* Main image */}
-                            <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100">
-                                {allImages.length > 0 ? (
-                                    <Image
-                                        src={allImages[activeImg].src}
-                                        alt={allImages[activeImg].alt}
-                                        fill
-                                        className="object-cover transition-all duration-500"
-                                        priority
-                                        sizes="(max-width: 768px) 100vw, 800px"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        No images available
-                                    </div>
-                                )}
-
-                                {/* Image counter badge */}
-                                {allImages.length > 1 && (
-                                    <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-sm">
-                                        📷 {activeImg + 1}/{allImages.length}
-                                    </div>
-                                )}
+                
+                {/* ---------- Image Gallery (Now at the very top) ---------- */}
+                <div className="mb-8">
+                    <div className="relative group">
+                        {/* Desktop Bento Grid (Hidden on Mobile) */}
+                        <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-3 h-[480px] rounded-3xl overflow-hidden shadow-sm">
+                            {/* Main Image (Slot 1) */}
+                            <div 
+                                className="col-span-2 row-span-2 relative cursor-pointer overflow-hidden"
+                                onClick={() => setShowGallery(true)}
+                            >
+                                <Image
+                                    src={allImages[0]?.src || "/images/hero1.webp"}
+                                    alt={allImages[0]?.alt || hostel.name}
+                                    fill
+                                    className="object-cover hover:brightness-75 transition-all duration-300"
+                                    priority
+                                    sizes="800px"
+                                />
                             </div>
 
-                            {/* Thumbnails */}
-                            {allImages.length > 1 && (
-                                <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-                                    {allImages.map((img, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => setActiveImg(idx)}
-                                            className={`relative w-[80px] h-[56px] rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all duration-200 ${idx === activeImg
-                                                ? "border-blue-600 shadow-md scale-105"
-                                                : "border-transparent opacity-70 hover:opacity-100"
-                                                }`}
-                                        >
-                                            <Image
-                                                src={img.src}
-                                                alt={img.alt}
-                                                fill
-                                                className="object-cover"
-                                                sizes="80px"
-                                            />
-                                        </button>
-                                    ))}
+                            {/* Slot 2 (Top Middle) */}
+                            <div 
+                                className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
+                                onClick={() => setShowGallery(true)}
+                            >
+                                <Image
+                                    src={allImages[1]?.src || allImages[0]?.src || "/images/hero1.webp"}
+                                    alt={allImages[1]?.alt || hostel.name}
+                                    fill
+                                    className="object-cover hover:brightness-75 transition-all duration-300"
+                                    sizes="400px"
+                                />
+                            </div>
+
+                            {/* Slot 3 (Top Right) */}
+                            <div 
+                                className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
+                                onClick={() => setShowGallery(true)}
+                            >
+                                <Image
+                                    src={allImages[2]?.src || allImages[0]?.src || "/images/hero1.webp"}
+                                    alt={allImages[2]?.alt || hostel.name}
+                                    fill
+                                    className="object-cover hover:brightness-75 transition-all duration-300"
+                                    sizes="400px"
+                                />
+                            </div>
+
+                            {/* Slot 4 (Bottom Middle) */}
+                            <div 
+                                className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
+                                onClick={() => setShowGallery(true)}
+                            >
+                                <Image
+                                    src={allImages[3]?.src || allImages[0]?.src || "/images/hero1.webp"}
+                                    alt={allImages[3]?.alt || hostel.name}
+                                    fill
+                                    className="object-cover hover:brightness-75 transition-all duration-300"
+                                    sizes="400px"
+                                />
+                            </div>
+
+                            {/* Slot 5 (Bottom Right) */}
+                            <div 
+                                className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
+                                onClick={() => setShowGallery(true)}
+                            >
+                                <Image
+                                    src={allImages[4]?.src || allImages[0]?.src || "/images/hero1.webp"}
+                                    alt={allImages[4]?.alt || hostel.name}
+                                    fill
+                                    className="object-cover hover:brightness-75 transition-all duration-300"
+                                    sizes="400px"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Mobile View remains unchanged ... */}
+                        <div className="md:hidden relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                            {allImages.length > 0 ? (
+                                <Image
+                                    src={allImages[activeImg].src}
+                                    alt={allImages[activeImg].alt}
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                    sizes="100vw"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
+                                    No images
                                 </div>
                             )}
-                        </div>
 
-                        {/* ---------- Title Row ---------- */}
-                        <div className="flex items-start justify-between mb-2">
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                                {hostel.name}
-                            </h1>
-                            <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                                <button
-                                    onClick={() => setSaved(!saved)}
-                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                                    aria-label="Save hostel"
-                                >
-                                    <Heart
-                                        size={20}
-                                        className={
-                                            saved
-                                                ? "fill-red-500 text-red-500"
-                                                : "text-gray-500"
-                                        }
-                                    />
-                                </button>
-                                <button
-                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                                    aria-label="Share hostel"
-                                    onClick={() => {
-                                        navigator.share?.({
-                                            title: hostel.name,
-                                            url: window.location.href,
-                                        });
-                                    }}
-                                >
-                                    <Share2 size={20} className="text-gray-500" />
-                                </button>
+                            {allImages.length > 1 && (
+                                <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setActiveImg((prev) => (prev > 0 ? prev - 1 : allImages.length - 1));
+                                        }}
+                                        className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 flex items-center justify-center text-gray-800 shadow-lg pointer-events-auto active:scale-90"
+                                    >
+                                        <ChevronLeft size={20} />
+                                    </button>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setActiveImg((prev) => (prev < allImages.length - 1 ? prev + 1 : 0));
+                                        }}
+                                        className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 flex items-center justify-center text-gray-800 shadow-lg pointer-events-auto active:scale-90"
+                                    >
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10">
+                                {activeImg + 1} / {allImages.length}
                             </div>
                         </div>
 
-                        {/* ---------- Meta row ---------- */}
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 mb-3">
-                            <span>
-                                {hostel.area?.name
-                                    ? `${hostel.area.name}, `
-                                    : ""}
-                                {hostel.city.name}
-                            </span>
-                            <span className="text-gray-300">|</span>
-                            <span className="flex items-center gap-1">
-                                <StarRating rating={hostel.rating_avg} />
-                                <span className="ml-1 text-gray-700 font-medium">
-                                    {hostel.rating_avg.toFixed(1)}
+                        {/* "Show all photos" Button (Desktop) */}
+                        <button
+                            onClick={() => setShowGallery(true)}
+                            className="hidden md:flex absolute bottom-6 right-6 bg-white hover:bg-gray-50 text-slate-900 border border-slate-200 px-5 py-2.5 rounded-xl shadow-xl shadow-slate-900/10 font-bold text-sm items-center gap-2.5 transition-all active:scale-95 z-20"
+                        >
+                            <LayoutGrid size={18} className="text-slate-600" />
+                            <span>Show all photos</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* ---------- Title & Meta Details (Moved below Image) ---------- */}
+                <div className="mt-8 mb-6">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-2">
+                                {hostel.name}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 font-medium">
+                                <span>
+                                    {hostel.area?.name ? `${hostel.area.name}, ` : ""}
+                                    {hostel.city.name}
                                 </span>
-                                <span className="text-gray-400">
-                                    ({hostel.rating_count} reviews)
-                                </span>
-                            </span>
+                                <span className="text-gray-300 hidden sm:inline">|</span>
+                                <div className="flex items-center gap-1">
+                                    <StarRating rating={hostel.rating_avg} />
+                                    <span className="ml-1 text-gray-900 font-bold">
+                                        {hostel.rating_avg.toFixed(1)}
+                                    </span>
+                                    <span className="text-gray-400 font-normal">
+                                        ({hostel.rating_count} reviews)
+                                    </span>
+                                </div>
+                            </div>
                         </div>
+
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                            <button
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors text-sm font-bold text-gray-700 underline underline-offset-4"
+                                onClick={() => {
+                                    navigator.share?.({
+                                        title: hostel.name,
+                                        url: window.location.href,
+                                    });
+                                }}
+                            >
+                                <Share2 size={16} />
+                                <span>Share</span>
+                            </button>
+                            <button
+                                onClick={() => setSaved(!saved)}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors text-sm font-bold text-gray-700 underline underline-offset-4"
+                            >
+                                <Heart
+                                    size={16}
+                                    className={saved ? "fill-red-500 text-red-500" : ""}
+                                />
+                                <span>{saved ? "Saved" : "Save"}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12">
+                    {/* ===== LEFT COLUMN ===== */}
+                    <div>
+
+
+                        {/* ---------- Gallery Modal ---------- */}
+                        {showGallery && (
+                            <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in fade-in duration-300">
+                                {/* Header */}
+                                <div className="flex items-center justify-between px-6 py-4 border-b">
+                                    <button 
+                                        onClick={() => setShowGallery(false)}
+                                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                    <div className="text-sm font-semibold text-gray-500">
+                                        {activeImg + 1} / {allImages.length}
+                                    </div>
+                                    <div className="w-10"></div> {/* Spacer */}
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6 md:p-12">
+                                    <div className="max-w-4xl mx-auto space-y-6">
+                                        {allImages.map((img, idx) => (
+                                            <div key={idx} className="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-white border border-gray-100">
+                                                <Image
+                                                    src={img.src}
+                                                    alt={img.alt}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 1200px) 100vw, 1000px"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+
 
                         {/* ---------- Tags ---------- */}
                         <div className="flex flex-wrap gap-2 mb-5">
@@ -387,7 +536,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                         return (
                                             <div
                                                 key={amenity.id}
-                                                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200"
+                                                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-black bg-gray-50/50 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200"
                                             >
                                                 <IconComp
                                                     size={18}
@@ -428,9 +577,9 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     {(showAllRooms ? hostel.room_types : hostel.room_types.slice(0, INITIAL_ROOM_LIMIT)).map((room) => (
                                         <div
                                             key={room.id}
-                                            className={`rounded-xl border p-4 transition-all duration-200 ${room.is_available
-                                                ? "border-gray-200 bg-white hover:border-blue-200 hover:shadow-sm"
-                                                : "border-gray-100 bg-gray-50 opacity-60"
+                                            className={`rounded-xl border border-black p-4 transition-all duration-200 ${room.is_available
+                                                ? "bg-white hover:border-blue-200 hover:shadow-sm"
+                                                : "bg-gray-50 opacity-60"
                                                 }`}
                                         >
                                             {/* Room category & sharing */}
@@ -516,7 +665,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             <h2 className="text-lg font-bold text-gray-900 mb-4">
                                 Location
                             </h2>
-                            <div className="rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 h-[220px]">
+                            <div className="rounded-2xl overflow-hidden border border-black bg-gray-100 h-[220px]">
                                 {mapSrc ? (
                                     <iframe
                                         src={mapSrc}
@@ -570,7 +719,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                             {reviewsToShow.map((review) => (
                                                 <div
                                                     key={review.id}
-                                                    className="border border-gray-200 rounded-xl px-5 py-4 hover:shadow-sm transition-shadow"
+                                                    className="border border-black rounded-xl px-5 py-4 hover:shadow-sm transition-shadow"
                                                 >
                                                     <div className="flex items-start justify-between">
                                                         <div>
@@ -618,8 +767,8 @@ export default function HostelDetailClient({ hostel }: Props) {
                     </div>
 
                     {/* ===== RIGHT SIDEBAR ===== */}
-                    <div className="lg:self-start lg:sticky lg:top-6">
-                        <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
+                    <div className="lg:self-start lg:sticky lg:top-28">
+                        <div className="border border-black rounded-2xl p-6 shadow-sm bg-white">
                             {/* Price */}
                             <div className="text-center mb-4">
                                 <div className="flex justify-center mb-3">

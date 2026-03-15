@@ -82,14 +82,14 @@ export default function LandingCities({ data }: LandingCitiesProps) {
 
                 {/* IMAGE */}
                 <div className="absolute inset-0 w-full h-full z-0">
-                  <Image
-                    src={c.image || "/images/hero1.webp"}
-                    alt={`${c.city_name} hostels`}
-                    fill
-                    className="object-cover transition-transform duration-[1.5s] group-hover:scale-110"
-                    sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
-                    priority={idx === 0}
-                  />
+                    <Image
+                        src={c.image || "/images/hero1.webp"}
+                        alt={`${c.city_name} hostels`}
+                        fill
+                        className="object-cover transition-transform duration-[1.5s]"
+                        sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+                        priority={idx === 0}
+                    />
                 </div>
 
                 {/* GRADIENT */}

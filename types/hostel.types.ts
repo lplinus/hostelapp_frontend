@@ -28,6 +28,12 @@ export interface HostelImage {
     readonly image2: string | null;
     readonly image3: string | null;
     readonly image4: string | null;
+    readonly image5: string | null;
+    readonly image6: string | null;
+    readonly image7: string | null;
+    readonly image8: string | null;
+    readonly image9: string | null;
+    readonly image10: string | null;
     readonly alt_text: string;
     readonly is_primary: boolean;
     readonly order: number;
@@ -49,6 +55,12 @@ export interface DefaultHostelImage {
     readonly image2: string | null;
     readonly image3: string | null;
     readonly image4: string | null;
+    readonly image5: string | null;
+    readonly image6: string | null;
+    readonly image7: string | null;
+    readonly image8: string | null;
+    readonly image9: string | null;
+    readonly image10: string | null;
     readonly alt_text: string;
 }
 

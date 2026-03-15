@@ -56,6 +56,12 @@ export default function HostelManagement() {
         image2: null as string | null,
         image3: null as string | null,
         image4: null as string | null,
+        image5: null as string | null,
+        image6: null as string | null,
+        image7: null as string | null,
+        image8: null as string | null,
+        image9: null as string | null,
+        image10: null as string | null,
     });
     const uploadFormRef = useRef<HTMLFormElement>(null);
 
@@ -85,7 +91,11 @@ export default function HostelManagement() {
     };
 
     const clearPreviewsAndForm = () => {
-        setImagePreviews({ image: null, image2: null, image3: null, image4: null });
+        setImagePreviews({ 
+            image: null, image2: null, image3: null, image4: null, 
+            image5: null, image6: null, image7: null, image8: null, 
+            image9: null, image10: null 
+        });
         if (uploadFormRef.current) uploadFormRef.current.reset();
     };
 
@@ -328,43 +338,103 @@ export default function HostelManagement() {
                                                         Delete Set
                                                     </button>
                                                 </div>
-                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                    {/* Outer / Main Image */}
+                                                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                                    {/* Image 1 */}
                                                     <div>
-                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Outer Image</p>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 1</p>
                                                         {img.image ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image}`} alt={img.alt_text || "Outer"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={`${API_BASE}${img.image}`} alt={img.alt_text || "Image 1"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
                                                     </div>
-                                                    {/* Inner Image 2 */}
+                                                    {/* Image 2 */}
                                                     <div>
-                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Inner Image 2</p>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 2</p>
                                                         {img.image2 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image2}`} alt={img.alt_text || "Inner 2"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={`${API_BASE}${img.image2}`} alt={img.alt_text || "Image 2"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
                                                     </div>
-                                                    {/* Inner Image 3 */}
+                                                    {/* Image 3 */}
                                                     <div>
-                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Inner Image 3</p>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 3</p>
                                                         {img.image3 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image3}`} alt={img.alt_text || "Inner 3"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={`${API_BASE}${img.image3}`} alt={img.alt_text || "Image 3"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
                                                     </div>
-                                                    {/* Inner Image 4 */}
+                                                    {/* Image 4 */}
                                                     <div>
-                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Inner Image 4</p>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 4</p>
                                                         {img.image4 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image4}`} alt={img.alt_text || "Inner 4"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={`${API_BASE}${img.image4}`} alt={img.alt_text || "Image 4"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 5 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 5</p>
+                                                        {img.image5 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image5}`} alt={img.alt_text || "Image 5"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 6 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 6</p>
+                                                        {img.image6 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image6}`} alt={img.alt_text || "Image 6"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 7 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 7</p>
+                                                        {img.image7 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image7}`} alt={img.alt_text || "Image 7"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 8 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 8</p>
+                                                        {img.image8 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image8}`} alt={img.alt_text || "Image 8"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 9 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 9</p>
+                                                        {img.image9 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image9}`} alt={img.alt_text || "Image 9"} className="w-full h-28 object-cover rounded" />
+                                                        ) : (
+                                                            <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
+                                                        )}
+                                                    </div>
+                                                    {/* Image 10 */}
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 10</p>
+                                                        {img.image10 ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={`${API_BASE}${img.image10}`} alt={img.alt_text || "Image 10"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -391,7 +461,7 @@ export default function HostelManagement() {
                                 return (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <label htmlFor="img-outer" className="block text-sm font-medium text-gray-700">Outer / Main Image</label>
+                                            <label htmlFor="img-outer" className="block text-sm font-medium text-gray-700">Image 1</label>
                                             <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-blue-300 transition-colors">
                                                 <input id="img-outer" type="file" name="image" accept="image/*" required={!existingSet?.image} className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image || existingSet?.image) && (
@@ -405,7 +475,7 @@ export default function HostelManagement() {
                                             </div>
                                         </div>
                                         <div className="space-y-1">
-                                            <label htmlFor="img-inner-1" className="block text-sm font-medium text-gray-700">Inner Image 2</label>
+                                            <label htmlFor="img-inner-1" className="block text-sm font-medium text-gray-700">Image 2</label>
                                             <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
                                                 <input id="img-inner-1" type="file" name="image2" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image2 || existingSet?.image2) && (
@@ -419,7 +489,7 @@ export default function HostelManagement() {
                                             </div>
                                         </div>
                                         <div className="space-y-1">
-                                            <label htmlFor="img-inner-2" className="block text-sm font-medium text-gray-700">Inner Image 3</label>
+                                            <label htmlFor="img-inner-2" className="block text-sm font-medium text-gray-700">Image 3</label>
                                             <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
                                                 <input id="img-inner-2" type="file" name="image3" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image3 || existingSet?.image3) && (
@@ -433,7 +503,7 @@ export default function HostelManagement() {
                                             </div>
                                         </div>
                                         <div className="space-y-1">
-                                            <label htmlFor="img-inner-3" className="block text-sm font-medium text-gray-700">Inner Image 4</label>
+                                            <label htmlFor="img-inner-3" className="block text-sm font-medium text-gray-700">Image 4</label>
                                             <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
                                                 <input id="img-inner-3" type="file" name="image4" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image4 || existingSet?.image4) && (
@@ -442,6 +512,90 @@ export default function HostelManagement() {
                                                             {imagePreviews.image4 ? "New Input" : existingSet?.image4?.split("/").pop()}
                                                         </span>
                                                         <img src={imagePreviews.image4 || (existingSet?.image4 ? `${API_BASE}${existingSet.image4}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-4" className="block text-sm font-medium text-gray-700">Image 5</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-4" type="file" name="image5" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image5 || existingSet?.image5) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image5 ? "New Input" : existingSet?.image5?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image5 || (existingSet?.image5 ? `${API_BASE}${existingSet.image5}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-5" className="block text-sm font-medium text-gray-700">Image 6</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-5" type="file" name="image6" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image6 || existingSet?.image6) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image6 ? "New Input" : existingSet?.image6?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image6 || (existingSet?.image6 ? `${API_BASE}${existingSet.image6}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-6" className="block text-sm font-medium text-gray-700">Image 7</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-6" type="file" name="image7" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image7 || existingSet?.image7) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image7 ? "New Input" : existingSet?.image7?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image7 || (existingSet?.image7 ? `${API_BASE}${existingSet.image7}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-7" className="block text-sm font-medium text-gray-700">Image 8</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-7" type="file" name="image8" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image8 || existingSet?.image8) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image8 ? "New Input" : existingSet?.image8?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image8 || (existingSet?.image8 ? `${API_BASE}${existingSet.image8}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-8" className="block text-sm font-medium text-gray-700">Image 9</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-8" type="file" name="image9" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image9 || existingSet?.image9) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image9 ? "New Input" : existingSet?.image9?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image9 || (existingSet?.image9 ? `${API_BASE}${existingSet.image9}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label htmlFor="img-inner-9" className="block text-sm font-medium text-gray-700">Image 10</label>
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
+                                                <input id="img-inner-9" type="file" name="image10" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                                {(imagePreviews.image10 || existingSet?.image10) && (
+                                                    <div className="flex flex-col items-end flex-shrink-0">
+                                                        <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
+                                                            {imagePreviews.image10 ? "New Input" : existingSet?.image10?.split("/").pop()}
+                                                        </span>
+                                                        <img src={imagePreviews.image10 || (existingSet?.image10 ? `${API_BASE}${existingSet.image10}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>

@@ -7,6 +7,12 @@ export interface HostelImageData {
     image2: string | null;
     image3: string | null;
     image4: string | null;
+    image5?: string | null;
+    image6?: string | null;
+    image7?: string | null;
+    image8?: string | null;
+    image9?: string | null;
+    image10?: string | null;
     alt_text: string;
     is_primary: boolean;
     order: number;

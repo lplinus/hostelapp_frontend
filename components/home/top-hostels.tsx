@@ -11,19 +11,30 @@ import {
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { toLocalMediaPath } from "@/lib/utils";
+
 function getPrimaryImage(hostel: HostelListItem): string | null {
   const primaryImg = hostel.images.find((img) => img.is_primary);
   const firstImg = hostel.images[0];
-  const img = primaryImg || firstImg;
+  const imgObj = primaryImg || firstImg;
 
-  if (img?.image) {
-    return img.image;
+  if (imgObj) {
+    // Try fields image, image2, ..., image10
+    for (let i = 1; i <= 10; i++) {
+        const field = i === 1 ? "image" : `image${i}` as keyof typeof imgObj;
+        const src = imgObj[field];
+        if (typeof src === "string" && src) return toLocalMediaPath(src);
+    }
   }
 
   // Fallback to default images from backend
   if (hostel.default_images) {
     const d = hostel.default_images;
-    return d.image1 || d.image2 || d.image3 || d.image4 || null;
+    for (let i = 1; i <= 10; i++) {
+        const field = `image${i}` as keyof typeof d;
+        const src = d[field];
+        if (typeof src === "string" && src) return toLocalMediaPath(src);
+    }
   }
 
   return null;

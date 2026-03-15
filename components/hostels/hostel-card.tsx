@@ -64,7 +64,7 @@ export default function HostelCard({
   };
 
   return (
-    <div className="bg-white rounded-[14px] p-3 sm:p-4 flex flex-col md:flex-row gap-4 md:gap-6 items-start shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all hover:shadow-md w-full border border-gray-100/50">
+    <div className="bg-white rounded-[14px] p-3 sm:p-4 flex flex-col md:flex-row gap-4 md:gap-6 items-start shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all hover:shadow-md w-full border border-black">
 
       {/* LEFT SECTION (IMAGE) */}
       <Link href={`/hostels/${slug}`} className="relative w-full md:w-[220px] h-[150px] aspect-[4/3] md:aspect-auto rounded-xl overflow-hidden shrink-0 shadow-sm block">

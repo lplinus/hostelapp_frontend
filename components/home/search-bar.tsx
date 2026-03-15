@@ -110,7 +110,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-8 max-w-5xl mx-auto border border-black">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
         {/* Location */}
         <div className="flex flex-col">

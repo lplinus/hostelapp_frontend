@@ -90,15 +90,19 @@ export interface ContactPageResponse {
 
 export interface ContactMessagePayload {
     name: string;
-    email: string;
+    email?: string;
+    phone?: string;
     message: string;
+    hostel?: number;
 }
 
 export interface ContactMessageResponse {
     id: number;
     name: string;
-    email: string;
+    email?: string;
+    phone?: string;
     message: string;
+    hostel?: number;
 }
 
 // ── Pricing Page ────────────────────────────────────────────

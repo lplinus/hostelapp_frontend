@@ -27,16 +27,7 @@ async function getHostelTypes(): Promise<HostelType[]> {
     }
 }
 
-/** Strip backend host so images go through Next.js /media/* rewrite */
-function toLocalMediaPath(url: string | null): string {
-    if (!url) return "";
-    try {
-        const parsed = new URL(url);
-        return parsed.pathname;
-    } catch {
-        return url;
-    }
-}
+import { toLocalMediaPath } from "@/lib/utils";
 
 export default async function FeaturedHostelTypes() {
     const hostelTypes = await getHostelTypes();
@@ -49,49 +40,61 @@ export default async function FeaturedHostelTypes() {
                     Browse by Hostel Type
                 </h2>
 
-                <Carousel
-                    opts={{
-                        align: "start",
-                        loop: false,
-                    }}
-                    className="w-full">
-                    <CarouselContent className="-ml-3">
-                        {hostelTypes.map((type) => (
-                            <CarouselItem
-                                key={type.id}
-                                className="pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
-                            >
-                                <Link
-                                    href={`/hostel-type/${type.hostel_type}`}
-                                    className="relative h-36 rounded-2xl overflow-hidden shadow-lg group block"
+                <div className="relative group/carousel overflow-visible">
+                    {/* Vanishing Edge Gradients */}
+                    <div className="absolute -left-1 top-0 bottom-0 w-3 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                    <div className="absolute -right-1 top-0 bottom-0 w-3 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+                    <Carousel
+                        opts={{
+                            align: "start",
+                            loop: false,
+                        }}
+                        className="w-full"
+                    >
+                        <CarouselContent className="-ml-3">
+                            {hostelTypes.map((type) => (
+                                <CarouselItem
+                                    key={type.id}
+                                    className="pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                                 >
-                                    {type.image ? (
-                                        <Image
-                                            src={toLocalMediaPath(type.image)}
-                                            alt={type.alt_text || type.name}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition duration-500"
-                                            sizes="(max-width: 768px) 50vw, 20vw"
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 bg-blue-500 opacity-90 group-hover:scale-110 transition duration-500" />
-                                    )}
+                                    <Link
+                                        href={`/hostel-type/${type.hostel_type}`}
+                                        className="group block"
+                                    >
+                                        <div className="relative h-36 rounded-2xl overflow-hidden shadow-lg mb-3 border border-black">
+                                            {type.image ? (
+                                                <Image
+                                                    src={toLocalMediaPath(type.image) || ""}
+                                                    alt={type.alt_text || type.name}
+                                                    fill
+                                                    className="object-cover transition duration-500"
+                                                    sizes="(max-width: 768px) 50vw, 20vw"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 bg-blue-500 opacity-90 transition duration-500" />
+                                            )}
+                                            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
+                                        </div>
 
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white p-4 text-center">
-                                        <span className="text-lg font-semibold">{type.name}</span>
-                                    </div>
-                                </Link>
-                            </CarouselItem>
-                        ))}
-                    </CarouselContent>
+                                        <p className="text-center font-bold text-slate-800 text-base group-hover:text-orange-600 transition-colors">
+                                            {type.name}
+                                        </p>
+                                    </Link>
 
-                    <CarouselPrevious
-                        className="-left-4 size-9 rounded-full border-0 bg-white/70 backdrop-blur-sm text-gray-800 shadow-md hover:bg-white hover:scale-110 transition-all duration-200 disabled:opacity-0"
-                    />
-                    <CarouselNext
-                        className="-right-4 size-9 rounded-full border-0 bg-white/70 backdrop-blur-sm text-gray-800 shadow-md hover:bg-white hover:scale-110 transition-all duration-200 disabled:opacity-0"
-                    />
-                </Carousel>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+
+                        <CarouselPrevious
+                            className="-left-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
+                        />
+                        <CarouselNext
+                            className="-right-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
+                        />
+                    </Carousel>
+                </div>
+
             </div>
         </section>
     );

@@ -24,16 +24,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-/** Strip backend host so images go through Next.js /media/* rewrite */
-function toLocalMediaPath(url: string | null): string | null {
-    if (!url) return null;
-    try {
-        const parsed = new URL(url);
-        return parsed.pathname;
-    } catch {
-        return url;
-    }
-}
+import { toLocalMediaPath } from "@/lib/utils";
 
 interface Props {
     readonly data: SearchHostelResponse | null;
