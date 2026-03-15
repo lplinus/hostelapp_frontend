@@ -27,16 +27,24 @@ export default async function BookingPage({ params }: Props) {
 
     let hostel;
     try {
-        console.log("Fetching hostel for slug:", slug);
         hostel = await getHostelBySlug(slug);
-        console.log("Hostel found:", hostel.name);
-    } catch (error) {
-        console.error("Error fetching hostel:", error);
-        notFound();
+    } catch (error: any) {
+        return (
+            <div className="p-10">
+                <h1 className="text-2xl font-bold">Error fetching hostel</h1>
+                <p className="text-red-500">{error.message}</p>
+                <p className="text-gray-500">Slug: {slug}</p>
+            </div>
+        );
     }
 
     if (!hostel) {
-        notFound();
+        return (
+            <div className="p-10">
+                <h1 className="text-2xl font-bold">Hostel not found</h1>
+                <p className="text-gray-500">Slug: {slug}</p>
+            </div>
+        );
     }
 
     return (

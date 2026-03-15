@@ -82,6 +82,8 @@ export default function BookingContainer({ hostel }: Props) {
         const baseMonthly = Number(selectedRoom.base_price || 0);
         // Fallback to monthly/30 if daily rate is not provided
         const dailyRate = Number(selectedRoom.price_per_day || (baseMonthly / 30));
+        
+        const guestCount = Number.parseInt(form.adults) || 1;
 
         // 1. If a fixed monthly duration is selected, use monthly rate
         if (form.stay_duration && form.stay_duration !== "none") {
@@ -93,12 +95,12 @@ export default function BookingContainer({ hostel }: Props) {
             else if (form.stay_duration === "5_months") months = 5;
             else if (form.stay_duration === "gt_5_months") months = 6;
 
-            if (months > 0) return baseMonthly * months;
+            if (months > 0) return baseMonthly * months * guestCount;
         }
 
         // 2. If no duration selected (Custom Dates) or fallback, use daily rate
-        return Math.ceil(dailyRate * nights);
-    }, [selectedRoom, nights, form.stay_duration, form.booking_type]);
+        return Math.ceil(dailyRate * nights * guestCount);
+    }, [selectedRoom, nights, form.stay_duration, form.booking_type, form.adults]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
 
