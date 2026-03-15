@@ -1,0 +1,135 @@
+"use client";
+
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Info, Calendar as CalendarIcon, Users } from "lucide-react";
+import { format } from "date-fns";
+import type { HostelDetail } from "@/types/hostel.types";
+
+interface BookingSummaryProps {
+    hostel: HostelDetail;
+    selectedRoom: any;
+    selectedRoomId: string | null;
+    setSelectedRoomId: (id: string | null) => void;
+    form: any;
+    nights: number;
+    totalPrice: number;
+    setStep: (s: any) => void;
+}
+
+export function BookingSummary({
+    hostel,
+    selectedRoom,
+    selectedRoomId,
+    setSelectedRoomId,
+    form,
+    nights,
+    totalPrice,
+    setStep
+}: BookingSummaryProps) {
+    return (
+        <Card className="border-2 border-gray-200 shadow-none overflow-hidden bg-white rounded-3xl">
+            <CardHeader className="bg-transparent border-none">
+                <CardTitle className="text-lg">Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+                {/* Hostel Mini Info */}
+                <div className="p-4 flex gap-4 border-b">
+                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 relative shrink-0">
+                        {hostel.images?.[0]?.image ? (
+                            <img
+                                src={hostel.images[0].image}
+                                alt={hostel.name}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                No Image
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <Badge variant="outline" className="text-[10px] mb-1 font-bold bg-blue-50 text-blue-600 border-blue-100">
+                            {form.booking_type === "visit" ? "Site Visit" : "Confirmed Booking"}
+                        </Badge>
+                        <h4 className="font-bold text-gray-900 leading-tight line-clamp-2 mb-1">{hostel.name}</h4>
+                        <div className="flex items-center gap-1 text-[11px] text-gray-500">
+                            <span className="font-bold text-yellow-500">★ {hostel.rating_avg || "4.5"}</span>
+                            <span>({hostel.rating_count || "0"})</span>
+                            <span className="text-gray-300">•</span>
+                            <span className="capitalize">{hostel.hostel_type}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="p-4 space-y-4">
+                    {/* Room Selection in Summary */}
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Selected Room Type</Label>
+                        <Select value={selectedRoomId || ""} onValueChange={setSelectedRoomId}>
+                            <SelectTrigger className="rounded-xl border-gray-200 shadow-sm bg-gray-50/30">
+                                <SelectValue placeholder="Select a room" />
+                            </SelectTrigger>
+                            <SelectContent position="popper" className="max-h-[200px] overflow-y-auto">
+                                {hostel.room_types?.map(room => (
+                                    <SelectItem key={room.id} value={room.id.toString()}>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">{room.category_display}</span>
+                                            <span className="text-[10px] text-muted-foreground">₹{room.base_price}/month • {room.sharing_display}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dates</Label>
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                <CalendarIcon size={12} className="text-blue-500" />
+                                {format(form.check_in, "MMM d")} - {format(form.check_out, "MMM d")}
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Guests</Label>
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                <Users size={12} className="text-blue-500" />
+                                {Number(form.adults) + Number(form.children)} Guests
+                            </div>
+                        </div>
+                    </div>
+
+                    {form.booking_type !== "visit" && (
+                        <>
+                            <Separator className="bg-gray-100" />
+                            <div className="space-y-3">
+                                <h5 className="text-[11px] font-bold text-gray-900 uppercase">Price Details</h5>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>{nights} nights × ₹{nights > 0 ? (totalPrice / (nights * (Number(form.adults) || 1))).toLocaleString() : '0'}</span>
+                                        <span className="font-medium text-gray-900">₹{totalPrice.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between text-gray-600">
+                                        <span className="flex items-center gap-1">Service Fee <Info size={12} /></span>
+                                        <span className="font-medium text-green-600 italic">Free</span>
+                                    </div>
+                                    <div className="pt-2 border-t flex justify-between items-center bg-blue-50/50 -mx-4 px-4 py-3">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-gray-900">Total (INR)</span>
+                                            <span className="text-[10px] text-gray-500">Incl. all taxes</span>
+                                        </div>
+                                        <span className="text-xl font-black text-gray-900">₹{totalPrice.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
