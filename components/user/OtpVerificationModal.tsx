@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -31,12 +31,24 @@ export function OtpVerificationModal({
     const [otp, setOtp] = useState("");
     const [isPending, setIsPending] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [timer, setTimer] = useState(0);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [timer]);
 
     const handleSendOtp = async () => {
         setIsSending(true);
         try {
             await authService.sendOtp(phone);
             toast.success("OTP sent to your phone number");
+            setTimer(60);
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to send OTP");
         } finally {
@@ -73,7 +85,7 @@ export function OtpVerificationModal({
                     <Button
                         variant="outline"
                         onClick={handleSendOtp}
-                        disabled={isSending || isPending}
+                        disabled={isSending || isPending || timer > 0}
                         className="w-full h-11 rounded-xl border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600 transition-all font-semibold"
                     >
                         {isSending ? (
@@ -81,6 +93,8 @@ export function OtpVerificationModal({
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Sending...
                             </>
+                        ) : timer > 0 ? (
+                            `Resend OTP in ${timer}s`
                         ) : (
                             "Send Verification Code"
                         )}

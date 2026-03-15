@@ -7,6 +7,7 @@ import Header from "@/components/layout/header";
 import ConditionalFooter from "@/components/layout/conditional-footer";
 import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/seo/schema";
 import JsonLd from "@/components/seo/JsonLd";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,10 @@ export default function RootLayout({
           <ConditionalFooter />
           <Toaster position="bottom-right" richColors />
         </Providers>
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

@@ -80,3 +80,21 @@ export const sendBookingOtp = async (phone: string): Promise<{ message: string }
 export const verifyBookingOtp = async (phone: string, code: string): Promise<{ message: string }> => {
     return apiClient.post<{ message: string }>("/api/bookings/verify_otp/", { phone, code });
 };
+
+export const createRazorpayOrder = async (bookingId: string): Promise<any> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = {};
+    if (token) {
+        options.headers = { 'Authorization': `Bearer ${token}` };
+    }
+    return apiClient.post<any>("/api/payments/create_razorpay_order/", { booking_id: bookingId }, options);
+};
+
+export const verifyRazorpayPayment = async (data: any): Promise<any> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = {};
+    if (token) {
+        options.headers = { 'Authorization': `Bearer ${token}` };
+    }
+    return apiClient.post<any>("/api/payments/verify_razorpay_payment/", data, options);
+};

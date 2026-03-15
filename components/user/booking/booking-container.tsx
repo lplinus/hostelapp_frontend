@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp } from "@/services/booking.service";
+import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp, createRazorpayOrder, verifyRazorpayPayment } from "@/services/booking.service";
 import { getUserProfile } from "@/services/user.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelDetail } from "@/types/hostel.types";
@@ -47,6 +47,17 @@ export default function BookingContainer({ hostel }: Props) {
     const [isGuestOtpSent, setIsGuestOtpSent] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [termsError, setTermsError] = useState(false);
+    const [guestOtpTimer, setGuestOtpTimer] = useState(0);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (guestOtpTimer > 0) {
+            interval = setInterval(() => {
+                setGuestOtpTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [guestOtpTimer]);
 
     const [legalModalContent, setLegalModalContent] = useState<{ title: string, content: string, effective_date?: string } | null>(null);
     const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
@@ -82,7 +93,7 @@ export default function BookingContainer({ hostel }: Props) {
         const baseMonthly = Number(selectedRoom.base_price || 0);
         // Fallback to monthly/30 if daily rate is not provided
         const dailyRate = Number(selectedRoom.price_per_day || (baseMonthly / 30));
-        
+
         const guestCount = Number.parseInt(form.adults) || 1;
 
         // 1. If a fixed monthly duration is selected, use monthly rate
@@ -108,8 +119,14 @@ export default function BookingContainer({ hostel }: Props) {
         mutationFn: (data: BookingRequest) => createBooking(data),
         onSuccess: (data) => {
             setConfirmedBookingId(data.id);
-            setStep("confirmation");
-            toast.success("Booking submitted successfully!");
+            // Only move to confirmation automatically for "visit" bookings
+            // For "stay" bookings, we wait for Razorpay payment to complete
+            if (form.booking_type === "visit") {
+                setStep("confirmation");
+                toast.success("Visit request submitted successfully!");
+            } else {
+                toast.success("Booking initialized. Please complete your payment.");
+            }
             queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
             queryClient.invalidateQueries({ queryKey: ["recentBookings"] });
             queryClient.invalidateQueries({ queryKey: ["userBookings"] });
@@ -199,6 +216,7 @@ export default function BookingContainer({ hostel }: Props) {
         try {
             await sendBookingOtp(form.mobile_number);
             toast.success(`OTP sent to ${form.mobile_number}`);
+            setGuestOtpTimer(60);
         } catch (error: any) {
             setIsGuestOtpSent(false);
             toast.error(error.response?.data?.error || "Failed to send OTP");
@@ -269,6 +287,49 @@ export default function BookingContainer({ hostel }: Props) {
         bookingMutation.mutate(bookingData);
     };
 
+    const handleRazorpayPayment = async (bookingId: string) => {
+        try {
+            const order = await createRazorpayOrder(bookingId);
+
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SRVXPRrskTPpW6",
+                amount: order.amount,
+                currency: order.currency,
+                name: "StayNest",
+                description: `Booking for ${hostel.name}`,
+                order_id: order.order_id,
+                handler: async function (response: any) {
+                    try {
+                        await verifyRazorpayPayment({
+                            order_id: response.razorpay_order_id,
+                            payment_id: response.razorpay_payment_id,
+                            signature: response.razorpay_signature
+                        });
+
+                        setStep("confirmation");
+                        toast.success("Payment successful!");
+                        queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+                    } catch (error) {
+                        toast.error("Payment verification failed.");
+                    }
+                },
+                prefill: {
+                    name: form.guest_name,
+                    email: form.guest_email,
+                    contact: form.mobile_number
+                },
+                theme: {
+                    color: "#2563eb"
+                }
+            };
+
+            const rzp = new (window as any).Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            toast.error("Failed to initiate payment.");
+        }
+    };
+
 
     return (
         <div className="max-w-5xl mx-auto py-10 px-4">
@@ -277,7 +338,7 @@ export default function BookingContainer({ hostel }: Props) {
                 onClick={() => router.back()}
                 className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors mb-6 group"
             >
-                <div className="p-2 rounded-full border border-gray-200 group-hover:border-blue-200 group-hover:bg-blue-50 transition-all">
+                <div className="p-2 rounded-full border border-gray-200 group-hover:bg-gray-100 transition-all text-black">
                     <ArrowLeft size={18} />
                 </div>
                 <span className="font-medium">Back to Hostel</span>
@@ -287,7 +348,7 @@ export default function BookingContainer({ hostel }: Props) {
                 {/* Left Column: Form */}
                 <div className="space-y-6">
                     {/* Step 1: Log in or sign up */}
-                    <Card className="border-none shadow-none overflow-hidden transition-all duration-300 bg-white">
+                    <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
                         <CardHeader className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all" onClick={() => setStep(step === "details" ? null : "details")}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
@@ -305,7 +366,7 @@ export default function BookingContainer({ hostel }: Props) {
                                     {step !== "details" && (
                                         <span className="text-xs font-bold text-blue-600">Change</span>
                                     )}
-                                    <ChevronRight className={cn("h-5 w-5 text-gray-400 transition-transform duration-300", step === "details" ? "rotate-90" : "")} />
+                                    <ChevronRight className={cn("h-5 w-5 text-black transition-transform duration-300", step === "details" ? "rotate-90" : "")} />
                                 </div>
                             </div>
                         </CardHeader>
@@ -526,7 +587,7 @@ export default function BookingContainer({ hostel }: Props) {
                                     </div>
                                 </div>
                                 <div className="pt-4 flex justify-end">
-                                    <Button 
+                                    <Button
                                         className="px-8 py-6 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-100 font-bold"
                                         onClick={handleNext}
                                     >
@@ -540,8 +601,8 @@ export default function BookingContainer({ hostel }: Props) {
 
                     {/* Step 2: Add a payment method */}
                     {form.booking_type !== "visit" && (
-                        <Card className="border-none shadow-none overflow-hidden transition-all duration-300 bg-white">
-                            <CardHeader 
+                        <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
+                            <CardHeader
                                 className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all"
                                 onClick={() => setStep(step === "payment" ? null : "payment")}
                             >
@@ -552,7 +613,7 @@ export default function BookingContainer({ hostel }: Props) {
                                         </div>
                                         <CardTitle className="text-xl text-gray-900 font-bold">Add a payment method</CardTitle>
                                     </div>
-                                    <ChevronRight className={cn("h-5 w-5 text-gray-400 transition-transform duration-300", step === "payment" ? "rotate-90" : "")} />
+                                    <ChevronRight className={cn("h-5 w-5 text-black transition-transform duration-300", step === "payment" ? "rotate-90" : "")} />
                                 </div>
                             </CardHeader>
                             {step === "payment" && (
@@ -560,11 +621,12 @@ export default function BookingContainer({ hostel }: Props) {
                                     <div className="p-4 bg-blue-50/30 text-blue-700 rounded-2xl flex gap-3 text-sm">
                                         <CreditCard className="shrink-0 mt-0.5" size={18} />
                                         <div>
-                                            <p className="font-bold">Mock Payment Mode Enabled</p>
-                                            <p className="text-gray-500">This is a demonstration. Clicking "Complete & Pay" will process the booking without an actual charge.</p>
+                                            <p className="font-bold">Safe & Secure Payment</p>
+                                            <p className="text-gray-500">You will be redirected to Razorpay's secure checkout to complete your booking.</p>
                                         </div>
                                     </div>
 
+                                    {/* Mock Card UI Hidden
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="card">Card Details</Label>
@@ -581,14 +643,53 @@ export default function BookingContainer({ hostel }: Props) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-4 flex justify-end">
+                                    */}
+
+                                    <div className="pt-4 flex flex-col gap-4">
                                         <Button
-                                            className="px-10 rounded-xl bg-green-600 hover:bg-green-700 shadow-md shadow-green-100 py-6 font-bold"
-                                            onClick={handleConfirmBooking}
+                                            className="w-full rounded-2xl bg-orange-500 hover:bg-orange-600 h-14 text-lg font-bold shadow-lg shadow-orange-100 flex items-center justify-center gap-2 text-white border-none"
+                                            onClick={() => {
+                                                if (confirmedBookingId) {
+                                                    handleRazorpayPayment(confirmedBookingId);
+                                                } else {
+                                                    bookingMutation.mutate({
+                                                        hostel: hostel.id,
+                                                        room_type: selectedRoom!.id,
+                                                        guest_name: form.guest_name,
+                                                        guest_email: form.guest_email,
+                                                        mobile_number: form.mobile_number,
+                                                        guest_age: Number.parseInt(form.guest_age),
+                                                        adults: Number.parseInt(form.adults),
+                                                        children: Number.parseInt(form.children),
+                                                        check_in: format(form.check_in, "yyyy-MM-dd"),
+                                                        check_out: format(form.check_out, "yyyy-MM-dd"),
+                                                        guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                                                        total_price: totalPrice,
+                                                        booking_type: "stay",
+                                                        stay_duration: form.stay_duration as any,
+                                                    }, {
+                                                        onSuccess: (data) => {
+                                                            handleRazorpayPayment(data.id);
+                                                        }
+                                                    });
+                                                }
+                                            }}
                                             disabled={bookingMutation.isPending}
                                         >
-                                            {bookingMutation.isPending ? "Processing..." : `Complete & Pay ₹${totalPrice.toLocaleString()}`}
+                                            {bookingMutation.isPending ? (
+                                                "Initializing..."
+                                            ) : (
+                                                <>
+                                                    Pay with Razorpay
+                                                    <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-lg text-sm">
+                                                        ₹{totalPrice.toLocaleString()}
+                                                    </span>
+                                                </>
+                                            )}
                                         </Button>
+                                        <p className="text-[10px] text-center text-gray-400 font-medium">
+                                            By clicking, you agree to our booking policies and local regulations.
+                                        </p>
                                     </div>
                                 </CardContent>
                             )}
@@ -596,8 +697,8 @@ export default function BookingContainer({ hostel }: Props) {
                     )}
 
                     {form.booking_type !== "visit" && (
-                        <Card className="border-none shadow-none overflow-hidden transition-all duration-300 bg-white">
-                            <CardHeader 
+                        <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
+                            <CardHeader
                                 className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all"
                                 onClick={() => setStep(step === "confirmation" ? null : "confirmation")}
                             >
@@ -608,7 +709,7 @@ export default function BookingContainer({ hostel }: Props) {
                                         </div>
                                         <CardTitle className="text-xl text-gray-900 font-bold">Confirmation & QR Code</CardTitle>
                                     </div>
-                                    <ChevronRight className={cn("h-5 w-5 text-gray-400 transition-transform duration-300", step === "confirmation" ? "rotate-90" : "")} />
+                                    <ChevronRight className={cn("h-5 w-5 text-black transition-transform duration-300", step === "confirmation" ? "rotate-90" : "")} />
                                 </div>
                             </CardHeader>
                             {step === "confirmation" && (
@@ -670,9 +771,9 @@ export default function BookingContainer({ hostel }: Props) {
                                                     Complete your guest details and process the mock payment to receive your booking ID and QR code.
                                                 </p>
                                             </div>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="sm" 
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
                                                 className="text-blue-600 font-bold hover:bg-blue-50"
                                                 onClick={() => setStep("details")}
                                             >
@@ -688,7 +789,7 @@ export default function BookingContainer({ hostel }: Props) {
 
                 {/* Right Column: Summary Sticky Card */}
                 <div className="lg:sticky lg:top-6 self-start space-y-6">
-                    <Card className="border-none shadow-none overflow-hidden bg-gray-50/30 rounded-3xl">
+                    <Card className="border-2 border-gray-200 shadow-none overflow-hidden bg-white rounded-3xl">
                         <CardHeader className="bg-transparent border-none">
                             <CardTitle className="text-lg">Summary</CardTitle>
                         </CardHeader>
@@ -806,10 +907,16 @@ export default function BookingContainer({ hostel }: Props) {
                         <Button
                             variant="outline"
                             onClick={handleGuestOtpSend}
-                            disabled={isGuestOtpSent || isGuestOtpVerifying}
+                            disabled={isGuestOtpVerifying || guestOtpTimer > 0}
                             className="w-full h-11 rounded-xl border-blue-100 hover:bg-blue-50 hover:text-blue-600 transition-all font-semibold"
                         >
-                            {isGuestOtpSent ? "Verification Code Sent" : "Send Verification Code"}
+                            {isGuestOtpSent && guestOtpTimer > 0 ? (
+                                `Resend OTP in ${guestOtpTimer}s`
+                            ) : isGuestOtpSent ? (
+                                "Resend Verification Code"
+                            ) : (
+                                "Send Verification Code"
+                            )}
                         </Button>
 
                         <div className="w-full space-y-2 mt-2">
