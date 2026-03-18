@@ -1,6 +1,7 @@
 import { getFAQs, getFAQCategories } from "@/services/cms.service";
 import { FAQsComponent } from "@/components/faqs/faqscomponent";
 import { Metadata } from "next";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Frequently Asked Questions | Techsprout Hostels",

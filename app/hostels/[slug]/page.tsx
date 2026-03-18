@@ -5,6 +5,7 @@ import HostelDetailClient from "@/components/hostelclient/hostel-detail-client";
 import { generateHostelMetadata } from "@/lib/seo/hostelSeo";
 import { generateHostelSchema, generateBreadcrumbSchema, generateReviewSchema } from "@/lib/seo/schema";
 import JsonLd from "@/components/seo/JsonLd";
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
     try {

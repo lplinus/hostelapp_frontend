@@ -48,6 +48,23 @@ function processDefaultImages(
     };
 }
 
+// export async function getHostels(): Promise<HostelListItem[]> {
+//     const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
+//         next: { revalidate: 60 },
+//     });
+
+//     if (!res.ok) {
+//         throw new Error("Failed to fetch hostels");
+//     }
+
+//     const hostels: HostelListItem[] = await res.json();
+
+//     return hostels.map((hostel) => ({
+//         ...hostel,
+//         images: processHostelImages(hostel.images),
+//         default_images: processDefaultImages(hostel.default_images),
+//     }));
+// }
 export async function getHostels(): Promise<HostelListItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
         next: { revalidate: 60 },
@@ -57,11 +74,15 @@ export async function getHostels(): Promise<HostelListItem[]> {
         throw new Error("Failed to fetch hostels");
     }
 
-    const hostels: HostelListItem[] = await res.json();
+    const data = await res.json();
+
+    const hostels: HostelListItem[] = Array.isArray(data)
+        ? data
+        : data?.results || [];
 
     return hostels.map((hostel) => ({
         ...hostel,
-        images: processHostelImages(hostel.images),
+        images: processHostelImages(hostel.images || []),
         default_images: processDefaultImages(hostel.default_images),
     }));
 }

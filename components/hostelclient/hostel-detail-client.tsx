@@ -138,7 +138,7 @@ export default function HostelDetailClient({ hostel }: Props) {
     const hostelImages: { src: string; alt: string }[] = [];
     
     // Process hostel's specific images (up to 10 fields per image object)
-    for (const img of hostel.images) {
+     for (const img of hostel.images || []){
         for (let i = 1; i <= 10; i++) {
             const field = (i === 1 ? "image" : `image${i}`) as keyof typeof img;
             const src = img[field];
@@ -409,7 +409,8 @@ export default function HostelDetailClient({ hostel }: Props) {
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 font-medium">
                                 <span>
                                     {hostel.area?.name ? `${hostel.area.name}, ` : ""}
-                                    {hostel.city.name}
+                                    {/* {hostel.city.name} */}
+                                    {hostel.city?.name || "Unknown"}
                                 </span>
                                 <span className="text-gray-300 hidden sm:inline">|</span>
                                 <div className="flex items-center gap-1">
@@ -530,13 +531,13 @@ export default function HostelDetailClient({ hostel }: Props) {
                         </p>
 
                         {/* ---------- Amenities ---------- */}
-                        {hostel.amenities.length > 0 && (
+                        {(hostel.amenities || []).length > 0 && (
                             <div className="mb-8">
                                 <h2 className="text-lg font-bold text-gray-900 mb-4">
                                     Amenities
                                 </h2>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {(showAllAmenities ? hostel.amenities : hostel.amenities.slice(0, INITIAL_AMENITY_LIMIT)).map((amenity) => {
+                                    {((showAllAmenities ? hostel.amenities : (hostel.amenities || []).slice(0, INITIAL_AMENITY_LIMIT)) || []).map((amenity) => {
                                         const IconComp = getAmenityIcon(
                                             amenity.name
                                         );
@@ -557,7 +558,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     })}
                                 </div>
 
-                                {hostel.amenities.length > INITIAL_AMENITY_LIMIT && (
+                                {(hostel.amenities || []).length > INITIAL_AMENITY_LIMIT && (
                                     <button
                                         onClick={() => setShowAllAmenities(!showAllAmenities)}
                                         className="mt-4 w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200 flex items-center justify-center gap-2"
@@ -581,7 +582,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     Room Types & Availability
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {(showAllRooms ? hostel.room_types : hostel.room_types.slice(0, INITIAL_ROOM_LIMIT)).map((room) => (
+                                    {((showAllRooms ? hostel.room_types : (hostel.room_types || []).slice(0, INITIAL_ROOM_LIMIT)) || []).map((room) => (
                                         <div
                                             key={room.id}
                                             className={`rounded-xl border border-black p-4 transition-all duration-200 ${room.is_available
@@ -695,8 +696,10 @@ export default function HostelDetailClient({ hostel }: Props) {
                         {/* ---------- Reviews ---------- */}
                         <div className="mb-8">
                             {(() => {
+                                // const hasRealReviews =
+                                //     hostel.reviews && hostel.reviews.length > 0;
                                 const hasRealReviews =
-                                    hostel.reviews && hostel.reviews.length > 0;
+                                    Array.isArray(hostel.reviews) && hostel.reviews.length > 0;
                                 const reviewsToShow = hasRealReviews
                                     ? hostel.reviews
                                     : DEFAULT_REVIEWS;

@@ -1,7 +1,12 @@
 import { tokenManager } from "@/lib/token";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+// const API_BASE_URL =
+//     process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
+
+if (!API_BASE_URL) {
+    throw new Error("API base URL is not defined");
+}
 
 export interface StateItem {
     id: number;
@@ -23,23 +28,52 @@ export interface AreaItem {
     city: number;
 }
 
+// export async function getStates(): Promise<StateItem[]> {
+//     const res = await fetch(`${API_BASE_URL}/api/locations/states/`);
+//     if (!res.ok) throw new Error("Failed to fetch states");
+//     return res.json();
+// }
 export async function getStates(): Promise<StateItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/locations/states/`);
     if (!res.ok) throw new Error("Failed to fetch states");
-    return res.json();
+
+    const data = await res.json();
+
+    return Array.isArray(data) ? data : data?.results || [];
 }
 
+// export async function getCities(): Promise<CityItem[]> {
+//     const res = await fetch(`${API_BASE_URL}/api/locations/cities/`);
+//     if (!res.ok) throw new Error("Failed to fetch cities");
+//     return res.json();
+// }
 export async function getCities(): Promise<CityItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/locations/cities/`);
     if (!res.ok) throw new Error("Failed to fetch cities");
-    return res.json();
+
+    const data = await res.json();
+
+    return Array.isArray(data) ? data : data?.results || [];
 }
+
+
+
+// export async function getAreas(): Promise<AreaItem[]> {
+//     const res = await fetch(`${API_BASE_URL}/api/locations/areas/`);
+//     if (!res.ok) throw new Error("Failed to fetch areas");
+//     return res.json();
+// }
 
 export async function getAreas(): Promise<AreaItem[]> {
     const res = await fetch(`${API_BASE_URL}/api/locations/areas/`);
     if (!res.ok) throw new Error("Failed to fetch areas");
-    return res.json();
+
+    const data = await res.json();
+
+    return Array.isArray(data) ? data : data?.results || [];
 }
+
+
 
 export async function createCity(data: { name: string; state: number }): Promise<CityItem> {
     const token = tokenManager.getAccessToken();
