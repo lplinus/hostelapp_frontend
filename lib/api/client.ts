@@ -8,12 +8,18 @@ interface RequestOptions extends RequestInit {
 }
 
 export class APIClient {
+    // private baseUrl = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
     private baseUrl = env.NEXT_PUBLIC_API_BASE_URL;
 
     protected async fetch<T>(endpoint: string, method: HttpMethod, options: RequestOptions = {}): Promise<T> {
         const { params, headers, ...customOptions } = options;
 
-        let url = `${this.baseUrl}${endpoint}`;
+        // Ensure endpoint has a trailing slash for Django compatibility
+        const normalizedEndpoint = (endpoint.endsWith('/') || endpoint.includes('?') || endpoint.includes('#'))
+            ? endpoint
+            : `${endpoint}/`;
+
+        let url = `${this.baseUrl}${normalizedEndpoint}`;
 
         // Append query params if any
         if (params) {
@@ -49,9 +55,16 @@ export class APIClient {
             incomingHeaders = headers as Record<string, string>;
         }
 
+        // For non-GET methods, use 'manual' redirect so the browser doesn't
+        // silently convert POST → GET on a 301/302/307 (losing the body).
+        // For GET, 'follow' is safe and avoids extra round-trips.
+        const isMutation = method !== 'GET';
+
         const config: RequestInit = {
             method,
             headers: { ...defaultHeaders, ...incomingHeaders },
+            credentials: 'include' as RequestCredentials,
+            redirect: isMutation ? 'manual' : 'follow',
             ...customOptions,
         };
 
@@ -62,7 +75,30 @@ export class APIClient {
             delete h['content-type'];
         }
 
-        const response = await fetch(url, config);
+        let response = await fetch(url, config);
+
+        // Handle manual redirects for mutations — follow the Location header
+        // with the SAME method and body so POST data is never lost.
+        if (isMutation && response.type === 'opaqueredirect') {
+            // opaqueredirect means we got a redirect but redirect: 'manual' hid it
+            // Re-issue to the trailing-slash URL directly
+            const locationUrl = normalizedEndpoint.endsWith('/')
+                ? url
+                : `${url}/`;
+            response = await fetch(locationUrl, { ...config, redirect: 'follow' });
+        }
+
+        // Safety: if status is 3xx (redirect response visible in manual mode),
+        // follow the Location header once.
+        if (response.status >= 300 && response.status < 400) {
+            const location = response.headers.get('Location');
+            if (location) {
+                const redirectUrl = location.startsWith('http')
+                    ? location
+                    : `${this.baseUrl}${location}`;
+                response = await fetch(redirectUrl, { ...config, redirect: 'follow' });
+            }
+        }
 
         if (!response.ok) {
             await handleApiError(response);

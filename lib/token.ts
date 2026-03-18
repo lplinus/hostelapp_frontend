@@ -26,7 +26,7 @@ export const tokenManager = {
      */
     setAuthFlag: (): void => {
         if (typeof document !== 'undefined') {
-            document.cookie = `auth_status=authenticated; path=/; max-age=${10 * 60}; SameSite=Lax`;
+            document.cookie = `auth_status=authenticated; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
         }
     },
 

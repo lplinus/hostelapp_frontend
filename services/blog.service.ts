@@ -5,8 +5,7 @@ import {
     BlogCategory,
 } from "@/types/blog.types";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
 
 /**
  * Strips the Django backend base URL from image paths so they become
@@ -15,12 +14,24 @@ const API_BASE_URL =
  */
 function toRelativeImageUrl(url: string | null): string | null {
     if (!url) return null;
+    const s = String(url);
+    // If it's an ImageKit URL, return it as-is (external CDN)
+    if (s.includes("ik.imagekit.io")) return s;
+
     try {
-        const parsed = new URL(url);
-        return parsed.pathname;
+        const parsed = new URL(s);
+        // Only strip to pathname for our own backend URLs
+        if (API_BASE_URL && s.startsWith(API_BASE_URL)) {
+            return parsed.pathname;
+        }
+        if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") {
+            return parsed.pathname;
+        }
+        // For any other external URL, return as-is
+        return s;
     } catch {
-        // Already a relative path
-        return url;
+        // Already a relative path or invalid URL
+        return s;
     }
 }
 

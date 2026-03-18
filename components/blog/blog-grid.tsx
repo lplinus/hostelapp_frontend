@@ -14,7 +14,7 @@ export default function BlogGrid({ posts }: BlogGridProps) {
             key={post.id}
             title={post.title}
             description={post.short_description}
-            image={post.banner_image || post.featured_image || "/images/placeholder.jpg"}
+            image={post.banner_image || post.featured_image || ""}
             category={post.category.name}
             readTime={post.read_time}
             slug={post.slug}

@@ -9,6 +9,7 @@ import {
     CarouselPrevious,
     CarouselNext,
 } from "@/components/ui/carousel";
+import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
 
 interface City {
     id: number;
@@ -19,15 +20,6 @@ interface City {
     longitude: string | null;
 }
 
-/** Strip backend host so images go through Next.js /media/* rewrite */
-function toLocalMediaPath(url: string): string {
-    try {
-        const parsed = new URL(url);
-        return parsed.pathname; // "/media/cities/dg.webp"
-    } catch {
-        return url; // already a relative path
-    }
-}
 
 interface FeaturedCitiesCarouselProps {
     cities: City[];
@@ -63,11 +55,12 @@ export default function FeaturedCitiesCarousel({
                                 <div className="relative h-36 rounded-2xl overflow-hidden shadow-lg mb-3 border border-black">
                                     {city.city_image && (
                                         <Image
-                                            src={toLocalMediaPath(city.city_image)}
+                                            src={toLocalMediaPath(city.city_image) || ""}
                                             alt={city.name}
                                             fill
                                             className="object-cover transition duration-500"
                                             sizes="(max-width: 768px) 50vw, 20vw"
+                                            unoptimized={isExternalImage(city.city_image)}
                                         />
                                     )}
                                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />

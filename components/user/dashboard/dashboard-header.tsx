@@ -2,6 +2,7 @@
 
 import { Bell, UserCircle, LogOut, Loader2, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { toLocalMediaPath } from "@/lib/utils";
 
 export default function DashboardHeader() {
     const { user, logout, isLoggingOut } = useAuth();
@@ -32,7 +33,7 @@ export default function DashboardHeader() {
                 <button className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-all">
                     {user?.profile_picture ? (
                         <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-100 shadow-sm">
-                            <img src={user.profile_picture} alt="Profile" className="w-full h-full object-cover" />
+                            <img src={toLocalMediaPath(user.profile_picture) || ""} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                     ) : (
                         <UserCircle size={24} className="text-gray-600" />

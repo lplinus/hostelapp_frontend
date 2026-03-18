@@ -3,7 +3,7 @@ import { AuthResponse, AuthUser, RegisterData, RegisterResponse } from '@/lib/ap
 import { tokenManager } from '@/lib/token';
 import { env } from '@/config/env';
 
-const BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
  * Read a cookie value by name (client-side only).
@@ -94,8 +94,13 @@ export async function refreshAccessToken(): Promise<string | null> {
         });
 
         if (!response.ok) {
-            tokenManager.clearAccessToken();
-            tokenManager.clearAuthFlag();
+            console.warn(`[Auth] Token refresh failed with status: ${response.status}`);
+            // Only clear auth state on 401 (invalid/expired refresh token)
+            // Don't clear on network errors or server errors
+            if (response.status === 401 || response.status === 403) {
+                tokenManager.clearAccessToken();
+                tokenManager.clearAuthFlag();
+            }
             return null;
         }
 
@@ -103,9 +108,9 @@ export async function refreshAccessToken(): Promise<string | null> {
         tokenManager.setAccessToken(data.access);
         tokenManager.setAuthFlag();
         return data.access;
-    } catch {
-        tokenManager.clearAccessToken();
-        tokenManager.clearAuthFlag();
+    } catch (err) {
+        console.warn('[Auth] Token refresh network error:', err);
+        // Don't clear auth state on network errors — the token might still be valid
         return null;
     }
 }

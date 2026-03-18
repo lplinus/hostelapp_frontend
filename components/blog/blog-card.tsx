@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock } from "lucide-react";
+import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
 
 interface BlogCardProps {
   title: string;
@@ -20,15 +21,17 @@ export default function BlogCard({
   readTime,
   slug,
 }: BlogCardProps) {
+  const imageSrc = toLocalMediaPath(image) || "/images/placeholder.jpg";
   return (
     <div className="rounded-3xl border shadow-sm hover:shadow-lg transition overflow-hidden bg-white">
       {/* Image */}
       <div className="relative h-56 w-full">
         <Image
-          src={image}
+          src={imageSrc}
           alt={title}
           fill
           className="object-cover"
+          unoptimized={isExternalImage(image)}
         />
       </div>
 

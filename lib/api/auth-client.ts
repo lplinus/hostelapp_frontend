@@ -78,8 +78,10 @@ class AuthAPIClient extends APIClient {
                     return await super.fetch<T>(endpoint, method, retryOptions);
                 }
 
-                // Refresh failed — redirect to login
+                // Refresh truly failed — redirect to login so user isn't stuck
                 if (typeof globalThis.window !== 'undefined') {
+                    tokenManager.clearAccessToken();
+                    tokenManager.clearAuthFlag();
                     globalThis.window.location.href = '/login';
                 }
             }

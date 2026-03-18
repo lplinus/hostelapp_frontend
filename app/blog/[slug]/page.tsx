@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { isExternalImage } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, ArrowLeft } from "lucide-react";
@@ -78,21 +79,21 @@ export default async function BlogDetailPage({ params }: Props) {
               {post.featured_image && (
                 <CarouselItem>
                   <div className="relative h-[40vh] md:h-[50vh] w-full">
-                    <Image src={post.featured_image} alt={`${post.title} - Image 1`} fill className="object-cover" priority />
+                    <Image src={post.featured_image} alt={`${post.title} - Image 1`} fill className="object-cover" priority unoptimized={isExternalImage(post.featured_image)} />
                   </div>
                 </CarouselItem>
               )}
               {post.featured_image2 && (
                 <CarouselItem>
                   <div className="relative h-[40vh] md:h-[50vh] w-full">
-                    <Image src={post.featured_image2} alt={`${post.title} - Image 2`} fill className="object-cover" />
+                    <Image src={post.featured_image2} alt={`${post.title} - Image 2`} fill className="object-cover" unoptimized={isExternalImage(post.featured_image2)} />
                   </div>
                 </CarouselItem>
               )}
               {post.featured_image3 && (
                 <CarouselItem>
                   <div className="relative h-[40vh] md:h-[50vh] w-full">
-                    <Image src={post.featured_image3} alt={`${post.title} - Image 3`} fill className="object-cover" />
+                    <Image src={post.featured_image3} alt={`${post.title} - Image 3`} fill className="object-cover" unoptimized={isExternalImage(post.featured_image3)} />
                   </div>
                 </CarouselItem>
               )}
@@ -112,6 +113,7 @@ export default async function BlogDetailPage({ params }: Props) {
               fill
               className="object-cover"
               priority
+              unoptimized={isExternalImage(post.banner_image)}
             />
           </div>
         )}

@@ -1,14 +1,23 @@
 import { HostelListItem, HostelDetail, HostelImage, DefaultHostelImage } from "@/types/hostel.types";
 import { authApiClient } from "@/lib/api/auth-client";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = typeof globalThis.window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
 
 function toRelativeImageUrl(url: string | null): string | null {
     if (!url) return null;
+    // If it's an ImageKit URL, return it as-is (external CDN)
+    if (url.includes("ik.imagekit.io")) return url;
     try {
         const parsed = new URL(url);
-        return parsed.pathname;
+        // Only strip to pathname for our own backend URLs
+        if (API_BASE_URL && url.startsWith(API_BASE_URL)) {
+            return parsed.pathname;
+        }
+        if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") {
+            return parsed.pathname;
+        }
+        // For any other external URL, return as-is
+        return url;
     } catch {
         return url;
     }
@@ -40,7 +49,7 @@ function processDefaultImages(
 }
 
 export async function getHostels(): Promise<HostelListItem[]> {
-    const res = await fetch(`${API_BASE_URL}/api/hostels/hostels/`, {
+    const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
         next: { revalidate: 60 },
     });
 
@@ -70,7 +79,7 @@ export async function getTopRatedHostels(): Promise<HostelListItem[]> {
 export async function getHostelBySlug(
     slug: string
 ): Promise<HostelDetail> {
-    const res = await fetch(`${API_BASE_URL}/api/hostels/hostels/${slug}/`, {
+    const res = await fetch(`${API_BASE_URL}/api/hostels/${slug}/`, {
         next: { revalidate: 60 },
     });
 

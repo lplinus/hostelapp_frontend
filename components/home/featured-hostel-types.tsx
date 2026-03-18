@@ -27,7 +27,7 @@ async function getHostelTypes(): Promise<HostelType[]> {
     }
 }
 
-import { toLocalMediaPath } from "@/lib/utils";
+import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
 
 export default async function FeaturedHostelTypes() {
     const hostelTypes = await getHostelTypes();
@@ -70,6 +70,7 @@ export default async function FeaturedHostelTypes() {
                                                     fill
                                                     className="object-cover transition duration-500"
                                                     sizes="(max-width: 768px) 50vw, 20vw"
+                                                    unoptimized={isExternalImage(type.image)}
                                                 />
                                             ) : (
                                                 <div className="absolute inset-0 bg-blue-500 opacity-90 transition duration-500" />

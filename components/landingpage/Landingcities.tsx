@@ -3,6 +3,7 @@ import Image from "next/image";
 import SectionReveal from "@/components/ui/section-reveal";
 import { ArrowUpRight, Navigation } from "lucide-react";
 import { LandingPageResponse } from "@/lib/api/types";
+import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
 
 interface LandingCitiesProps {
   data: LandingPageResponse | null;
@@ -83,12 +84,13 @@ export default function LandingCities({ data }: LandingCitiesProps) {
                 {/* IMAGE */}
                 <div className="absolute inset-0 w-full h-full z-0">
                     <Image
-                        src={c.image || "/images/hero1.webp"}
+                        src={toLocalMediaPath(c.image) || "/images/hero1.webp"}
                         alt={`${c.city_name} hostels`}
                         fill
                         className="object-cover transition-transform duration-[1.5s]"
                         sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
                         priority={idx === 0}
+                        unoptimized={isExternalImage(c.image)}
                     />
                 </div>
 

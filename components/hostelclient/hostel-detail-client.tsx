@@ -127,7 +127,7 @@ const DEFAULT_REVIEWS = [
 /* ------------------------------------------------------------------ */
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
-import { toLocalMediaPath } from "@/lib/utils";
+import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
 
 interface Props {
     hostel: HostelDetail;
@@ -277,6 +277,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     className="object-cover hover:brightness-75 transition-all duration-300"
                                     priority
                                     sizes="800px"
+                                    unoptimized={isExternalImage(allImages[0]?.src)}
                                 />
                             </div>
 
@@ -291,6 +292,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     fill
                                     className="object-cover hover:brightness-75 transition-all duration-300"
                                     sizes="400px"
+                                    unoptimized={isExternalImage(allImages[1]?.src || allImages[0]?.src)}
                                 />
                             </div>
 
@@ -305,6 +307,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     fill
                                     className="object-cover hover:brightness-75 transition-all duration-300"
                                     sizes="400px"
+                                    unoptimized={isExternalImage(allImages[2]?.src || allImages[0]?.src)}
                                 />
                             </div>
 
@@ -319,6 +322,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     fill
                                     className="object-cover hover:brightness-75 transition-all duration-300"
                                     sizes="400px"
+                                    unoptimized={isExternalImage(allImages[3]?.src || allImages[0]?.src)}
                                 />
                             </div>
 
@@ -333,6 +337,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     fill
                                     className="object-cover hover:brightness-75 transition-all duration-300"
                                     sizes="400px"
+                                    unoptimized={isExternalImage(allImages[4]?.src || allImages[0]?.src)}
                                 />
                             </div>
                         </div>
@@ -347,6 +352,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     className="object-cover"
                                     priority
                                     sizes="100vw"
+                                    unoptimized={isExternalImage(allImages[activeImg]?.src)}
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">
@@ -478,6 +484,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                                     fill
                                                     className="object-cover"
                                                     sizes="(max-width: 1200px) 100vw, 1000px"
+                                                    unoptimized={isExternalImage(img.src)}
                                                 />
                                             </div>
                                         ))}

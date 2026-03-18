@@ -2,12 +2,32 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-    // Check for auth status flag (set by client-side auth flow)
-    const authStatus = request.cookies.get('auth_status')?.value;
-    // Also check legacy access cookie for backward compatibility
-    const legacyToken = request.cookies.get('access')?.value;
+    const { pathname } = request.nextUrl;
 
-    const isAuthenticated = authStatus === 'authenticated' || !!legacyToken;
+    // ─── CRITICAL: Never intercept API or internal Next.js routes ───
+    // The /api/ rewrite proxies to Django. If middleware touches these
+    // paths it can cause ERR_TOO_MANY_REDIRECTS because middleware
+    // redirect logic (e.g. "not authenticated → /login") fires on the
+    // proxied fetch request itself, not just on page navigations.
+    if (
+        pathname.startsWith('/api/') ||
+        pathname.startsWith('/_next/') ||
+        pathname.startsWith('/media/') ||
+        pathname.includes('.')
+    ) {
+        return NextResponse.next();
+    }
+
+    // Check for the HttpOnly cookies set by the Django backend.
+    // These survive browser refreshes (unlike in-memory tokens).
+    const accessToken = request.cookies.get('access_token')?.value;
+    const refreshToken = request.cookies.get('refresh_token')?.value;
+    // Legacy: also check the client-side auth_status flag for backward compat
+    const authStatus = request.cookies.get('auth_status')?.value;
+
+    // User is authenticated if ANY persistent token cookie is present.
+    // access_token expires every 10 min, but refresh_token lasts 30 days.
+    const isAuthenticated = !!accessToken || !!refreshToken || authStatus === 'authenticated';
 
     // Protect /admin routes
     if (request.nextUrl.pathname.startsWith('/admin')) {
@@ -54,5 +74,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*'],
+    matcher: ['/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/login', '/register'],
 };

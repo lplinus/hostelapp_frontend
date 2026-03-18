@@ -12,6 +12,7 @@ import type { HostelListItem } from "@/types/hostel.types";
 import { toast } from "sonner";
 import { Pencil, Image as ImageIcon, Trash2 } from "lucide-react";
 import HostelForm from "./hostel-form";
+import { toLocalMediaPath } from "@/lib/utils";
 
 export default function HostelManagement() {
     const queryClient = useQueryClient();
@@ -344,7 +345,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 1</p>
                                                         {img.image ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image}`} alt={img.alt_text || "Image 1"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image) || ""} alt={img.alt_text || "Image 1"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -354,7 +355,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 2</p>
                                                         {img.image2 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image2}`} alt={img.alt_text || "Image 2"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image2) || ""} alt={img.alt_text || "Image 2"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -364,7 +365,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 3</p>
                                                         {img.image3 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image3}`} alt={img.alt_text || "Image 3"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image3) || ""} alt={img.alt_text || "Image 3"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -374,7 +375,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 4</p>
                                                         {img.image4 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image4}`} alt={img.alt_text || "Image 4"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image4) || ""} alt={img.alt_text || "Image 4"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -384,7 +385,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 5</p>
                                                         {img.image5 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image5}`} alt={img.alt_text || "Image 5"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image5) || ""} alt={img.alt_text || "Image 5"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -394,7 +395,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 6</p>
                                                         {img.image6 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image6}`} alt={img.alt_text || "Image 6"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image6) || ""} alt={img.alt_text || "Image 6"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -404,7 +405,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 7</p>
                                                         {img.image7 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image7}`} alt={img.alt_text || "Image 7"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image7) || ""} alt={img.alt_text || "Image 7"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -414,7 +415,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 8</p>
                                                         {img.image8 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image8}`} alt={img.alt_text || "Image 8"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image8) || ""} alt={img.alt_text || "Image 8"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -424,7 +425,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 9</p>
                                                         {img.image9 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image9}`} alt={img.alt_text || "Image 9"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image9) || ""} alt={img.alt_text || "Image 9"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -434,7 +435,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 10</p>
                                                         {img.image10 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                            <img src={`${API_BASE}${img.image10}`} alt={img.alt_text || "Image 10"} className="w-full h-28 object-cover rounded" />
+                                                    <img src={toLocalMediaPath(img.image10) || ""} alt={img.alt_text || "Image 10"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -469,7 +470,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image ? "New Input" : existingSet?.image?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image || (existingSet?.image ? `${API_BASE}${existingSet.image}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image || (existingSet?.image ? toLocalMediaPath(existingSet.image) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -483,7 +484,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image2 ? "New Input" : existingSet?.image2?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image2 || (existingSet?.image2 ? `${API_BASE}${existingSet.image2}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image2 || (existingSet?.image2 ? toLocalMediaPath(existingSet.image2) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -497,7 +498,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image3 ? "New Input" : existingSet?.image3?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image3 || (existingSet?.image3 ? `${API_BASE}${existingSet.image3}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image3 || (existingSet?.image3 ? toLocalMediaPath(existingSet.image3) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -511,7 +512,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image4 ? "New Input" : existingSet?.image4?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image4 || (existingSet?.image4 ? `${API_BASE}${existingSet.image4}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image4 || (existingSet?.image4 ? toLocalMediaPath(existingSet.image4) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -525,7 +526,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image5 ? "New Input" : existingSet?.image5?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image5 || (existingSet?.image5 ? `${API_BASE}${existingSet.image5}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image5 || (existingSet?.image5 ? toLocalMediaPath(existingSet.image5) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -539,7 +540,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image6 ? "New Input" : existingSet?.image6?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image6 || (existingSet?.image6 ? `${API_BASE}${existingSet.image6}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image6 || (existingSet?.image6 ? toLocalMediaPath(existingSet.image6) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -553,7 +554,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image7 ? "New Input" : existingSet?.image7?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image7 || (existingSet?.image7 ? `${API_BASE}${existingSet.image7}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image7 || (existingSet?.image7 ? toLocalMediaPath(existingSet.image7) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -567,7 +568,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image8 ? "New Input" : existingSet?.image8?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image8 || (existingSet?.image8 ? `${API_BASE}${existingSet.image8}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image8 || (existingSet?.image8 ? toLocalMediaPath(existingSet.image8) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -581,7 +582,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image9 ? "New Input" : existingSet?.image9?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image9 || (existingSet?.image9 ? `${API_BASE}${existingSet.image9}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image9 || (existingSet?.image9 ? toLocalMediaPath(existingSet.image9) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>
@@ -595,7 +596,7 @@ export default function HostelManagement() {
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
                                                             {imagePreviews.image10 ? "New Input" : existingSet?.image10?.split("/").pop()}
                                                         </span>
-                                                        <img src={imagePreviews.image10 || (existingSet?.image10 ? `${API_BASE}${existingSet.image10}` : "")} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
+                                                        <img src={imagePreviews.image10 || (existingSet?.image10 ? toLocalMediaPath(existingSet.image10) : "") || ""} alt="Preview" className="w-10 h-10 object-cover rounded shadow-sm ring-1 ring-gray-200" />
                                                     </div>
                                                 )}
                                             </div>

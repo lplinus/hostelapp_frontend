@@ -1,4 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+// const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://34.80.15.95"
 
 export async function getSEO(page: string) {
     try {

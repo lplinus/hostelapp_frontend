@@ -9,7 +9,7 @@ import {
   MapPin,
   Star
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isExternalImage } from "@/lib/utils";
 
 export interface HostelCardProps {
   readonly id: string;
@@ -74,6 +74,7 @@ export default function HostelCard({
             alt={name}
             fill
             className="object-cover"
+            unoptimized={isExternalImage(image)}
           />
         ) : (
           <div className="w-full h-full bg-slate-100 flex items-center justify-center">
