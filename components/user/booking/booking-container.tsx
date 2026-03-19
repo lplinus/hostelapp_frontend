@@ -8,13 +8,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelDetail } from "@/types/hostel.types";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, addDays, differenceInDays, parseISO, addMonths } from "date-fns";
-import { Calendar as CalendarIcon, CheckCircle2, ChevronRight, CreditCard, User, Mail, Users, Baby, Phone, Activity, Info, ArrowLeft } from "lucide-react";
+import { format, addDays, differenceInDays } from "date-fns";
+import { Activity, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { BookingDetailsStep } from "./steps/BookingDetailsStep";
@@ -52,6 +47,9 @@ export default function BookingContainer({ hostel }: Props) {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [termsError, setTermsError] = useState(false);
     const [guestOtpTimer, setGuestOtpTimer] = useState(0);
+    const [isPhoneVerifiedManually, setIsPhoneVerifiedManually] = useState(false);
+    const [isPaymentVerified, setIsPaymentVerified] = useState(false);
+    const isPhoneVerified = profile?.is_phone_verified || isPhoneVerifiedManually;
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -70,7 +68,7 @@ export default function BookingContainer({ hostel }: Props) {
     const [form, setForm] = useState({
         guest_name: "",
         guest_email: "",
-        mobile_number: "",
+        mobile_number: "+91",
         guest_age: "20",
         adults: "1",
         children: "0",
@@ -118,6 +116,7 @@ export default function BookingContainer({ hostel }: Props) {
     }, [selectedRoom, nights, form.stay_duration, form.booking_type, form.adults]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
+    const [paymentId, setPaymentId] = useState<string | null>(null);
 
     const bookingMutation = useMutation({
         mutationFn: (data: BookingRequest) => createBooking(data),
@@ -140,6 +139,20 @@ export default function BookingContainer({ hostel }: Props) {
             toast.error(error.response?.data?.message || "Failed to create booking. Please try again.");
         }
     });
+
+    const isFormValid = useMemo(() => {
+        const hasName = form.guest_name.trim().length >= 3;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const hasEmail = emailRegex.test(form.guest_email);
+        const phoneRegex = /^\+?[\d\s-]{10,}$/;
+        const hasPhone = phoneRegex.test(form.mobile_number);
+        const age = Number.parseInt(form.guest_age);
+        const hasAge = !Number.isNaN(age) && age >= 10 && age <= 100;
+        const hasRoom = !!selectedRoomId;
+        const hasDates = nights > 0;
+        
+        return hasName && hasEmail && hasPhone && hasAge && hasRoom && hasDates && termsAccepted;
+    }, [form, selectedRoomId, nights, termsAccepted]);
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -172,7 +185,7 @@ export default function BookingContainer({ hostel }: Props) {
         }
 
         if (!selectedRoomId) {
-            toast.error("Please select a room type."); // Still use toast for global/hidden field errors if necessary, but try to avoid
+            toast.error("Please select a room type.");
             return false;
         }
 
@@ -180,13 +193,9 @@ export default function BookingContainer({ hostel }: Props) {
             newErrors.dates = "Check-out date must be after check-in date.";
         }
 
-        if (!termsAccepted) {
-            setTermsError(true);
-        } else {
-            setTermsError(false);
-        }
-
+        setTermsError(!termsAccepted);
         setErrors(newErrors);
+        
         return Object.keys(newErrors).length === 0 && termsAccepted;
     };
 
@@ -233,6 +242,7 @@ export default function BookingContainer({ hostel }: Props) {
         try {
             await verifyBookingOtp(form.mobile_number, guestOtp);
             setIsGuestOtpVerifying(false);
+            setIsPhoneVerifiedManually(true);
             toast.success("Mobile number verified successfully!");
             setShowGuestOtp(false);
             if (form.booking_type === "visit") {
@@ -310,8 +320,10 @@ export default function BookingContainer({ hostel }: Props) {
                             signature: response.razorpay_signature
                         });
 
-                        setStep("confirmation");
-                        toast.success("Payment successful!");
+                            setPaymentId(response.razorpay_payment_id);
+                            setIsPaymentVerified(true);
+                            setStep("confirmation");
+                            toast.success("Payment successful!");
                         queryClient.invalidateQueries({ queryKey: ["userBookings"] });
                     } catch (error) {
                         toast.error("Payment verification failed.");
@@ -329,9 +341,36 @@ export default function BookingContainer({ hostel }: Props) {
 
             const rzp = new (window as any).Razorpay(options);
             rzp.open();
-        } catch (error) {
-            toast.error("Failed to initiate payment.");
+        } catch (error: any) {
+            const errorMsg = error.message || "Failed to initiate payment.";
+            if (errorMsg.includes("already 'confirmed'")) {
+                toast.error("You have already booked this hostel. Please use 'Book Again' for a new booking.");
+            } else {
+                toast.error(errorMsg);
+            }
         }
+    };
+
+    const resetBooking = () => {
+        setForm({
+            guest_name: "",
+            guest_email: "",
+            mobile_number: "+91",
+            guest_age: "20",
+            adults: "1",
+            children: "0",
+            check_in: new Date(),
+            check_out: addDays(new Date(), 1),
+            booking_type: "stay",
+            stay_duration: "none",
+        });
+        setConfirmedBookingId(null);
+        setStep("details");
+        setTermsAccepted(false);
+        setErrors({});
+        setIsPhoneVerifiedManually(false);
+        setIsPaymentVerified(false);
+        setPaymentId(null);
     };
 
 
@@ -365,6 +404,7 @@ export default function BookingContainer({ hostel }: Props) {
                         setTermsError={setTermsError}
                         openLegalDocument={openLegalDocument}
                         handleNext={handleNext}
+                        isPhoneVerified={isPhoneVerified}
                     />
 
                     {form.booking_type !== "visit" && (
@@ -378,6 +418,10 @@ export default function BookingContainer({ hostel }: Props) {
                             form={form}
                             bookingMutation={bookingMutation}
                             handleRazorpayPayment={handleRazorpayPayment}
+                            isPhoneVerified={isPhoneVerified}
+                            validateForm={validateForm}
+                            isFormValid={isFormValid}
+                            isPaymentVerified={isPaymentVerified}
                         />
                     )}
 
@@ -386,10 +430,16 @@ export default function BookingContainer({ hostel }: Props) {
                             step={step}
                             setStep={setStep}
                             confirmedBookingId={confirmedBookingId}
+                            paymentId={paymentId}
                             form={form}
                             totalPrice={totalPrice}
                             hostelName={hostel.name}
                             router={router}
+                            isPhoneVerified={isPhoneVerified}
+                            validateForm={validateForm}
+                            isFormValid={isFormValid}
+                            resetBooking={resetBooking}
+                            isPaymentVerified={isPaymentVerified}
                         />
                     )}
                 </div>
@@ -422,6 +472,7 @@ export default function BookingContainer({ hostel }: Props) {
                 phone={form.mobile_number}
                 onSuccess={() => {
                     toast.success("Phone verified! Proceeding...");
+                    setIsPhoneVerifiedManually(true);
                     queryClient.invalidateQueries({ queryKey: ["userProfile"] });
                     if (form.booking_type === "visit") {
                         handleConfirmBooking();

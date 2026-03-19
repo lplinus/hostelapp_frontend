@@ -24,6 +24,8 @@ export interface Booking {
     booking_type: 'stay' | 'visit';
     stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
     created_at?: string;
+    payment_id?: string;
+    payment_status?: string;
 }
 
 export interface BookingRequest {
@@ -43,8 +45,8 @@ export interface BookingRequest {
     stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
 }
 
-export const getOwnerBookings = async (): Promise<Booking[]> => {
-    return authApiClient.get<Booking[]>("/api/bookings/owner/");
+export const getOwnerBookings = async (params?: any): Promise<Booking[]> => {
+    return authApiClient.get<Booking[]>("/api/bookings/owner/", { params });
 };
 
 export const updateBookingStatus = async (id: number | string, status: string): Promise<Booking> => {

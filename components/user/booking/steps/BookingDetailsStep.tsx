@@ -26,6 +26,7 @@ interface BookingDetailsStepProps {
     setTermsError: (t: boolean) => void;
     openLegalDocument: (type: 'terms' | 'privacy', e: React.MouseEvent) => void;
     handleNext: () => void;
+    isPhoneVerified: boolean;
 }
 
 export function BookingDetailsStep({
@@ -41,20 +42,28 @@ export function BookingDetailsStep({
     termsError,
     setTermsError,
     openLegalDocument,
-    handleNext
+    handleNext,
+    isPhoneVerified
 }: BookingDetailsStepProps) {
     return (
         <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
             <CardHeader className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all" onClick={() => setStep(step === "details" ? null : "details")}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold", step !== "details" ? "bg-green-100 text-green-600" : "bg-blue-600 text-white")}>
-                            {step !== "details" ? <CheckCircle2 size={16} /> : "1"}
+                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold", (step !== "details" && isPhoneVerified) ? "bg-green-100 text-green-600" : "bg-blue-600 text-white")}>
+                            {(step !== "details" && isPhoneVerified) ? <CheckCircle2 size={16} /> : "1"}
                         </div>
                         <div>
                             <CardTitle className="text-xl text-gray-900 font-bold">Confirm Booking details</CardTitle>
                             {step !== "details" && (
-                                <p className="text-xs text-gray-500 mt-1 font-medium">{form.guest_name} • {form.mobile_number}</p>
+                                <p className="text-xs text-gray-500 mt-1 font-medium">
+                                    {form.guest_name} • {form.mobile_number} 
+                                    {isPhoneVerified ? (
+                                        <span className="ml-2 text-green-600 font-bold uppercase text-[9px]">Verified</span>
+                                    ) : (
+                                        <span className="ml-2 text-orange-600 font-bold uppercase text-[9px]">Verification Pending</span>
+                                    )}
+                                </p>
                             )}
                         </div>
                     </div>
@@ -120,7 +129,11 @@ export function BookingDetailsStep({
                             placeholder="+91 9876543210"
                             value={form.mobile_number}
                             onChange={(e) => {
-                                setForm({ ...form, mobile_number: e.target.value });
+                                let val = e.target.value;
+                                if (!val.startsWith("+91")) {
+                                    val = "+91" + val.replace(/^\+?91?/, "");
+                                }
+                                setForm({ ...form, mobile_number: val });
                                 if (errors.mobile_number) setErrors(prev => ({ ...prev, mobile_number: "" }));
                             }}
                             className={cn(

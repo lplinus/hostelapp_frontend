@@ -11,26 +11,61 @@ interface ConfirmationStepProps {
     step: Step;
     setStep: (s: Step) => void;
     confirmedBookingId: string | null;
+    paymentId: string | null;
     form: any;
     totalPrice: number;
     hostelName: string;
     router: any;
+    isPhoneVerified: boolean;
+    validateForm: () => boolean;
+    isFormValid: boolean;
+    resetBooking: () => void;
+    isPaymentVerified: boolean;
 }
 
 export function ConfirmationStep({
     step,
     setStep,
     confirmedBookingId,
+    paymentId,
     form,
     totalPrice,
     hostelName,
-    router
+    router,
+    isPhoneVerified,
+    validateForm,
+    isFormValid,
+    resetBooking,
+    isPaymentVerified
 }: ConfirmationStepProps) {
     return (
         <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
             <CardHeader
                 className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all"
-                onClick={() => setStep(step === "confirmation" ? null : "confirmation")}
+                onClick={() => {
+                    if (step === "confirmation") {
+                        setStep(null);
+                        return;
+                    }
+
+                    if (!isFormValid) {
+                        validateForm();
+                        setStep("details");
+                        return;
+                    }
+                    
+                    if (!isPhoneVerified) {
+                        setStep("details");
+                        return;
+                    }
+
+                    if (form.booking_type === "stay" && !isPaymentVerified) {
+                        setStep("payment");
+                        return;
+                    }
+
+                    setStep("confirmation");
+                }}
             >
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -43,8 +78,34 @@ export function ConfirmationStep({
                 </div>
             </CardHeader>
             {step === "confirmation" && (
-                <CardContent className="space-y-6 pt-4 px-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                    {confirmedBookingId ? (
+                <CardContent className="space-y-6 pt-2 pb-8 px-6 animate-in slide-in-from-top-2 duration-300">
+                    {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && !isPaymentVerified)) ? (
+                        <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                             <div className="flex justify-center">
+                                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                    <Info size={28} />
+                                </div>
+                            </div>
+                            <div className="space-y-2 max-w-xs mx-auto">
+                                <h4 className="font-bold text-gray-900">Step Incomplete</h4>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {!isFormValid 
+                                        ? "Please complete guest details correctly first." 
+                                        : !isPhoneVerified 
+                                            ? "Please verify your mobile number first." 
+                                            : "Please complete your payment to view confirmation."}
+                                </p>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-blue-600 font-bold hover:bg-blue-50"
+                                onClick={() => setStep(!isFormValid || !isPhoneVerified ? "details" : "payment")}
+                            >
+                                {!isFormValid || !isPhoneVerified ? "Go to Details" : "Go to Payment"}
+                            </Button>
+                        </div>
+                    ) : (confirmedBookingId && (form.booking_type === "visit" || isPaymentVerified)) ? (
                         <>
                             <div className="text-center space-y-4 mb-4">
                                 <div className="flex justify-center">
@@ -71,10 +132,16 @@ export function ConfirmationStep({
                                         <div className="font-semibold text-right">{format(form.check_in, "MMM d")} - {format(form.check_out, "MMM d")}</div>
                                         <div className="text-gray-400 font-bold uppercase tracking-wider">Total Price</div>
                                         <div className="font-bold text-right text-green-600 text-sm">₹{totalPrice.toLocaleString()}</div>
+                                        {paymentId && (
+                                            <>
+                                                <div className="text-gray-400 font-bold uppercase tracking-wider">Payment ID</div>
+                                                <div className="font-bold text-right font-mono text-blue-600 text-[10px] break-all">{paymentId}</div>
+                                            </>
+                                        )}
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                                         <img
-                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nBOOKING:${confirmedBookingId}`)}`}
+                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nPayment ID: ${paymentId || "N/A"}\nBOOKING:${confirmedBookingId}`)}`}
                                             alt="Booking QR Code"
                                             className="w-24 h-24"
                                         />
@@ -83,34 +150,15 @@ export function ConfirmationStep({
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 pt-2">
+                            <div className="flex flex-col sm:flex-row gap-4 pt-2">
                                 <Button variant="outline" className="flex-1 rounded-xl h-12 font-bold" onClick={() => router.push("/home")}>Browse Hostels</Button>
+                                {((form.booking_type === 'visit' && confirmedBookingId) || isPaymentVerified) && (
+                                    <Button variant="outline" className="flex-1 rounded-xl h-12 border-blue-200 text-blue-700 font-bold" onClick={resetBooking}>Book Again</Button>
+                                )}
                                 <Button className="flex-1 rounded-xl h-12 bg-blue-600 font-bold shadow-md shadow-blue-100" onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
                             </div>
                         </>
-                    ) : (
-                        <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-                            <div className="flex justify-center">
-                                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                                    <Info size={28} />
-                                </div>
-                            </div>
-                            <div className="space-y-2 max-w-xs mx-auto">
-                                <h4 className="font-bold text-gray-900">No Confirmation Yet</h4>
-                                <p className="text-xs text-muted-foreground leading-relaxed">
-                                    Complete your guest details and process the mock payment to receive your booking ID and QR code.
-                                </p>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-blue-600 font-bold hover:bg-blue-50"
-                                onClick={() => setStep("details")}
-                            >
-                                Start with Details
-                            </Button>
-                        </div>
-                    )}
+                    ) : null}
                 </CardContent>
             )}
         </Card>
