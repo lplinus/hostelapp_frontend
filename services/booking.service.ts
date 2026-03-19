@@ -26,6 +26,7 @@ export interface Booking {
     created_at?: string;
     payment_id?: string;
     payment_status?: string;
+    payment_method?: 'online' | 'on_arrival';
 }
 
 export interface BookingRequest {
@@ -43,6 +44,7 @@ export interface BookingRequest {
     total_price: number;
     booking_type: 'stay' | 'visit';
     stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
+    payment_method?: 'online' | 'on_arrival';
 }
 
 export const getOwnerBookings = async (params?: any): Promise<Booking[]> => {
@@ -99,4 +101,13 @@ export const verifyRazorpayPayment = async (data: any): Promise<any> => {
         options.headers = { 'Authorization': `Bearer ${token}` };
     }
     return apiClient.post<any>("/api/payments/verify_razorpay_payment/", data, options);
+};
+
+export const confirmPayAtProperty = async (bookingId: string): Promise<any> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = {};
+    if (token) {
+        options.headers = { 'Authorization': `Bearer ${token}` };
+    }
+    return apiClient.post<any>(`/api/bookings/${bookingId}/confirm_pay_at_property/`, {}, options);
 };

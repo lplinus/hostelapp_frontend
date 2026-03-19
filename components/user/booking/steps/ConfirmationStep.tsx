@@ -21,6 +21,7 @@ interface ConfirmationStepProps {
     isFormValid: boolean;
     resetBooking: () => void;
     isPaymentVerified: boolean;
+    paymentMethod: "online" | "on_arrival";
 }
 
 export function ConfirmationStep({
@@ -36,7 +37,8 @@ export function ConfirmationStep({
     validateForm,
     isFormValid,
     resetBooking,
-    isPaymentVerified
+    isPaymentVerified,
+    paymentMethod
 }: ConfirmationStepProps) {
     return (
         <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
@@ -59,7 +61,7 @@ export function ConfirmationStep({
                         return;
                     }
 
-                    if (form.booking_type === "stay" && !isPaymentVerified) {
+                    if (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified) {
                         setStep("payment");
                         return;
                     }
@@ -79,7 +81,7 @@ export function ConfirmationStep({
             </CardHeader>
             {step === "confirmation" && (
                 <CardContent className="space-y-6 pt-2 pb-8 px-6 animate-in slide-in-from-top-2 duration-300">
-                    {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && !isPaymentVerified)) ? (
+                    {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified)) ? (
                         <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
                              <div className="flex justify-center">
                                 <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
@@ -105,7 +107,7 @@ export function ConfirmationStep({
                                 {!isFormValid || !isPhoneVerified ? "Go to Details" : "Go to Payment"}
                             </Button>
                         </div>
-                    ) : (confirmedBookingId && (form.booking_type === "visit" || isPaymentVerified)) ? (
+                    ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified)) ? (
                         <>
                             <div className="text-center space-y-4 mb-4">
                                 <div className="flex justify-center">
@@ -130,8 +132,10 @@ export function ConfirmationStep({
                                         <div className="font-semibold text-right">{form.guest_name}</div>
                                         <div className="text-gray-400 font-bold uppercase tracking-wider">Dates</div>
                                         <div className="font-semibold text-right">{format(form.check_in, "MMM d")} - {format(form.check_out, "MMM d")}</div>
-                                        <div className="text-gray-400 font-bold uppercase tracking-wider">Total Price</div>
-                                        <div className="font-bold text-right text-green-600 text-sm">₹{totalPrice.toLocaleString()}</div>
+                                        <div className="text-gray-400 font-bold uppercase tracking-wider">Payment</div>
+                                        <div className={cn("font-bold text-right text-sm", paymentMethod === "on_arrival" ? "text-orange-600" : "text-green-600")}>
+                                            {paymentMethod === "on_arrival" ? "Pay at Hostel" : "Paid Online"}
+                                        </div>
                                         {paymentId && (
                                             <>
                                                 <div className="text-gray-400 font-bold uppercase tracking-wider">Payment ID</div>
@@ -141,7 +145,7 @@ export function ConfirmationStep({
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                                         <img
-                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nPayment ID: ${paymentId || "N/A"}\nBOOKING:${confirmedBookingId}`)}`}
+                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid'}\nBOOKING:${confirmedBookingId}`)}`}
                                             alt="Booking QR Code"
                                             className="w-24 h-24"
                                         />
@@ -152,7 +156,7 @@ export function ConfirmationStep({
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-2">
                                 <Button variant="outline" className="flex-1 rounded-xl h-12 font-bold" onClick={() => router.push("/home")}>Browse Hostels</Button>
-                                {((form.booking_type === 'visit' && confirmedBookingId) || isPaymentVerified) && (
+                                {((form.booking_type === 'visit' && confirmedBookingId) || paymentMethod === "on_arrival" || isPaymentVerified) && (
                                     <Button variant="outline" className="flex-1 rounded-xl h-12 border-blue-200 text-blue-700 font-bold" onClick={resetBooking}>Book Again</Button>
                                 )}
                                 <Button className="flex-1 rounded-xl h-12 bg-blue-600 font-bold shadow-md shadow-blue-100" onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>

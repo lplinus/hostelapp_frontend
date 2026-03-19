@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp, createRazorpayOrder, verifyRazorpayPayment } from "@/services/booking.service";
+import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp, createRazorpayOrder, verifyRazorpayPayment, confirmPayAtProperty } from "@/services/booking.service";
 import { getUserProfile } from "@/services/user.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelDetail } from "@/types/hostel.types";
@@ -117,18 +117,19 @@ export default function BookingContainer({ hostel }: Props) {
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
     const [paymentId, setPaymentId] = useState<string | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "on_arrival">("online");
 
     const bookingMutation = useMutation({
         mutationFn: (data: BookingRequest) => createBooking(data),
         onSuccess: (data) => {
             setConfirmedBookingId(data.id);
             // Only move to confirmation automatically for "visit" bookings
-            // For "stay" bookings, we wait for Razorpay payment to complete
+            // For "stay" bookings, we wait for Razorpay payment to complete or Pay at Property confirmation
             if (form.booking_type === "visit") {
                 setStep("confirmation");
                 toast.success("Visit request submitted successfully!");
             } else {
-                toast.success("Booking initialized. Please complete your payment.");
+                toast.success("Booking initialized.");
             }
             queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
             queryClient.invalidateQueries({ queryKey: ["recentBookings"] });
@@ -137,6 +138,18 @@ export default function BookingContainer({ hostel }: Props) {
         },
         onError: (error: any) => {
             toast.error(error.response?.data?.message || "Failed to create booking. Please try again.");
+        }
+    });
+
+    const confirmPropertyPaymentMutation = useMutation({
+        mutationFn: (bookingId: string) => confirmPayAtProperty(bookingId),
+        onSuccess: () => {
+            setStep("confirmation");
+            toast.success("Booking confirmed! You can pay at the property.");
+            queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.error || "Failed to confirm property payment.");
         }
     });
 
@@ -296,7 +309,8 @@ export default function BookingContainer({ hostel }: Props) {
             total_price: form.booking_type === "visit" ? 0 : totalPrice,
             booking_type: form.booking_type,
             stay_duration: form.stay_duration as any,
-        };
+            payment_method: paymentMethod,
+        } as any;
 
         bookingMutation.mutate(bookingData);
     };
@@ -422,6 +436,9 @@ export default function BookingContainer({ hostel }: Props) {
                             validateForm={validateForm}
                             isFormValid={isFormValid}
                             isPaymentVerified={isPaymentVerified}
+                            paymentMethod={paymentMethod}
+                            setPaymentMethod={setPaymentMethod}
+                            confirmPropertyPaymentMutation={confirmPropertyPaymentMutation}
                         />
                     )}
 
@@ -431,6 +448,7 @@ export default function BookingContainer({ hostel }: Props) {
                             setStep={setStep}
                             confirmedBookingId={confirmedBookingId}
                             paymentId={paymentId}
+                            paymentMethod={paymentMethod}
                             form={form}
                             totalPrice={totalPrice}
                             hostelName={hostel.name}

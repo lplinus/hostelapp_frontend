@@ -229,24 +229,31 @@ export default function BookingsPage() {
                                             {new Date(b.check_out).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4 text-sm">
-                                            {b.payment_id ? (
-                                                <div className="space-y-1">
-                                                    <div className="font-mono text-[10px] text-gray-500 break-all max-w-[120px]">
-                                                        {b.payment_id}
-                                                    </div>
-                                                    <div className="flex">
-                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                                                            b.payment_status === 'captured' 
-                                                                ? 'bg-green-100 text-green-700' 
-                                                                : 'bg-yellow-100 text-yellow-700'
-                                                        }`}>
-                                                            {b.payment_status}
-                                                        </span>
-                                                    </div>
+                                            <div className="space-y-2">
+                                                <div className="flex gap-1 flex-wrap">
+                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${
+                                                        b.payment_method === 'on_arrival' 
+                                                            ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                                            : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                                                    }`}>
+                                                        {b.payment_method === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}
+                                                    </span>
+                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${
+                                                        b.payment_status === 'paid' || b.payment_status === 'captured'
+                                                            ? 'bg-green-50 text-green-700 border-green-200' 
+                                                            : b.payment_status === 'failed'
+                                                                ? 'bg-red-50 text-red-700 border-red-200'
+                                                                : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                                    }`}>
+                                                        {b.payment_status || 'Pending'}
+                                                    </span>
                                                 </div>
-                                            ) : (
-                                                <span className="text-gray-400 italic text-[11px]">Unpaid</span>
-                                            )}
+                                                {b.payment_id && (
+                                                    <div className="font-mono text-[8px] text-gray-400 break-all max-w-[120px] leading-tight">
+                                                        ID: {b.payment_id}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 text-sm">
                                             <div className="flex items-center gap-3">
