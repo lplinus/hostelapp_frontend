@@ -21,10 +21,10 @@ export default function Footer() {
         <div className="flex flex-col items-start">
           <Link href={homeHref} className="flex items-center gap-3 mb-5 group">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              S
+              H
             </div>
             <span className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
-              StayNest
+              Hostel In
             </span>
           </Link>
 
@@ -112,7 +112,7 @@ export default function Footer() {
       <div className="border-t border-gray-200 bg-gray-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-sm font-medium text-gray-500 text-center sm:text-left">
-            © {new Date().getFullYear()} StayNest. All rights reserved.
+            © {new Date().getFullYear()} Hostel In. All rights reserved.
           </div>
           <div className="flex items-center gap-6 text-sm font-medium text-gray-500">
             <Link href="/sitemap" className="hover:text-gray-900 transition-colors">Sitemap</Link>

@@ -19,29 +19,29 @@ export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO("landing");
 
   return {
-    title: seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
-    description: seo?.meta_description || "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with StayNest.",
-    keywords: seo?.meta_keywords || "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, staynest hostels",
+    title: seo?.meta_title || "Affordable Student Hostels Across India | Hostel In",
+    description: seo?.meta_description || "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with Hostel In.",
+    keywords: seo?.meta_keywords || "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, hostelin hostels",
     alternates: {
-      canonical: seo?.canonical_url || "https://staynest.in/",
+      canonical: seo?.canonical_url || "https://hostelin.online/",
     },
     robots: {
       index: seo?.is_indexed ?? true,
       follow: true,
     },
     openGraph: {
-      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
-      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
-      images: seo?.og_image ? [seo.og_image] : ["https://staynest.in/images/og-home.jpg"],
-      url: "https://staynest.in/",
-      siteName: "StayNest",
+      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | Hostel In",
+      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. Hostel In helps students compare hostels, explore amenities and book their perfect stay near campus.",
+      images: seo?.og_image ? [seo.og_image] : ["https://hostelin.online/images/og-home.jpg"],
+      url: "https://hostelin.online/",
+      siteName: "Hostel In",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | StayNest",
-      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
-      images: seo?.og_image ? [seo.og_image] : ["https://staynest.in/images/og-home.jpg"],
+      title: seo?.og_title || seo?.meta_title || "Affordable Student Hostels Across India | Hostel In",
+      description: seo?.og_description || seo?.meta_description || "Discover safe and verified student hostels across India. Hostel In helps students compare hostels, explore amenities and book their perfect stay near campus.",
+      images: seo?.og_image ? [seo.og_image] : ["https://hostelin.online/images/og-home.jpg"],
     }
   };
 }

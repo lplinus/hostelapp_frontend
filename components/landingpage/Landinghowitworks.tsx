@@ -49,7 +49,7 @@ export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
 
                         {/* Eyebrow */}
                         <p className="text-xs tracking-[0.35em] uppercase font-semibold text-orange-500 mb-6">
-                            {data?.how_eyebrow || "The LiveHub Journey"}
+                            {data?.how_eyebrow || "The Hostel In Journey"}
                         </p>
 
                         {/* Main Heading */}
@@ -62,7 +62,7 @@ export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
 
                         {/* Sub Heading */}
                         <p className="text-lg text-slate-500 leading-relaxed max-w-xl mx-auto">
-                            {data?.how_subtitle || "Finding the right hostel shouldn't take weeks. LiveHub simplifies the entire process into three effortless steps."}
+                            {data?.how_subtitle || "Finding the right hostel shouldn't take weeks. Hostel In simplifies the entire process into three effortless steps."}
                         </p>
 
                     </div>

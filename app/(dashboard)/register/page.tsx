@@ -2,9 +2,9 @@ import RegisterForm from "@/components/user/RegisterForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Register | StayNest - Hostel Booking Platform",
+  title: "Register | Hostel In - Hostel Booking Platform",
   description:
-    "Create your StayNest account to book hostels, manage stays, and explore amazing accommodations.",
+    "Create your Hostel In account to book hostels, manage stays, and explore amazing accommodations.",
 };
 
 export default function RegisterPage() {

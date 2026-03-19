@@ -38,14 +38,14 @@ export async function getSEO(page: string) {
         console.error("SEO API Error:", error)
 
         return {
-            meta_title: "Affordable Student Hostels Across India | StayNest",
+            meta_title: "Affordable Student Hostels Across India | Hostel In",
             meta_description:
-                "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with StayNest.",
-            meta_keywords: "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, staynest hostels",
-            canonical_url: "https://staynest.in/",
-            og_title: "Affordable Student Hostels Across India | StayNest",
-            og_description: "Discover safe and verified student hostels across India. StayNest helps students compare hostels, explore amenities and book their perfect stay near campus.",
-            og_image: "https://staynest.in/images/og-home.jpg",
+                "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with Hostel In.",
+            meta_keywords: "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, hostelin hostels",
+            canonical_url: "https://hostelin.online/",
+            og_title: "Affordable Student Hostels Across India | Hostel In",
+            og_description: "Discover safe and verified student hostels across India. Hostel In helps students compare hostels, explore amenities and book their perfect stay near campus.",
+            og_image: "https://hostelin.online/images/og-home.jpg",
             robots_directives: "index, follow",
             is_indexed: true,
             structured_data: null

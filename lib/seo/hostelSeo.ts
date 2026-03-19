@@ -21,7 +21,7 @@ function fallbackTitle(hostel: HostelDetail): string {
     const location = [hostel.area?.name, hostel.city.name]
         .filter(Boolean)
         .join(" ");
-    return `${hostel.name}${location ? ` in ${location}` : ""} | StayNest`;
+    return `${hostel.name}${location ? ` in ${location}` : ""} | Hostel In`;
 }
 
 /**

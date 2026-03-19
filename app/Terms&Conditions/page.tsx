@@ -132,7 +132,7 @@ export default async function TermsAndConditionsPage() {
           </article>
           
           <div className="mt-12 text-center">
-             <p className="text-slate-400 font-medium">© {new Date().getFullYear()} LiveHub. All rights reserved.</p>
+             <p className="text-slate-400 font-medium">© {new Date().getFullYear()} Hostel In. All rights reserved.</p>
           </div>
         </SectionReveal>
       </div>

@@ -55,7 +55,7 @@ export default function LandingFeatures({ data }: LandingFeaturesProps) {
 
                         {/* Eyebrow */}
                         <p className="text-[11px] tracking-[0.35em] font-semibold text-orange-500 uppercase mb-6">
-                            {data?.features_eyebrow || "The LiveHub Advantage"}
+                            {data?.features_eyebrow || "The Hostel In Advantage"}
                         </p>
 
                         {/* Main Heading */}

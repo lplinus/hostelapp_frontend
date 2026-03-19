@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
   ),
-  title: "StayNest | Hostel Booking Platform",
-  description: "Find verified hostels across India with StayNest.",
+  title: "Hostel In | Hostel Booking Platform",
+  description: "Find verified hostels across India with Hostel In.",
 };
 
 import Providers from "./providers";

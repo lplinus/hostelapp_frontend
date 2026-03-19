@@ -1,6 +1,6 @@
 import { HostelDetail, CityHostel, HostelReview } from "@/types/hostel.types";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://staynest.in";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online";
 
 export function generateHostelSchema(data: HostelDetail) {
     const defaultImage = data.images?.[0]?.image || data.default_images?.image1 || `${baseUrl}/default-hostel.jpg`;
@@ -88,7 +88,7 @@ export function generateReviewSchema(review: HostelReview, hostelName: string) {
         },
         publisher: {
             "@type": "Organization",
-            name: "StayNest",
+            name: "Hostel In",
         },
         reviewRating: {
             "@type": "Rating",
@@ -104,13 +104,13 @@ export function generateOrganizationSchema() {
     return {
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "StayNest",
+        name: "Hostel In",
         url: baseUrl,
         logo: `${baseUrl}/logo.png`, // Use accurate URL in production
         sameAs: [
-            "https://www.facebook.com/staynest",
-            "https://www.twitter.com/staynest",
-            "https://www.instagram.com/staynest",
+            "https://www.facebook.com/hostelin",
+            "https://www.twitter.com/hostelin",
+            "https://www.instagram.com/hostelin",
         ],
     };
 }
@@ -119,7 +119,7 @@ export function generateWebsiteSchema() {
     return {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "StayNest",
+        name: "Hostel In",
         url: baseUrl,
         potentialAction: {
             "@type": "SearchAction",

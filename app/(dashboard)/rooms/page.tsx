@@ -5,7 +5,7 @@ import { getGroupedRoomsServer } from "@/lib/api/server-rooms";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Manage Rooms | StayNest Dashboard",
+    title: "Manage Rooms | Hostel In Dashboard",
     description: "Structure and manage your hostel room variants, pricing, and availability.",
 };
 

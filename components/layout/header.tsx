@@ -62,10 +62,10 @@ export default function Header() {
         <div className="flex justify-start">
           <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 shrink-0">
             <div className="w-10 h-10 rounded-xl bg-[#3B82F6] flex items-center justify-center text-white font-bold text-lg">
-              S
+              H
             </div>
             <span className="text-xl font-bold text-gray-900 tracking-tight">
-              StayNest
+              Hostel In
             </span>
           </Link>
         </div>
