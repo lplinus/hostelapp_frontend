@@ -55,8 +55,11 @@ export default async function HostelDetailPage({ params }: Props) {
             <JsonLd data={generateHostelSchema(hostel)} />
             <JsonLd
                 data={generateBreadcrumbSchema([
-                    { name: "Home", url: "https://staynest.in/" },
-                    { name: hostel.city?.name || "City", url: `https://staynest.in/city/${hostel.city?.slug || ""}` },
+                    { name: "Home", url: "https://hostelin.online/" },
+                    { 
+                        name: hostel.city?.name || "City", 
+                        url: `https://hostelin.online/hostels-in-${hostel.city?.slug || "all"}/` 
+                    },
                     { name: hostel.name }
                 ])}
             />

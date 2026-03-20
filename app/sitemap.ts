@@ -60,7 +60,7 @@ export default async function sitemap() {
 
         // ✅ CITY PAGES (DYNAMIC)
         ...cities.map((city) => ({
-            url: `${baseUrl}/city/${city.slug}`,
+            url: `${baseUrl}/hostels-in-${city.slug}/`,
             priority: 0.8,
             lastModified: new Date(),
         })),

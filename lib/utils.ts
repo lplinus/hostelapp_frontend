@@ -43,3 +43,26 @@ export function toLocalMediaPath(url: string | null | undefined): string | null 
     return s;
   }
 }
+
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/[^\w-]+/g, '')    // Remove all non-word chars
+    .replace(/--+/g, '-');    // Replace multiple - with single -
+}
+
+export function getCitySEOLink(citySlug: string): string {
+  if (!citySlug) return "/";
+  if (citySlug === "all") return "/hostels/";
+  // Returns keyword-rich SEO URL: /hostels-in-hyderabad/
+  return `/hostels-in-${citySlug}/`;
+}
+
+export function getHostelSEOLink(hostelSlug: string): string {
+  if (!hostelSlug) return "/";
+  // Keep original /hostels/slug/ but ensures consistency
+  return `/hostels/${hostelSlug}/`;
+}

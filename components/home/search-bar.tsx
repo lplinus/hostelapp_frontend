@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, IndianRupee, Users, Search, ChevronDown } from "lucide-react";
+import { slugify, getCitySEOLink } from "@/lib/utils";
 
 interface DropdownOption {
   value: string;
@@ -100,6 +101,13 @@ export default function SearchBar() {
   const [gender, setGender] = useState<string>("");
 
   const handleSearch = () => {
+    // SEO Optimization: If only location is specified, redirect to keyword-rich URL
+    if (location && !budget && !gender) {
+      const citySlug = slugify(location);
+      router.push(getCitySEOLink(citySlug));
+      return;
+    }
+
     const params = new URLSearchParams();
 
     if (location) params.append("location", location);

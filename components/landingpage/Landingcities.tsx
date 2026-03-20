@@ -3,7 +3,7 @@ import Image from "next/image";
 import SectionReveal from "@/components/ui/section-reveal";
 import { ArrowUpRight, Navigation } from "lucide-react";
 import { LandingPageResponse } from "@/lib/api/types";
-import { toLocalMediaPath, isExternalImage } from "@/lib/utils";
+import { toLocalMediaPath, isExternalImage, getCitySEOLink } from "@/lib/utils";
 
 interface LandingCitiesProps {
   data: LandingPageResponse | null;
@@ -76,7 +76,7 @@ export default function LandingCities({ data }: LandingCitiesProps) {
             {displayCities.map((c, idx) => (
               <Link
                 key={idx}
-                href={`/city/${c.city_name.toLowerCase()}`}
+                href={getCitySEOLink(c.city_name.toLowerCase())}
                 className={`group relative block rounded-[2.5rem] overflow-hidden h-[380px] sm:h-[420px] w-full shadow-2xl transition-all duration-500 hover:-translate-y-1 ${c.span_large ? "lg:col-span-2" : ""
                   }`}
               >

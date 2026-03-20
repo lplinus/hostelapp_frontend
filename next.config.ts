@@ -19,6 +19,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/city/:slug/",
+        destination: "/hostels-in-:slug/",
+        permanent: true,
+      },
+      {
+        source: "/city/:slug",
+        destination: "/hostels-in-:slug/",
+        permanent: true,
+      },
+    ];
+  },
 
   images: {
     remotePatterns: [
