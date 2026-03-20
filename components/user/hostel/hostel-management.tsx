@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Pencil, Image as ImageIcon, Trash2 } from "lucide-react";
 import HostelForm from "./hostel-form";
 import { toLocalMediaPath } from "@/lib/utils";
+import { getStorageSettings, StorageSettings } from "@/services/cms.service";
 
 export default function HostelManagement() {
     const queryClient = useQueryClient();
@@ -47,6 +48,11 @@ export default function HostelManagement() {
 
     const [isCreating, setIsCreating] = useState(false);
     const [editingHostel, setEditingHostel] = useState<HostelListItem | null>(null);
+    const [storageSettings, setStorageSettings] = useState<StorageSettings>({ max_image_size_mb: 30 });
+
+    useEffect(() => {
+        getStorageSettings().then(setStorageSettings);
+    }, []);
 
     // ── Image Upload State ──────────────────────────────────────
     const [uploadingFor, setUploadingFor] = useState<number | null>(null);
@@ -70,10 +76,10 @@ export default function HostelManagement() {
         const { name, files } = e.target;
         if (files?.[0]) {
             const file = files[0];
-            const maxSize = 30 * 1024 * 1024; // 30MB
+            const maxSize = storageSettings.max_image_size_mb * 1024 * 1024;
 
             if (file.size > maxSize) {
-                toast.error(`Image "${file.name}" is too large. Max size is 30MB.`);
+                toast.error(`Image "${file.name}" is too large. Max size is ${storageSettings.max_image_size_mb}MB.`);
                 e.target.value = ""; // Clear input
                 setImagePreviews((prev) => ({ ...prev, [name]: null }));
                 return;

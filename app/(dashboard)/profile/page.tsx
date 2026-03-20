@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
+import { getStorageSettings, StorageSettings } from "@/services/cms.service";
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -21,6 +22,11 @@ export default function ProfilePage() {
     const [profilePic, setProfilePic] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [showOtpModal, setShowOtpModal] = useState(false);
+    const [storageSettings, setStorageSettings] = useState<StorageSettings>({ max_image_size_mb: 15 });
+
+    useEffect(() => {
+        getStorageSettings().then(setStorageSettings);
+    }, []);
 
     useEffect(() => {
         if (profile) {
@@ -55,8 +61,8 @@ export default function ProfilePage() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            if (file.size > 15 * 1024 * 1024) {
-                toast.error("Profile picture must be under 15MB");
+            if (file.size > storageSettings.max_image_size_mb * 1024 * 1024) {
+                toast.error(`Profile picture must be under ${storageSettings.max_image_size_mb}MB`);
                 return;
             }
             setProfilePic(file);
@@ -191,7 +197,7 @@ export default function ProfilePage() {
                                         className="hidden"
                                     />
                                 </label>
-                                <p className="text-[10px] text-gray-400 mt-1">Max 15MB</p>
+                                <p className="text-[10px] text-gray-400 mt-1">Max {storageSettings.max_image_size_mb}MB</p>
                             </div>
                             <button
                                 type="submit"
