@@ -20,6 +20,7 @@ export async function getSEO(page: string) {
             "contact-us": 26,
             "pricing": 30,
             "blog": 34,
+            "faqs": 51,
         };
 
         let seo = null;
