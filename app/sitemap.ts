@@ -2,6 +2,8 @@ import { getHostels } from "@/services/hostel.service";
 import { getCities } from "@/services/location.service";
 import { HostelListItem } from "@/types/hostel.types";
 import { CityItem } from "@/services/location.service";
+import { getBlogPosts } from "@/services/blog.service";
+import { BlogPostListItem } from "@/types/blog.types";
 
 export default async function sitemap() {
     const baseUrl =
@@ -9,6 +11,7 @@ export default async function sitemap() {
 
     let hostels: HostelListItem[] = [];
     let cities: CityItem[] = [];
+    let blogs: BlogPostListItem[] = [];
 
     try {
         hostels = await getHostels();
@@ -20,6 +23,11 @@ export default async function sitemap() {
         cities = await getCities();
     } catch (error) {
         console.error("Failed to fetch cities for sitemap", error);
+    }
+    try {
+        blogs = await getBlogPosts();
+    } catch (error) {
+        console.error("Failed to fetch blogs for sitemap", error);
     }
 
     return [
@@ -35,13 +43,18 @@ export default async function sitemap() {
             lastModified: new Date(),
         },
         {
-            url: `${baseUrl}/about`,
+            url: `${baseUrl}/about-us`,
             priority: 0.6,
             lastModified: new Date(),
         },
         {
-            url: `${baseUrl}/contact`,
+            url: `${baseUrl}/contact-us`,
             priority: 0.6,
+            lastModified: new Date(),
+        },
+        {
+            url: `${baseUrl}/blog`,
+            priority: 0.7,
             lastModified: new Date(),
         },
 
@@ -56,6 +69,11 @@ export default async function sitemap() {
         ...hostels.map((hostel) => ({
             url: `${baseUrl}/hostels/${hostel.slug}`,
             priority: 0.7,
+            lastModified: new Date(),
+        })),
+        ...blogs.map((blog) => ({
+            url: `${baseUrl}/blog/${blog.slug}`,
+            priority: 0.6,
             lastModified: new Date(),
         })),
     ];
