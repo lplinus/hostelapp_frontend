@@ -5,7 +5,7 @@ import HelpSupportContent from "@/components/user/help&support/help-support-cont
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Help & Support | StayNest Dashboard",
+    title: "Help & Support | Hostel In Dashboard",
     description: "Get help with your bookings, account, or payments.",
 };
 

@@ -20,7 +20,7 @@ const defaultFaqs: ContactFAQItem[] = [
   {
     question: "Can hostel owners list their properties?",
     answer:
-      "Yes! We welcome verified hostel owners. Contact us to become a partner and list your property on StayNest.",
+      "Yes! We welcome verified hostel owners. Contact us to become a partner and list your property on Hostel In.",
   },
   {
     question: "Is there a service fee?",

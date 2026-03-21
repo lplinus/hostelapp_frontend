@@ -67,7 +67,7 @@ export default async function CityPage({ params }: Props) {
         <div className="py-8 sm:py-10 lg:py-12 bg-gray-50 min-h-screen">
             <JsonLd
                 data={generateBreadcrumbSchema([
-                    { name: "Home", url: "https://staynest.in/" },
+                    { name: "Home", url: "https://hostelin.in/" },
                     { name: cityName }
                 ])}
             />

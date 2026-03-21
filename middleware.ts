@@ -20,14 +20,14 @@ export function middleware(request: NextRequest) {
 
     // Check for the HttpOnly cookies set by the Django backend.
     // These survive browser refreshes (unlike in-memory tokens).
+    // SECURITY: Only trust HttpOnly cookies set by the server.
+    // Never trust client-writable cookies (like auth_status) for auth decisions.
     const accessToken = request.cookies.get('access_token')?.value;
     const refreshToken = request.cookies.get('refresh_token')?.value;
-    // Legacy: also check the client-side auth_status flag for backward compat
-    const authStatus = request.cookies.get('auth_status')?.value;
 
     // User is authenticated if ANY persistent token cookie is present.
     // access_token expires every 10 min, but refresh_token lasts 30 days.
-    const isAuthenticated = !!accessToken || !!refreshToken || authStatus === 'authenticated';
+    const isAuthenticated = !!accessToken || !!refreshToken;
 
     // Protect /admin routes
     if (request.nextUrl.pathname.startsWith('/admin')) {

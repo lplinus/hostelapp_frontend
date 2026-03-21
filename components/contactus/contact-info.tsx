@@ -16,7 +16,7 @@ const defaultItems: { icon: LucideIcon; title: string; value: string }[] = [
   {
     icon: Mail,
     title: "Email Us",
-    value: "support@staynest.com",
+    value: "support@hostelin.com",
   },
   {
     icon: Phone,

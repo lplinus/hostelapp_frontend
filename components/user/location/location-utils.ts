@@ -49,7 +49,7 @@ export const reverseGeocode = async (lat: number, lon: number): Promise<string> 
             {
                 headers: {
                     'Accept-Language': 'en',
-                    'User-Agent': 'StayNest-Hostel-Management-App'
+                    'User-Agent': 'HostelIn-Hostel-Management-App'
                 }
             }
         );

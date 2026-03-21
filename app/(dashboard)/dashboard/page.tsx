@@ -7,9 +7,9 @@ import BookingChartWrapper from "../../../components/user/dashboard/booking-char
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Dashboard | StayNest - Hostel Booking Platform",
+    title: "Dashboard | Hostel In - Hostel Booking Platform",
     description:
-        "Manage your hostel bookings, view stats, and take quick actions from your StayNest dashboard.",
+        "Manage your hostel bookings, view stats, and take quick actions from your Hostel In dashboard.",
 };
 
 export default function DashboardPage() {

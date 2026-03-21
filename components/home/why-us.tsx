@@ -1,12 +1,19 @@
 "use client";
 
-import * as LucideIcons from "lucide-react";
+import { ShieldCheck, Shield, Search, Star, LucideIcon } from "lucide-react";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  ShieldCheck,
+  Shield,
+  Search,
+  Star,
+};
 
 interface WhyUsItem {
   id?: number;
   title: string;
   description: string;
-  icon: string | any;
+  icon: string | LucideIcon;
 }
 
 interface WhyUsProps {
@@ -44,6 +51,12 @@ export default function WhyUs({ title, items }: WhyUsProps) {
 
   const featuresToRender = items && items.length > 0 ? items : defaultFeatures;
 
+  // Clean the title prop to avoid duplication (removes "StayNest" or "Hostel In" if already present)
+  // then we append the correctly styled "Hostel In" brand name.
+  const cleanTitle = title 
+    ? title.replace(/StayNest/gi, "").replace(/Hostel In/gi, "").trim() 
+    : "Why Choose";
+
   return (
     <section className="py-24 bg-[#F8FAFC] font-inter overflow-hidden relative">
       {/* Background visual elements */}
@@ -57,8 +70,8 @@ export default function WhyUs({ title, items }: WhyUsProps) {
           </div>
 
           <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight mb-8">
-            {title || "Why Choose"}{" "}
-            <span className="italic text-[#64748B] font-medium">StayNest</span>
+            {cleanTitle}{" "}
+            <span className="italic text-[#64748B] font-medium">Hostel In</span>
           </h2>
 
           <p className="text-lg text-[#64748B] leading-relaxed max-w-2xl mx-auto font-medium">
@@ -69,12 +82,12 @@ export default function WhyUs({ title, items }: WhyUsProps) {
         {/* Features Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {featuresToRender.map((feature, index) => {
-            // Dynamic Icon Resolution
-            let IconComponent: any;
+            // Dynamic Icon Resolution via ICON_MAP
+            let IconComponent: LucideIcon;
             if (typeof feature.icon === 'string') {
-              IconComponent = (LucideIcons as any)[feature.icon] || LucideIcons.Shield;
+              IconComponent = ICON_MAP[feature.icon] || Shield;
             } else {
-              IconComponent = feature.icon || LucideIcons.Shield;
+              IconComponent = feature.icon || Shield;
             }
 
             return (

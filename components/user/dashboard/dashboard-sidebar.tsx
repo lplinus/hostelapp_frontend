@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Building2, BedDouble, CalendarCheck, Settings, Menu, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 
@@ -39,12 +40,17 @@ export default function DashboardSidebar() {
         <div className={`flex items-center h-20 px-4 ${isCollapsed ? "md:justify-center" : "justify-between"}`}>
 
           <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden group">
-            <div className="bg-blue-500 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg shrink-0 shadow-sm group-hover:bg-blue-600 transition-colors">
-              S
+            <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Image
+                src="/images/icon.webp"
+                alt="Logo"
+                fill
+                className="object-contain p-0.5"
+              />
             </div>
             {(!isCollapsed || isOpenMobile) && (
               <span className="font-bold text-xl text-gray-900 tracking-tight whitespace-nowrap group-hover:text-blue-600 transition-colors">
-                StayNest
+                Hostel In
               </span>
             )}
           </Link>

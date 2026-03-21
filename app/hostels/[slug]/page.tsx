@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         return generateHostelMetadata(hostel);
     } catch {
         return {
-            title: "Hostel Not Found | StayNest",
+            title: "Hostel Not Found | Hostel In",
             description: "The hostel you are looking for could not be found.",
             robots: "noindex,nofollow",
         };

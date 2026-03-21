@@ -12,12 +12,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
         const hostel = await getHostelBySlug(slug);
         return {
-            title: `Book ${hostel.name} | StayNest`,
+            title: `Book ${hostel.name} | Hostel In`,
             description: `Book your stay at ${hostel.name} in ${hostel.city.name}. Secure your bed today.`,
         };
     } catch {
         return {
-            title: "Booking | StayNest",
+            title: "Booking | Hostel In",
         };
     }
 }

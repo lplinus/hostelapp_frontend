@@ -86,7 +86,7 @@ export default function HelpSupportContent() {
                             </div>
                             <div>
                                 <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Email Us</p>
-                                <p className="font-semibold text-gray-900">support@staynest.com</p>
+                                <p className="font-semibold text-gray-900">support@hostelin.com</p>
                                 <p className="text-gray-500 text-xs mt-1">Average response: 2 hours</p>
                             </div>
                         </div>

@@ -102,7 +102,7 @@ export default function RegisterForm() {
             Create Account
           </CardTitle>
           <p className="text-gray-500 text-sm">
-            Join StayNest and start exploring hostels
+            Join Hostel In and start exploring hostels
           </p>
         </CardHeader>
 

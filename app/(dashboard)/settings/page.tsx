@@ -8,8 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-    title: "Settings | StayNest",
-    description: "Manage your account settings and preferences on StayNest.",
+    title: "Settings | Hostel In",
+    description: "Manage your account settings and preferences on Hostel In.",
 };
 
 export default function SettingsPage() {

@@ -265,7 +265,7 @@ export default function SubscriptionClient() {
           </h2>
 
           <p className="text-muted-foreground">
-            Join thousands of hostel owners using StayNest to simplify booking
+            Join thousands of hostel owners using Hostel In to simplify booking
             management and increase their visibility online.
           </p>
         </div>

@@ -26,7 +26,7 @@ export default function AboutHero({ title, subtitle }: AboutHeroProps) {
         className="mt-6 text-lg md:text-xl max-w-3xl mx-auto text-blue-100"
       >
         {subtitle ||
-          "StayNest helps students discover verified, affordable, and comfortable hostels near their colleges."}
+          "Hostel In helps students discover verified, affordable, and comfortable hostels near their colleges."}
       </motion.p>
     </section>
   );

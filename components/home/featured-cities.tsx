@@ -12,20 +12,26 @@ interface City {
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 async function getCities(): Promise<City[]> {
-  if (!BASE_URL) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
+  try {
+    if (!BASE_URL) {
+      console.error("[FeaturedCities] NEXT_PUBLIC_API_BASE_URL is not defined");
+      return [];
+    }
+
+    const res = await fetch(`${BASE_URL}/api/locations/cities/`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+      console.error("[FeaturedCities] Fetch failed:", res.status);
+      return [];
+    }
+
+    return res.json();
+  } catch (err) {
+    console.error("[FeaturedCities] Network error:", err);
+    return [];
   }
-
-  const res = await fetch(`${BASE_URL}/api/locations/cities/`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
-    console.error("Fetch failed:", res.status);
-    throw new Error("Failed to fetch cities");
-  }
-
-  return res.json();
 }
 
 export default async function FeaturedCities() {

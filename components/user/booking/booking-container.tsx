@@ -323,7 +323,7 @@ export default function BookingContainer({ hostel }: Props) {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SRVXPRrskTPpW6",
                 amount: order.amount,
                 currency: order.currency,
-                name: "StayNest",
+                name: "Hostel In",
                 description: `Booking for ${hostel.name}`,
                 order_id: order.order_id,
                 handler: async function (response: any) {

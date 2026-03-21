@@ -4,7 +4,7 @@ import SubscriptionClient from "@/components/user/subscription/subscription-clie
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Subscription | StayNest - Upgrade Your Plan",
+    title: "Subscription | Hostel In - Upgrade Your Plan",
     description:
         "Manage your subscription and upgrade to premium plans to unlock more features for your hostel.",
 };

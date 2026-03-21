@@ -11,7 +11,7 @@ export default function PricingCTA({ title, buttonText, buttonUrl }: PricingCTAP
   return (
     <section className="py-24 px-6 text-center bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
       <h2 className="text-4xl font-bold mb-6">
-        {title || "Ready to Grow With StayNest?"}
+        {title || "Ready to Grow With Hostel In?"}
       </h2>
 
       <Button

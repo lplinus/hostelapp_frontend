@@ -15,7 +15,7 @@ import {
 /**
  * Build a human-readable fallback title from hostel data.
  *
- * e.g. "Urban Nest Co-Living in Gachibowli Hyderabad | StayNest"
+ * e.g. "Urban Nest Co-Living in Gachibowli Hyderabad | Hostel In"
  */
 function fallbackTitle(hostel: HostelDetail): string {
     const location = [hostel.area?.name, hostel.city.name]

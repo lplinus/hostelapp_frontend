@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-    title: "Verify Account | StayNest",
-    description: "Verify your StayNest account to start booking hostels.",
+    title: "Verify Account | Hostel In",
+    description: "Verify your Hostel In account to start booking hostels.",
 };
 
 export default function VerifyEmailPage() {

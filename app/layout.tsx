@@ -9,6 +9,8 @@ import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/seo/sch
 import JsonLd from "@/components/seo/JsonLd";
 import Script from "next/script";
 import { cookies } from "next/headers";
+import Providers from "./providers";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,9 +40,6 @@ export const metadata: Metadata = {
     apple: "/images/favicon.webp",
   },
 };
-
-import Providers from "./providers";
-import { Toaster } from "sonner";
 
 export default async function RootLayout({
   children,

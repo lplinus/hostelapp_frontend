@@ -51,7 +51,7 @@ export const useAuth = () => {
                 queryClient.setQueryData(['authUser'], data.user);
 
                 toast.success('Login Successful 🎉', {
-                    description: 'Welcome back to StayNest!',
+                    description: 'Welcome back to Hostel In!',
                 });
                 router.push('/dashboard');
                 router.refresh(); // Tells Next.js to re-evaluate server components
