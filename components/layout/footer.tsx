@@ -8,6 +8,7 @@ import {
   Lock,
   GraduationCap,
 } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
@@ -20,8 +21,13 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex flex-col items-start">
           <Link href={homeHref} className="flex items-center gap-3 mb-5 group">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              H
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src="/images/icon.webp"
+                alt="Logo"
+                fill
+                className="object-contain p-0.5"
+              />
             </div>
             <span className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
               Hostel In

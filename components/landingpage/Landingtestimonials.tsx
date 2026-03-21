@@ -26,76 +26,71 @@ export default function LandingTestimonials({ data }: LandingTestimonialsProps) 
     const displayTestimonials = data?.testimonials && data.testimonials.length > 0 ? data.testimonials : defaultTestimonials;
 
     return (
-        <section id="reviews" className="py-24 sm:py-32 bg-white font-poppins relative overflow-hidden">
-
-            {/* Decorative Quote Mark */}
-            <div className="absolute top-16 right-16 opacity-[0.04] pointer-events-none hidden lg:block">
-                <Quote size={180} strokeWidth={1.5} />
-            </div>
+        <section id="reviews" className="py-24 lg:py-32 bg-white font-inter relative overflow-hidden">
+            {/* Decorative Background Element */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#8B5CF6]/5 blur-[200px] rounded-full pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
 
                 {/* Heading */}
                 <SectionReveal>
-                    <div className="max-w-6xl mx-auto text-center">
+                    <div className="max-w-5xl mx-auto text-center mb-16 lg:mb-24">
+                        <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-8">
+                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">
+                                {data?.testimonials_eyebrow || "Real Experiences"}
+                            </span>
+                        </div>
 
-                        <span className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[0.35em] uppercase text-orange-500 block mb-8">
-                            {data?.testimonials_eyebrow || "Real Experiences"}
-                        </span>
-
-                        <h2 className="text-7xl sm:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 leading-[1.02]">
+                        <h2 className="text-5xl sm:text-7xl lg:text-[100px] font-bold tracking-tighter text-[#0F172A] leading-[1] mb-6">
                             {data?.testimonials_title_main || "Trusted by"}{" "}
-                            <span className="text-slate-400 italic font-semibold">
+                            <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#C084FC]">
                                 {data?.testimonials_title_italic || "Thousands"}
                             </span>
                         </h2>
-
                     </div>
                 </SectionReveal>
 
-                {/* Explicit Spacer */}
-                <div className="h-20 sm:h-32 lg:h-40 w-full" />
-
                 {/* Cards */}
                 <SectionReveal delay={0.2}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-14">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
 
                         {displayTestimonials.map((t, idx) => (
                             <figure
                                 key={idx}
-                                className="group flex flex-col bg-white rounded-[3rem] p-12 hover:bg-slate-50 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-700 active:scale-95 border border-slate-200"
+                                className="group relative flex flex-col bg-[#F8FAFC] rounded-3xl p-10 lg:p-12 hover:bg-white hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 border border-slate-100/50"
                             >
+                                {/* Quote Icon */}
+                                <div className="absolute top-8 right-8 text-slate-200 group-hover:text-[#8B5CF6]/20 transition-colors duration-500">
+                                    <Quote size={48} strokeWidth={1} />
+                                </div>
 
                                 {/* Stars */}
-                                <div className="flex gap-1.5 text-orange-400 mb-8 group-hover:scale-110 transition-transform origin-left">
+                                <div className="flex gap-1 text-[#8B5CF6] mb-8 transform group-hover:scale-105 transition-transform origin-left">
                                     {[...Array(5)].map((_, i) => (
-                                        <Star key={i} size={18} fill="currentColor" />
+                                        <Star key={i} size={16} fill="currentColor" />
                                     ))}
                                 </div>
 
                                 {/* Quote */}
-                                <blockquote className="flex-1 text-lg sm:text-xl font-medium leading-relaxed text-slate-700 mb-12 group-hover:text-orange-600 transition-colors duration-500">
+                                <blockquote className="flex-1 text-lg sm:text-xl font-medium leading-relaxed text-[#0F172A]/90 mb-10 group-hover:text-[#0F172A] transition-colors duration-500">
                                     “{t.text}”
                                 </blockquote>
 
                                 {/* Author */}
                                 <figcaption className="flex items-center gap-4 mt-auto">
-
-                                    <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-lg font-bold text-orange-500 flex-shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm">
+                                    <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-xl font-bold text-[#0F172A] flex-shrink-0 group-hover:bg-[#0F172A] group-hover:text-white transition-all shadow-sm">
                                         {t.initial || t.name.charAt(0)}
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <p className="text-base font-semibold text-slate-900">
+                                        <p className="text-base font-bold text-[#0F172A]">
                                             {t.name}
                                         </p>
-                                        <p className="text-sm text-slate-500">
+                                        <p className="text-sm font-medium text-[#64748B]">
                                             {t.role}
                                         </p>
                                     </div>
-
                                 </figcaption>
-
                             </figure>
                         ))}
 

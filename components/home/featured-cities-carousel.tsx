@@ -29,11 +29,7 @@ export default function FeaturedCitiesCarousel({
     cities,
 }: FeaturedCitiesCarouselProps) {
     return (
-        <div className="relative group/carousel overflow-visible">
-            {/* Vanishing Edge Gradients */}
-            <div className="absolute -left-1 top-0 bottom-0 w-3 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
-            <div className="absolute -right-1 top-0 bottom-0 w-3 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
-
+        <div className="relative group/carousel">
             <Carousel
                 opts={{
                     align: "start",
@@ -41,47 +37,48 @@ export default function FeaturedCitiesCarousel({
                 }}
                 className="w-full"
             >
-                {/* Carousel Slider */}
-                <CarouselContent className="-ml-3">
+                {/* Navigation Buttons Moved to Top Right (relative to Carousel) */}
+                <div className="absolute -top-16 right-0 flex gap-3 z-20">
+                    <CarouselPrevious
+                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                    />
+                    <CarouselNext
+                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                    />
+                </div>
+
+                <CarouselContent className="-ml-4 sm:-ml-6">
                     {cities.map((city) => (
                         <CarouselItem
                             key={city.id}
-                            className="pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                            className="pl-4 sm:pl-6 basis-[70%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                         >
                             <Link
                                 href={`/city/${city.slug}`}
                                 className="group block"
                             >
-                                <div className="relative h-36 rounded-2xl overflow-hidden shadow-lg mb-3 border border-black">
+                                <div className="relative h-44 rounded-3xl overflow-hidden shadow-md border border-slate-100/50 group-hover:shadow-2xl group-hover:shadow-[#8B5CF6]/30 transition-all duration-500 group-hover:-translate-y-2">
                                     {city.city_image && (
                                         <Image
                                             src={toLocalMediaPath(city.city_image) || ""}
                                             alt={city.name}
                                             fill
-                                            className="object-cover transition duration-500"
-                                            sizes="(max-width: 768px) 50vw, 20vw"
+                                            className="object-cover"
+                                            sizes="(max-width: 768px) 70vw, 20vw"
                                             unoptimized={isExternalImage(city.city_image)}
                                         />
                                     )}
-                                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
                                 </div>
-
-                                <p className="text-center font-bold text-slate-800 text-base group-hover:text-orange-600 transition-colors">
-                                    {city.name}
-                                </p>
+                                <div className="mt-4 w-full">
+                                    <p className="text-[#0F172A] font-bold text-lg tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
+                                        {city.name}
+                                    </p>
+                                </div>
                             </Link>
 
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-
-                {/* Side arrows — transparent */}
-                <CarouselPrevious
-                    className="-left-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
-                />
-                <CarouselNext
-                    className="-right-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
-                />
             </Carousel>
         </div>
 

@@ -34,11 +34,18 @@ export default async function FeaturedCities() {
   if (!cities?.length) return null;
 
   return (
-    <section className="py-8 sm:py-10 lg:py-12 bg-gray-50">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-8">
-          Popular Cities
-        </h2>
+    <section className="pt-10 pb-6 bg-[#F8FAFC] font-inter">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div>
+            <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
+              <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Locations</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight">
+              Popular <span className="italic text-[#64748B] font-medium">Cities</span>
+            </h2>
+          </div>
+        </div>
 
         <FeaturedCitiesCarousel cities={cities} />
       </div>

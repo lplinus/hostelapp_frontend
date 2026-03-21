@@ -32,6 +32,11 @@ export const metadata: Metadata = {
   ),
   title: "Hostel In | Hostel Booking Platform",
   description: "Find verified hostels across India with Hostel In.",
+  icons: {
+    icon: "/images/favicon.webp",
+    shortcut: "/images/favicon.webp",
+    apple: "/images/favicon.webp",
+  },
 };
 
 import Providers from "./providers";

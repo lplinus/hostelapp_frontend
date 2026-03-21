@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 
+import Image from "next/image";
+
 const navLinks = [
   { name: "Home", href: "/home" },
   // { name: "Hostels", href: "/hostels" },
@@ -55,16 +57,20 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
+    <header className="w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between lg:grid lg:grid-cols-3 items-center">
-
         {/* LEFT - Logo */}
         <div className="flex justify-start">
-          <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-[#3B82F6] flex items-center justify-center text-white font-bold text-lg">
-              H
+          <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 shrink-0 group">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Image
+                src="/images/icon.webp"
+                alt="Logo"
+                fill
+                className="object-contain p-0.5"
+              />
             </div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight">
+            <span className="text-xl font-bold text-[#0F172A] tracking-tight">
               Hostel In
             </span>
           </Link>
@@ -79,10 +85,10 @@ export default function Header() {
                 key={link.name}
                 href={link.href}
                 className={clsx(
-                  "px-4 py-2 rounded-lg text-[15px] font-medium transition-all",
+                  "px-4 py-2 rounded-lg text-[15px] font-bold transition-all duration-200",
                   isActive
-                    ? "bg-[#EFF6FF] text-[#2563EB]"
-                    : "text-gray-500 hover:text-gray-900"
+                    ? "bg-[#0F172A]/5 text-black"
+                    : "text-black hover:text-[#8B5CF6] hover:bg-white/50"
                 )}
               >
                 {link.name}
@@ -93,9 +99,9 @@ export default function Header() {
 
         {/* RIGHT - Actions (Icons + Both Buttons) */}
         <div className="flex items-center justify-end gap-4">
-          <div className="hidden sm:flex items-center gap-4 text-gray-400 mr-2">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-gray-600 transition" strokeWidth={1.5} />
-            <Moon className="w-5 h-5 cursor-pointer hover:text-gray-600 transition" strokeWidth={1.5} />
+          <div className="hidden sm:flex items-center gap-4 text-black mr-2">
+            <Heart className="w-5 h-5 cursor-pointer hover:text-[#8B5CF6] transition-colors" strokeWidth={1.5} />
+            <Moon className="w-5 h-5 cursor-pointer hover:text-[#8B5CF6] transition-colors" strokeWidth={1.5} />
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -103,13 +109,13 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                  className="px-5 py-2 rounded-xl text-sm font-bold text-black hover:bg-white/50 transition-all duration-200 shadow-sm border border-transparent hover:border-gray-200"
                 >
                   Owner Login
                 </Link>
                 <Link
                   href="/register"
-                  className="px-5 py-2 rounded-xl border-2 border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm"
+                  className="px-5 py-2 rounded-xl bg-white border border-slate-200 text-sm font-bold text-black hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105"
                 >
                   Owner Register
                 </Link>

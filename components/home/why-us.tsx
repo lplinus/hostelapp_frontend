@@ -45,20 +45,29 @@ export default function WhyUs({ title, items }: WhyUsProps) {
   const featuresToRender = items && items.length > 0 ? items : defaultFeatures;
 
   return (
-    <section className="py-10 sm:py-12 bg-gray-50">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        {/* Heading */}
-        <h2 className="text-3xl md:text-4xl font-semibold text-gray-900">
-          {title || "Why Choose StayNest"}
-        </h2>
+    <section className="py-24 bg-[#F8FAFC] font-inter overflow-hidden relative">
+      {/* Background visual elements */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#8B5CF6]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
 
-        {/* Subtitle */}
-        <p className="mt-3 text-base text-gray-500">
-          We make hostel hunting simple and safe
-        </p>
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10 text-center">
+        {/* Section Header */}
+        <div className="max-w-3xl mx-auto mb-20 lg:mb-24">
+          <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-6">
+            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">The Advantage</span>
+          </div>
 
-        {/* Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+          <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight mb-8">
+            {title || "Why Choose"}{" "}
+            <span className="italic text-[#64748B] font-medium">StayNest</span>
+          </h2>
+
+          <p className="text-lg text-[#64748B] leading-relaxed max-w-2xl mx-auto font-medium">
+            We've re-imagined the hostel experience from the ground up, focusing only on what truly matters to students.
+          </p>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {featuresToRender.map((feature, index) => {
             // Dynamic Icon Resolution
             let IconComponent: any;
@@ -71,22 +80,27 @@ export default function WhyUs({ title, items }: WhyUsProps) {
             return (
               <div
                 key={feature.id || index}
-                className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                className="group relative p-10 bg-white rounded-3xl border border-slate-100 hover:border-[#8B5CF6]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
               >
-                {/* Icon */}
-                <div className="w-10 h-10 mx-auto mb-4 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <IconComponent className="w-5 h-5 text-blue-600" />
+                {/* Icon Container */}
+                <div className="mb-10 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#0F172A] group-hover:bg-[#8B5CF6] group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-sm">
+                  <IconComponent size={28} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#8B5CF6] mb-4 tracking-tight transition-colors">
                   {feature.title}
                 </h3>
 
                 {/* Description */}
-                <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+                <p className="text-base leading-relaxed text-[#64748B] group-hover:text-[#0F172A]/80 font-medium transition-colors">
                   {feature.description}
                 </p>
+
+                {/* Decorative Visual Flair */}
+                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-bounce" />
+                </div>
               </div>
             );
           })}

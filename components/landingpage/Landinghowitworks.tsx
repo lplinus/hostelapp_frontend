@@ -39,29 +39,28 @@ export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
     return (
         <section
             id="how"
-            className="py-28 sm:py-36 bg-slate-50 font-poppins overflow-hidden"
+            className="py-24 lg:py-32 bg-[#F8FAFC] font-inter overflow-hidden"
         >
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
 
                 {/* Header */}
                 <SectionReveal>
-                    <div className="max-w-3xl mx-auto text-center mb-32">
+                    <div className="max-w-3xl mx-auto text-center mb-20 lg:mb-32">
 
-                        {/* Eyebrow */}
-                        <p className="text-xs tracking-[0.35em] uppercase font-semibold text-orange-500 mb-6">
-                            {data?.how_eyebrow || "The Hostel In Journey"}
-                        </p>
+                        <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-6">
+                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">
+                                {data?.how_eyebrow || "The Hostel In Journey"}
+                            </span>
+                        </div>
 
-                        {/* Main Heading */}
-                        <h2 className="text-6xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
+                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-[#0F172A] tracking-tight leading-[1.1] mb-8">
                             {data?.how_title_main || "Booking Made"}{" "}
-                            <span className="italic text-orange-500">
+                            <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#C084FC]">
                                 {data?.how_title_italic || "Simple."}
                             </span>
                         </h2>
 
-                        {/* Sub Heading */}
-                        <p className="text-lg text-slate-500 leading-relaxed max-w-xl mx-auto">
+                        <p className="text-lg text-[#64748B] leading-relaxed max-w-xl mx-auto font-medium">
                             {data?.how_subtitle || "Finding the right hostel shouldn't take weeks. Hostel In simplifies the entire process into three effortless steps."}
                         </p>
 
@@ -72,7 +71,7 @@ export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
                 <div className="relative">
 
                     {/* Connector Line */}
-                    <div className="hidden lg:block absolute top-[60px] left-[10%] right-[10%] h-[2px] bg-slate-200" />
+                    <div className="hidden lg:block absolute top-[110px] left-[15%] right-[15%] h-[1px] bg-slate-200" />
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-10">
 
@@ -80,25 +79,25 @@ export default function LandingHowItWorks({ data }: LandingHowItWorksProps) {
                             const Icon = ICON_MAP[s.icon_name] || Search;
                             return (
                                 <SectionReveal key={i} delay={i * 0.1}>
-                                    <div className="flex flex-col items-center text-center group max-w-[320px] mx-auto">
+                                    <div className="flex flex-col items-center text-center group max-w-[320px] mx-auto relative">
 
-                                        {/* Step Number */}
-                                        <div className="text-[60px] font-black text-slate-200 group-hover:text-orange-200 transition-colors duration-500 mb-4">
+                                        {/* Step Number Background */}
+                                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-[100px] font-black text-slate-100 group-hover:text-[#8B5CF6]/5 transition-colors duration-500 pointer-events-none select-none z-0">
                                             {s.step_number}
                                         </div>
 
                                         {/* Icon Bubble */}
-                                        <div className="w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500 mb-6">
-                                            <Icon className="w-7 h-7" />
+                                        <div className="w-20 h-20 rounded-2xl bg-white shadow-xl shadow-[#0F172A]/5 flex items-center justify-center text-[#0F172A] group-hover:bg-[#8B5CF6] group-hover:text-white transition-all duration-500 mb-8 relative z-10 border border-slate-50">
+                                            <Icon className="w-8 h-8 group-hover:scale-110 transition-transform" />
                                         </div>
 
                                         {/* Title */}
-                                        <h3 className="text-2xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                                        <h3 className="text-2xl font-bold text-[#0F172A] mb-4 tracking-tight group-hover:text-[#8B5CF6] transition-colors relative z-10">
                                             {s.title}
                                         </h3>
 
                                         {/* Description */}
-                                        <p className="text-slate-500 font-medium leading-relaxed max-w-[260px]">
+                                        <p className="text-[#64748B] font-medium leading-relaxed max-w-[260px] relative z-10 transition-colors group-hover:text-[#0F172A]/80">
                                             {s.text}
                                         </p>
 

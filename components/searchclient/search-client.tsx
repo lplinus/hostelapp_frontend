@@ -221,7 +221,7 @@ export default function SearchClient({
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                        <div className="flex bg-white border border-slate-200/60 rounded-xl p-1 shadow-sm">
                             <button className="p-2 text-slate-400 hover:text-teal-600 transition-colors"><Grid size={18} /></button>
                             <button className="p-2 bg-teal-50 text-teal-600 rounded-lg transition-colors shadow-sm"><ListIcon size={18} /></button>
                         </div>
@@ -397,7 +397,7 @@ export default function SearchClient({
             <div className="grid grid-cols-12 gap-6 lg:gap-8 w-full">
                 <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 flex flex-col items-center lg:items-end">
                     {!data || filteredAndSortedResults.length === 0 ? (
-                        <div className="bg-white p-20 rounded-[22px] text-center border border-slate-100 shadow-sm">
+                        <div className="bg-white p-20 rounded-[22px] text-center border border-slate-200/60 shadow-sm">
                             <SearchX className="w-16 h-16 text-slate-200 mx-auto mb-6" />
                             <h3 className="text-2xl font-bold text-slate-900">No hostels match your filters</h3>
                             <p className="text-slate-500 mt-3 max-w-md mx-auto">
@@ -450,8 +450,8 @@ export default function SearchClient({
 
                 <div className="col-span-12 lg:col-span-4 order-1 lg:order-2">
                     <div className={cn("hidden lg:block sticky top-[100px]")}>
-                        <Card className="rounded-[22px] border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
-                            <CardHeader className="bg-slate-50/50 px-6 py-5 border-b border-slate-100">
+                        <Card className="rounded-[22px] border border-slate-200/60 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
+                            <CardHeader className="bg-slate-50/50 px-6 py-5 border-b border-slate-200/60">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
                                         <SlidersHorizontal className="w-5 h-5 text-teal-600" />

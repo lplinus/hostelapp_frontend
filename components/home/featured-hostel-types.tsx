@@ -34,17 +34,20 @@ export default async function FeaturedHostelTypes() {
 
     if (!hostelTypes?.length) return null;
     return (
-        <section className="py-8 sm:py-10 lg:py-12 bg-white">
-            <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-8">
-                    Browse by Hostel Type
-                </h2>
+        <section className="pt-0 pb-16 bg-white font-inter">
+            <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                    <div>
+                        <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
+                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Categories</span>
+                        </div>
+                        <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight">
+                            Browse by <span className="italic text-[#64748B] font-medium">Hostel Type</span>
+                        </h2>
+                    </div>
+                </div>
 
-                <div className="relative group/carousel overflow-visible">
-                    {/* Vanishing Edge Gradients */}
-                    <div className="absolute -left-1 top-0 bottom-0 w-3 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-                    <div className="absolute -right-1 top-0 bottom-0 w-3 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-
+                <div className="relative group/carousel">
                     <Carousel
                         opts={{
                             align: "start",
@@ -52,50 +55,51 @@ export default async function FeaturedHostelTypes() {
                         }}
                         className="w-full"
                     >
-                        <CarouselContent className="-ml-3">
+                        {/* Navigation Buttons Moved to Top Right (relative to Carousel) */}
+                        <div className="absolute -top-16 right-0 flex gap-3 z-20">
+                            <CarouselPrevious
+                                className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                            />
+                            <CarouselNext
+                                className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                            />
+                        </div>
+
+                        <CarouselContent className="-ml-4 sm:-ml-6">
                             {hostelTypes.map((type) => (
                                 <CarouselItem
                                     key={type.id}
-                                    className="pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                                    className="pl-4 sm:pl-6 basis-[70%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                                 >
                                     <Link
                                         href={`/hostel-type/${type.hostel_type}`}
                                         className="group block"
                                     >
-                                        <div className="relative h-36 rounded-2xl overflow-hidden shadow-lg mb-3 border border-black">
+                                        <div className="relative h-44 rounded-3xl overflow-hidden shadow-md border border-slate-100/50 group-hover:shadow-2xl group-hover:shadow-[#8B5CF6]/30 transition-all duration-500 group-hover:-translate-y-2">
                                             {type.image ? (
                                                 <Image
                                                     src={toLocalMediaPath(type.image) || ""}
                                                     alt={type.alt_text || type.name}
                                                     fill
-                                                    className="object-cover transition duration-500"
-                                                    sizes="(max-width: 768px) 50vw, 20vw"
+                                                    className="object-cover"
+                                                    sizes="(max-width: 768px) 70vw, 20vw"
                                                     unoptimized={isExternalImage(type.image)}
                                                 />
                                             ) : (
-                                                <div className="absolute inset-0 bg-blue-500 opacity-90 transition duration-500" />
+                                                <div className="absolute inset-0 bg-[#8B5CF6] opacity-90 transition duration-500" />
                                             )}
-                                            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
                                         </div>
-
-                                        <p className="text-center font-bold text-slate-800 text-base group-hover:text-orange-600 transition-colors">
-                                            {type.name}
-                                        </p>
+                                        <div className="mt-4 w-full">
+                                            <p className="text-[#0F172A] font-bold text-lg tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
+                                                {type.name}
+                                            </p>
+                                        </div>
                                     </Link>
-
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-
-                        <CarouselPrevious
-                            className="-left-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
-                        />
-                        <CarouselNext
-                            className="-right-6 size-11 rounded-full border-2 border-slate-100 bg-white text-black shadow-2xl hover:scale-110 transition-all duration-200 disabled:opacity-0 top-[72px] z-30 [&_svg]:size-6"
-                        />
                     </Carousel>
                 </div>
-
             </div>
         </section>
     );

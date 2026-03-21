@@ -59,34 +59,37 @@ export default function LandingStats({ stats }: LandingStatsProps) {
     const displayStats = stats && stats.length > 0 ? stats : defaultStats;
 
     return (
-        <section className="bg-white py-16 lg:py-24 mt-12 lg:mt-24 font-poppins relative">
+        <section className="bg-transparent py-20 lg:py-32 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 <SectionReveal>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
                         {displayStats.map((s, idx) => {
                             const Icon = ICON_MAP[s.icon_name] || Home;
                             return (
                                 <div
                                     key={idx}
-                                    className="group relative flex flex-col items-center justify-center p-10 sm:p-12 text-center bg-slate-50 rounded-[2.5rem] border border-slate-200 hover:bg-white hover:border-orange-200 hover:shadow-xl hover:shadow-orange-200/40 transition-all duration-500 active:scale-95"
+                                    className="group relative flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-white rounded-3xl shadow-sm hover:shadow-xl hover:shadow-[#0F172A]/5 hover:-translate-y-2 transition-all duration-500 border border-slate-100/50"
                                 >
+                                    {/* Subtle Icon Background */}
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-gradient-to-right from-transparent via-[#8B5CF6] to-transparent transition-all duration-500" />
+                                    
                                     {/* Icon Circle */}
-                                    <div className="mb-6 w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-700 group-hover:bg-orange-500 group-hover:text-white transition-all duration-500">
-                                        <Icon className="w-5 h-5" />
+                                    <div className="mb-8 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#64748B] group-hover:bg-[#8B5CF6]/10 group-hover:text-[#8B5CF6] transition-all duration-500 shadow-inner">
+                                        <Icon className="w-6 h-6" />
                                     </div>
 
                                     {/* Stat Number */}
-                                    <dt className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 mb-2">
+                                    <dt className="text-4xl sm:text-5xl font-bold tracking-tight text-[#0F172A] mb-3">
                                         {s.number}
                                     </dt>
 
                                     {/* Stat Label */}
-                                    <dd className="text-[10px] sm:text-[11px] uppercase font-black tracking-[0.2em] text-slate-500 group-hover:text-orange-600 transition-colors">
+                                    <dd className="text-xs sm:text-[13px] uppercase font-bold tracking-[0.1em] text-[#64748B] group-hover:text-[#0F172A] transition-colors">
                                         {s.label}
                                     </dd>
-
-                                    {/* Corner accent */}
-                                    <div className="absolute top-6 right-6 w-2 h-2 rounded-full bg-slate-200 group-hover:bg-orange-500 transition-colors" />
+                                    
+                                    {/* Decorative Dot */}
+                                    <div className="mt-6 w-1 h-1 rounded-full bg-slate-200 group-hover:bg-[#8B5CF6] group-hover:scale-150 transition-all duration-500" />
                                 </div>
                             );
                         })}

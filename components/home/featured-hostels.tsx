@@ -59,27 +59,31 @@ export default async function FeaturedHostels() {
     });
 
     if (featuredHostels.length === 0) {
-        return null; // hide section if no featured hostels
+        return null;
     }
 
     return (
-        <section className="py-8 sm:py-10 lg:py-12 bg-white">
-            <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12">
-                {/* Section Heading — left-aligned with View All on same row */}
-                <div className="flex items-start justify-between mb-2">
+        <section className="py-24 bg-white font-inter">
+            <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
-                            Featured Hostels
+                        <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
+                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Featured Selection</span>
+                        </div>
+                        <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight mb-2">
+                            Curated <span className="italic text-[#64748B] font-medium">Hostels</span>
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Hand-picked hostels loved by students
+                        <p className="text-lg text-[#64748B] font-medium">
+                            Hand-picked stays loved by our community
                         </p>
                     </div>
+
                     <Link
                         href="/hostels"
-                        className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors mt-1"
+                        className="group flex items-center gap-3 text-[15px] font-bold text-[#0F172A] hover:text-[#8B5CF6] transition-all bg-[#F8FAFC] px-6 py-3 rounded-full border border-slate-100"
                     >
-                        View All <ArrowRight className="w-4 h-4" />
+                        View All Listings 
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </div>
 
@@ -90,24 +94,13 @@ export default async function FeaturedHostels() {
                     }}
                     className="w-full"
                 >
-                    {/* Arrow controls */}
-                    <div className="flex items-center justify-end gap-2 mb-4">
-                        <CarouselPrevious
-                            className="static translate-y-0 size-8 rounded-full border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-40 disabled:hover:scale-100"
-                        />
-                        <CarouselNext
-                            className="static translate-y-0 size-8 rounded-full border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-40 disabled:hover:scale-100"
-                        />
-                    </div>
-
-                    {/* Carousel Slider — 4 cards per slide on xl */}
-                    <CarouselContent className="-ml-4">
+                    <CarouselContent className="-ml-6">
                         {featuredHostels.map((hostel) => (
                             <CarouselItem
                                 key={hostel.id}
-                                className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                                className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                             >
-                                <div className="h-full py-1">
+                                <div className="h-full py-4">
                                     <HostelCard
                                         id={String(hostel.id)}
                                         slug={hostel.slug}
@@ -132,6 +125,16 @@ export default async function FeaturedHostels() {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
+
+                    {/* Navigation */}
+                    <div className="flex justify-end gap-3 mt-10">
+                        <CarouselPrevious
+                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                        />
+                        <CarouselNext
+                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                        />
+                    </div>
                 </Carousel>
             </div>
         </section>

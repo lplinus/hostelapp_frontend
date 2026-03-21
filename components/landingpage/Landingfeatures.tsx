@@ -42,33 +42,31 @@ export default function LandingFeatures({ data }: LandingFeaturesProps) {
     const displayFeatures = data?.features && data.features.length > 0 ? data.features : defaultFeatures;
 
     return (
-        <section id="features" className="py-28 sm:py-36 bg-slate-50 font-poppins relative overflow-hidden">
-
-            {/* subtle background glow */}
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-orange-200/20 blur-[180px] rounded-full pointer-events-none" />
+        <section id="features" className="py-24 lg:py-32 bg-white font-inter relative overflow-hidden">
+            {/* background glow */}
+            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#8B5CF6]/5 blur-[180px] rounded-full pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
 
                 {/* Section Header */}
                 <SectionReveal>
-                    <div className="max-w-3xl mx-auto text-center mb-28">
+                    <div className="max-w-3xl mx-auto text-center mb-20 lg:mb-28">
 
-                        {/* Eyebrow */}
-                        <p className="text-[11px] tracking-[0.35em] font-semibold text-orange-500 uppercase mb-6">
-                            {data?.features_eyebrow || "The Hostel In Advantage"}
-                        </p>
+                        <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-6">
+                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">
+                                {data?.features_eyebrow || "The Hostel In Advantage"}
+                            </span>
+                        </div>
 
-                        {/* Main Heading */}
-                        <h2 className="text-4xl sm:text-6xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-6">
+                        <h2 className="text-4xl sm:text-6xl font-bold text-[#0F172A] leading-[1.1] tracking-tight mb-8">
                             {data?.features_title_main || "Everything You Need,"}
                             <br />
-                            <span className="italic text-slate-500 font-medium">
+                            <span className="italic text-[#64748B] font-medium">
                                 {data?.features_title_italic || "Nothing You Don't."}
                             </span>
                         </h2>
 
-                        {/* Description */}
-                        <p className="text-base sm:text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto">
+                        <p className="text-lg text-[#64748B] leading-relaxed max-w-2xl mx-auto font-medium">
                             {data?.features_subtitle || "We've re-imagined the hostel experience from the ground up, focusing only on what truly matters to students."}
                         </p>
 
@@ -77,30 +75,30 @@ export default function LandingFeatures({ data }: LandingFeaturesProps) {
 
                 {/* Feature Grid */}
                 <SectionReveal delay={0.2}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
                         {displayFeatures.map((f, idx) => {
                             const Icon = ICON_MAP[f.icon_name] || ShieldCheck;
                             return (
                                 <div
                                     key={idx}
-                                    className="group relative p-12 bg-white rounded-[3rem] border border-slate-200 hover:border-orange-200 hover:shadow-xl hover:shadow-orange-200/20 transition-all duration-700 active:scale-[0.98]"
+                                    className="group relative p-10 lg:p-12 bg-[#F8FAFC] rounded-3xl border border-slate-100 hover:border-[#8B5CF6]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
                                 >
                                     {/* Icon Container */}
-                                    <div className="mb-10 w-20 h-20 rounded-[2rem] bg-orange-50 flex items-center justify-center text-orange-500 shadow-lg shadow-orange-900/5 group-hover:bg-orange-500 group-hover:text-white group-hover:rotate-[10deg] transition-all duration-700">
+                                    <div className="mb-10 w-20 h-20 rounded-2xl bg-white flex items-center justify-center text-[#0F172A] shadow-sm group-hover:bg-[#8B5CF6] group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg shadow-[#8B5CF6]/20">
                                         <Icon size={32} />
                                     </div>
 
                                     {/* Content */}
-                                    <h3 className="text-2xl font-black text-slate-900 group-hover:text-orange-600 mb-4 tracking-tight transition-colors">
+                                    <h3 className="text-2xl font-bold text-[#0F172A] group-hover:text-[#8B5CF6] mb-5 tracking-tight transition-colors">
                                         {f.title}
                                     </h3>
-                                    <p className="text-base leading-relaxed text-slate-500 group-hover:text-slate-600 font-medium transition-colors">
+                                    <p className="text-base leading-relaxed text-[#64748B] group-hover:text-[#0F172A]/80 font-medium transition-colors">
                                         {f.text}
                                     </p>
 
                                     {/* Decorative Visual Flair */}
-                                    <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-ping" />
+                                    <div className="absolute bottom-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-bounce" />
                                     </div>
                                 </div>
                             );
