@@ -1,12 +1,7 @@
 import { tokenManager } from "@/lib/token";
+import { env } from "@/config/env";
 
-// const API_BASE_URL =
-//     process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
-
-if (!API_BASE_URL) {
-    throw new Error("API base URL is not defined");
-}
+const API_BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface StateItem {
     id: number;

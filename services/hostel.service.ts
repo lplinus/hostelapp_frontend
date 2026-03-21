@@ -1,7 +1,8 @@
 import { HostelListItem, HostelDetail, HostelImage, DefaultHostelImage } from "@/types/hostel.types";
 import { authApiClient } from "@/lib/api/auth-client";
+import { env } from "@/config/env";
 
-const API_BASE_URL = typeof globalThis.window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
+const API_BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
 
 function toRelativeImageUrl(url: string | null): string | null {
     if (!url) return null;

@@ -8,14 +8,15 @@ const nextConfig: NextConfig = {
   // The trailing slash is already enforced by the API client and Django's APPEND_SLASH.
   skipTrailingSlashRedirect: true,
   async rewrites() {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
     return [
       {
         source: "/media/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000"}/media/:path*`,
+        destination: `${apiBase}/media/:path*`,
       },
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000"}/api/:path*`,
+        destination: `${apiBase}/api/:path*`,
       },
     ];
   },

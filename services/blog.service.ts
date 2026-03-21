@@ -4,8 +4,9 @@ import {
     BlogPostDetail,
     BlogCategory,
 } from "@/types/blog.types";
+import { env } from "@/config/env";
 
-const API_BASE_URL = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000");
+const API_BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
  * Strips the Django backend base URL from image paths so they become
