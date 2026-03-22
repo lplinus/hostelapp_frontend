@@ -3,15 +3,18 @@ export const dynamic = "force-dynamic"
 import type { Metadata } from "next";
 import { getSEO } from "@/lib/seo";
 import { Suspense } from "react";
+import dynamicImport from "next/dynamic";
 
-// Landing Page Components
+// Critical Landing Page Component (SSR)
 import LandingHero from "@/components/landingpage/Landinghero";
-import LandingStats from "@/components/landingpage/Landingstats";
-import LandingCities from "@/components/landingpage/Landingcities";
-import LandingFeatures from "@/components/landingpage/Landingfeatures";
-import LandingHowItWorks from "@/components/landingpage/Landinghowitworks";
-import LandingTestimonials from "@/components/landingpage/Landingtestimonials";
-import LandingCTA from "@/components/landingpage/Landingcta";
+
+// Non-critical components (Dynamic Import)
+const LandingStats = dynamicImport(() => import("@/components/landingpage/Landingstats"), { ssr: true });
+const LandingCities = dynamicImport(() => import("@/components/landingpage/Landingcities"), { ssr: true });
+const LandingFeatures = dynamicImport(() => import("@/components/landingpage/Landingfeatures"), { ssr: true });
+const LandingHowItWorks = dynamicImport(() => import("@/components/landingpage/Landinghowitworks"), { ssr: true });
+const LandingTestimonials = dynamicImport(() => import("@/components/landingpage/Landingtestimonials"), { ssr: true });
+const LandingCTA = dynamicImport(() => import("@/components/landingpage/Landingcta"), { ssr: true });
 
 import { landingService } from "@/services/landing.service";
 
@@ -72,7 +75,9 @@ export default async function LandingPage() {
       <main className="antialiased font-poppins bg-white text-stone-900 overflow-hidden">
         {/* Full-width premium sections */}
         <LandingHero data={landingData} />
-        <Suspense fallback={null}>
+        
+        {/* Below the fold components - Loaded dynamically with Suspense */}
+        <Suspense fallback={<div className="h-40 bg-slate-50 animate-pulse" />}>
           <LandingStats stats={landingData?.stats} />
           <LandingCities data={landingData} />
           <LandingFeatures data={landingData} />

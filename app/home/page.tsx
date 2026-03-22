@@ -68,7 +68,7 @@ export default async function HomePage() {
         />
 
         {/* PERMANENT STICKY Search Bar Wrap - Positioned exactly below nav (h-20 = 80px), z-40 to stay under header */}
-        <div className="sticky top-[80px] z-[40] w-full px-4 sm:px-6 -mt-10 sm:-mt-12 lg:-mt-16 mb-4 transition-all duration-300">
+        <div className="sticky top-[80px] z-[40] w-full px-4 sm:px-6 -mt-10 sm:-mt-12 lg:-mt-16 mb-4">
            <div className="max-w-5xl mx-auto">
               <SearchBar />
            </div>

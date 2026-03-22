@@ -36,7 +36,7 @@ export default async function FeaturedHostelTypes() {
     return (
         <section className="pt-0 pb-16 bg-white font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
                     <div>
                         <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
                             <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Categories</span>
@@ -56,7 +56,7 @@ export default async function FeaturedHostelTypes() {
                         className="w-full"
                     >
                         {/* Navigation Buttons Moved to Top Right (relative to Carousel) */}
-                        <div className="absolute -top-16 right-0 flex gap-3 z-20">
+                        <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
                             <CarouselPrevious
                                 className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
                             />

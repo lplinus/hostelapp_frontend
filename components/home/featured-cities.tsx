@@ -42,7 +42,7 @@ export default async function FeaturedCities() {
   return (
     <section className="pt-10 pb-6 bg-[#F8FAFC] font-inter">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
           <div>
             <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
               <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Locations</span>

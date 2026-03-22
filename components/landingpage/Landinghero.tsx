@@ -1,7 +1,7 @@
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Star, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import SectionReveal from "@/components/ui/section-reveal";
 import { LandingPageResponse } from "@/lib/api/types";
 
 interface LandingHeroProps {
@@ -11,10 +11,10 @@ interface LandingHeroProps {
 export default function LandingHero({ data }: LandingHeroProps) {
     return (
         <section className="relative w-full min-h-[100vh] flex flex-col pt-12 lg:pt-16 pb-12 lg:pb-20 font-inter bg-[#F8FAFC] overflow-hidden">
-            {/* Background Layer: Subtle Gradients */}
+            {/* Background Layer: Subtle Gradients & Dot Pattern */}
             <div className="absolute inset-0 -z-10">
                 <div
-                    className="absolute inset-0 opacity-[0.3]"
+                    className="absolute inset-0 opacity-[0.2]"
                     style={{
                         backgroundImage: `radial-gradient(#64748B 0.5px, transparent 0.5px)`,
                         backgroundSize: '32px 32px'
@@ -26,13 +26,30 @@ export default function LandingHero({ data }: LandingHeroProps) {
 
             {/* Main Rounded Container - Premium Dark Theme */}
             <div className="flex-1 mx-4 sm:mx-6 lg:mx-8 rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-2xl shadow-[#0F172A]/20 relative bg-[#0F172A] border border-white/10 group">
-                {/* Decorative Background for Container */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] opacity-90" />
-                <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 pointer-events-none" />
+                {/* Optimized Background Image using next/image with priority */}
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/images/landing.webp"
+                        alt="Modern student living space"
+                        fill
+                        priority
+                        sizes="(max-width: 768px) 100vw, 95vw"
+                        quality={85}
+                        className="object-cover opacity-30 transform scale-105 group-hover:scale-100 transition-transform duration-1000"
+                    />
+                    {/* Decorative Overlays */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B]/90 to-[#0F172A] opacity-90" />
+                    <div 
+                        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                        style={{
+                            backgroundImage: `url('https://www.transparenttextures.com/patterns/carbon-fibre.png')`,
+                        }}
+                     />
+                </div>
                 
-                {/* Content */}
+                {/* Content - Directly rendered for LCP (No SectionReveal delay) */}
                 <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24 py-20 lg:py-32">
-                    <SectionReveal>
+                    <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-forwards">
                         {/* Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-10 backdrop-blur-md">
                             <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
@@ -41,8 +58,8 @@ export default function LandingHero({ data }: LandingHeroProps) {
                             </span>
                         </div>
 
-                        {/* Heading */}
-                        <h1 className="text-5xl sm:text-7xl lg:text-[92px] font-bold text-white leading-[1.1] lg:leading-[1.05] tracking-tight mb-8 max-w-5xl">
+                        {/* Heading - Critical LCP Element */}
+                        <h1 className="text-5xl sm:text-7xl lg:text-[92px] font-bold text-white leading-[1.1] lg:leading-[1.05] tracking-tight mb-8 max-w-5xl drop-shadow-sm">
                             {data?.hero_title_main || "Find Your Perfect"}<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#C084FC] font-extrabold italic">
                                 {data?.hero_title_italic || "Student Hostel"}
@@ -54,11 +71,11 @@ export default function LandingHero({ data }: LandingHeroProps) {
                         </h1>
 
                         {/* Description */}
-                        <p className="text-lg sm:text-xl md:text-2xl text-[#94A3B8] max-w-3xl mb-14 font-medium leading-relaxed mx-auto">
+                        <p className="text-lg sm:text-xl md:text-2xl text-[#94A3B8] max-w-3xl mb-14 font-medium leading-relaxed mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 fill-mode-forwards">
                             {data?.hero_description || "Premium, pre-verified hostels designed for the modern student. Join 10,000+ residents across 25+ major cities."}
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full max-w-2xl mx-auto px-4 mt-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full max-w-2xl mx-auto px-4 mt-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-200 fill-mode-forwards">
                             <Link
                                 href={data?.hero_primary_cta_url || "/home"}
                                 className="group/btn relative flex justify-center items-center gap-3 bg-[#8B5CF6] text-white font-bold px-10 py-5 rounded-2xl transition-all shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] hover:bg-[#7C3AED] active:scale-95 text-base w-full sm:w-auto"
@@ -76,7 +93,7 @@ export default function LandingHero({ data }: LandingHeroProps) {
                         </div>
 
                         {/* Trust Row */}
-                        <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center text-white/60 text-sm font-semibold tracking-wide w-full mt-20 lg:mt-32">
+                        <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center text-white/60 text-sm font-semibold tracking-wide w-full mt-20 lg:mt-32 animate-in fade-in duration-1000 delay-300 fill-mode-forwards">
                             <div className="flex items-center gap-3 group/item cursor-default">
                                 <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-[#8B5CF6]/20 transition-colors">
                                     <ShieldCheck size={20} className="text-[#8B5CF6]" />
@@ -98,7 +115,7 @@ export default function LandingHero({ data }: LandingHeroProps) {
                                 <span>4.9 Avg Rating</span>
                             </div>
                         </div>
-                    </SectionReveal>
+                    </div>
                 </div>
             </div>
         </section>

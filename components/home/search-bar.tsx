@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, IndianRupee, Users, Search, ChevronDown } from "lucide-react";
 import { slugify, getCitySEOLink } from "@/lib/utils";
 import clsx from "clsx";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DropdownOption {
   value: string;
@@ -55,25 +56,42 @@ function MobileSelect({
         />
       </button>
 
-      {open && (
-        <ul className="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 max-h-60 overflow-auto scrollbar-hide py-2 translate-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          {options.map((opt) => (
-            <li
-              key={opt.value}
-              onClick={() => {
-                onChange(opt.value);
-                setOpen(false);
-              }}
-              className={`px-6 py-3 cursor-pointer text-[15px] hover:bg-[#F8FAFC] transition-colors ${value === opt.value
-                ? "bg-[#8B5CF6]/5 text-[#8B5CF6] font-bold"
-                : "text-[#64748B]"
-                }`}
-            >
-              {opt.label}
-            </li>
-          ))}
-        </ul>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 max-h-60 overflow-auto scrollbar-hide py-2"
+          >
+            {options.map((opt) => (
+              <li
+                key={opt.value}
+                role="option"
+                aria-selected={value === opt.value}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }
+                }}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={`px-6 py-3 cursor-pointer text-[15px] hover:bg-[#F8FAFC] transition-colors ${value === opt.value
+                  ? "bg-[#8B5CF6]/5 text-[#8B5CF6] font-bold"
+                  : "text-[#64748B]"
+                  }`}
+              >
+                {opt.label}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -103,18 +121,26 @@ export default function SearchBar() {
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (window.scrollY > 200) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sticky = window.scrollY > 200;
+          if (sticky !== isSticky) {
+            setIsSticky(sticky);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
-  const handleSearch = () => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isSticky]);
+
+  const handleSearch = useCallback(() => {
     if (location && !budget && !gender) {
       const citySlug = slugify(location);
       router.push(getCitySEOLink(citySlug));
@@ -127,26 +153,37 @@ export default function SearchBar() {
     if (gender) params.append("gender", gender);
 
     router.push(`/search?${params.toString()}`);
-  };
+  }, [location, budget, gender, router]);
+
+  // Optimized spring for "very very smooth" transition
+  const springConfig = { 
+    type: "spring", 
+    stiffness: 260, 
+    damping: 32, 
+    mass: 0.5,
+    restDelta: 0.001 
+  } as const;
 
   return (
     <>
-      <div 
+      <motion.div 
+        layout
+        transition={springConfig}
         className={clsx(
-          "bg-white/95 backdrop-blur-2xl transition-all duration-500 mx-auto border z-[40]",
+          "bg-white/95 backdrop-blur-2xl mx-auto border z-[40] font-inter will-change-[transform,width,max-width,padding]",
           isSticky 
-            ? "p-2 max-w-4xl scale-[0.98] mt-1 shadow-[0_20px_60px_rgba(0,0,0,0.2)] border-slate-300 rounded-full" 
+            ? "p-2 max-w-4xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border-slate-200 rounded-full" 
             : "p-4 md:p-5 max-w-5xl border-[#0F172A]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
         )}
       >
-        <div className={clsx(
-          "grid items-center transition-all duration-500",
+        <motion.div layout className={clsx(
+          "grid items-center",
           isSticky 
             ? "grid-cols-[1fr_auto] md:grid-cols-5 gap-2" 
             : "grid-cols-1 md:grid-cols-4 gap-3"
         )}>
-          {/* Location - Always visible */}
-          <div className={clsx(
+          {/* Location */}
+          <motion.div layout className={clsx(
             "relative group", 
             isSticky ? "md:col-span-2" : "col-span-1"
           )}>
@@ -162,14 +199,14 @@ export default function SearchBar() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className={clsx(
-                "w-full pl-12 pr-6 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium placeholder:text-black/80 transition-all group-hover:border-[#8B5CF6]/50",
+                "w-full pl-12 pr-6 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400 transition-all group-hover:border-[#8B5CF6]/50",
                 isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
               )}
             />
-          </div>
+          </motion.div>
 
-          {/* Budget - Hidden on mobile if sticky */}
-          <div className={clsx(
+          {/* Budget */}
+          <motion.div layout className={clsx(
             "relative group",
             isSticky ? "hidden md:block" : "block"
           )}>
@@ -180,11 +217,11 @@ export default function SearchBar() {
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               className={clsx(
-                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50",
+                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50 cursor-pointer",
                 isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
               )}
             >
-              <option value="" className="text-black">Budget</option>
+              <option value="">Budget</option>
               {budgetOptions.slice(1).map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -198,10 +235,10 @@ export default function SearchBar() {
               onChange={setBudget}
               placeholder="Budget"
             />
-          </div>
+          </motion.div>
 
-          {/* Gender - Hidden on mobile if sticky */}
-          <div className={clsx(
+          {/* Gender */}
+          <motion.div layout className={clsx(
             "relative group",
             isSticky ? "hidden md:block" : "block"
           )}>
@@ -212,11 +249,11 @@ export default function SearchBar() {
               value={gender}
               onChange={(e) => setGender(e.target.value)}
               className={clsx(
-                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50",
+                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50 cursor-pointer",
                 isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
               )}
             >
-              <option value="" className="text-black">Gender</option>
+              <option value="">Gender</option>
               {genderOptions.slice(1).map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -230,23 +267,25 @@ export default function SearchBar() {
               onChange={setGender}
               placeholder="Gender"
             />
-          </div>
+          </motion.div>
 
           {/* Search Button */}
-          <div className="flex">
+          <motion.div layout className="flex">
             <button
               onClick={handleSearch}
               className={clsx(
-                "w-full flex items-center justify-center gap-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all shadow-xl shadow-[#0F172A]/20 hover:scale-[1.02] active:scale-95 group/btn",
+                "w-full flex items-center justify-center gap-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all shadow-xl shadow-[#0F172A]/20 active:scale-95 group/btn",
                 isSticky ? "h-[48px] px-4 md:px-6" : "h-[58px] px-8"
               )}
             >
               <Search className={clsx("transition-transform group-hover/btn:scale-110", isSticky ? "w-4 h-4" : "w-5 h-5")} />
-              <span className={clsx(isSticky ? "hidden md:inline" : "inline", isSticky ? "text-sm" : "text-lg")}>Search</span>
+              <motion.span layout className={clsx(isSticky ? "hidden md:inline" : "inline", isSticky ? "text-sm" : "text-lg")}>
+                Search
+              </motion.span>
             </button>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </>
   );
 }

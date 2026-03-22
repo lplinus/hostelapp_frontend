@@ -38,7 +38,7 @@ export default function FeaturedCitiesCarousel({
                 className="w-full"
             >
                 {/* Navigation Buttons Moved to Top Right (relative to Carousel) */}
-                <div className="absolute -top-16 right-0 flex gap-3 z-20">
+                <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
                     <CarouselPrevious
                         className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
                     />
