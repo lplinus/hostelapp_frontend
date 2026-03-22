@@ -99,10 +99,12 @@ export async function getTopRatedHostels(): Promise<HostelListItem[]> {
 }
 
 export async function getHostelBySlug(
-    slug: string
+    slug: string,
+    noCache: boolean = false
 ): Promise<HostelDetail> {
     const res = await fetch(`${API_BASE_URL}/api/hostels/${slug}/`, {
-        next: { revalidate: 60 },
+        cache: noCache ? "no-store" : "default",
+        next: noCache ? undefined : { revalidate: 60 },
     });
 
     if (!res.ok) {
@@ -143,3 +145,25 @@ export async function deleteHostel(id: number | string): Promise<void> {
     return authApiClient.delete(`/api/hostels/hostels/my-hostels/${id}/delete/`);
 }
 
+export async function postReview(data: {
+    hostel: number;
+    hostel_rating: number;
+    food_rating: number;
+    room_rating: number;
+    comment: string;
+    name?: string
+}): Promise<any> {
+    return authApiClient.post("/api/reviews/", data);
+}
+
+export async function getReviewsByHostel(hostelId: number): Promise<any[]> {
+    const res = await fetch(`${API_BASE_URL}/api/reviews/?hostel=${hostelId}`, {
+        cache: "no-store", // We want the latest reviews for polling
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch reviews");
+    }
+
+    return res.json();
+}

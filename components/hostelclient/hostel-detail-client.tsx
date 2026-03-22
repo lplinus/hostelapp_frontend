@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { sendContactMessage } from "@/services/public.service";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -35,8 +35,19 @@ import {
     X,
     ChevronLeft,
     ChevronRight,
+    MapPin,
+    Building2,
+    MessageSquarePlus,
 } from "lucide-react";
 import type { HostelDetail } from "@/types/hostel.types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { postReview, getHostelBySlug } from "@/services/hostel.service";
+import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 /* ------------------------------------------------------------------ */
 /*  Amenity-icon mapping                                               */
@@ -136,17 +147,17 @@ interface Props {
 export default function HostelDetailClient({ hostel }: Props) {
     /* ---------- images ---------- */
     const hostelImages: { src: string; alt: string }[] = [];
-    
+
     // Process hostel's specific images (up to 10 fields per image object)
-     for (const img of hostel.images || []){
+    for (const img of hostel.images || []) {
         for (let i = 1; i <= 10; i++) {
             const field = (i === 1 ? "image" : `image${i}`) as keyof typeof img;
             const src = img[field];
             if (typeof src === "string" && src) {
-              hostelImages.push({ 
-                src: toLocalMediaPath(src) || src, 
-                alt: i === 1 ? img.alt_text : `${img.alt_text} ${i}` 
-              });
+                hostelImages.push({
+                    src: toLocalMediaPath(src) || src,
+                    alt: i === 1 ? img.alt_text : `${img.alt_text} ${i}`
+                });
             }
         }
     }
@@ -159,10 +170,10 @@ export default function HostelDetailClient({ hostel }: Props) {
             const field = `image${i}` as keyof typeof d;
             const src = d[field];
             if (typeof src === "string" && src) {
-              hostelImages.push({ 
-                src: toLocalMediaPath(src) || src, 
-                alt: i === 1 ? altText : `${altText} ${i}`
-              });
+                hostelImages.push({
+                    src: toLocalMediaPath(src) || src,
+                    alt: i === 1 ? altText : `${altText} ${i}`
+                });
             }
         }
     }
@@ -176,6 +187,75 @@ export default function HostelDetailClient({ hostel }: Props) {
     const INITIAL_AMENITY_LIMIT = 6;
     const [priceMode, setPriceMode] = useState<"monthly" | "daily">("monthly");
     const [showGallery, setShowGallery] = useState(false);
+    const router = useRouter();
+    
+    const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
+    const previousReviewCount = useRef(hostel.rating_count);
+
+    // Use TanStack Query for "immediate effect" on reviews and caching
+    const { data: hostelData, refetch } = useQuery({
+        queryKey: ["hostel", hostel.slug],
+        queryFn: () => getHostelBySlug(hostel.slug, true), // Bypass cache for immediate polling
+        initialData: hostel,
+        refetchInterval: isWaitingForApproval ? 5000 : false, // Poll only when waiting for approval
+        staleTime: 30000, 
+    });
+
+    useEffect(() => {
+        if (isWaitingForApproval && hostelData?.rating_count && hostelData.rating_count > previousReviewCount.current) {
+            setIsWaitingForApproval(false);
+            previousReviewCount.current = hostelData.rating_count;
+            router.refresh(); // Sync the SSR cache
+            toast.success("Your review is now live!");
+        }
+    }, [hostelData?.rating_count, isWaitingForApproval, router]);
+
+    // Use polled data for reviews and ratings, but keep original for other details if preferred
+    // However, hostelData will naturally be the source of truth
+    const currentHostel = hostelData || hostel;
+
+    // Review Form State
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [reviewForm, setReviewForm] = useState({
+        name: "",
+        hostel_rating: 5,
+        food_rating: 5,
+        room_rating: 5,
+        comment: ""
+    });
+
+    const queryClient = useQueryClient();
+
+    const handleReviewSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!reviewForm.comment) {
+            toast.error("Please add a comment");
+            return;
+        }
+        setIsSubmittingReview(true);
+        try {
+            await postReview({
+                hostel: hostel.id,
+                hostel_rating: reviewForm.hostel_rating,
+                food_rating: reviewForm.food_rating,
+                room_rating: reviewForm.room_rating,
+                comment: reviewForm.comment,
+                name: reviewForm.name || undefined
+            });
+            toast.info("Review submitted! It will appear once approved by admin.");
+            setIsReviewModalOpen(false);
+            setReviewForm({ name: "", hostel_rating: 5, food_rating: 5, room_rating: 5, comment: "" });
+            
+            // Start polling for approval
+            setIsWaitingForApproval(true);
+        } catch (error) {
+            toast.error("Failed to post review. Please try again.");
+            console.error(error);
+        } finally {
+            setIsSubmittingReview(false);
+        }
+    };
 
     /* ---------- contact form ---------- */
     const [formData, setFormData] = useState({
@@ -207,15 +287,7 @@ export default function HostelDetailClient({ hostel }: Props) {
         }
     };
 
-    /* ---------- map ---------- */
-    // const hasCoords = hostel.latitude && hostel.longitude;
-    // const mapSrc = hasCoords
-    //     ? `https://maps.google.com/maps?q=${hostel.latitude},${hostel.longitude}&z=15&output=embed`
-    //     : hostel.address
-    //         ? `https://maps.google.com/maps?q=${encodeURIComponent(
-    //             hostel.address + ", " + hostel.city.name
-    //         )}&z=15&output=embed`
-    //         : null;
+
 
     const hasCoords =
         hostel.latitude !== null &&
@@ -257,16 +329,26 @@ export default function HostelDetailClient({ hostel }: Props) {
                 </ol>
             </nav>
 
+            <style dangerouslySetInnerHTML={{ __html: `
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            ` }} />
+
             {/* ===== Main Layout ===== */}
             <div className="max-w-[1200px] mx-auto px-5 pb-16">
-                
+
                 {/* ---------- Image Gallery (Now at the very top) ---------- */}
                 <div className="mb-8">
                     <div className="relative group">
                         {/* Desktop Bento Grid (Hidden on Mobile) */}
                         <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-3 h-[480px] rounded-3xl overflow-hidden shadow-sm">
                             {/* Main Image (Slot 1) */}
-                            <div 
+                            <div
                                 className="col-span-2 row-span-2 relative cursor-pointer overflow-hidden"
                                 onClick={() => setShowGallery(true)}
                             >
@@ -282,7 +364,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             </div>
 
                             {/* Slot 2 (Top Middle) */}
-                            <div 
+                            <div
                                 className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
                                 onClick={() => setShowGallery(true)}
                             >
@@ -297,7 +379,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             </div>
 
                             {/* Slot 3 (Top Right) */}
-                            <div 
+                            <div
                                 className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
                                 onClick={() => setShowGallery(true)}
                             >
@@ -312,7 +394,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             </div>
 
                             {/* Slot 4 (Bottom Middle) */}
-                            <div 
+                            <div
                                 className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
                                 onClick={() => setShowGallery(true)}
                             >
@@ -327,7 +409,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             </div>
 
                             {/* Slot 5 (Bottom Right) */}
-                            <div 
+                            <div
                                 className="col-span-1 row-span-1 relative cursor-pointer overflow-hidden"
                                 onClick={() => setShowGallery(true)}
                             >
@@ -362,7 +444,7 @@ export default function HostelDetailClient({ hostel }: Props) {
 
                             {allImages.length > 1 && (
                                 <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-                                    <button 
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setActiveImg((prev) => (prev > 0 ? prev - 1 : allImages.length - 1));
@@ -371,7 +453,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     >
                                         <ChevronLeft size={20} />
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setActiveImg((prev) => (prev < allImages.length - 1 ? prev + 1 : 0));
@@ -414,12 +496,12 @@ export default function HostelDetailClient({ hostel }: Props) {
                                 </span>
                                 <span className="text-gray-300 hidden sm:inline">|</span>
                                 <div className="flex items-center gap-1">
-                                    <StarRating rating={hostel.rating_avg} />
+                                    <StarRating rating={hostelData?.rating_avg || hostel.rating_avg} />
                                     <span className="ml-1 text-gray-900 font-bold">
-                                        {hostel.rating_avg.toFixed(1)}
+                                        {(hostelData?.rating_avg || hostel.rating_avg).toFixed(1)}
                                     </span>
                                     <span className="text-gray-400 font-normal">
-                                        ({hostel.rating_count} reviews)
+                                        ({hostelData?.rating_count || hostel.rating_count} reviews)
                                     </span>
                                 </div>
                             </div>
@@ -452,9 +534,36 @@ export default function HostelDetailClient({ hostel }: Props) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12">
+                {/* ---------- Ratings Summary Section (Big Section) ---------- */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 mt-4">
+                    {[
+                        { label: "Hostel", val: hostelData?.hostel_rating_avg || hostel.hostel_rating_avg, icon: Building2, color: "blue" },
+                        { label: "Food", val: hostelData?.food_rating_avg || hostel.food_rating_avg, icon: UtensilsCrossed, color: "orange" },
+                        { label: "Room", val: hostelData?.room_rating_avg || hostel.room_rating_avg, icon: BedDouble, color: "purple" }
+                    ].map((cat, idx) => (
+                        <div key={idx} className="bg-white border-2 border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                            <div className={`absolute top-0 right-0 w-24 h-24 bg-${cat.color}-50 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-500`} />
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`w-10 h-10 rounded-2xl bg-${cat.color}-100 flex items-center justify-center text-${cat.color}-600`}>
+                                        <cat.icon size={20} />
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{cat.label}</span>
+                                </div>
+                                <div className="flex items-end gap-2">
+                                    <span className="text-4xl font-black text-slate-900">{(Number(cat.val) || 5.0).toFixed(1)}</span>
+                                    <div className="mb-1">
+                                        <StarRating rating={Number(cat.val) || 5.0} size={16} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 min-w-0">
                     {/* ===== LEFT COLUMN ===== */}
-                    <div>
+                    <div className="min-w-0">
 
 
                         {/* ---------- Gallery Modal ---------- */}
@@ -462,7 +571,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in fade-in duration-300">
                                 {/* Header */}
                                 <div className="flex items-center justify-between px-6 py-4 border-b">
-                                    <button 
+                                    <button
                                         onClick={() => setShowGallery(false)}
                                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                                     >
@@ -669,11 +778,12 @@ export default function HostelDetailClient({ hostel }: Props) {
                         )}
 
                         {/* ---------- Location ---------- */}
-                        <div className="mb-8">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">
-                                Location
+                        <div className="mb-10">
+                            <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                                <MapPin size={22} className="text-blue-600" />
+                                Location & Surroundings
                             </h2>
-                            <div className="rounded-2xl overflow-hidden border border-black bg-gray-100 h-[220px]">
+                            <div className="rounded-3xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 h-[300px] mb-6">
                                 {mapSrc ? (
                                     <iframe
                                         src={mapSrc}
@@ -684,6 +794,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                                         loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
                                         title={`${hostel.name} location`}
+                                        className="grayscale-[0.2] contrast-[1.1]"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
@@ -691,6 +802,46 @@ export default function HostelDetailClient({ hostel }: Props) {
                                     </div>
                                 )}
                             </div>
+
+                            {hostel.landmarks && hostel.landmarks.length > 0 && (
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
+                                        Nearby Landmarks
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {hostel.landmarks.map((landmark) => (
+                                            <div
+                                                key={landmark.id}
+                                                className="flex items-center justify-between p-4 rounded-2xl bg-white border border-black shadow-sm hover:shadow-md transition-all group"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                                        {landmark.is_popular ? <Star size={18} className="fill-current" /> : <Building2 size={18} />}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-gray-900 leading-tight">
+                                                            {landmark.name}
+                                                        </p>
+                                                        {landmark.is_popular && (
+                                                            <span className="text-[10px] font-bold text-amber-600 uppercase tracking-tighter bg-amber-50 px-1.5 py-0.5 rounded-md">
+                                                                Popular
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-sm font-extrabold text-blue-600">
+                                                        {landmark.distance}
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-400 font-medium">
+                                                        Away
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* ---------- Reviews ---------- */}
@@ -698,77 +849,149 @@ export default function HostelDetailClient({ hostel }: Props) {
                             {(() => {
                                 // const hasRealReviews =
                                 //     hostel.reviews && hostel.reviews.length > 0;
+                                const currentReviews = hostelData?.reviews || hostel.reviews;
+                                const currentRatingAvg = hostelData?.rating_avg || hostel.rating_avg;
+                                const currentReviewCount = hostelData?.rating_count || hostel.rating_count;
+
                                 const hasRealReviews =
-                                    Array.isArray(hostel.reviews) && hostel.reviews.length > 0;
+                                    Array.isArray(currentReviews) && currentReviews.length > 0;
                                 const reviewsToShow = hasRealReviews
-                                    ? hostel.reviews
+                                    ? currentReviews
                                     : DEFAULT_REVIEWS;
                                 const reviewCount = hasRealReviews
-                                    ? hostel.reviews.length
-                                    : hostel.rating_count || DEFAULT_REVIEWS.length;
+                                    ? currentReviews.length
+                                    : currentReviewCount || DEFAULT_REVIEWS.length;
                                 const avgRating = hasRealReviews
-                                    ? hostel.rating_avg
+                                    ? currentRatingAvg
                                     : 4.5;
 
                                 return (
                                     <>
-                                        <div className="flex items-center gap-3 mb-5">
-                                            <h2 className="text-lg font-bold text-gray-900">
-                                                Reviews ({reviewCount})
-                                            </h2>
-                                            <StarRating
-                                                rating={avgRating}
-                                                size={16}
-                                            />
-                                            <span className="text-sm text-gray-500">
-                                                {avgRating.toFixed(1)}/5
-                                            </span>
-                                        </div>
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <h2 className="text-lg font-bold text-gray-900">
+                                                    Reviews
+                                                </h2>
+                                                <div className="bg-blue-50 px-2.5 py-1 rounded-lg flex items-center gap-1.5 border border-blue-100">
+                                                    <StarRating rating={avgRating} size={14} />
+                                                    <span className="text-blue-700 font-bold text-sm">
+                                                        {avgRating.toFixed(1)}
+                                                    </span>
+                                                    <span className="text-blue-300 font-bold mx-0.5">·</span>
+                                                    <span className="text-blue-700 font-bold text-sm">
+                                                        {reviewCount} reviews
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                        <div className="space-y-4">
-                                            {reviewsToShow.map((review) => (
-                                                <div
-                                                    key={review.id}
-                                                    className="border border-black rounded-xl px-5 py-4 hover:shadow-sm transition-shadow"
-                                                >
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
-                                                            <div className="flex items-center gap-2">
-                                                                <p className="font-semibold text-gray-900 text-sm">
-                                                                    {review.user_name}
-                                                                </p>
-                                                                {!hasRealReviews && (
-                                                                    <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                                                                        Sample Review
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <p className="text-gray-600 text-sm mt-1 leading-relaxed">
-                                                                {review.comment}
-                                                            </p>
-                                                            <p className="text-xs text-gray-400 mt-2">
-                                                                {new Date(
-                                                                    review.created_at
-                                                                ).toLocaleDateString(
-                                                                    "en-IN",
-                                                                    {
-                                                                        month: "short",
-                                                                        year: "numeric",
-                                                                    }
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div className="ml-4 flex-shrink-0">
-                                                            <StarRating
-                                                                rating={
-                                                                    review.rating
-                                                                }
-                                                                size={13}
+                                            <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button className="bg-black hover:bg-gray-800 text-white font-bold rounded-xl px-4 py-2 flex items-center gap-2 group transition-all">
+                                                        <MessageSquarePlus size={18} className="group-hover:scale-110 transition-transform" />
+                                                        Post a Review
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px] rounded-3xl">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-xl font-bold">Post a Review</DialogTitle>
+                                                    </DialogHeader>
+                                                    <form onSubmit={handleReviewSubmit} className="space-y-4 pt-4">
+                                                        <div className="space-y-2">
+                                                            <Label htmlFor="name" className="text-sm font-bold text-gray-700">Your Name (Optional)</Label>
+                                                            <Input
+                                                                id="name"
+                                                                placeholder="e.g. John Doe"
+                                                                className="rounded-xl border-gray-200 focus:border-blue-500"
+                                                                value={reviewForm.name}
+                                                                onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
                                                             />
                                                         </div>
+                                                        <div className="grid grid-cols-1 gap-4 bg-gray-50/50 p-4 rounded-2xl">
+                                                            {[
+                                                                { field: "hostel_rating", label: "Hostel Quality" },
+                                                                { field: "food_rating", label: "Food & Mess" },
+                                                                { field: "room_rating", label: "Room & Comfort" }
+                                                            ].map((cat) => (
+                                                                <div key={cat.field} className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-gray-500 uppercase tracking-wide">{cat.label}</Label>
+                                                                    <div className="flex items-center gap-2">
+                                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                                            <button
+                                                                                key={star}
+                                                                                type="button"
+                                                                                onClick={() => setReviewForm({ ...reviewForm, [cat.field]: star })}
+                                                                                className="p-1 transition-transform hover:scale-110"
+                                                                            >
+                                                                                <Star
+                                                                                    size={20}
+                                                                                    className={`${
+                                                                                        star <= (reviewForm as any)[cat.field]
+                                                                                            ? "fill-amber-400 text-amber-400"
+                                                                                            : "text-gray-200"
+                                                                                    }`}
+                                                                                />
+                                                                            </button>
+                                                                        ))}
+                                                                        <span className="ml-auto text-sm font-bold text-gray-600">
+                                                                            {(reviewForm as any)[cat.field]}/5
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <Label htmlFor="comment" className="text-sm font-bold text-gray-700">Your Experience</Label>
+                                                            <Textarea
+                                                                id="comment"
+                                                                placeholder="Tell others about your stay..."
+                                                                className="rounded-xl border-gray-200 focus:border-blue-500 min-h-[100px]"
+                                                                required
+                                                                value={reviewForm.comment}
+                                                                onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                                                            />
+                                                        </div>
+                                                        <Button
+                                                            type="submit"
+                                                            disabled={isSubmittingReview}
+                                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 rounded-xl transition-all"
+                                                        >
+                                                            {isSubmittingReview ? "Posting..." : "Post Review"}
+                                                        </Button>
+                                                    </form>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+
+                                        <div className="w-full overflow-hidden">
+                                            <div className="flex overflow-x-auto pb-4 gap-4 flex-nowrap scrollbar-hide snap-x snap-mandatory">
+                                                {reviewsToShow.map((review) => (
+                                                        <div
+                                                            key={review.id}
+                                                            className="border border-black rounded-xl p-3 w-[calc((100%-32px)/3)] min-w-[200px] flex-shrink-0 bg-white snap-start hover:shadow-sm transition-shadow"
+                                                        >
+                                                        <div className="flex items-start justify-between gap-3 mb-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                                                    {review.user_name.charAt(0)}
+                                                                </div>
+                                                                <p className="font-semibold text-gray-900 text-[12px]">
+                                                                    {review.user_name}
+                                                                </p>
+                                                            </div>
+                                                            <StarRating rating={review.rating} size={10} />
+                                                        </div>
+                                                        <p className="text-gray-600 text-[12px] leading-relaxed line-clamp-3 min-h-[50px] italic">
+                                                            "{review.comment}"
+                                                        </p>
+                                                        <p className="text-[11px] text-gray-400 mt-3">
+                                                            {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                                                month: "short",
+                                                                year: "numeric",
+                                                            })}
+                                                        </p>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ))}
+                                            </div>
                                         </div>
                                     </>
                                 );
@@ -861,11 +1084,11 @@ export default function HostelDetailClient({ hostel }: Props) {
                                 )}
                                 <div className="flex items-center justify-center gap-1 mt-1.5">
                                     <StarRating
-                                        rating={hostel.rating_avg}
+                                        rating={hostelData?.rating_avg || hostel.rating_avg}
                                         size={13}
                                     />
                                     <span className="text-xs text-gray-400 ml-1">
-                                        ({hostel.rating_count} reviews)
+                                        ({hostelData?.rating_count || hostel.rating_count} reviews)
                                     </span>
                                 </div>
                             </div>
@@ -967,9 +1190,9 @@ export default function HostelDetailClient({ hostel }: Props) {
                         </span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <StarRating rating={hostel.rating_avg} size={11} />
+                        <StarRating rating={hostelData?.rating_avg || hostel.rating_avg} size={11} />
                         <span className="text-[11px] text-gray-400 font-bold">
-                            {hostel.rating_avg.toFixed(1)} ({hostel.rating_count})
+                            {(hostelData?.rating_avg || hostel.rating_avg).toFixed(1)} ({hostelData?.rating_count || hostel.rating_count})
                         </span>
                     </div>
                 </div>

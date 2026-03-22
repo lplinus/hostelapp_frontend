@@ -42,11 +42,22 @@ export interface HostelImage {
 export interface HostelReview {
     readonly id: number;
     readonly hostel: number;
-    readonly user: number;
+    readonly user?: number | null;
+    readonly name?: string | null;
     readonly user_name: string;
     readonly rating: number;
+    readonly hostel_rating: number;
+    readonly food_rating: number;
+    readonly room_rating: number;
     readonly comment: string;
     readonly created_at: string;
+}
+
+export interface HostelLandmark {
+    readonly id: number;
+    readonly name: string;
+    readonly distance: string;
+    readonly is_popular: boolean;
 }
 
 export interface DefaultHostelImage {
@@ -111,6 +122,9 @@ export interface HostelListItem {
     readonly check_in_time: string;
     readonly check_out_time: string;
     readonly rating_avg: number;
+    readonly food_rating_avg: number;
+    readonly room_rating_avg: number;
+    readonly hostel_rating_avg: number;
     readonly rating_count: number;
     readonly is_active: boolean;
     readonly is_featured: boolean;
@@ -126,6 +140,7 @@ export interface HostelListItem {
 
 export interface HostelDetail extends HostelListItem {
     readonly reviews: readonly HostelReview[];
+    readonly landmarks: readonly HostelLandmark[];
     // SEO fields (returned by backend HostelSerializer)
     readonly meta_title: string | null;
     readonly meta_description: string | null;

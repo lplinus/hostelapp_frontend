@@ -10,13 +10,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
     return [
+      // Trailing-slash rules MUST come first — :path* strips trailing slashes,
+      // which causes Django APPEND_SLASH to issue 301 loops via the proxy.
       {
-        source: "/media/:path*",
-        destination: `${apiBase}/media/:path*`,
+        source: "/api/:path*/",
+        destination: `${apiBase}/api/:path*/`,
       },
       {
         source: "/api/:path*",
         destination: `${apiBase}/api/:path*`,
+      },
+      {
+        source: "/media/:path*/",
+        destination: `${apiBase}/media/:path*/`,
+      },
+      {
+        source: "/media/:path*",
+        destination: `${apiBase}/media/:path*`,
       },
     ];
   },
