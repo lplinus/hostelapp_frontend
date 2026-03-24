@@ -5,9 +5,10 @@ import BookingContainer from "@/components/user/booking/booking-container";
 
 interface Props {
     readonly params: Promise<{ slug: string }>;
+    readonly searchParams: Promise<{ roomId?: string, priceMode?: string, checkIn?: string, checkOut?: string, guests?: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     try {
         const hostel = await getHostelBySlug(slug);
@@ -22,8 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 }
 
-export default async function BookingPage({ params }: Props) {
+export default async function BookingPage({ params, searchParams }: Props) {
     const { slug } = await params;
+    const { roomId, priceMode, checkIn, checkOut, guests } = await searchParams;
 
     let hostel;
     try {
@@ -38,7 +40,14 @@ export default async function BookingPage({ params }: Props) {
 
     return (
         <div className="bg-white min-h-screen">
-            <BookingContainer hostel={hostel} />
+            <BookingContainer 
+                hostel={hostel} 
+                initialRoomId={roomId} 
+                initialPriceMode={priceMode}
+                initialCheckIn={checkIn}
+                initialCheckOut={checkOut}
+                initialGuests={guests}
+            />
         </div>
     );
 }

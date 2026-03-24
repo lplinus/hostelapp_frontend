@@ -143,8 +143,8 @@ export default function HostelCard({
 
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-end">
-                  <span className="text-[11px] font-bold text-[#0F172A] leading-none mb-0.5">{getRatingText(rating)}</span>
-                  <span className="text-[10px] text-[#64748B] leading-none">{reviewsCount || 0} reviews</span>
+                  {/* <span className="text-[11px] font-bold text-[#0F172A] leading-none mb-0.5">{getRatingText(rating)}</span> */}
+                  {/* <span className="text-[10px] text-[#64748B] leading-none font-bold italic tracking-tight">({reviewsCount || 0}) Reviews</span> */}
                 </div>
                 <div className="w-10 h-10 bg-[#0F172A] text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-sm group-hover:bg-[#8B5CF6] transition-colors">
                   {rating.toFixed(1)}
@@ -236,12 +236,12 @@ export default function HostelCard({
                 {rating.toFixed(1)}
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] font-bold text-[#0F172A] leading-tight">
+                {/* <span className="text-[13px] font-bold text-[#0F172A] leading-tight">
                   {getRatingText(rating)}
-                </span>
-                <span className="text-[11px] text-[#64748B]">
-                  {reviewsCount?.toLocaleString() || "0"} reviews
-                </span>
+                </span> */}
+                {/* <span className="text-[12px] font-black text-[#64748B] tracking-tight">
+                  ({reviewsCount || 0}) Reviews
+                </span> */}
               </div>
             </div>
           </div>

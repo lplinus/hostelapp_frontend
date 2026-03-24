@@ -164,31 +164,49 @@ export function BookingDetailsStep({
                             />
                             {errors.guest_age && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_age}</p>}
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 text-left">
                             <Label htmlFor="adults" className="flex items-center gap-2 text-gray-700">
                                 <Users size={14} className="text-blue-600" /> Adults
                             </Label>
-                            <Select value={form.adults} onValueChange={(v) => setForm({ ...form, adults: v })}>
-                                <SelectTrigger className="rounded-xl border-gray-200">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent position="popper" className="max-h-[200px] overflow-y-auto">
-                                    {Array.from({ length: 20 }, (_, i) => i + 1).map(i => <SelectItem key={i} value={i.toString()}>{i}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <div className="flex items-center justify-between h-10 px-2 border border-gray-200 rounded-xl bg-white shadow-sm">
+                                <button 
+                                    type="button"
+                                    onClick={() => setForm({ ...form, adults: (Math.max(1, Number(form.adults) - 1)).toString() })}
+                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                >
+                                    -
+                                </button>
+                                <span className="text-sm font-black text-gray-900 mx-2">{form.adults}</span>
+                                <button 
+                                    type="button"
+                                    onClick={() => setForm({ ...form, adults: (Math.min(20, Number(form.adults) + 1)).toString() })}
+                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 text-left">
                             <Label htmlFor="children" className="flex items-center gap-2 text-gray-700">
                                 <Baby size={14} className="text-blue-600" /> Children
                             </Label>
-                            <Select value={form.children} onValueChange={(v) => setForm({ ...form, children: v })}>
-                                <SelectTrigger className="rounded-xl border-gray-200">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent position="popper" className="max-h-[200px] overflow-y-auto">
-                                    {Array.from({ length: 21 }, (_, i) => i).map(i => <SelectItem key={i} value={i.toString()}>{i}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <div className="flex items-center justify-between h-10 px-2 border border-gray-200 rounded-xl bg-white shadow-sm">
+                                <button 
+                                    type="button"
+                                    onClick={() => setForm({ ...form, children: (Math.max(0, Number(form.children) - 1)).toString() })}
+                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                >
+                                    -
+                                </button>
+                                <span className="text-sm font-black text-gray-900 mx-2">{form.children}</span>
+                                <button 
+                                    type="button"
+                                    onClick={() => setForm({ ...form, children: (Math.min(20, Number(form.children) + 1)).toString() })}
+                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
 

@@ -85,7 +85,7 @@ export default function HostelGrid({ hostels }: HostelGridProps) {
 
       {visibleCount < sortedHostels.length && (
         <div className="flex justify-center mt-4">
-          <Button 
+          <Button
             onClick={handleLoadMore}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 px-10 rounded-xl shadow-lg active:scale-95 transition-all"
           >

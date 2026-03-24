@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelDetail } from "@/types/hostel.types";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
-import { format, addDays, differenceInDays } from "date-fns";
+import { format, addDays, differenceInDays, addMonths, parseISO } from "date-fns";
 import { Activity, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,15 +21,27 @@ import { LegalDocumentModal } from "./steps/LegalDocumentModal";
 
 interface Props {
     hostel: HostelDetail;
+    initialRoomId?: string;
+    initialPriceMode?: string;
+    initialCheckIn?: string;
+    initialCheckOut?: string;
+    initialGuests?: string;
 }
 
 export type Step = "details" | "payment" | "confirmation" | null;
 
-export default function BookingContainer({ hostel }: Props) {
+export default function BookingContainer({ 
+    hostel, 
+    initialRoomId, 
+    initialPriceMode,
+    initialCheckIn,
+    initialCheckOut,
+    initialGuests
+}: Props) {
     const router = useRouter();
     const [step, setStep] = useState<Step>("details");
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(
-        hostel.room_types?.[0]?.id.toString() || null
+        initialRoomId || hostel.room_types?.[0]?.id.toString() || null
     );
     const { user } = useAuth();
     const queryClient = useQueryClient();
@@ -70,12 +82,12 @@ export default function BookingContainer({ hostel }: Props) {
         guest_email: "",
         mobile_number: "+91",
         guest_age: "20",
-        adults: "1",
+        adults: initialGuests || "1",
         children: "0",
-        check_in: new Date(),
-        check_out: addDays(new Date(), 1),
+        check_in: initialCheckIn ? parseISO(initialCheckIn) : new Date(),
+        check_out: initialCheckOut ? parseISO(initialCheckOut) : (initialPriceMode === "monthly" ? addMonths(new Date(), 1) : addDays(new Date(), 1)),
         booking_type: "stay" as "stay" | "visit",
-        stay_duration: "none",
+        stay_duration: initialPriceMode === "monthly" ? "1_month" : "none",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});

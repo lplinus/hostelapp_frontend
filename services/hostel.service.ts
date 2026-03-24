@@ -67,7 +67,8 @@ function processDefaultImages(
 //     }));
 // }
 export async function getHostels(): Promise<HostelListItem[]> {
-    const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
+    // const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
+    const res = await fetch(`${API_BASE_URL}/api/hostels/hostels/`, {
         next: { revalidate: 60 },
     });
 

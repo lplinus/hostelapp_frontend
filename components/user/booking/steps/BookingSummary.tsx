@@ -68,30 +68,59 @@ export function BookingSummary({
                 <div className="p-4 space-y-4">
                     {/* Room Selection in Summary */}
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Selected Room Type</Label>
+                        <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Selected Room Type</Label>
                         <Select value={selectedRoomId || ""} onValueChange={setSelectedRoomId}>
-                            <SelectTrigger className="rounded-xl border-gray-200 shadow-sm bg-gray-50/30">
+                            <SelectTrigger className="w-full text-center h-auto py-3 px-4 pl-16 rounded-2xl border-gray-200 shadow-sm bg-white hover:bg-gray-50 transition-all focus:ring-2 focus:ring-blue-500/20 [&>span]:w-full [&>span]:text-center">
                                 <SelectValue placeholder="Select a room" />
                             </SelectTrigger>
-                            <SelectContent position="popper" className="max-h-[200px] overflow-y-auto">
-                                {hostel.room_types?.map(room => (
-                                    <SelectItem key={room.id} value={room.id.toString()}>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold">{room.category_display}</span>
-                                            <span className="text-[10px] text-muted-foreground">₹{room.base_price}/month • {room.sharing_display}</span>
-                                        </div>
-                                    </SelectItem>
-                                ))}
+                            <SelectContent position="popper" className="max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-2xl border-gray-100 shadow-xl bg-white p-1">
+                                {(() => {
+                                    const getSharingLevel = (s: string) => {
+                                        const num = Number.parseInt(s);
+                                        if (!Number.isNaN(num)) return num;
+                                        const lower = s.toLowerCase();
+                                        if (lower.includes("four") || lower.includes("4")) return 4;
+                                        if (lower.includes("three") || lower.includes("triple") || lower.includes("3")) return 3;
+                                        if (lower.includes("two") || lower.includes("double") || lower.includes("2")) return 2;
+                                        if (lower.includes("one") || lower.includes("single") || lower.includes("1")) return 1;
+                                        return 0;
+                                    };
+
+                                    const sortedRooms = [...(hostel.room_types || [])].sort((a, b) => {
+                                        // Sort by category (Non-AC before AC as per user request)
+                                        const catA = a.room_category === "AC" ? 1 : 0;
+                                        const catB = b.room_category === "AC" ? 1 : 0;
+                                        if (catA !== catB) return catA - catB;
+
+                                        // Then by sharing level descending (4, 3, 2, 1)
+                                        return getSharingLevel(b.sharing_display) - getSharingLevel(a.sharing_display);
+                                    });
+
+                                    return sortedRooms.map(room => (
+                                        <SelectItem
+                                            key={room.id}
+                                            value={room.id.toString()}
+                                            className="rounded-xl focus:bg-blue-600 focus:text-white group px-3 py-2.5 mb-1 last:mb-0 transition-colors cursor-pointer"
+                                        >
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="font-bold text-sm tracking-tight">{room.category_display}</span>
+                                                <span className="text-[11px] font-medium opacity-80 group-focus:text-blue-50 text-gray-500">
+                                                    ₹{room.base_price}/month • {room.sharing_display}
+                                                </span>
+                                            </div>
+                                        </SelectItem>
+                                    ));
+                                })()}
                             </SelectContent>
                         </Select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-4">
                         <div className="space-y-1">
                             <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dates</Label>
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
                                 <CalendarIcon size={12} className="text-blue-500" />
-                                {format(form.check_in, "MMM d")} - {format(form.check_out, "MMM d")}
+                                {format(form.check_in, "MMM d, yyyy")} - {format(form.check_out, "MMM d, yyyy")}
                             </div>
                         </div>
                         <div className="space-y-1">

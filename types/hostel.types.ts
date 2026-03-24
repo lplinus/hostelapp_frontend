@@ -92,6 +92,7 @@ export interface RoomType {
     readonly base_price: string | null;
     readonly price_per_day: string | null;
     readonly is_available: boolean;
+    readonly total_beds: number;
     readonly available_beds: number;
     readonly beds: readonly Bed[];
 }
