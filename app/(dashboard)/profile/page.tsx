@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { getStorageSettings, StorageSettings } from "@/services/cms.service";
+import { Pencil } from "lucide-react";
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -23,6 +24,8 @@ export default function ProfilePage() {
     const [preview, setPreview] = useState<string | null>(null);
     const [showOtpModal, setShowOtpModal] = useState(false);
     const [storageSettings, setStorageSettings] = useState<StorageSettings>({ max_image_size_mb: 15 });
+    const [isEmailEditable, setIsEmailEditable] = useState(false);
+    const [isPhoneEditable, setIsPhoneEditable] = useState(false);
 
     useEffect(() => {
         getStorageSettings().then(setStorageSettings);
@@ -30,17 +33,23 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (profile) {
-            setFormData({
-                first_name: profile.first_name,
-                last_name: profile.last_name,
-                email: profile.email,
-                phone: profile.phone,
-            });
-            if (profile.profile_picture) {
+            setFormData(prev => ({
+                first_name: prev.first_name ?? profile.first_name,
+                last_name: prev.last_name ?? profile.last_name,
+                email: prev.email ?? profile.email,
+                phone: prev.phone ?? profile.phone,
+            }));
+            if (profile.profile_picture && !preview) {
                 setPreview(profile.profile_picture);
             }
         }
-    }, [profile]);
+    }, [profile, preview]);
+
+    // Robust verification check
+    const isVerified = profile?.is_phone_verified && 
+                      formData.phone && 
+                      profile.phone && 
+                      formData.phone === profile.phone;
 
     const mutation = useMutation({
         mutationFn: updateUserProfile,
@@ -74,7 +83,7 @@ export default function ProfilePage() {
         e.preventDefault();
 
         // Check for phone verification if phone is changed or not verified
-        if (profile && !profile.is_phone_verified && formData.phone) {
+        if (formData.phone && !isVerified) {
             setShowOtpModal(true);
             return;
         }
@@ -128,14 +137,29 @@ export default function ProfilePage() {
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email || ""}
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-                                />
+                                <div className="mt-1 flex items-center gap-2">
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        value={formData.email || ""}
+                                        onChange={handleChange}
+                                        disabled={!isEmailEditable}
+                                        className={`flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 ${!isEmailEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white"}`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEmailEditable(!isEmailEditable)}
+                                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${
+                                            isEmailEditable 
+                                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110" 
+                                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
+                                        }`}
+                                        title={isEmailEditable ? "Editing Email" : "Edit Email"}
+                                    >
+                                        <Pencil className={`w-4 h-4 ${isEmailEditable ? "animate-pulse" : ""}`} />
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
@@ -146,6 +170,7 @@ export default function ProfilePage() {
                                         name="phone"
                                         maxLength={10}
                                         value={formData.phone || ""}
+                                        disabled={!isPhoneEditable}
                                         onChange={(e) => {
                                             const val = e.target.value.replaceAll(/\D/g, "");
                                             if (val.length <= 10) {
@@ -153,9 +178,21 @@ export default function ProfilePage() {
                                             }
                                         }}
                                         placeholder="10-digit mobile number"
-                                        className="flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+                                        className={`flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 ${!isPhoneEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white"}`}
                                     />
-                                    {profile?.is_phone_verified && profile.phone && formData.phone === profile.phone ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPhoneEditable(!isPhoneEditable)}
+                                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${
+                                            isPhoneEditable 
+                                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110" 
+                                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
+                                        }`}
+                                        title={isPhoneEditable ? "Editing Phone" : "Edit Phone"}
+                                    >
+                                        <Pencil className={`w-4 h-4 ${isPhoneEditable ? "animate-pulse" : ""}`} />
+                                    </button>
+                                    {isVerified ? (
                                         <span className="inline-flex items-center px-3 py-2 rounded-md bg-green-50 text-green-700 border border-green-200 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
                                             ✓ Verified
                                         </span>
@@ -213,9 +250,10 @@ export default function ProfilePage() {
             <OtpVerificationModal
                 isOpen={showOtpModal}
                 onClose={() => setShowOtpModal(false)}
-                onSuccess={() => {
+                onSuccess={async () => {
                     toast.success("Phone verified! You can now save your profile.");
-                    queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+                    await queryClient.refetchQueries({ queryKey: ["userProfile"] });
+                    await queryClient.refetchQueries({ queryKey: ["authUser"] });
                 }}
                 phone={formData.phone}
             />
