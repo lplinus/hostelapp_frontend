@@ -112,6 +112,40 @@ const genderOptions: DropdownOption[] = [
   { value: "unisex", label: "Unisex" },
 ];
 
+const KEYWORD_MAPPINGS: Record<string, string> = {
+  hyd: "hyderabad",
+  ben: "bengaluru",
+  bang: "bengaluru",
+  mum: "mumbai",
+  che: "chennai",
+  kol: "kolkata",
+  viz: "visakhapatnam",
+  del: "delhi",
+  pun: "pune",
+  gur: "gurugram",
+  gurgaon: "gurugram",
+  vzg: "visakhapatnam",
+  kphb: "KPHB Colony",
+  hsr: "HSR Layout",
+  btm: "BTM Layout",
+  srnagar: "SR Nagar",
+  ecil: "ECIL",
+};
+
+const MAJOR_CITIES = [
+  "hyderabad",
+  "bengaluru",
+  "mumbai",
+  "chennai",
+  "kolkata",
+  "visakhapatnam",
+  "delhi",
+  "pune",
+  "gurugram",
+  "noida",
+  "ahmedabad",
+];
+
 export default function SearchBar() {
   const router = useRouter();
 
@@ -141,14 +175,30 @@ export default function SearchBar() {
   }, [isSticky]);
 
   const handleSearch = useCallback(() => {
-    if (location && !budget && !gender) {
-      const citySlug = slugify(location);
+    const searchLocation = location.trim();
+    if (!searchLocation) return;
+
+    // Word mapping for multi-word search like "hyd hostels" -> "hyderabad hostels"
+    const words = searchLocation.split(/\s+/);
+    const mapped_words = words.map((w) => {
+      const lower = w.toLowerCase();
+      return KEYWORD_MAPPINGS[lower] || w;
+    });
+    const mappedLocation = mapped_words.join(" ");
+    const lowerLocation = mappedLocation.toLowerCase();
+
+    // Check if it's purely a major city search to use SEO city pages
+    const isOnlyCity = MAJOR_CITIES.includes(lowerLocation);
+
+    if (isOnlyCity && !budget && !gender) {
+      const citySlug = slugify(mappedLocation);
       router.push(getCitySEOLink(citySlug));
       return;
     }
 
+    // Default to search results page which handles areas, hostel names, etc.
     const params = new URLSearchParams();
-    if (location) params.append("location", location);
+    params.append("location", mappedLocation);
     if (budget) params.append("budget", budget);
     if (gender) params.append("gender", gender);
 

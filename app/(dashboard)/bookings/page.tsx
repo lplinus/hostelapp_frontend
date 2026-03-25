@@ -79,12 +79,19 @@ export default function BookingsPage() {
     };
 
     const handleQRScan = (decodedText: string) => {
-        // Look for BOOKING:<id>
-        const match = decodedText.match(/BOOKING:([^ \n]+)/);
-        if (match && match[1]) {
-            setIsScanning(false); // Close scanner first
-            const bookingId = match[1];
-            
+        // Extract booking ID from QR code data — supports multiple formats:
+        // 1. "Booking ID: STN-XXXXXXXX" (current format)
+        // 2. "BOOKING:<uuid>" (legacy format)
+        // 3. Raw UUID pattern (fallback)
+        const stnMatch = decodedText.match(/STN-([A-Fa-f0-9]{8})/);
+        const bookingTagMatch = decodedText.match(/BOOKING:([^\s\\]+)/);
+        const uuidMatch = decodedText.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+
+        // Prefer STN format (sends "STN-XXXXXXXX" to backend which handles it)
+        const bookingId = stnMatch ? `STN-${stnMatch[1].toUpperCase()}` : (bookingTagMatch?.[1] || uuidMatch?.[1]);
+        
+        if (bookingId) {
+            setIsScanning(false);
             toast.promise(checkInMutation.mutateAsync(bookingId), {
                 loading: "Checking in guest...",
                 success: "Guest checked in successfully!",

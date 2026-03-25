@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, Building2, MapPin, Grid, ListIcon } from "lucide-react";
+import { SlidersHorizontal, Building2, MapPin, Grid, ListIcon, Search, X } from "lucide-react";
 import HostelCard from "@/components/hostels/hostel-card";
 import { TypeHostelResponse } from "@/types/hostel.types";
 import { cn } from "@/lib/utils";
@@ -135,23 +135,57 @@ export default function TypeClient({ data }: Props) {
         ].filter(Boolean).length;
     }, [appliedFilters]);
 
-    // Filter and sort results using APPLIED filters
+    const [visibleCount, setVisibleCount] = useState<number>(6);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<any[]>([...data.results]);
+    const [isSearching, setIsSearching] = useState(false);
+
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setSearchResults([...data.results]);
+            setIsSearching(false);
+            return;
+        }
+
+        const timer = setTimeout(async () => {
+            setIsSearching(true);
+            try {
+                const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                const cityParam = appliedFilters.selectedCity !== "All Cities" ? `&city=${encodeURIComponent(appliedFilters.selectedCity)}` : "";
+                const typeParam = `&type=${encodeURIComponent(currentTypeSlug)}`;
+                
+                const response = await fetch(`${baseUrl}/api/locations/inner-search/?q=${encodeURIComponent(searchQuery)}${cityParam}${typeParam}`);
+                if (response.ok) {
+                    const searchData = await response.json();
+                    setSearchResults(searchData.results);
+                }
+            } catch (error) {
+                console.error("Inner search failed:", error);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, data.results]);
+
+    // Filter and sort results using APPLIED filters and searchResults
     const filteredAndSortedResults = useMemo(() => {
-        let results = [...data.results];
+        let resultsArr = [...searchResults];
 
         // Filter by City
         if (appliedFilters.selectedCity !== "All Cities") {
-            results = results.filter((hostel) => hostel.city_name === appliedFilters.selectedCity);
+            resultsArr = resultsArr.filter((hostel) => hostel.city_name === appliedFilters.selectedCity);
         }
 
         // Filter by Area
         if (appliedFilters.selectedArea !== "All Areas") {
-            results = results.filter((hostel) => hostel.area_name === appliedFilters.selectedArea);
+            resultsArr = resultsArr.filter((hostel) => hostel.area_name === appliedFilters.selectedArea);
         }
 
         // Filter by PriceRange
         if (appliedFilters.priceRange !== "All Prices") {
-            results = results.filter((hostel) => {
+            resultsArr = resultsArr.filter((hostel) => {
                 const price = hostel.final_price ?? (Number(hostel.price) || 0);
                 if (appliedFilters.priceRange === "Under ₹5000") return price < 5000;
                 if (appliedFilters.priceRange === "₹5000 - ₹10000") return price >= 5000 && price <= 10000;
@@ -161,7 +195,7 @@ export default function TypeClient({ data }: Props) {
         }
 
         // Sort
-        results.sort((a: any, b: any) => {
+        resultsArr.sort((a: any, b: any) => {
             const getPriority = (h: any) => {
                 if (h.is_verified && h.is_discounted) return 1;
                 if (h.is_verified) return 2;
@@ -186,10 +220,8 @@ export default function TypeClient({ data }: Props) {
             return 0;
         });
 
-        return results;
-    }, [data.results, appliedFilters]);
-
-    const [visibleCount, setVisibleCount] = useState<number>(6);
+        return resultsArr;
+    }, [searchResults, appliedFilters]);
     const paginatedResults = useMemo(() => {
         return filteredAndSortedResults.slice(0, visibleCount);
     }, [filteredAndSortedResults, visibleCount]);
@@ -200,8 +232,8 @@ export default function TypeClient({ data }: Props) {
 
     return (
         <>
-            <div className="mb-4 lg:mb-8">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="mb-6 lg:mb-10">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 text-sm font-semibold text-teal-600 mb-2 uppercase tracking-wider">
                             <Building2 className="w-4 h-4" />
@@ -210,17 +242,37 @@ export default function TypeClient({ data }: Props) {
                         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
                             Best {data.type}
                         </h1>
-                        <p className="text-slate-500 font-medium">
+                        <p className="text-slate-500 font-medium mt-1">
                             Showing {filteredAndSortedResults.length} {filteredAndSortedResults.length === 1 ? 'hostel' : 'hostels'}
                             {appliedFilters.selectedCity !== "All Cities" && ` in ${appliedFilters.selectedCity}`}
-                            {appliedFilters.selectedArea !== "All Areas" && `, ${appliedFilters.selectedArea}`}
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
-                            <button className="p-2 text-slate-400 hover:text-teal-600 transition-colors"><Grid size={18} /></button>
-                            <button className="p-2 bg-teal-50 text-teal-600 rounded-lg transition-colors shadow-sm"><ListIcon size={18} /></button>
+                    <div className="flex-1 max-w-xl w-full">
+                        <div className="relative group">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none">
+                                <Search size={22} />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder={`Search in ${data.type}...`}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-12 pr-12 py-4 rounded-[1.25rem] border border-slate-200 bg-white shadow-sm focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-slate-900 font-medium placeholder:text-slate-400 transition-all"
+                            />
+                            {isSearching && (
+                                <div className="absolute right-12 top-1/2 -translate-y-1/2">
+                                    <div className="w-5 h-5 border-2 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+                                >
+                                    <X size={20} />
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

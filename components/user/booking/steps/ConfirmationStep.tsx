@@ -145,9 +145,11 @@ export function ConfirmationStep({
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                                         <img
-                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid'}\nBOOKING:${confirmedBookingId}`)}`}
+                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+                                                `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}`
+                                            )}`}
                                             alt="Booking QR Code"
-                                            className="w-24 h-24"
+                                            className="w-28 h-28"
                                         />
                                         <span className="text-[8px] text-gray-400 font-bold uppercase mt-2 tracking-widest">Scan to verify</span>
                                     </div>
