@@ -234,7 +234,7 @@ export default function ProfilePage() {
                                             <ValidationItem label="Numbers" met={/\d/.test(formData.password || "")} />
                                             <ValidationItem label="Special Char" met={/[^A-Za-z0-9]/.test(formData.password || "")} />
                                         </div>
-                                        <p className="mt-3 text-[9px] text-gray-500 italic border-t border-gray-200 pt-2">
+                                        <p className="mt-3 text-[9px] text-purple-600 font-bold italic border-t border-gray-200 pt-2">
                                             Please note your password carefully. Once saved, it will be encrypted and shown only as stars for security.
                                         </p>
                                     </div>
