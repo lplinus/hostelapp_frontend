@@ -267,11 +267,13 @@ export default function BookingsPage() {
                                                 <select
                                                     value={b.status}
                                                     onChange={(e) => handleStatusChange(e, b.id)}
-                                                    disabled={statusMutation.isPending || b.status === "completed"}
+                                                    disabled={statusMutation.isPending || b.status === "completed" || b.status === "cancelled"}
                                                     className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${
                                                         b.status === "completed" 
                                                             ? "text-green-600 border-green-200 bg-green-50 font-bold" 
-                                                            : "text-gray-700"
+                                                            : b.status === "cancelled"
+                                                                ? "text-red-600 border-red-200 bg-red-50 font-bold"
+                                                                : "text-gray-700"
                                                     }`}
                                                 >
                                                     <option value="pending">Pending</option>

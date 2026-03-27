@@ -19,7 +19,14 @@ import {
   Loader2,
   Eye,
   EyeOff,
+  UserCircle,
+  Building2,
+  Zap,
 } from "lucide-react";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,6 +37,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<"guest" | "hostel_owner" | "vendor">("guest");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -83,6 +91,7 @@ export default function RegisterForm() {
         confirm_password: confirmPassword,
         first_name: nameParts[0] || "",
         last_name: nameParts.slice(1).join(" ") || "",
+        role,
       });
     } catch {
       // Error is handled by useAuth hook via toast
@@ -94,7 +103,7 @@ export default function RegisterForm() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full max-w-md"
+      className="w-full max-w-md my-12"
     >
       <Card className="rounded-3xl shadow-2xl border border-gray-200">
         <CardHeader className="space-y-2 text-center">
@@ -107,7 +116,50 @@ export default function RegisterForm() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleRegister} className="space-y-5">
+          <form onSubmit={handleRegister} className="space-y-4">
+
+            {/* Role Selection */}
+            <div className="space-y-3 pb-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">I am a...</Label>
+              <RadioGroup 
+                value={role} 
+                onValueChange={(value: any) => setRole(value)}
+                className="grid grid-cols-3 gap-3"
+              >
+                <div className="relative">
+                  <RadioGroupItem value="guest" id="guest" className="peer sr-only" />
+                  <Label
+                    htmlFor="guest"
+                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                  >
+                    <User className={cn("w-5 h-5 mb-1.5 transition-colors", role === "guest" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-indigo-700" : "text-gray-500")}>Guest</span>
+                  </Label>
+                </div>
+
+                <div className="relative">
+                  <RadioGroupItem value="hostel_owner" id="hostel_owner" className="peer sr-only" />
+                  <Label
+                    htmlFor="hostel_owner"
+                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                  >
+                    <Building2 className={cn("w-5 h-5 mb-1.5 transition-colors", role === "hostel_owner" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-indigo-700" : "text-gray-500")}>Hostel<br/>Owner</span>
+                  </Label>
+                </div>
+
+                <div className="relative">
+                  <RadioGroupItem value="vendor" id="vendor" className="peer sr-only" />
+                  <Label
+                    htmlFor="vendor"
+                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                  >
+                    <Zap className={cn("w-5 h-5 mb-1.5 transition-colors", role === "vendor" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "vendor" ? "text-indigo-700" : "text-gray-500")}>Vendor</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
 
             {/* Name */}
             <div className="space-y-2">
@@ -228,7 +280,7 @@ export default function RegisterForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
+              className="w-full h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium mt-2"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

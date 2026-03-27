@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { getStorageSettings, StorageSettings } from "@/services/cms.service";
-import { Pencil } from "lucide-react";
+import { Pencil, Eye, EyeOff, Lock, CheckCircle2, Circle } from "lucide-react";
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -26,6 +26,8 @@ export default function ProfilePage() {
     const [storageSettings, setStorageSettings] = useState<StorageSettings>({ max_image_size_mb: 15 });
     const [isEmailEditable, setIsEmailEditable] = useState(false);
     const [isPhoneEditable, setIsPhoneEditable] = useState(false);
+    const [isPasswordEditable, setIsPasswordEditable] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         getStorageSettings().then(setStorageSettings);
@@ -100,6 +102,14 @@ export default function ProfilePage() {
         mutation.mutate(data);
     };
 
+    // Helper for password validation UI
+    const ValidationItem = ({ label, met }: { label: string; met: boolean }) => (
+        <div className={`flex items-center gap-2 text-[10px] transition-colors ${met ? "text-green-600" : "text-gray-400"}`}>
+            {met ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+            <span className={met ? "font-bold" : "font-medium"}>{label}</span>
+        </div>
+    );
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             <DashboardSidebar />
@@ -135,6 +145,102 @@ export default function ProfilePage() {
                                     />
                                 </div>
                             </div>
+
+                            {/* Password Section */}
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                                <div className="mt-1 flex items-center gap-2">
+                                    <div className="relative flex-1">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                            <Lock className="h-4 w-4" />
+                                        </div>
+                                        <input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            value={formData.password ?? "********"}
+                                            onChange={handleChange}
+                                            disabled={!isPasswordEditable}
+                                            placeholder="Enter new password"
+                                            className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 pl-10 ${!isPasswordEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed font-mono" : "bg-white"}`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            disabled={!isPasswordEditable}
+                                            className={`absolute inset-y-0 right-0 pr-3 flex items-center ${!isPasswordEditable ? "text-gray-300 cursor-not-allowed" : "text-gray-400 hover:text-gray-600"} transition-colors`}
+                                        >
+                                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </button>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (isPasswordEditable) {
+                                                setShowPassword(false);
+                                                setFormData({ ...formData, password: undefined }); 
+                                            }
+                                            setIsPasswordEditable(!isPasswordEditable);
+                                        }}
+                                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${
+                                            isPasswordEditable 
+                                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110" 
+                                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
+                                        }`}
+                                        title={isPasswordEditable ? "Cancel" : "Edit Password"}
+                                    >
+                                        <Pencil className={`w-4 h-4 ${isPasswordEditable ? "animate-pulse" : ""}`} />
+                                    </button>
+                                    
+                                    {isPasswordEditable && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const pwd = formData.password || "";
+                                                const isValid = pwd.length >= 8 && 
+                                                              /[A-Z]/.test(pwd) && 
+                                                              /[a-z]/.test(pwd) && 
+                                                              /\d/.test(pwd) && 
+                                                              /[^A-Za-z0-9]/.test(pwd);
+
+                                                if (!isValid) {
+                                                    toast.error("Please meet all password requirements.");
+                                                    return;
+                                                }
+
+                                                const data = new FormData();
+                                                data.append("password", pwd);
+                                                mutation.mutate(data, {
+                                                    onSuccess: () => {
+                                                        setIsPasswordEditable(false);
+                                                        setShowPassword(false);
+                                                        setFormData({ ...formData, password: undefined }); // Reset after save
+                                                    }
+                                                });
+                                            }}
+                                            className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                                        >
+                                            {mutation.isPending ? "Saving..." : "Save"}
+                                        </button>
+                                    )}
+                                </div>
+                                {isPasswordEditable && (
+                                    <div className="mt-3 space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-300">
+                                        <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider mb-2">Password Requirements</p>
+                                        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                            <ValidationItem label="8+ Characters" met={(formData.password?.length ?? 0) >= 8} />
+                                            <ValidationItem label="Upper Case" met={/[A-Z]/.test(formData.password || "")} />
+                                            <ValidationItem label="Lower Case" met={/[a-z]/.test(formData.password || "")} />
+                                            <ValidationItem label="Numbers" met={/\d/.test(formData.password || "")} />
+                                            <ValidationItem label="Special Char" met={/[^A-Za-z0-9]/.test(formData.password || "")} />
+                                        </div>
+                                        <p className="mt-3 text-[9px] text-gray-500 italic border-t border-gray-200 pt-2">
+                                            Please note your password carefully. Once saved, it will be encrypted and shown only as stars for security.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                                 <div className="mt-1 flex items-center gap-2">
@@ -216,6 +322,8 @@ export default function ProfilePage() {
                                     <p className="mt-1 text-xs text-red-500 font-semibold">Please enter a valid 10-digit phone number.</p>
                                 )}
                             </div>
+
+
                             {/* Avatar File Upload Dummy Field */}
                             <div className="flex flex-col items-center mb-6">
                                 <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-100 flex items-center justify-center mb-2">

@@ -11,6 +11,7 @@ export interface UserProfile {
     role: string;
     is_email_verified: boolean;
     is_phone_verified: boolean;
+    password?: string;
 }
 
 export const getUserProfile = async (): Promise<UserProfile> => {
