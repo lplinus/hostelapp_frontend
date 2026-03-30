@@ -689,7 +689,7 @@ export default function HostelManagement() {
                                                             {discountText}
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{h.rating_avg > 0 ? h.rating_avg : "Unrated"}</td>
+                                                    <td className="px-6 py-4 text-sm text-gray-500">{h.rating_avg > 0 ? h.rating_avg.toFixed(1) : "Unrated"}</td>
                                                     <td className="px-6 py-4 text-sm text-gray-500">
                                                         <span className="text-gray-700 font-medium">{h.images?.length ?? 0}</span>
                                                     </td>

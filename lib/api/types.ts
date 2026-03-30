@@ -33,6 +33,7 @@ export interface AuthUser {
 export interface AuthResponse {
     access: string;
     user: AuthUser;
+    redirect_url?: string;
 }
 
 export interface RegisterResponse {

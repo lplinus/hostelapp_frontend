@@ -1,3 +1,4 @@
+import { Vendor } from "@/types/marketplace.types";
 import { authApiClient } from "@/lib/api/auth-client";
 
 export interface UserProfile {
@@ -12,6 +13,7 @@ export interface UserProfile {
     is_email_verified: boolean;
     is_phone_verified: boolean;
     password?: string;
+    vendor_profile?: Vendor;
 }
 
 export const getUserProfile = async (): Promise<UserProfile> => {

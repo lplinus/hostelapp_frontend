@@ -53,8 +53,10 @@ export const useAuth = () => {
                 toast.success('Login Successful 🎉', {
                     description: 'Welcome back to Hostel In!',
                 });
-                router.push('/dashboard');
-                router.refresh(); // Tells Next.js to re-evaluate server components
+                
+                // Role-based redirection (backend-driven)
+                router.push(data.redirect_url || '/dashboard');
+
                 return data;
             } catch (error: any) {
                 toast.error('Login failed', {

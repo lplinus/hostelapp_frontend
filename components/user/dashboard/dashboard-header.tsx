@@ -41,6 +41,7 @@ export default function DashboardHeader() {
                     <span className="hidden md:block text-sm font-medium text-gray-700">{user?.first_name || user?.username || "Profile"}</span>
                 </button>
 
+                {/* 
                 <button
                     onClick={logout}
                     disabled={isLoggingOut}
@@ -52,6 +53,7 @@ export default function DashboardHeader() {
                         {isLoggingOut ? "Logging out..." : "Logout"}
                     </span>
                 </button>
+                */}
 
             </div>
         </div>

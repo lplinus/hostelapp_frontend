@@ -46,7 +46,9 @@ export default function Header() {
     pathname === "/rooms" ||
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
-    pathname.startsWith("/bookings/");
+    pathname.startsWith("/bookings/") ||
+    pathname.startsWith("/vendordashboard") ||
+    pathname.startsWith("/usermarketplace");
 
   if (isDashboardRoute) {
     return null;

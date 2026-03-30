@@ -67,6 +67,10 @@ export function middleware(request: NextRequest) {
         (request.nextUrl.pathname === '/login' ||
             request.nextUrl.pathname === '/register')
     ) {
+        const role = request.cookies.get('user_role')?.value;
+        if (role === 'vendor') {
+            return NextResponse.redirect(new URL('/vendordashboard/vendors', request.url));
+        }
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 

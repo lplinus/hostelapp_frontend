@@ -37,4 +37,18 @@ export const API_ENDPOINTS = {
         SEND_OTP: '/api/bookings/send_otp/',
         VERIFY_OTP: '/api/bookings/verify_otp/',
     },
+    MARKETPLACE: {
+        PUBLIC_VENDORS: '/api/vendors/marketplace/',
+        VENDORS: '/api/vendors/',
+        VENDOR_DETAIL: (id: string | number) => `/api/vendors/${id}/`,
+        CATEGORIES: '/api/marketplace/categories/',
+        PRODUCTS: '/api/marketplace/products/',
+        FEATURED_PRODUCTS: '/api/marketplace/products/featured/',
+    },
+    ORDERS: {
+        LIST: '/api/orders/',
+        CREATE_STRUCTURED: '/api/orders/create-structured/',
+        CREATE_IMAGE_SCAN: '/api/orders/create-image-scan/',
+        UPDATE_STATUS: (id: string | number) => `/api/orders/${id}/update-status/`,
+    },
 } as const;
