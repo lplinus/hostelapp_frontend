@@ -74,15 +74,15 @@ export default function DashboardSidebar() {
 
         <nav className="space-y-1.5 px-3 flex-1 overflow-y-auto py-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <SidebarItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" pathname={pathname} isCollapsed={isCollapsed && !isOpenMobile} closeMobile={() => setIsOpenMobile(false)} />
-          
-          <SidebarDropdownItem 
-            label="Marketplace" 
-            icon={ShoppingBag} 
+
+          <SidebarDropdownItem
+            label="Marketplace"
+            icon={ShoppingBag}
             isCollapsed={isCollapsed && !isOpenMobile}
             pathname={pathname}
             items={[
-              { label: "Online Kirana", href: "/usermarketplace/online-kirana", icon: ShoppingCart },
-              { label: "Vendors", href: "/usermarketplace/vendors", icon: Store },
+              { label: "Merchants", href: "/usermarketplace/vendors", icon: Store },
+              { label: "Kirana", href: "/usermarketplace/online-kirana", icon: ShoppingCart },
               { label: "My Orders", href: "/usermarketplace/myorders", icon: Package },
             ]}
             closeMobile={() => setIsOpenMobile(false)}
@@ -170,7 +170,7 @@ function SidebarDropdownItem({ label, icon: Icon, items, pathname, isCollapsed, 
         {!isCollapsed && (
           <ChevronDown size={14} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         )}
-        
+
         {isCollapsed && (
           <div className="absolute left-full ml-4 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-sm pointer-events-none whitespace-nowrap">
             {label}
@@ -202,4 +202,4 @@ function SidebarDropdownItem({ label, icon: Icon, items, pathname, isCollapsed, 
       )}
     </div>
   );
-}
+}

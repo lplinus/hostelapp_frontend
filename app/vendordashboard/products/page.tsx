@@ -27,6 +27,8 @@ export default function ProductsPage() {
         price: '',
         stock: '0',
         category_id: '',
+        quantity_unit: 'number',
+        quantity_steps: '',
         is_active: true,
         is_featured: false
     });
@@ -70,8 +72,10 @@ export default function ProductsPage() {
                 name: product.name,
                 description: product.description,
                 price: product.price.toString(),
-                stock: (product.stock || 0).toString(),
+                stock: (product.stock || '').toString(),
                 category_id: typeof product.category === 'object' ? product.category?.id?.toString() : (product.category?.toString() || ''),
+                quantity_unit: product.quantity_unit || 'number',
+                quantity_steps: product.quantity_steps?.join(', ') || '',
                 is_active: product.is_active ?? true,
                 is_featured: product.is_featured ?? false
             });
@@ -82,8 +86,10 @@ export default function ProductsPage() {
                 name: '',
                 description: '',
                 price: '',
-                stock: '0',
+                stock: '',
                 category_id: categories.length > 0 ? categories[0].id.toString() : '',
+                quantity_unit: 'number',
+                quantity_steps: '',
                 is_active: true,
                 is_featured: false
             });
@@ -99,7 +105,23 @@ export default function ProductsPage() {
 
         try {
             const data = new FormData();
-            Object.entries(formData).forEach(([key, value]) => data.append(key, String(value)));
+            
+            // Format steps: "5, 10, 15" -> ["5", "10", "15"]
+            const steps = formData.quantity_steps
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s !== '' && !isNaN(Number(s)));
+
+            Object.entries(formData).forEach(([key, value]) => {
+                if (key === 'quantity_steps') {
+                    data.append(key, JSON.stringify(steps));
+                } else if (key === 'stock' && value === '') {
+                    // Skip stock if empty (nullable)
+                } else {
+                    data.append(key, String(value));
+                }
+            });
+
             if (selectedImage) data.append('image', selectedImage);
 
             if (editingProduct) {

@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function MyOrdersPage() {
     const { user, initializing: authInitializing } = useAuth();
-    
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             {authInitializing ? (

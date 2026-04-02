@@ -61,10 +61,12 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    // Redirect authenticated users away from login/register pages
+    // Redirect authenticated users away from home/landing/login/register pages
     if (
         isAuthenticated &&
-        (request.nextUrl.pathname === '/login' ||
+        (request.nextUrl.pathname === '/' ||
+            request.nextUrl.pathname === '/home' ||
+            request.nextUrl.pathname === '/login' ||
             request.nextUrl.pathname === '/register')
     ) {
         const role = request.cookies.get('user_role')?.value;
@@ -78,5 +80,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/login', '/register'],
+    matcher: ['/', '/home', '/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/login', '/register'],
 };

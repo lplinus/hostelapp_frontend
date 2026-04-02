@@ -14,15 +14,35 @@ export default function Providers({ children, isAuthenticated }: ProvidersProps)
 
     // If the server detected an authenticated session (via HttpOnly cookies),
     // proactively hydrate the auth state into React Query's cache AND refresh.
-    // This prevents the Public Navbar from ever appearing for a logged-in user.
     useEffect(() => {
         if (isAuthenticated) {
-            // Set a placeholder authenticated state while refreshing
-            // This ensures useAuth().isAuthenticated is true on the first client render.
-            queryClient.setQueryData(['authUser'], { id: -1, username: 'placeholder', isPlaceholder: true });
+            // Set a placeholder state ONLY if we don't already have one.
+            // This prevents flickering Header for returning users.
+            const existingUser = queryClient.getQueryData(['authUser']);
+            if (!existingUser) {
+                queryClient.setQueryData(['authUser'], { id: -1, username: 'placeholder', isPlaceholder: true });
+            }
+
             refreshAccessToken().then((token) => {
                 if (!token) {
                     queryClient.setQueryData(['authUser'], null);
+                    queryClient.invalidateQueries({ queryKey: ['authUser'] });
+                    
+                    // Force clear cookies JS can access
+                    document.cookie = 'auth_status=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax';
+                    document.cookie = 'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax';
+
+                    // Redirect if refresh failure happens on a protected route
+                    const isProtectedRoute = 
+                        window.location.pathname.startsWith('/dashboard') || 
+                        window.location.pathname.startsWith('/profile') || 
+                        (window.location.pathname.startsWith('/hostel') && !window.location.pathname.startsWith('/hostels')) ||
+                        window.location.pathname.startsWith('/rooms') ||
+                        window.location.pathname.startsWith('/bookings');
+
+                    if (isProtectedRoute) {
+                        window.location.href = '/login';
+                    }
                 }
             });
         }

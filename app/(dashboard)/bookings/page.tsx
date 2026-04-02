@@ -89,7 +89,7 @@ export default function BookingsPage() {
 
         // Prefer STN format (sends "STN-XXXXXXXX" to backend which handles it)
         const bookingId = stnMatch ? `STN-${stnMatch[1].toUpperCase()}` : (bookingTagMatch?.[1] || uuidMatch?.[1]);
-        
+
         if (bookingId) {
             setIsScanning(false);
             toast.promise(checkInMutation.mutateAsync(bookingId), {
@@ -110,7 +110,7 @@ export default function BookingsPage() {
                 <DashboardHeader />
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">Manage Bookings</h2>
-                    
+
                     <button
                         onClick={() => setIsScanning(true)}
                         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm font-semibold transition-colors"
@@ -127,7 +127,7 @@ export default function BookingsPage() {
                             <Search size={12} /> Search Bookings
                         </label>
                         <div className="relative">
-                            <input 
+                            <input
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -146,7 +146,7 @@ export default function BookingsPage() {
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
                             <Calendar size={12} /> Date Range (From)
                         </label>
-                        <input 
+                        <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
@@ -158,7 +158,7 @@ export default function BookingsPage() {
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
                             <Calendar size={12} /> Date Range (To)
                         </label>
-                        <input 
+                        <input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
@@ -166,8 +166,8 @@ export default function BookingsPage() {
                         />
                     </div>
 
-                    <button 
-                        onClick={() => {setSearch(""); setStartDate(""); setEndDate("");}}
+                    <button
+                        onClick={() => { setSearch(""); setStartDate(""); setEndDate(""); }}
                         className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         Reset
@@ -209,11 +209,10 @@ export default function BookingsPage() {
                                         <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
                                             STN-{b.id.substring(0, 8).toUpperCase()}
                                             <div className="mt-1">
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                                                    b.booking_type === 'visit' 
-                                                        ? 'bg-orange-100 text-orange-700' 
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${b.booking_type === 'visit'
+                                                        ? 'bg-orange-100 text-orange-700'
                                                         : 'bg-indigo-100 text-indigo-700'
-                                                }`}>
+                                                    }`}>
                                                     {b.booking_type}
                                                 </span>
                                             </div>
@@ -238,20 +237,18 @@ export default function BookingsPage() {
                                         <td className="px-6 py-4 text-sm">
                                             <div className="space-y-2">
                                                 <div className="flex gap-1 flex-wrap">
-                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${
-                                                        b.payment_method === 'on_arrival' 
-                                                            ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_method === 'on_arrival'
+                                                            ? 'bg-blue-50 text-blue-700 border-blue-200'
                                                             : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                                                    }`}>
+                                                        }`}>
                                                         {b.payment_method === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}
                                                     </span>
-                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${
-                                                        b.payment_status === 'paid' || b.payment_status === 'captured'
-                                                            ? 'bg-green-50 text-green-700 border-green-200' 
+                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_status === 'paid' || b.payment_status === 'captured'
+                                                            ? 'bg-green-50 text-green-700 border-green-200'
                                                             : b.payment_status === 'failed'
                                                                 ? 'bg-red-50 text-red-700 border-red-200'
                                                                 : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                                                    }`}>
+                                                        }`}>
                                                         {b.payment_status || 'Pending'}
                                                     </span>
                                                 </div>
@@ -268,13 +265,12 @@ export default function BookingsPage() {
                                                     value={b.status}
                                                     onChange={(e) => handleStatusChange(e, b.id)}
                                                     disabled={statusMutation.isPending || b.status === "completed" || b.status === "cancelled"}
-                                                    className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${
-                                                        b.status === "completed" 
-                                                            ? "text-green-600 border-green-200 bg-green-50 font-bold" 
+                                                    className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${b.status === "completed"
+                                                            ? "text-green-600 border-green-200 bg-green-50 font-bold"
                                                             : b.status === "cancelled"
                                                                 ? "text-red-600 border-red-200 bg-red-50 font-bold"
                                                                 : "text-gray-700"
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <option value="pending">Pending</option>
                                                     <option value="confirmed">Confirmed</option>

@@ -39,7 +39,7 @@ export const vendorService = {
      * Get all products belonging to the current user's vendor.
      */
     getMyProducts: async () => {
-        const response = await authApiClient.get<any>(API_ENDPOINTS.MARKETPLACE.PRODUCTS);
+        const response = await authApiClient.get<any>(`${API_ENDPOINTS.MARKETPLACE.PRODUCTS}?mine=true`);
         // Handle { success: true, data: [] }, paginated { results: [] }, and raw []
         if (response && typeof response === 'object') {
             if (response.success && Array.isArray(response.data)) return response.data as Product[];

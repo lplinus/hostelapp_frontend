@@ -84,13 +84,13 @@ export default function ProductCard({ product, onEdit, onDelete }: ProductCardPr
                 <Separator className="my-3" />
 
                 <div className="flex items-center justify-between">
-                    <span className="text-base font-semibold text-foreground">₹{product.price}</span>
+                    <span className="text-base font-semibold text-foreground">₹{product.price}<span className="text-xs text-muted-foreground ml-0.5">/{product.quantity_unit || 'unit'}</span></span>
                     <Badge
                         variant={isOutOfStock ? 'destructive' : 'outline'}
                         className="text-[10px] font-medium gap-1"
                     >
-                        <span className={`w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-white animate-pulse' : 'bg-emerald-500'}`} />
-                        {product.stock} units
+                        <span className={`w-1.5 h-1.5 rounded-full ${(product.stock ?? 0) === 0 ? 'bg-white animate-pulse' : 'bg-emerald-500'}`} />
+                        {product.stock ?? 0} {product.quantity_unit || 'units'}
                     </Badge>
                 </div>
             </CardContent>

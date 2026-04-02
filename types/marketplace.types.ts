@@ -17,7 +17,9 @@ export interface Product {
     description: string;
     price: string;
     image: string | null;
-    stock: number;
+    stock: number | null;
+    quantity_unit?: string;
+    quantity_steps?: number[];
     is_active: boolean;
     is_featured: boolean;
 }

@@ -30,6 +30,8 @@ interface ProductModalProps {
         price: string;
         stock: string;
         category_id: string;
+        quantity_unit: string;
+        quantity_steps: string;
         is_active: boolean;
         is_featured: boolean;
     };
@@ -121,7 +123,7 @@ export default function ProductModal({
                         />
                     </div>
 
-                    {/* Price & Stock */}
+                    {/* Price & Primary Quantity Unit */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="p_price">Price (₹)</Label>
@@ -135,15 +137,45 @@ export default function ProductModal({
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="p_stock">Stock Quantity</Label>
+                            <Label htmlFor="p_unit">Quantity Unit</Label>
+                            <Select
+                                value={formData.quantity_unit}
+                                onValueChange={(value) => setFormData({ ...formData, quantity_unit: value })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Unit" />
+                                </SelectTrigger>
+                                <SelectContent className="z-[10001]">
+                                    <SelectItem value="kg">per Kilogram (kg)</SelectItem>
+                                    <SelectItem value="number">per Unit</SelectItem>
+                                    <SelectItem value="ltr">per Liter (L)</SelectItem>
+                                    <SelectItem value="pkt">per Packet</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Stock & Quantity Steps */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="p_stock">Available Stock (Optional)</Label>
                             <Input
                                 id="p_stock"
                                 type="number"
-                                placeholder="0"
+                                placeholder="Enter total stock"
                                 value={formData.stock}
                                 onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                                required
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="p_steps">Purchasable Steps (e.g. 5, 10, 15)</Label>
+                            <Input
+                                id="p_steps"
+                                placeholder="5, 10, 15 (optional)"
+                                value={formData.quantity_steps}
+                                onChange={(e) => setFormData({ ...formData, quantity_steps: e.target.value })}
+                            />
+                            <p className="text-[10px] text-muted-foreground">Define bulk selection steps for travelers/buyers.</p>
                         </div>
                     </div>
 
@@ -178,7 +210,7 @@ export default function ProductModal({
                                                 ))}
                                             </SelectGroup>
                                         )}
-                                        
+
                                         {categories.length > 0 && <SelectSeparator />}
 
                                         {/* All Categories Group */}

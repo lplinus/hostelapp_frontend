@@ -1,11 +1,11 @@
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import { Settings as SettingsIcon, Shield, Smartphone } from "lucide-react";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import DashboardHeader from "@/components/user/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 
 export const metadata: Metadata = {
     title: "Settings | Hostel In",
