@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
 
     // ─── SITEMAP ENTRIES ───
-    
+
     // 1. Static Routes
     const staticRoutes: MetadataRoute.Sitemap = [
         { url: baseUrl, priority: 1, lastModified: new Date() },
@@ -61,4 +61,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     return [...staticRoutes, ...cityRoutes, ...hostelRoutes, ...blogRoutes];
-}
+}
