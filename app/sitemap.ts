@@ -81,10 +81,11 @@ export const dynamic = "force-dynamic";
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online";
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+    // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
 
     const [hostels, cities, blogs, hostelTypes] = await Promise.all([
-        safeFetch<HostelListItem>(`${apiUrl}/api/hostels/`),
+        safeFetch<HostelListItem>(`${apiUrl}/api/hostels/hostels/`),
         safeFetch<CityItem>(`${apiUrl}/api/locations/cities/`),
         safeFetch<BlogPostListItem>(`${apiUrl}/api/blog/blog/posts/`),
         safeFetch<HostelType>(`${apiUrl}/api/hostels/types/`),
