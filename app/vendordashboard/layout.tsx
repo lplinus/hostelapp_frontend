@@ -20,8 +20,13 @@ export default function VendorDashboardLayout({
 }) {
     const { user, initializing, isAuthenticated } = useAuth();
     const router = useRouter();
-    // Use cookie as an instant signal that user is authenticated
-    const [hasRoleCookie] = useState(() => !!getRoleCookie());
+    const [isMounted, setIsMounted] = useState(false);
+    const [hasRoleCookie, setHasRoleCookie] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+        setHasRoleCookie(!!getRoleCookie());
+    }, []);
 
     useEffect(() => {
         if (!initializing && !isAuthenticated && !hasRoleCookie) {
@@ -29,8 +34,8 @@ export default function VendorDashboardLayout({
         }
     }, [initializing, isAuthenticated, hasRoleCookie, router]);
 
-    // Show loading ONLY if we have no signal at all (no cookie AND no user data yet)
-    if (!hasRoleCookie && (initializing || !user)) {
+    // Show loading ONLY if we have no signal at all (no cookie AND no user data yet), or if not hydrated
+    if (!isMounted || (!hasRoleCookie && (initializing || !user))) {
         return (
             <div className="flex h-screen items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-3">

@@ -158,7 +158,8 @@ export default function SearchClient({
         setPendingArea("All Areas");
     };
 
-    const [visibleCount, setVisibleCount] = useState<number>(6);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 6;
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([...results]);
     const [isSearching, setIsSearching] = useState(false);
@@ -190,7 +191,7 @@ export default function SearchClient({
         }, 400);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, results]);
+    }, [searchQuery, results, appliedCity, appliedHostelType]);
 
     const filteredAndSortedResults = useMemo(() => {
         let filtered = [...searchResults];
@@ -223,6 +224,24 @@ export default function SearchClient({
         });
         return filtered;
     }, [searchResults, appliedCity, appliedArea, appliedHostelType, appliedPriceRange, appliedSortBy]);
+
+    const totalPages = Math.ceil(filteredAndSortedResults.length / itemsPerPage);
+
+    const paginatedResults = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return filteredAndSortedResults.slice(start, start + itemsPerPage);
+    }, [filteredAndSortedResults, currentPage]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 150, behavior: "smooth" });
+    };
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [appliedCity, appliedArea, appliedHostelType, appliedPriceRange, appliedSortBy, searchQuery]);
+
     const hasUnappliedChanges = useMemo(() => {
         return pendingCity !== appliedCity || 
                pendingArea !== appliedArea || 
@@ -232,14 +251,6 @@ export default function SearchClient({
                pendingPriceRange !== appliedPriceRange || 
                pendingSortBy !== appliedSortBy;
     }, [pendingCity, appliedCity, pendingArea, appliedArea, pendingHostelType, appliedHostelType, pendingRoomType, appliedRoomType, pendingSharingType, appliedSharingType, pendingPriceRange, appliedPriceRange, pendingSortBy, appliedSortBy]);
-
-    const paginatedResults = useMemo(() => {
-        return filteredAndSortedResults.slice(0, visibleCount);
-    }, [filteredAndSortedResults, visibleCount]);
-
-    const handleLoadMore = () => {
-        setVisibleCount(prev => prev + 6);
-    };
 
     const headingText = initialQuery ? `Hostels in ${initialQuery}` : "Available Hostels";
 
@@ -469,7 +480,7 @@ export default function SearchClient({
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto lg:max-w-3xl lg:ml-auto lg:mr-0">
+                        <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto lg:max-w-3xl lg:ml-auto lg:mr-0 min-h-[600px]">
                             {paginatedResults.map((hostel) => (
                                 <HostelCard
                                     key={hostel.id}
@@ -495,15 +506,59 @@ export default function SearchClient({
                                 />
                             ))}
 
-                            {visibleCount < filteredAndSortedResults.length && (
-                                <div className="mt-8 flex justify-center">
+                            {totalPages > 1 && (
+                                <nav className="flex items-center justify-center gap-2 mt-10 mb-6 w-full" aria-label="Pagination">
                                     <Button
-                                        onClick={handleLoadMore}
-                                        className="bg-teal-600 hover:bg-teal-700 text-white font-bold h-12 px-10 rounded-xl shadow-lg shadow-teal-600/10 active:scale-95 transition-all"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                                        disabled={currentPage === 1}
+                                        className="rounded-xl border-slate-200 text-slate-600 hover:border-teal-600 hover:bg-teal-50 hover:text-teal-600 disabled:opacity-50 h-10 px-4 font-semibold transition-all"
                                     >
-                                        Load More Hostels
+                                        Previous
                                     </Button>
-                                </div>
+
+                                    <div className="flex items-center gap-1.5 mx-2">
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                            if (
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 1 && page <= currentPage + 1)
+                                            ) {
+                                                return (
+                                                    <Button
+                                                        key={page}
+                                                        variant={currentPage === page ? "default" : "outline"}
+                                                        size="icon"
+                                                        onClick={() => handlePageChange(page)}
+                                                        className={`w-10 h-10 rounded-xl font-bold transition-all ${currentPage === page
+                                                                ? "bg-teal-600 hover:bg-teal-700 text-white shadow-md shadow-teal-600/20"
+                                                                : "border-slate-200 text-slate-600 hover:border-teal-600 hover:bg-teal-50 hover:text-teal-600"
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </Button>
+                                                );
+                                            } else if (
+                                                (page === currentPage - 2 && page > 1) ||
+                                                (page === currentPage + 2 && page < totalPages)
+                                            ) {
+                                                return <span key={page} className="text-slate-400 font-bold px-1 select-none">...</span>;
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                                        disabled={currentPage === totalPages}
+                                        className="rounded-xl border-slate-200 text-slate-600 hover:border-teal-600 hover:bg-teal-50 hover:text-teal-600 disabled:opacity-50 h-10 px-4 font-semibold transition-all"
+                                    >
+                                        Next
+                                    </Button>
+                                </nav>
                             )}
                         </div>
                     )}

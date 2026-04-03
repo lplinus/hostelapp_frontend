@@ -59,6 +59,7 @@ export interface Order {
     id: number;
     hostel: number;
     hostel_name: string;
+    hostel_address?: string;
     vendor: number;
     vendor_name: string;
     status: OrderStatus;

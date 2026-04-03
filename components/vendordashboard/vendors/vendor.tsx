@@ -18,8 +18,10 @@ import {
     TrendingUp,
     UserCircle,
     Package,
-    ShoppingCart
+    ShoppingCart,
+    CheckCircle2
 } from 'lucide-react';
+import { authApiClient } from '@/lib/api/auth-client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -34,16 +36,29 @@ export default function VendorsPage() {
     const role = user?.role;
     const [vendors, setVendors] = useState<Vendor[]>([]);
     const [myVendor, setMyVendor] = useState<Vendor | null>(null);
+    const [currentSubscription, setCurrentSubscription] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         if (role === 'vendor') {
             fetchVendorData();
+            fetchVendorSubscription();
         } else {
             fetchPublicVendors();
         }
     }, [role]);
+
+    const fetchVendorSubscription = async () => {
+        try {
+            const data: any = await authApiClient.get('/api/payments/vendor-subscriptions/current/');
+            if (data && data.plan) {
+                setCurrentSubscription(data);
+            }
+        } catch (error) {
+            // Ignore if no active subscription
+        }
+    };
 
     const fetchVendorData = async () => {
         setIsLoading(true);
@@ -88,12 +103,21 @@ export default function VendorsPage() {
                     <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                         {role === 'vendor' ? 'Dashboard' : 'Marketplace'}
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground mt-1 mb-2">
                         {role === 'vendor'
                             ? 'Overview of your vendor activity and performance.'
                             : 'Discover verified vendors for your hostel needs.'
                         }
                     </p>
+                    {role === 'vendor' && currentSubscription && currentSubscription.end_date && (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md text-xs font-medium animate-in fade-in slide-in-from-top-1">
+                            <CheckCircle2 size={13} className="shrink-0 text-white" strokeWidth={3} />
+                            <span>
+                                <strong className="font-extrabold tracking-wide uppercase mr-1">{currentSubscription.plan_name}</strong> 
+                                <span className="opacity-90">Active until {new Date(currentSubscription.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            </span>
+                        </div>
+                    )}
                 </div>
                 {role !== 'vendor' && (
                     <form onSubmit={handleSearch} className="flex items-center gap-2 w-full md:w-auto">
