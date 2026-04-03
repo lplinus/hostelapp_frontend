@@ -27,7 +27,7 @@ async function ensureAccessToken(): Promise<string | null> {
     if (!isAuthenticated) return null;
 
     const existing = tokenManager.getAccessToken();
-    if (existing) return existing;
+    if (existing && tokenManager.isTokenValid(existing)) return existing;
 
     if (!refreshPromise) {
         refreshPromise = refreshAccessToken().finally(() => {
@@ -49,11 +49,20 @@ class AuthAPIClient extends APIClient {
         const isAuthenticated = tokenManager.getAuthFlag() === 'authenticated';
 
         // ✅ Only attempt token ensure if authenticated
+        let finalToken = null;
         if (isAuthenticated) {
-            await ensureAccessToken();
+            finalToken = await ensureAccessToken();
+            if (!finalToken) {
+                 if (typeof window !== 'undefined') {
+                     tokenManager.clearAccessToken();
+                     tokenManager.clearAuthFlag();
+                     window.location.href = '/login';
+                 }
+                 throw new Error("Authentication expired");
+            }
         }
 
-        const token = tokenManager.getAccessToken();
+        const token = finalToken || tokenManager.getAccessToken();
         const csrfToken = getCookie('csrftoken');
 
         const headers = new Headers(options.headers || {});

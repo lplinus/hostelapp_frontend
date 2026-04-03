@@ -23,8 +23,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
+import { tokenManager } from "@/lib/token";
 
 export default function UserOrders() {
+    const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
     const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<OrderStatus | "all">("all");
@@ -33,10 +36,14 @@ export default function UserOrders() {
     const [isContactOpen, setIsContactOpen] = useState(false);
     const [contactForm, setContactForm] = useState({ name: '', mobile: '', issue: '' });
 
+    const isAuthenticated = !!user && tokenManager.getAuthFlag() === 'authenticated';
+
     const { data: ordersData, isLoading } = useQuery({
         queryKey: ["userOrders"],
         queryFn: () => orderService.getOrders(),
-        refetchInterval: 5000,
+        refetchInterval: isAuthenticated ? 5000 : false,
+        enabled: isAuthenticated,
+        retry: false,
     });
     
     const orders = ordersData || [];

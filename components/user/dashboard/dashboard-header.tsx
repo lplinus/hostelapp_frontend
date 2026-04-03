@@ -44,13 +44,13 @@ export default function DashboardHeader() {
                             <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/15 to-transparent pointer-events-none"></div>
                             {/* Shimmer sweeping effect */}
                             <div className="absolute inset-0 translate-x-[-100%] animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none"></div>
-                            
+
                             <span className="relative flex h-2 w-2 z-10 shrink-0">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
                             <span className="relative z-10 drop-shadow-sm flex items-center">
-                                <strong className="font-black tracking-widest uppercase mr-1.5 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-400 drop-shadow-lg">{subscription.plan_name}</strong> 
+                                <strong className="font-black tracking-widest uppercase mr-1.5 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-400 drop-shadow-lg">{subscription.plan_name}</strong>
                                 <span className="opacity-80 text-[10px] tracking-wide">Valid until {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                             </span>
                         </div>

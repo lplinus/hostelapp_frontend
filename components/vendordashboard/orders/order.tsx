@@ -34,6 +34,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/useAuth';
+import { tokenManager } from '@/lib/token';
 
 const STATUS_FLOW: Record<string, OrderStatus[]> = {
     pending: ['shipped', 'cancelled'],
@@ -52,6 +54,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 };
 
 export default function OrdersPage() {
+    const { user } = useAuth();
     const queryClient = useQueryClient();
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
@@ -68,10 +71,14 @@ export default function OrdersPage() {
         toast.success("Address copied securely!");
     };
 
+    const isAuthenticated = !!user && tokenManager.getAuthFlag() === 'authenticated';
+
     const { data: ordersData, isLoading } = useQuery({
         queryKey: ['vendorOrders'],
         queryFn: () => vendorService.getVendorOrders(),
-        refetchInterval: 5000,
+        refetchInterval: isAuthenticated ? 5000 : false,
+        enabled: isAuthenticated,
+        retry: false,
     });
     const orders = ordersData || [];
 

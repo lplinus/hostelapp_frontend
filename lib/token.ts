@@ -36,6 +36,16 @@ export const tokenManager = {
         }
     },
 
+    isTokenValid: (token: string | null): boolean => {
+        if (!token) return false;
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.exp ? (Date.now() / 1000) < (payload.exp - 10) : false;
+        } catch {
+            return false;
+        }
+    },
+
     //newly added
     getAuthFlag: (): string | null => {
         if (typeof document === 'undefined') return null;

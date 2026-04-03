@@ -142,14 +142,14 @@ export async function logoutUser(): Promise<void> {
 export async function fetchCurrentUser(): Promise<AuthUser | null> {
     const token = tokenManager.getAccessToken();
 
-    if (!token) {
+    if (!tokenManager.isTokenValid(token)) {
         // Try refreshing first
         const newToken = await refreshAccessToken();
         if (!newToken) return null;
     }
 
     const currentToken = tokenManager.getAccessToken();
-    if (!currentToken) return null;
+    if (!tokenManager.isTokenValid(currentToken)) return null;
 
     const response = await fetch(`${BASE_URL}${API_ENDPOINTS.AUTH.ME}`, {
         method: 'GET',
