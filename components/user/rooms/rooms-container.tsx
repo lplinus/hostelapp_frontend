@@ -157,7 +157,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
     };
 
     return (
-        <div className="space-y-8 pb-12 font-poppins">
+        <div className="space-y-8 pb-12 font-sans">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-muted">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Room Management</h1>

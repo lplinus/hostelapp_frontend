@@ -13,13 +13,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
-
 import Image from "next/image";
+
+// ✅ PREMIUM FONT
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 const navLinks = [
   { name: "Home", href: "/home" },
-  // { name: "Hostels", href: "/hostels" },
-  // { name: "Pricing", href: "/pricing" },
   { name: "Blog", href: "/blog" },
   { name: "Faqs", href: "/faqs" },
   { name: "About", href: "/about-us" },
@@ -42,7 +47,9 @@ export default function Header() {
     pathname.startsWith("/dashboard/") ||
     pathname === "/profile" ||
     pathname.startsWith("/profile/") ||
-    (pathname.startsWith("/hostel") && !pathname.startsWith("/hostels") && !pathname.startsWith("/hostel-type")) ||
+    (pathname.startsWith("/hostel") &&
+      !pathname.startsWith("/hostels") &&
+      !pathname.startsWith("/hostel-type")) ||
     pathname === "/rooms" ||
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
@@ -50,21 +57,19 @@ export default function Header() {
     pathname.startsWith("/vendordashboard") ||
     pathname.startsWith("/usermarketplace");
 
-  if (isDashboardRoute) {
-    return null;
-  }
-
-  if (isMounted && (isAuthenticated || isLoggingOut)) {
-    return null;
-  }
+  if (isDashboardRoute) return null;
+  if (isMounted && (isAuthenticated || isLoggingOut)) return null;
 
   return (
-    <header className="w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300">
+    <header
+      className={`w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${inter.variable} font-sans`}
+    >
       <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between lg:grid lg:grid-cols-3 items-center">
-        {/* LEFT - Logo */}
+        
+        {/* LOGO */}
         <div className="flex justify-start">
-          <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-3 shrink-0 group">
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition">
               <Image
                 src="/images/icon.webp"
                 alt="Logo"
@@ -72,13 +77,13 @@ export default function Header() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="text-xl font-bold text-[#0F172A] tracking-tight">
+            <span className="text-[18px] font-semibold tracking-tight text-slate-900">
               Hostel In
             </span>
           </Link>
         </div>
 
-        {/* CENTER - Navigation (Perfectly Centered) */}
+        {/* NAVIGATION */}
         <nav className="hidden lg:flex items-center justify-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -87,10 +92,10 @@ export default function Header() {
                 key={link.name}
                 href={link.href}
                 className={clsx(
-                  "px-4 py-2 rounded-lg text-[15px] font-bold transition-all duration-200",
+                  "px-4 py-2 rounded-lg text-[14px] font-medium tracking-tight transition-all duration-200",
                   isActive
-                    ? "bg-[#0F172A]/5 text-black"
-                    : "text-black hover:text-[#8B5CF6] hover:bg-white/50"
+                    ? "text-black bg-blue-100"
+                    : "text-slate-600 hover:text-black hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50"
                 )}
               >
                 {link.name}
@@ -99,25 +104,29 @@ export default function Header() {
           })}
         </nav>
 
-        {/* RIGHT - Actions (Icons + Both Buttons) */}
+        {/* RIGHT */}
         <div className="flex items-center justify-end gap-4">
-          <div className="hidden sm:flex items-center gap-4 text-black mr-2">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-[#8B5CF6] transition-colors" strokeWidth={1.5} />
-            <Moon className="w-5 h-5 cursor-pointer hover:text-[#8B5CF6] transition-colors" strokeWidth={1.5} />
+
+          {/* ICONS */}
+          <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
+            <Heart className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
+            <Moon className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
           </div>
 
+          {/* BUTTONS */}
           <div className="hidden md:flex items-center gap-3">
             {isMounted && !isAuthenticated && !isLoggingOut && (
               <>
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-bold text-black hover:bg-white/50 transition-all duration-200 shadow-sm border border-transparent hover:border-gray-200"
+                  className="px-5 py-2 rounded-xl text-sm font-medium tracking-tight text-slate-700 hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50 transition-all duration-200"
                 >
                   Owner Login
                 </Link>
+
                 <Link
                   href="/register"
-                  className="px-5 py-2 rounded-xl bg-white border border-slate-200 text-sm font-bold text-black hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105"
+                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-black bg-white border border-slate-200 hover:bg-blue-100 transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-blue-200/50"
                 >
                   Owner Register
                 </Link>
@@ -125,21 +134,25 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile Menu */}
+          {/* MOBILE MENU */}
           <div className="lg:hidden">
             {!isMounted ? (
               <div className="w-10 h-10" />
             ) : (
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
-                  <button className="p-2 text-gray-500">
+                  <button className="p-2 text-slate-500">
                     <Menu className="w-6 h-6" />
                   </button>
                 </SheetTrigger>
-                <SheetContent side="right">
+
+                <SheetContent side="right" className="bg-white/90 backdrop-blur-xl">
                   <SheetHeader>
-                    <SheetTitle>Menu</SheetTitle>
+                    <SheetTitle className="font-semibold tracking-tight">
+                      Menu
+                    </SheetTitle>
                   </SheetHeader>
+
                   <div className="flex flex-col gap-4 mt-8 px-4 pb-4">
                     {navLinks.map((link) => (
                       <Link
@@ -147,18 +160,26 @@ export default function Header() {
                         href={link.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={clsx(
-                          "text-lg font-medium",
-                          pathname === link.href ? "text-blue-600" : "text-gray-600"
+                          "text-[15px] font-medium tracking-tight",
+                          pathname === link.href
+                            ? "text-black"
+                            : "text-slate-600"
                         )}
                       >
                         {link.name}
                       </Link>
                     ))}
+
                     <hr className="my-2" />
+
                     {isMounted && !isAuthenticated && !isLoggingOut && (
                       <>
-                        <Link href="/login" className="text-lg font-medium text-gray-700">Owner Login</Link>
-                        <Link href="/register" className="text-lg font-medium text-gray-700">Owner Register</Link>
+                        <Link href="/login" className="text-[15px] font-medium text-slate-700">
+                          Owner Login
+                        </Link>
+                        <Link href="/register" className="text-[15px] font-medium text-slate-700">
+                          Owner Register
+                        </Link>
                       </>
                     )}
                   </div>
@@ -171,3 +192,4 @@ export default function Header() {
     </header>
   );
 }
+

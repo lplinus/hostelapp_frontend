@@ -69,7 +69,7 @@ export default async function RootLayout({
         <JsonLd data={generateWebsiteSchema()} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${inter.variable} antialiased font-sans`}
       >
         <Providers isAuthenticated={isAuthenticated}>
           <Header />

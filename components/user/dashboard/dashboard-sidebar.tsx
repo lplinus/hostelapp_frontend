@@ -20,7 +20,7 @@ export default function DashboardSidebar() {
   }, []);
 
   return (
-    <div className="font-poppins">
+    <div className="font-sans">
       {/* Mobile Overlay */}
       {isOpenMobile && (
         <div
