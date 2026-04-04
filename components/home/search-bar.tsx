@@ -236,14 +236,14 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
             : clsx(
               "bg-white/95 backdrop-blur-2xl mx-auto border",
               isSticky
-                ? "w-full max-w-none shadow-sm border-b border-slate-200 rounded-none h-20 flex items-center"
+                ? "w-full max-w-none shadow-md border-b border-slate-200 rounded-none h-20 flex items-center"
                 : "p-4 md:p-5 max-w-5xl border-[#0F172A]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
             )
         )}
       >
         <div className={clsx(
           "mx-auto w-full flex items-center transition-all duration-500",
-          (isSticky || isHeaderMode) ? "max-w-7xl px-0 justify-between gap-4 sm:gap-8" : "max-w-none grid grid-cols-1 md:grid-cols-4 gap-3"
+          (isSticky || isHeaderMode) ? "max-w-7xl px-0 justify-between gap-4 sm:gap-6" : "max-w-none grid grid-cols-1 md:grid-cols-4 gap-3"
         )}>
           {/* Logo (Sticky Only & Not in header variant) */}
           {(isSticky && !isHeaderMode) && (
@@ -262,18 +262,22 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
           )}
 
           <motion.div layout className={clsx(
-            "transition-all duration-200 ease-in-out",
+            "group/pill transition-all duration-300 ease-in-out flex items-center bg-white border border-slate-200 shadow-sm hover:shadow-md",
             (isSticky || isHeaderMode)
-              ? "w-full flex items-center justify-between rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 px-4 py-1.5 md:px-5 md:py-2 gap-0"
-              : "w-full grid grid-cols-1 md:grid-cols-4 gap-3 items-center"
+              ? "w-full rounded-full py-1.5 pl-1.5 pr-1.5 md:pr-2"
+              : "grid grid-cols-1 md:grid-cols-4 gap-3 md:p-1 items-center border-none bg-transparent shadow-none hover:shadow-none"
           )}>
             {/* Location */}
-            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "flex-1 min-w-[130px]" : "col-span-1")}>
+            <motion.div layout className={clsx(
+              "relative",
+              (isSticky || isHeaderMode) 
+                ? "flex-1 min-w-0 border-r border-slate-100 last:border-r-0" 
+                : "col-span-1"
+            )}>
               <div className={clsx(
-                "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none",
-                "text-gray-400 group-focus-within:text-[#8B5CF6]"
+                "absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none text-gray-400 group-focus-within/pill:text-[#8B5CF6]"
               )}>
-                <MapPin size={(isSticky || isHeaderMode) ? 16 : 20} />
+                <MapPin size={(isSticky || isHeaderMode) ? 15 : 20} />
               </div>
               <input
                 type="text"
@@ -281,23 +285,30 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className={clsx(
-                  "w-full pl-8 md:pl-10 pr-2 focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400 transition-all",
-                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent rounded-full focus:bg-transparent focus:ring-0" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "w-full pl-9 md:pl-12 pr-2 focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400/80 transition-all",
+                  (isSticky || isHeaderMode) 
+                    ? "h-11 text-sm md:text-[15px] bg-transparent rounded-full" 
+                    : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
                 )}
               />
             </motion.div>
 
             {/* Budget */}
-            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "hidden md:flex flex-1 min-w-[130px] relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:border-l before:border-slate-200" : "block")}>
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
+            <motion.div layout className={clsx(
+              "relative",
+              (isSticky || isHeaderMode) 
+                ? "hidden md:block flex-1 border-r border-slate-100" 
+                : "block"
+            )}>
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#8B5CF6] transition-colors pointer-events-none">
                 <IndianRupee size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <select
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 className={clsx(
-                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer",
-                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent focus:ring-0 rounded-full" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer bg-transparent",
+                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
                 )}
               >
                 <option value="">Budget</option>
@@ -305,23 +316,28 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
-              <div className={clsx("hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400", (isSticky || isHeaderMode) && "right-3")}>
+              <div className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <ChevronDown size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <MobileSelect options={budgetOptions} value={budget} onChange={setBudget} placeholder="Budget" />
             </motion.div>
 
             {/* Gender */}
-            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "hidden md:flex flex-1 min-w-[130px] relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:border-l before:border-slate-200" : "block")}>
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
+            <motion.div layout className={clsx(
+              "relative",
+              (isSticky || isHeaderMode) 
+                ? "hidden lg:block flex-1" 
+                : "block"
+            )}>
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#8B5CF6] transition-colors pointer-events-none">
                 <Users size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 className={clsx(
-                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer",
-                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent focus:ring-0 rounded-full" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer bg-transparent",
+                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
                 )}
               >
                 <option value="">Gender</option>
@@ -329,22 +345,22 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
-              <div className={clsx("hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400", (isSticky || isHeaderMode) && "right-3")}>
+              <div className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <ChevronDown size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <MobileSelect options={genderOptions} value={gender} onChange={setGender} placeholder="Gender" />
             </motion.div>
 
             {/* Search Button */}
-            <motion.div layout className={clsx("flex", (isSticky || isHeaderMode) && "ml-2 shrink-0")}>
+            <motion.div layout className={clsx("flex shrink-0", (isSticky || isHeaderMode) && "ml-auto")}>
               <button
                 onClick={handleSearch}
                 className={clsx(
-                  "flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all active:scale-95 group/btn",
-                  (isSticky || isHeaderMode) ? "w-9 h-9 md:w-10 md:h-10" : "w-full h-[58px] px-8"
+                  "flex items-center justify-center bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all active:scale-95 group/btn",
+                  (isSticky || isHeaderMode) ? "w-10 h-10 md:w-11 md:h-11" : "w-full h-[58px] px-8 gap-2"
                 )}
               >
-                <Search className={clsx("transition-transform group-hover/btn:scale-110", (isSticky || isHeaderMode) ? "w-4 h-4 shrink-0" : "w-5 h-5")} />
+                <Search className="transition-transform group-hover/btn:scale-110 w-5 h-5" />
                 <motion.span layout className={clsx((isSticky || isHeaderMode) ? "hidden" : "inline", "text-lg")}>
                   Search
                 </motion.span>
