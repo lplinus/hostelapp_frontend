@@ -23,12 +23,12 @@ export default function Hero({ title, subtitle }: HeroProps) {
 
       {/* COMPACT Content */}
       <div className="relative z-10 container mx-auto px-6 pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-32 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-4 animate-in fade-in slide-in-from-bottom-6 duration-700 drop-shadow-2xl">
+        <div className="max-w-6xl mx-auto w-full px-2">
+          <h1 className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:whitespace-nowrap font-extrabold leading-tight tracking-tight mb-4 animate-in fade-in slide-in-from-bottom-6 duration-700 drop-shadow-2xl">
             {title || "Find Your Perfect Stay"}
           </h1>
 
-          <p className="text-base md:text-xl text-gray-300/90 max-w-xl mx-auto font-medium leading-normal animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+          <p className="font-sans text-base md:text-xl text-gray-300/90 max-w-xl mx-auto font-medium leading-normal animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
             {subtitle ||
               "Affordable. Comfortable. Verified. Book hostels across India in seconds."}
           </p>

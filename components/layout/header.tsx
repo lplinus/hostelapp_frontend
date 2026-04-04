@@ -80,9 +80,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
 
         {/* LOGO */}
-        <div className="flex flex-1 justify-start shrink-0 min-w-0">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition">
+        <div className="flex lg:flex-1 justify-start shrink-0 min-w-0">
+          <Link href="/" className="flex items-center gap-2 md:gap-3 group">
+            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition">
               <Image
                 src="/images/icon.webp"
                 alt="Logo"
@@ -90,14 +90,14 @@ export default function Header() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="text-[18px] font-semibold tracking-tight text-slate-900">
+            <span className="hidden md:block text-[18px] font-semibold tracking-tight text-slate-900 whitespace-nowrap">
               Hostel In
             </span>
           </Link>
         </div>
 
         {/* COMPACT SEARCH BAR IN HEADER */}
-        <div className="hidden lg:flex w-full max-w-2xl px-4 justify-center items-center shrink">
+        <div className="flex flex-1 w-full max-w-2xl px-2 lg:px-4 justify-center items-center min-w-[150px]">
           <SearchBar variant="header" />
         </div>
 
@@ -125,7 +125,7 @@ export default function Header() {
         */}
 
         {/* RIGHT */}
-        <div className="flex flex-1 items-center justify-end gap-3 shrink-0 min-w-0">
+        <div className="flex flex-none lg:flex-1 items-center justify-end gap-2 md:gap-3 shrink-0 min-w-0">
 
           {/* ICONS */}
           <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
