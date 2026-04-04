@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
+import SearchBar from "@/components/home/search-bar";
 
 // ✅ PREMIUM FONT
 import { Inter } from "next/font/google";
@@ -23,22 +24,28 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const navLinks = [
+/* const navLinks = [
   { name: "Home", href: "/home" },
   { name: "Blog", href: "/blog" },
   { name: "Faqs", href: "/faqs" },
   { name: "About", href: "/about-us" },
   { name: "Contact", href: "/contact-us" },
-];
+]; */
 
 export default function Header() {
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const { isAuthenticated, isLoggingOut } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const isDashboardRoute =
@@ -60,14 +67,20 @@ export default function Header() {
   if (isDashboardRoute) return null;
   if (isMounted && (isAuthenticated || isLoggingOut)) return null;
 
+  const isHomePage = pathname === "/home";
+
   return (
     <header
-      className={`w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-300 ${inter.variable} font-sans`}
+      className={clsx(
+        `w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-700 ease-in-out ${inter.variable} font-sans`,
+        // Header stays visible when it contains the search bar
+        // isHomePage && isScrolled && "-translate-y-full opacity-0 pointer-events-none"
+      )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between lg:grid lg:grid-cols-3 items-center">
-        
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+
         {/* LOGO */}
-        <div className="flex justify-start">
+        <div className="flex flex-1 justify-start shrink-0 min-w-0">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition">
               <Image
@@ -83,7 +96,13 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* NAVIGATION */}
+        {/* COMPACT SEARCH BAR IN HEADER */}
+        <div className="hidden lg:flex w-full max-w-2xl px-4 justify-center items-center shrink">
+          <SearchBar variant="header" />
+        </div>
+
+        {/* NAVIGATION (Commented out to make room for Search Bar) */}
+        {/* 
         <nav className="hidden lg:flex items-center justify-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -102,10 +121,11 @@ export default function Header() {
               </Link>
             );
           })}
-        </nav>
+        </nav> 
+        */}
 
         {/* RIGHT */}
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex flex-1 items-center justify-end gap-3 shrink-0 min-w-0">
 
           {/* ICONS */}
           <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
@@ -119,16 +139,16 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-medium tracking-tight text-slate-700 hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50 transition-all duration-200"
+                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-black hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50 transition-all duration-200"
                 >
-                  Owner Login
+                 Login
                 </Link>
 
                 <Link
                   href="/register"
                   className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-black bg-white border border-slate-200 hover:bg-blue-100 transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-blue-200/50"
                 >
-                  Owner Register
+                 Register
                 </Link>
               </>
             )}
@@ -154,7 +174,7 @@ export default function Header() {
                   </SheetHeader>
 
                   <div className="flex flex-col gap-4 mt-8 px-4 pb-4">
-                    {navLinks.map((link) => (
+                    {/* {navLinks.map((link) => (
                       <Link
                         key={link.name}
                         href={link.href}
@@ -168,7 +188,7 @@ export default function Header() {
                       >
                         {link.name}
                       </Link>
-                    ))}
+                    ))} */}
 
                     <hr className="my-2" />
 
@@ -192,4 +212,3 @@ export default function Header() {
     </header>
   );
 }
-

@@ -72,7 +72,7 @@ export default async function LandingPage() {
         />
       )}
 
-      <main className="antialiased font-poppins bg-white text-stone-900 overflow-hidden">
+      <main className="antialiased font-sans bg-white text-stone-900 overflow-hidden">
         {/* Full-width premium sections */}
         <LandingHero data={landingData} />
         

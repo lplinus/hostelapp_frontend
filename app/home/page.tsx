@@ -67,12 +67,14 @@ export default async function HomePage() {
           subtitle={homepageData?.hero_subtitle}
         />
 
-        {/* PERMANENT STICKY Search Bar Wrap - Positioned exactly below nav (h-20 = 80px), z-40 to stay under header */}
-        <div className="sticky top-[80px] z-[40] w-full px-4 sm:px-6 -mt-10 sm:-mt-12 lg:-mt-16 mb-4">
-           <div className="max-w-5xl mx-auto">
-              <SearchBar />
-           </div>
-        </div>
+        {/* SEARCH BAR (Commented out - now in Header) */}
+        {/* 
+        <div className="z-[40] w-full px-4 sm:px-6 -mt-10 sm:-mt-12 lg:-mt-16 mb-4">
+          <div className="max-w-5xl mx-auto">
+            <SearchBar />
+          </div>
+        </div> 
+        */}
 
         {/* Content sections with breathing room */}
         <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">

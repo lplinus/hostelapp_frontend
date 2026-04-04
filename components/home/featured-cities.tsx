@@ -44,11 +44,11 @@ export default async function FeaturedCities() {
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
           <div>
-            <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
-              <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Locations</span>
+            <div className="flex items-center gap-3 text-[#8B5CF6] mb-3">
+              <span className="text-[11px] tracking-[0.25em] font-semibold uppercase font-sans">Locations</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight">
-              Popular <span className="italic text-[#64748B] font-medium">Cities</span>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-slate-800 tracking-tight font-sans">
+              Popular <span className="text-slate-500 font-medium">Cities</span>
             </h2>
           </div>
         </div>

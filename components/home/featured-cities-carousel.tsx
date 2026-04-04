@@ -69,8 +69,8 @@ export default function FeaturedCitiesCarousel({
                                         />
                                     )}
                                 </div>
-                                <div className="mt-4 w-full">
-                                    <p className="text-[#0F172A] font-bold text-lg tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
+                                <div className="mt-3 w-full">
+                                    <p className="font-sans text-slate-800 font-medium text-base tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
                                         {city.name}
                                     </p>
                                 </div>

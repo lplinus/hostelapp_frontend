@@ -38,11 +38,11 @@ export default async function FeaturedHostelTypes() {
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
                     <div>
-                        <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
-                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Categories</span>
+                        <div className="flex items-center gap-3 text-[#8B5CF6] mb-3">
+                            <span className="text-[11px] tracking-[0.25em] font-semibold uppercase font-sans">Categories</span>
                         </div>
-                        <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight">
-                            Browse by <span className="italic text-[#64748B] font-medium">Hostel Type</span>
+                        <h2 className="text-3xl sm:text-4xl font-semibold text-slate-800 tracking-tight font-sans">
+                            Browse by <span className="text-slate-500 font-medium">Hostel Type</span>
                         </h2>
                     </div>
                 </div>
@@ -89,8 +89,8 @@ export default async function FeaturedHostelTypes() {
                                                 <div className="absolute inset-0 bg-[#8B5CF6] opacity-90 transition duration-500" />
                                             )}
                                         </div>
-                                        <div className="mt-4 w-full">
-                                            <p className="text-[#0F172A] font-bold text-lg tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
+                                        <div className="mt-3 w-full">
+                                            <p className="font-sans text-slate-800 font-medium text-base tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
                                                 {type.name}
                                             </p>
                                         </div>

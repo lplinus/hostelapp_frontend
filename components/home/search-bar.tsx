@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { MapPin, IndianRupee, Users, Search, ChevronDown } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { MapPin, IndianRupee, Users, Search, ChevronDown, Heart, Moon } from "lucide-react";
 import { slugify, getCitySEOLink } from "@/lib/utils";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DropdownOption {
   value: string;
@@ -146,22 +149,30 @@ const MAJOR_CITIES = [
   "ahmedabad",
 ];
 
-export default function SearchBar() {
+export default function SearchBar({ variant }: { variant?: "default" | "header" }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { isAuthenticated, isLoggingOut } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
 
   const [location, setLocation] = useState<string>("");
   const [budget, setBudget] = useState<string>("");
   const [gender, setGender] = useState<string>("");
-  const [isSticky, setIsSticky] = useState(false);
+  const isHeaderMode = variant === "header";
+  const [isStickyState, setIsSticky] = useState(false);
+
+  // If variant is header, it's always "sticky" (compact)
+  const isSticky = isHeaderMode || isStickyState;
 
   useEffect(() => {
+    setIsMounted(true);
     let ticking = false;
 
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const sticky = window.scrollY > 200;
-          if (sticky !== isSticky) {
+          const sticky = window.scrollY > 50;
+          if (sticky !== isStickyState) {
             setIsSticky(sticky);
           }
           ticking = false;
@@ -172,13 +183,12 @@ export default function SearchBar() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isSticky]);
+  }, [isStickyState]);
 
   const handleSearch = useCallback(() => {
     const searchLocation = location.trim();
     if (!searchLocation) return;
 
-    // Word mapping for multi-word search like "hyd hostels" -> "hyderabad hostels"
     const words = searchLocation.split(/\s+/);
     const mapped_words = words.map((w) => {
       const lower = w.toLowerCase();
@@ -187,7 +197,6 @@ export default function SearchBar() {
     const mappedLocation = mapped_words.join(" ");
     const lowerLocation = mappedLocation.toLowerCase();
 
-    // Check if it's purely a major city search to use SEO city pages
     const isOnlyCity = MAJOR_CITIES.includes(lowerLocation);
 
     if (isOnlyCity && !budget && !gender) {
@@ -196,7 +205,6 @@ export default function SearchBar() {
       return;
     }
 
-    // Default to search results page which handles areas, hostel names, etc.
     const params = new URLSearchParams();
     params.append("location", mappedLocation);
     if (budget) params.append("budget", budget);
@@ -205,137 +213,168 @@ export default function SearchBar() {
     router.push(`/search?${params.toString()}`);
   }, [location, budget, gender, router]);
 
-  // Optimized spring for "very very smooth" transition
-  const springConfig = { 
-    type: "spring", 
-    stiffness: 260, 
-    damping: 32, 
-    mass: 0.5,
-    restDelta: 0.001 
+  const springConfig = {
+    type: "spring",
+    stiffness: 100,
+    damping: 24,
+    mass: 1.2,
+    restDelta: 0.001
   } as const;
 
   return (
-    <>
-      <motion.div 
+    <div className={clsx(
+      isHeaderMode ? "w-full" : "w-full transition-all duration-700 ease-in-out",
+      !isHeaderMode && (isSticky ? "fixed top-0 left-0 right-0 z-[60]" : "relative px-4 sm:px-6")
+    )}>
+      <motion.div
         layout
         transition={springConfig}
         className={clsx(
-          "bg-white/95 backdrop-blur-2xl mx-auto border z-[40] font-inter will-change-[transform,width,max-width,padding]",
-          isSticky 
-            ? "p-2 max-w-4xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border-slate-200 rounded-full" 
-            : "p-4 md:p-5 max-w-5xl border-[#0F172A]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
+          "font-inter will-change-[transform,max-width,padding]",
+          isHeaderMode
+            ? "bg-transparent border-none p-0 w-full"
+            : clsx(
+              "bg-white/95 backdrop-blur-2xl mx-auto border",
+              isSticky
+                ? "w-full max-w-none shadow-sm border-b border-slate-200 rounded-none h-20 flex items-center"
+                : "p-4 md:p-5 max-w-5xl border-[#0F172A]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
+            )
         )}
       >
-        <motion.div layout className={clsx(
-          "grid items-center",
-          isSticky 
-            ? "grid-cols-[1fr_auto] md:grid-cols-5 gap-2" 
-            : "grid-cols-1 md:grid-cols-4 gap-3"
+        <div className={clsx(
+          "mx-auto w-full flex items-center transition-all duration-500",
+          (isSticky || isHeaderMode) ? "max-w-7xl px-0 justify-between gap-4 sm:gap-8" : "max-w-none grid grid-cols-1 md:grid-cols-4 gap-3"
         )}>
-          {/* Location */}
+          {/* Logo (Sticky Only & Not in header variant) */}
+          {(isSticky && !isHeaderMode) && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden lg:flex items-center gap-3 shrink-0"
+            >
+              <Link href="/" className="flex items-center gap-2">
+                <div className="relative w-8 h-8 rounded-lg overflow-hidden shadow-sm">
+                  <Image src="/images/icon.webp" alt="Logo" fill className="object-contain p-0.5" />
+                </div>
+                <span className="text-[16px] font-bold tracking-tight text-slate-900">Hostel In</span>
+              </Link>
+            </motion.div>
+          )}
+
           <motion.div layout className={clsx(
-            "relative group", 
-            isSticky ? "md:col-span-2" : "col-span-1"
+            "transition-all duration-200 ease-in-out",
+            (isSticky || isHeaderMode)
+              ? "w-full flex items-center justify-between rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 px-4 py-1.5 md:px-5 md:py-2 gap-0"
+              : "w-full grid grid-cols-1 md:grid-cols-4 gap-3 items-center"
           )}>
-            <div className={clsx(
-              "absolute left-5 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none",
-              "text-gray-400 group-focus-within:text-[#8B5CF6]"
-            )}>
-              <MapPin size={isSticky ? 18 : 20} />
-            </div>
-            <input
-              type="text"
-              placeholder="Search Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className={clsx(
-                "w-full pl-12 pr-6 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400 transition-all group-hover:border-[#8B5CF6]/50",
-                isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
-              )}
-            />
+            {/* Location */}
+            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "flex-1 min-w-[130px]" : "col-span-1")}>
+              <div className={clsx(
+                "absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none",
+                "text-gray-400 group-focus-within:text-[#8B5CF6]"
+              )}>
+                <MapPin size={(isSticky || isHeaderMode) ? 16 : 20} />
+              </div>
+              <input
+                type="text"
+                placeholder="Location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className={clsx(
+                  "w-full pl-8 md:pl-10 pr-2 focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400 transition-all",
+                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent rounded-full focus:bg-transparent focus:ring-0" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                )}
+              />
+            </motion.div>
+
+            {/* Budget */}
+            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "hidden md:flex flex-1 min-w-[130px] relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:border-l before:border-slate-200" : "block")}>
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
+                <IndianRupee size={(isSticky || isHeaderMode) ? 14 : 18} />
+              </div>
+              <select
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                className={clsx(
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer",
+                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent focus:ring-0 rounded-full" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                )}
+              >
+                <option value="">Budget</option>
+                {budgetOptions.slice(1).map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <div className={clsx("hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400", (isSticky || isHeaderMode) && "right-3")}>
+                <ChevronDown size={(isSticky || isHeaderMode) ? 14 : 18} />
+              </div>
+              <MobileSelect options={budgetOptions} value={budget} onChange={setBudget} placeholder="Budget" />
+            </motion.div>
+
+            {/* Gender */}
+            <motion.div layout className={clsx("relative group", (isSticky || isHeaderMode) ? "hidden md:flex flex-1 min-w-[130px] relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-6 before:border-l before:border-slate-200" : "block")}>
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
+                <Users size={(isSticky || isHeaderMode) ? 14 : 18} />
+              </div>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className={clsx(
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer",
+                  (isSticky || isHeaderMode) ? "h-10 text-sm bg-transparent focus:ring-0 rounded-full" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                )}
+              >
+                <option value="">Gender</option>
+                {genderOptions.slice(1).map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <div className={clsx("hidden md:block absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400", (isSticky || isHeaderMode) && "right-3")}>
+                <ChevronDown size={(isSticky || isHeaderMode) ? 14 : 18} />
+              </div>
+              <MobileSelect options={genderOptions} value={gender} onChange={setGender} placeholder="Gender" />
+            </motion.div>
+
+            {/* Search Button */}
+            <motion.div layout className={clsx("flex", (isSticky || isHeaderMode) && "ml-2 shrink-0")}>
+              <button
+                onClick={handleSearch}
+                className={clsx(
+                  "flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all active:scale-95 group/btn",
+                  (isSticky || isHeaderMode) ? "w-9 h-9 md:w-10 md:h-10" : "w-full h-[58px] px-8"
+                )}
+              >
+                <Search className={clsx("transition-transform group-hover/btn:scale-110", (isSticky || isHeaderMode) ? "w-4 h-4 shrink-0" : "w-5 h-5")} />
+                <motion.span layout className={clsx((isSticky || isHeaderMode) ? "hidden" : "inline", "text-lg")}>
+                  Search
+                </motion.span>
+              </button>
+            </motion.div>
           </motion.div>
 
-          {/* Budget */}
-          <motion.div layout className={clsx(
-            "relative group",
-            isSticky ? "hidden md:block" : "block"
-          )}>
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
-              <IndianRupee size={isSticky ? 16 : 18} />
-            </div>
-            <select
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className={clsx(
-                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50 cursor-pointer",
-                isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
-              )}
+          {/* Right Icons (Sticky Only & Not in header variant) */}
+          {(isSticky && !isHeaderMode) && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden lg:flex items-center gap-4 shrink-0"
             >
-              <option value="">Budget</option>
-              {budgetOptions.slice(1).map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            <div className="hidden md:block absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#8B5CF6]">
-              <ChevronDown size={isSticky ? 16 : 18} />
-            </div>
-            <MobileSelect
-              options={budgetOptions}
-              value={budget}
-              onChange={setBudget}
-              placeholder="Budget"
-            />
-          </motion.div>
-
-          {/* Gender */}
-          <motion.div layout className={clsx(
-            "relative group",
-            isSticky ? "hidden md:block" : "block"
-          )}>
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within:text-[#8B5CF6] transition-colors pointer-events-none">
-              <Users size={isSticky ? 16 : 18} />
-            </div>
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className={clsx(
-                "hidden md:block w-full pl-12 pr-10 rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6] focus:bg-white focus:outline-none text-[#0F172A] font-medium appearance-none transition-all group-hover:border-[#8B5CF6]/50 cursor-pointer",
-                isSticky ? "py-2.5 text-sm h-[48px]" : "py-4 text-base h-[58px]"
+              <div className="flex items-center gap-4 text-slate-500 mr-2">
+                <Heart className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
+                <Moon className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
+              </div>
+              {isMounted && !isAuthenticated && !isLoggingOut && (
+                <Link
+                  href="/login"
+                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-black hover:bg-blue-100 transition-all duration-200"
+                >
+                  Login
+                </Link>
               )}
-            >
-              <option value="">Gender</option>
-              {genderOptions.slice(1).map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            <div className="hidden md:block absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#8B5CF6]">
-              <ChevronDown size={isSticky ? 16 : 18} />
-            </div>
-            <MobileSelect
-              options={genderOptions}
-              value={gender}
-              onChange={setGender}
-              placeholder="Gender"
-            />
-          </motion.div>
-
-          {/* Search Button */}
-          <motion.div layout className="flex">
-            <button
-              onClick={handleSearch}
-              className={clsx(
-                "w-full flex items-center justify-center gap-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all shadow-xl shadow-[#0F172A]/20 active:scale-95 group/btn",
-                isSticky ? "h-[48px] px-4 md:px-6" : "h-[58px] px-8"
-              )}
-            >
-              <Search className={clsx("transition-transform group-hover/btn:scale-110", isSticky ? "w-4 h-4" : "w-5 h-5")} />
-              <motion.span layout className={clsx(isSticky ? "hidden md:inline" : "inline", isSticky ? "text-sm" : "text-lg")}>
-                Search
-              </motion.span>
-            </button>
-          </motion.div>
-        </motion.div>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
-    </>
+    </div>
   );
 }
