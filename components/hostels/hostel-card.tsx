@@ -255,26 +255,26 @@ export default function HostelCard({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-t border-slate-50 pt-6">
-          <div className="flex flex-col min-w-0">
-            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-[0.1em] mb-2">Price starts from</span>
-            <div className="flex items-center flex-nowrap gap-2 whitespace-nowrap">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-50 pt-6 overflow-hidden">
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-[0.1em] mb-1.5">Price starts from</span>
+            <div className="flex items-center flex-wrap gap-2">
               <span className="text-2xl font-bold text-[#0F172A]">₹{price.toLocaleString()}</span>
               {isDiscounted && originalPrice && (
-                <div className="flex items-center flex-nowrap gap-2">
+                <div className="flex items-center gap-1.5 min-w-0">
                   <span className="text-sm text-slate-400 line-through">₹{originalPrice.toLocaleString()}</span>
-                  <span className="text-[10px] font-bold text-white bg-red-600 px-3 py-1.5 rounded-full shadow-sm">
+                  <span className="text-[9px] font-bold text-white bg-red-600 px-2 py-1 rounded-full shadow-[0_2px_10px_rgba(220,38,38,0.2)] whitespace-nowrap">
                     {discountPercentage}% OFF
                   </span>
                 </div>
               )}
             </div>
-            <span className="text-[11px] font-bold text-[#64748B] mt-2">Inclusive of all local taxes</span>
+            <span className="text-[11px] font-bold text-[#64748B] mt-1.5 opacity-80">Inclusive of all local taxes</span>
           </div>
 
           <Link
             href={`/hostels/${slug}`}
-            className="bg-[#0F172A] hover:bg-[#8B5CF6] text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-[#0F172A]/10 hover:shadow-[#8B5CF6]/20 text-center hover:-translate-y-1 active:scale-95 whitespace-nowrap shrink-0 sm:mt-0 mt-4"
+            className="bg-[#0F172A] hover:bg-[#8B5CF6] text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-[#0F172A]/10 hover:shadow-[#8B5CF6]/20 text-center hover:-translate-y-1 active:scale-95 whitespace-nowrap shrink-0 block text-[14px]"
           >
             Explore Selection
           </Link>

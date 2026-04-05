@@ -93,11 +93,11 @@ export default function SearchClient({
     useEffect(() => {
         setAppliedCity(smartDefaults.city);
         setAppliedArea(smartDefaults.area);
+        setAppliedPriceRange(smartDefaults.priceRange);
+        setAppliedSortBy(smartDefaults.sortBy);
         setAppliedHostelType(smartDefaults.hostelType);
         setAppliedRoomType(smartDefaults.roomType);
         setAppliedSharingType(smartDefaults.sharingType);
-        setAppliedPriceRange(smartDefaults.priceRange);
-        setAppliedSortBy(smartDefaults.sortBy);
 
         setPendingCity(smartDefaults.city);
         setPendingArea(smartDefaults.area);
@@ -165,23 +165,23 @@ export default function SearchClient({
     const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
-        if (!searchQuery.trim()) {
-            setSearchResults([...results]);
-            setIsSearching(false);
-            return;
-        }
-
         const timer = setTimeout(async () => {
             setIsSearching(true);
             try {
                 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const cityParam = appliedCity !== "All Cities" ? `&city=${encodeURIComponent(appliedCity)}` : "";
-                const typeParam = appliedHostelType !== "All Types" ? `&type=${encodeURIComponent(appliedHostelType)}` : "";
+                const params = new URLSearchParams();
+                
+                if (searchQuery.trim()) params.append("q", searchQuery);
+                if (appliedCity !== "All Cities") params.append("city", appliedCity);
+                if (appliedArea !== "All Areas") params.append("area", appliedArea);
+                if (appliedHostelType !== "All Types") params.append("type", appliedHostelType);
+                if (appliedRoomType !== "All Room Types") params.append("room_type", appliedRoomType);
+                if (appliedSharingType !== "All Sharing Types") params.append("sharing", appliedSharingType);
 
-                const response = await fetch(`${baseUrl}/api/locations/inner-search/?q=${encodeURIComponent(searchQuery)}${cityParam}${typeParam}`);
+                const response = await fetch(`${baseUrl}/api/locations/inner-search/?${params.toString()}`);
                 if (response.ok) {
                     const searchData = await response.json();
-                    setSearchResults(searchData.results);
+                    setSearchResults(searchData.results || []);
                 }
             } catch (error) {
                 console.error("Inner search failed:", error);
@@ -191,7 +191,7 @@ export default function SearchClient({
         }, 400);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, results, appliedCity, appliedHostelType]);
+    }, [searchQuery, appliedCity, appliedArea, appliedHostelType, appliedRoomType, appliedSharingType]);
 
     const filteredAndSortedResults = useMemo(() => {
         let filtered = [...searchResults];
@@ -223,7 +223,7 @@ export default function SearchClient({
             return 0;
         });
         return filtered;
-    }, [searchResults, appliedCity, appliedArea, appliedHostelType, appliedPriceRange, appliedSortBy]);
+    }, [searchResults, appliedCity, appliedArea, appliedHostelType, appliedRoomType, appliedSharingType, appliedPriceRange, appliedSortBy]);
 
     const totalPages = Math.ceil(filteredAndSortedResults.length / itemsPerPage);
 
@@ -642,7 +642,7 @@ export default function SearchClient({
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <option value="All Sharing Types">All Sharing</option>
+                                            <SelectItem value="All Sharing Types">All Sharing</SelectItem>
                                             <SelectItem value="1">Single Sharing</SelectItem>
                                             <SelectItem value="2">Double Sharing</SelectItem>
                                             <SelectItem value="3">Triple Sharing</SelectItem>

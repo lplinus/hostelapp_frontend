@@ -24,13 +24,13 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-/* const navLinks = [
+const navLinks = [
   { name: "Home", href: "/home" },
   { name: "Blog", href: "/blog" },
   { name: "Faqs", href: "/faqs" },
   { name: "About", href: "/about-us" },
   { name: "Contact", href: "/contact-us" },
-]; */
+];
 
 export default function Header() {
   const pathname = usePathname();
@@ -96,13 +96,9 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* COMPACT SEARCH BAR IN HEADER */}
-        <div className="flex-[2] flex w-full max-w-[760px] px-1 sm:px-2 lg:px-4 justify-center items-center min-w-[140px]">
-          <SearchBar variant="header" />
-        </div>
 
-        {/* NAVIGATION (Commented out to make room for Search Bar) */}
-        {/* 
+
+        {/* NAVIGATION */}
         <nav className="hidden lg:flex items-center justify-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
@@ -121,8 +117,7 @@ export default function Header() {
               </Link>
             );
           })}
-        </nav> 
-        */}
+        </nav>
 
         {/* RIGHT */}
         <div className="flex flex-none lg:flex-1 items-center justify-end gap-2 md:gap-3 shrink-0 min-w-0">
@@ -174,7 +169,7 @@ export default function Header() {
                   </SheetHeader>
 
                   <div className="flex flex-col gap-4 mt-8 px-4 pb-4">
-                    {/* {navLinks.map((link) => (
+                    {navLinks.map((link) => (
                       <Link
                         key={link.name}
                         href={link.href}
@@ -188,7 +183,7 @@ export default function Header() {
                       >
                         {link.name}
                       </Link>
-                    ))} */}
+                    ))}
 
                     <hr className="my-2" />
 
