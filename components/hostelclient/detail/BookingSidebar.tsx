@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Phone, Users, ShieldCheck, CheckCircle2, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 import { sendContactMessage } from "@/services/public.service";
+import { Button } from "@/components/ui/button";
 
 interface BookingSidebarProps {
     hostel: {
@@ -70,19 +71,19 @@ export default function BookingSidebar({
                                     <>
                                         <div className="inline-flex items-center gap-2 mb-1">
                                             <span className="text-sm text-gray-400 line-through font-medium">₹{Number(hostel.price).toLocaleString()}</span>
-                                            <span className="text-[10px] font-black bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                            <span className="text-[10px] font-medium bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1">
                                                 <TrendingDown size={10} />
                                                 {Math.round(Number(hostel.discount_percentage))}% OFF
                                             </span>
                                         </div>
                                         <div className="flex items-end gap-1">
-                                            <span className="text-4xl font-black text-gray-900 tracking-tight">₹{Number(hostel.discounted_price).toLocaleString()}</span>
+                                            <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.discounted_price).toLocaleString()}</span>
                                             <span className="text-gray-500 font-medium mb-1.5"> / month</span>
                                         </div>
                                     </>
                                 ) : (
                                     <div className="flex items-end gap-1 mt-3">
-                                        <span className="text-4xl font-black text-gray-900 tracking-tight">₹{Number(hostel.price).toLocaleString()}</span>
+                                        <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.price).toLocaleString()}</span>
                                         <span className="text-gray-500 font-medium mb-1.5"> / month</span>
                                     </div>
                                 )
@@ -97,13 +98,13 @@ export default function BookingSidebar({
                                             </span>
                                         </div>
                                         <div className="flex items-end gap-1">
-                                            <span className="text-4xl font-black text-gray-900 tracking-tight">₹{Number(hostel.discounted_price_per_day).toLocaleString()}</span>
+                                            <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.discounted_price_per_day).toLocaleString()}</span>
                                             <span className="text-gray-500 font-medium mb-1.5"> / day</span>
                                         </div>
                                     </>
                                 ) : (
                                     <div className="flex items-end gap-1 mt-3">
-                                        <span className="text-4xl font-black text-gray-900 tracking-tight">₹{Number(hostel.price_per_day || 0).toLocaleString()}</span>
+                                        <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.price_per_day || 0).toLocaleString()}</span>
                                         <span className="text-gray-500 font-medium mb-1.5"> / day</span>
                                     </div>
                                 )
@@ -129,7 +130,7 @@ export default function BookingSidebar({
                 <div className="border border-gray-300 rounded-2xl overflow-hidden mb-5 bg-white">
                     <div className="grid grid-cols-2 border-b border-gray-300">
                         <div className="p-3 border-r border-gray-300 hover:bg-gray-50 transition-colors relative">
-                            <span className="block text-[10px] font-black text-gray-800 uppercase tracking-wider mb-0.5">Check-in</span>
+                            <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Check-in</span>
                             <input 
                                 type="date" 
                                 value={checkIn}
@@ -139,7 +140,7 @@ export default function BookingSidebar({
                             />
                         </div>
                         <div className="p-3 hover:bg-gray-50 transition-colors relative">
-                            <span className="block text-[10px] font-black text-gray-800 uppercase tracking-wider mb-0.5">Check-out</span>
+                            <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Check-out</span>
                             <input 
                                 type="date" 
                                 value={checkOut}
@@ -151,7 +152,7 @@ export default function BookingSidebar({
                     </div>
                     <div className="p-3 hover:bg-gray-50 transition-colors flex items-center justify-between">
                         <div className="flex-1">
-                            <span className="block text-[10px] font-black text-gray-800 uppercase tracking-wider mb-0.5">Guests</span>
+                            <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Guests</span>
                             <div className="flex items-center gap-4 mt-1">
                                 <button 
                                     type="button"
@@ -174,14 +175,16 @@ export default function BookingSidebar({
                     </div>
                 </div>
 
-                <Link
-                    href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 mb-4 shadow-[0_8px_20px_rgb(79,70,229,0.25)] active:scale-[0.98] relative overflow-hidden group"
+                <Button
+                    asChild
+                    size="lg"
+                    className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-medium h-14 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 mb-4 shadow-[0_8px_20px_rgba(30,58,138,0.2)] active:scale-[0.98] border-none text-[1.05rem]"
                 >
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                    <Phone size={18} className="relative z-10" />
-                    <span className="relative z-10 text-[15px]">Book Now</span>
-                </Link>
+                    <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
+                        <Phone size={18} />
+                        Book Now
+                    </Link>
+                </Button>
 
                 <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-2.5 text-sm text-gray-600 font-medium bg-green-50/50 p-2.5 rounded-xl border border-green-100">
@@ -220,13 +223,14 @@ export default function BookingSidebar({
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 font-medium"
                     />
-                    <button
+                    <Button
                         type="submit"
                         disabled={formSending}
-                        className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-bold py-3 rounded-xl transition-all duration-200 text-[14px] active:scale-[0.98] shadow-sm"
+                        variant="outline"
+                        className="w-full h-12 border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-xl transition-all duration-200 text-[14px] active:scale-[0.98] shadow-sm hover:border-gray-900"
                     >
                         {formSending ? "Sending..." : formSent ? "✓ Request Sent!" : "Send Request"}
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>

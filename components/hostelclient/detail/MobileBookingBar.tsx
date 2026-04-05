@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronUp, ChevronDown, Calendar, Users, TrendingDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface MobileBookingBarProps {
     hostel: {
@@ -76,7 +77,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                             className="bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-[0_-20px_50px_rgba(0,0,0,0.15)] border-t border-gray-100"
                         >
                             <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-xl font-black text-gray-900 tracking-tight">Booking Details</h3>
+                                <h3 className="text-xl font-medium text-gray-900 tracking-tight">Booking Details</h3>
                                 <button
                                     onClick={() => setIsExpanded(false)}
                                     className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
@@ -91,27 +92,27 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                     <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Calendar size={14} className="text-blue-600" />
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Check-in</span>
+                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Check-in</span>
                                         </div>
                                         <input
                                             type="date"
                                             value={checkIn}
                                             onChange={(e) => setCheckIn(e.target.value)}
                                             min={new Date().toISOString().split('T')[0]}
-                                            className="text-sm font-bold text-gray-900 bg-transparent w-full focus:outline-none"
+                                            className="text-sm font-medium text-gray-900 bg-transparent w-full focus:outline-none"
                                         />
                                     </div>
                                     <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Calendar size={14} className="text-indigo-600" />
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Check-out</span>
+                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Check-out</span>
                                         </div>
                                         <input
                                             type="date"
                                             value={checkOut}
                                             onChange={(e) => setCheckOut(e.target.value)}
                                             min={checkIn}
-                                            className="text-sm font-bold text-gray-900 bg-transparent w-full focus:outline-none"
+                                            className="text-sm font-medium text-gray-900 bg-transparent w-full focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -123,8 +124,8 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                             <Users size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Guests</p>
-                                            <p className="text-sm font-bold text-gray-900">{guests} Guest{guests > 1 ? 's' : ''}</p>
+                                            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-0.5">Guests</p>
+                                            <p className="text-sm font-medium text-gray-900">{guests} Guest{guests > 1 ? 's' : ''}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-5">
@@ -134,7 +135,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                         >
                                             -
                                         </button>
-                                        <span className="text-lg font-black text-gray-900 min-w-[20px] text-center">{guests}</span>
+                                        <span className="text-lg font-medium text-gray-900 min-w-[20px] text-center">{guests}</span>
                                         <button
                                             onClick={() => setGuests(Math.min(10, guests + 1))}
                                             className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-xl font-medium text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-all active:scale-90"
@@ -162,14 +163,14 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                             </div>
                         )}
                         <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-black text-gray-900 tracking-tight">
+                            <span className="text-2xl font-medium text-gray-900 tracking-tight">
                                 ₹{Math.round(totalPrice).toLocaleString()}
                             </span>
-                            <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest ml-1">
+                            <span className="text-gray-500 text-[10px] font-medium uppercase tracking-widest ml-1">
                                 {nights} {nights === 1 ? 'Night' : 'Nights'} Total
                             </span>
                         </div>
-                        <div className="flex items-center gap-1.5 font-bold text-gray-900">
+                        <div className="flex items-center gap-1.5 font-medium text-gray-900">
                             <span className="text-[14px]">{(hostel.rating_avg || 5).toFixed(1)}</span>
                             <div className="flex items-center text-yellow-500">
                                 {"★".repeat(Math.round(hostel.rating_avg || 5))}
@@ -180,7 +181,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                     {/* Toggle Button */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-1.5 text-[10px] font-black text-blue-600 uppercase tracking-widest mt-2 group"
+                        className="flex items-center gap-1.5 text-[10px] font-medium text-blue-600 uppercase tracking-widest mt-2 group"
                     >
                         <span className="whitespace-nowrap">
                             {new Date(checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -195,12 +196,15 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                     </button>
                 </div>
 
-                <Link
-                    href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}
-                    className="bg-slate-900 hover:bg-black text-white font-black px-10 py-4 rounded-2xl transition-all active:scale-95 shadow-2xl flex items-center justify-center gap-2 text-[15px] flex-shrink-0"
+                <Button
+                    asChild
+                    size="lg"
+                    className="bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-medium px-10 h-14 rounded-2xl transition-all active:scale-95 shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 text-[1.05rem] flex-shrink-0 border-none"
                 >
-                    Reserve
-                </Link>
+                    <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
+                        Reserve
+                    </Link>
+                </Button>
             </div>
         </div>
     );
