@@ -88,26 +88,37 @@ export default function BookingSidebar({
                                     </div>
                                 )
                             ) : (
-                                hostel.is_discounted && hostel.discounted_price_per_day ? (
-                                    <>
-                                        <div className="inline-flex items-center gap-2 mb-1">
-                                            <span className="text-sm text-gray-400 line-through font-medium">₹{Number(hostel.price_per_day).toLocaleString()}</span>
-                                            <span className="text-[10px] font-black bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                <TrendingDown size={10} />
-                                                {Math.round(Number(hostel.discount_percentage))}% OFF
-                                            </span>
-                                        </div>
-                                        <div className="flex items-end gap-1">
-                                            <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.discounted_price_per_day).toLocaleString()}</span>
+                                (() => {
+                                    const originalDaily = Number(hostel.price_per_day || (Number(hostel.price) / 30));
+                                    const discountedDaily = hostel.discounted_price_per_day 
+                                        ? Number(hostel.discounted_price_per_day) 
+                                        : (hostel.discounted_price ? (Number(hostel.discounted_price) / 30) : null);
+
+                                    if (hostel.is_discounted && discountedDaily) {
+                                        return (
+                                            <>
+                                                <div className="inline-flex items-center gap-2 mb-1">
+                                                    <span className="text-sm text-gray-400 line-through font-medium">₹{Math.round(originalDaily).toLocaleString()}</span>
+                                                    <span className="text-[10px] font-black bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                        <TrendingDown size={10} />
+                                                        {Math.round(Number(hostel.discount_percentage))}% OFF
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-end gap-1">
+                                                    <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Math.round(discountedDaily).toLocaleString()}</span>
+                                                    <span className="text-gray-500 font-medium mb-1.5"> / day</span>
+                                                </div>
+                                            </>
+                                        );
+                                    }
+
+                                    return (
+                                        <div className="flex items-end gap-1 mt-3">
+                                            <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Math.round(originalDaily).toLocaleString()}</span>
                                             <span className="text-gray-500 font-medium mb-1.5"> / day</span>
                                         </div>
-                                    </>
-                                ) : (
-                                    <div className="flex items-end gap-1 mt-3">
-                                        <span className="text-4xl font-medium text-gray-900 tracking-tight">₹{Number(hostel.price_per_day || 0).toLocaleString()}</span>
-                                        <span className="text-gray-500 font-medium mb-1.5"> / day</span>
-                                    </div>
-                                )
+                                    );
+                                })()
                             )}
                         </div>
 

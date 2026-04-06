@@ -12,6 +12,7 @@ export interface RoomType {
     price_per_day?: string | number;
     total_beds?: number;
     available_beds?: number;
+    show_this_price?: boolean;
 }
 
 export interface GroupedRoom {
@@ -22,6 +23,7 @@ export interface GroupedRoom {
     total_beds: number;
     available_beds: number;
     is_available: boolean;
+    show_this_price: boolean;
 }
 
 export interface GroupedRoomCategory {

@@ -72,6 +72,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
     const [formData, setFormData] = useState<Partial<RoomType>>({
         room_category: "NON_AC",
         sharing_type: "1",
+        show_this_price: false,
     });
 
     const createMutation = useMutation({
@@ -138,6 +139,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
             price: room.price,
             price_per_day: room.price_per_day,
             total_beds: room.total_beds,
+            show_this_price: !!room.show_this_price,
         });
         setEditingId(room.id as number);
         setIsEditing(true);
@@ -149,11 +151,17 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
         setIsCreating(false);
         setIsEditing(false);
         setEditingId(null);
-        setFormData({ room_category: "NON_AC", sharing_type: "1" });
+        setFormData({ room_category: "NON_AC", sharing_type: "1", show_this_price: false });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type } = e.target;
+        if (type === "checkbox") {
+            const checkbox = e.target as HTMLInputElement;
+            setFormData({ ...formData, [name]: checkbox.checked });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     return (
@@ -309,6 +317,20 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                     />
                                 </div>
                             </div>
+
+                            <div className="flex items-center space-x-2 pt-6">
+                                <input
+                                    type="checkbox"
+                                    id="show_this_price"
+                                    name="show_this_price"
+                                    checked={formData.show_this_price || false}
+                                    onChange={handleChange}
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all"
+                                />
+                                <label htmlFor="show_this_price" className="text-sm font-bold text-gray-700 cursor-pointer">
+                                    Show this room's price on Hostel card
+                                </label>
+                            </div>
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4">
@@ -393,6 +415,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Tariff ({priceView})</TableHead>
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Capacity Details</TableHead>
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Status</TableHead>
+                                                                <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Featured Price</TableHead>
                                                                 <TableHead className="px-6 py-4 text-right text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Actions</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
@@ -429,6 +452,13 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                         >
                                                                             {room.is_available ? "Live" : "Inactive"}
                                                                         </Badge>
+                                                                    </TableCell>
+                                                                    <TableCell className="px-6 py-5 whitespace-nowrap">
+                                                                        {room.show_this_price ? (
+                                                                            <Badge className="bg-blue-100 text-blue-700 border-none font-bold text-[10px]">Hostel Card Price</Badge>
+                                                                        ) : (
+                                                                            <span className="text-xs text-gray-400 font-medium italic">Standard</span>
+                                                                        )}
                                                                     </TableCell>
                                                                     <TableCell className="px-6 py-5 whitespace-nowrap text-right">
                                                                         <TooltipProvider>

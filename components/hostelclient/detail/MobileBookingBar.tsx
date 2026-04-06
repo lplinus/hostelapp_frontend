@@ -43,7 +43,12 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
         // Daily Mode
         const originalDaily = Number(hostel.price_per_day || (Number(hostel.price) / 30));
         if (type === "original") return originalDaily;
-        return Number(hostel.is_discounted && hostel.discounted_price_per_day ? hostel.discounted_price_per_day : originalDaily);
+        
+        const discountedDaily = hostel.discounted_price_per_day 
+            ? Number(hostel.discounted_price_per_day) 
+            : (hostel.discounted_price ? (Number(hostel.discounted_price) / 30) : originalDaily);
+            
+        return Number(hostel.is_discounted ? discountedDaily : originalDaily);
     };
 
     // 3. Compute Final Values

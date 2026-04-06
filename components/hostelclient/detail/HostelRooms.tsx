@@ -96,16 +96,24 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                                     </div>
                                 </div>
 
-                                {(priceMode === "monthly" ? room.base_price : room.price_per_day) && (
-                                    <div className="text-right flex flex-col items-end">
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="font-black text-2xl text-gray-900 tracking-tight">
-                                                ₹{Number(priceMode === "monthly" ? room.base_price : room.price_per_day).toLocaleString()}
-                                            </span>
+                                {(() => {
+                                    const displayPrice = priceMode === "monthly" 
+                                        ? room.base_price 
+                                        : (room.price_per_day || (room.base_price ? (Number(room.base_price) / 30).toString() : null));
+                                    
+                                    if (!displayPrice) return null;
+
+                                    return (
+                                        <div className="text-right flex flex-col items-end">
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="font-black text-2xl text-gray-900 tracking-tight">
+                                                    ₹{Number(displayPrice).toLocaleString()}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{priceMode === "monthly" ? "/month" : "/day"}</span>
                                         </div>
-                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{priceMode === "monthly" ? "/month" : "/day"}</span>
-                                    </div>
-                                )}
+                                    );
+                                })()}
                             </div>
 
                             <div className="flex items-center gap-4 mt-6 mb-6">
