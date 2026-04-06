@@ -198,6 +198,7 @@ export default function SearchClient({
         if (appliedCity !== "All Cities") filtered = filtered.filter((h) => h.city_name === appliedCity);
         if (appliedArea !== "All Areas") filtered = filtered.filter((h) => h.area_name === appliedArea);
         if (appliedHostelType !== "All Types") filtered = filtered.filter((h) => h.hostel_type === appliedHostelType);
+        
         if (appliedPriceRange !== "All Prices") {
             filtered = filtered.filter((hostel) => {
                 const price = hostel.final_price ?? (Number(hostel.price) || 0);
@@ -207,30 +208,76 @@ export default function SearchClient({
                 return true;
             });
         }
-        filtered.sort((a, b) => {
+
+        // Categorize results for sorting and statistics (Match Purity)
+        const categorized = filtered.map(hostel => {
+            const hasRoomFilter = appliedRoomType !== "All Room Types";
+            const hasSharingFilter = appliedSharingType !== "All Sharing Types";
+            
+            const matchesRoom = !hasRoomFilter || 
+                hostel.room_types?.some((r: any) => 
+                    appliedRoomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
+                );
+            
+            const matchesSharing = !hasSharingFilter ||
+                hostel.room_types?.some((r: any) => Number(r.sharing_type) === Number(appliedSharingType));
+
+            if (!matchesRoom || !matchesSharing) return { hostel, matchType: 'none' as const };
+
+            // Determine Purity: Pure if ALL rooms match the filter
+            let allRoomsMatch = true;
+            if (hasRoomFilter) {
+                const pureRoom = hostel.room_types?.every((r: any) => 
+                    appliedRoomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
+                );
+                if (!pureRoom) allRoomsMatch = false;
+            }
+            if (hasSharingFilter) {
+                const pureSharing = hostel.room_types?.every((r: any) => 
+                    Number(r.sharing_type) === Number(appliedSharingType)
+                );
+                if (!pureSharing) allRoomsMatch = false;
+            }
+
+            return { hostel, matchType: allRoomsMatch ? ('pure' as const) : ('mixed' as const) };
+        }).filter(item => item.matchType !== 'none');
+
+        // Sorting
+        categorized.sort((a, b) => {
+            // First priority: Pure Match vs Mixed Match (only if filters are active)
+            const isFiltering = appliedRoomType !== "All Room Types" || appliedSharingType !== "All Sharing Types";
+            if (isFiltering && a.matchType !== b.matchType) {
+                return a.matchType === 'pure' ? -1 : 1;
+            }
+
             const getPriority = (h: any) => {
                 if (h.is_verified && h.is_discounted) return 1;
                 if (h.is_verified) return 2;
                 if (h.is_discounted) return 3;
                 return 4;
             };
-            const priorityA = getPriority(a);
-            const priorityB = getPriority(b);
+            const priorityA = getPriority(a.hostel);
+            const priorityB = getPriority(b.hostel);
             if (priorityA !== priorityB) return priorityA - priorityB;
-            if (appliedSortBy === "Price: Low to High") return (a.final_price ?? (Number(a.price) || 0)) - (b.final_price ?? (Number(b.price) || 0));
-            if (appliedSortBy === "Price: High to Low") return (b.final_price ?? (Number(b.price) || 0)) - (a.final_price ?? (Number(a.price) || 0));
-            if (appliedSortBy === "Highest Rated") return (b.rating || 0) - (a.rating || 0);
+            if (appliedSortBy === "Price: Low to High") return (a.hostel.final_price ?? (Number(a.hostel.price) || 0)) - (b.hostel.final_price ?? (Number(b.hostel.price) || 0));
+            if (appliedSortBy === "Price: High to Low") return (b.hostel.final_price ?? (Number(b.hostel.price) || 0)) - (a.hostel.final_price ?? (Number(a.hostel.price) || 0));
+            if (appliedSortBy === "Highest Rated") return (b.hostel.rating || 0) - (a.hostel.rating || 0);
             return 0;
         });
-        return filtered;
+
+        const finalResults = categorized.map(i => i.hostel);
+        const pureCount = categorized.filter(i => i.matchType === 'pure').length;
+        const mixedCount = categorized.filter(i => i.matchType === 'mixed').length;
+
+        return { results: finalResults, pureCount, mixedCount };
     }, [searchResults, appliedCity, appliedArea, appliedHostelType, appliedRoomType, appliedSharingType, appliedPriceRange, appliedSortBy]);
 
-    const totalPages = Math.ceil(filteredAndSortedResults.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredAndSortedResults.results.length / itemsPerPage);
 
     const paginatedResults = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
-        return filteredAndSortedResults.slice(start, start + itemsPerPage);
-    }, [filteredAndSortedResults, currentPage]);
+        return filteredAndSortedResults.results.slice(start, start + itemsPerPage);
+    }, [filteredAndSortedResults.results, currentPage]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -267,7 +314,22 @@ export default function SearchClient({
                             {headingText}
                         </h1>
                         <p className="text-slate-500 font-medium mt-1">
-                            {data ? `${filteredAndSortedResults.length} accommodations match your search` : "Find your perfect stay"}
+                            {data ? (
+                                <>
+                                    Showing {filteredAndSortedResults.results.length} {filteredAndSortedResults.results.length === 1 ? 'hostel' : 'hostels'}
+                                    {appliedRoomType !== "All Room Types" || appliedSharingType !== "All Sharing Types" ? (
+                                        <span className="text-teal-600 ml-1 font-semibold">
+                                            ({filteredAndSortedResults.pureCount} only {
+                                                appliedRoomType !== "All Room Types" && appliedSharingType !== "All Sharing Types" 
+                                                ? `${appliedRoomType} ${appliedSharingType}-Sharing`
+                                                : appliedRoomType !== "All Room Types" 
+                                                ? appliedRoomType 
+                                                : `${appliedSharingType}-Sharing`
+                                            }, {filteredAndSortedResults.mixedCount} Mixed)
+                                        </span>
+                                    ) : null}
+                                </>
+                            ) : "Find your perfect stay"}
                         </p>
                     </div>
 
@@ -468,7 +530,7 @@ export default function SearchClient({
 
             <div className="grid grid-cols-12 gap-6 lg:gap-8 w-full">
                 <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 flex flex-col items-center lg:items-end">
-                    {!data || filteredAndSortedResults.length === 0 ? (
+                    {!data || filteredAndSortedResults.results.length === 0 ? (
                         <div className="bg-white p-20 rounded-[22px] text-center border border-slate-200/60 shadow-sm">
                             <SearchX className="w-16 h-16 text-slate-200 mx-auto mb-6" />
                             <h3 className="text-2xl font-bold text-slate-900">No hostels match your filters</h3>

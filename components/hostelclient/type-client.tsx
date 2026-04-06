@@ -142,7 +142,7 @@ export default function TypeClient({ data }: Props) {
     const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
-        if (!searchQuery.trim()) {
+        if (!searchQuery.trim() && appliedFilters.roomType === "All Room Types" && appliedFilters.sharingType === "All Sharing Types") {
             setSearchResults([...data.results]);
             setIsSearching(false);
             return;
@@ -154,8 +154,10 @@ export default function TypeClient({ data }: Props) {
                 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
                 const cityParam = appliedFilters.selectedCity !== "All Cities" ? `&city=${encodeURIComponent(appliedFilters.selectedCity)}` : "";
                 const typeParam = `&type=${encodeURIComponent(currentTypeSlug)}`;
+                const roomTypeParam = appliedFilters.roomType !== "All Room Types" ? `&room_type=${encodeURIComponent(appliedFilters.roomType)}` : "";
+                const sharingParam = appliedFilters.sharingType !== "All Sharing Types" ? `&sharing=${encodeURIComponent(appliedFilters.sharingType)}` : "";
                 
-                const response = await fetch(`${baseUrl}/api/locations/inner-search/?q=${encodeURIComponent(searchQuery)}${cityParam}${typeParam}`);
+                const response = await fetch(`${baseUrl}/api/locations/inner-search/?q=${encodeURIComponent(searchQuery)}${cityParam}${typeParam}${roomTypeParam}${sharingParam}`);
                 if (response.ok) {
                     const searchData = await response.json();
                     setSearchResults(searchData.results);
@@ -168,7 +170,7 @@ export default function TypeClient({ data }: Props) {
         }, 400);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, data.results, appliedFilters.selectedCity, currentTypeSlug]);
+    }, [searchQuery, data.results, appliedFilters.selectedCity, appliedFilters.roomType, appliedFilters.sharingType, currentTypeSlug]);
 
     // Filter and sort results using APPLIED filters and searchResults
     const filteredAndSortedResults = useMemo(() => {
@@ -195,8 +197,48 @@ export default function TypeClient({ data }: Props) {
             });
         }
 
-        // Sort
-        resultsArr.sort((a: any, b: any) => {
+        // Categorize results for sorting and statistics (Match Purity)
+        const categorized = resultsArr.map(hostel => {
+            const hasRoomFilter = appliedFilters.roomType !== "All Room Types";
+            const hasSharingFilter = appliedFilters.sharingType !== "All Sharing Types";
+            
+            const matchesRoom = !hasRoomFilter || 
+                hostel.room_types?.some((r: any) => 
+                    appliedFilters.roomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
+                );
+            
+            const matchesSharing = !hasSharingFilter ||
+                hostel.room_types?.some((r: any) => Number(r.sharing_type) === Number(appliedFilters.sharingType));
+
+            if (!matchesRoom || !matchesSharing) return { hostel, matchType: 'none' as const };
+
+            // Determine Purity: Pure if ALL rooms match the filter
+            let allRoomsMatch = true;
+            if (hasRoomFilter) {
+                const pureRoom = hostel.room_types?.every((r: any) => 
+                    appliedFilters.roomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
+                );
+                if (!pureRoom) allRoomsMatch = false;
+            }
+            if (hasSharingFilter) {
+                const pureSharing = hostel.room_types?.every((r: any) => 
+                    Number(r.sharing_type) === Number(appliedFilters.sharingType)
+                );
+                if (!pureSharing) allRoomsMatch = false;
+            }
+
+            return { hostel, matchType: allRoomsMatch ? ('pure' as const) : ('mixed' as const) };
+        }).filter(item => item.matchType !== 'none');
+
+        // Sorting
+        categorized.sort((a, b) => {
+            // First priority: Pure Match vs Mixed Match (only if filters are active)
+            const isFiltering = appliedFilters.roomType !== "All Room Types" || appliedFilters.sharingType !== "All Sharing Types";
+            if (isFiltering && a.matchType !== b.matchType) {
+                return a.matchType === 'pure' ? -1 : 1;
+            }
+
+            // Second priority: Verified/Discounted status
             const getPriority = (h: any) => {
                 if (h.is_verified && h.is_discounted) return 1;
                 if (h.is_verified) return 2;
@@ -204,32 +246,36 @@ export default function TypeClient({ data }: Props) {
                 return 4;
             };
 
-            const priorityA = getPriority(a);
-            const priorityB = getPriority(b);
+            const priorityA = getPriority(a.hostel);
+            const priorityB = getPriority(b.hostel);
 
             if (priorityA !== priorityB) {
                 return priorityA - priorityB;
             }
 
             if (appliedFilters.sortBy === "Price: Low to High") {
-                return (a.final_price ?? (Number(a.price) || 0)) - (b.final_price ?? (Number(b.price) || 0));
+                return (a.hostel.final_price ?? (Number(a.hostel.price) || 0)) - (b.hostel.final_price ?? (Number(b.hostel.price) || 0));
             } else if (appliedFilters.sortBy === "Price: High to Low") {
-                return (b.final_price ?? (Number(b.price) || 0)) - (a.final_price ?? (Number(a.price) || 0));
+                return (b.hostel.final_price ?? (Number(b.hostel.price) || 0)) - (a.hostel.final_price ?? (Number(a.hostel.price) || 0));
             } else if (appliedFilters.sortBy === "Highest Rated") {
-                return b.rating - a.rating;
+                return b.hostel.rating - a.hostel.rating;
             }
             return 0;
         });
 
-        return resultsArr;
+        const finalResults = categorized.map(i => i.hostel);
+        const pureCount = categorized.filter(i => i.matchType === 'pure').length;
+        const mixedCount = categorized.filter(i => i.matchType === 'mixed').length;
+
+        return { results: finalResults, pureCount, mixedCount };
     }, [searchResults, appliedFilters]);
 
-    const totalPages = Math.ceil(filteredAndSortedResults.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredAndSortedResults.results.length / itemsPerPage);
 
     const paginatedResults = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage;
-        return filteredAndSortedResults.slice(start, start + itemsPerPage);
-    }, [filteredAndSortedResults, currentPage]);
+        return filteredAndSortedResults.results.slice(start, start + itemsPerPage);
+    }, [filteredAndSortedResults.results, currentPage]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -254,7 +300,18 @@ export default function TypeClient({ data }: Props) {
                             Best {data.type}
                         </h1>
                         <p className="text-slate-500 font-medium mt-1">
-                            Showing {filteredAndSortedResults.length} {filteredAndSortedResults.length === 1 ? 'hostel' : 'hostels'}
+                            Showing {filteredAndSortedResults.results.length} {filteredAndSortedResults.results.length === 1 ? 'hostel' : 'hostels'}
+                            {appliedFilters.roomType !== "All Room Types" || appliedFilters.sharingType !== "All Sharing Types" ? (
+                                <span className="text-teal-600 ml-1 font-semibold">
+                                    ({filteredAndSortedResults.pureCount} only {
+                                        appliedFilters.roomType !== "All Room Types" && appliedFilters.sharingType !== "All Sharing Types" 
+                                        ? `${appliedFilters.roomType} ${appliedFilters.sharingType}-Sharing`
+                                        : appliedFilters.roomType !== "All Room Types" 
+                                        ? appliedFilters.roomType 
+                                        : `${appliedFilters.sharingType}-Sharing`
+                                    }, {filteredAndSortedResults.mixedCount} Mixed)
+                                </span>
+                            ) : null}
                             {appliedFilters.selectedCity !== "All Cities" && ` in ${appliedFilters.selectedCity}`}
                         </p>
                     </div>
@@ -457,7 +514,7 @@ export default function TypeClient({ data }: Props) {
             <div className="grid grid-cols-12 gap-6 lg:gap-8 w-full">
                 {/* Listings Section (Left - 8 Cols) */}
                 <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 flex flex-col items-center lg:items-end">
-                    {filteredAndSortedResults.length === 0 ? (
+                    {filteredAndSortedResults.results.length === 0 ? (
                         <div className="bg-white p-20 rounded-[22px] text-center border border-slate-100 shadow-sm w-full">
                             <h3 className="text-2xl font-bold text-slate-900">No hostels found</h3>
                             <p className="text-slate-500 mt-3">

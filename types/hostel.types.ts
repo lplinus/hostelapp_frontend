@@ -173,6 +173,7 @@ export interface CityHostel {
     readonly available_rooms?: number;
     readonly is_verified: boolean | null;
     readonly is_approved: boolean | null;
+    readonly room_types?: readonly RoomType[];
 }
 
 export interface CityHostelResponse {
