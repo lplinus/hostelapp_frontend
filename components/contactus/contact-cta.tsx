@@ -15,14 +15,12 @@ export default function ContactCTA({ title, buttonText, buttonUrl }: ContactCTAP
       </h2>
 
       <Button
-        className="bg-white text-blue-600 hover:bg-gray-100 rounded-xl px-8 py-3 text-lg"
-        asChild={!!buttonUrl}
+        className="bg-white text-blue-600 hover:bg-gray-100 rounded-xl px-8 py-3 text-lg font-bold"
+        asChild
       >
-        {buttonUrl ? (
-          <Link href={buttonUrl}>{buttonText || "Browse Hostels"}</Link>
-        ) : (
-          <>{buttonText || "Browse Hostels"}</>
-        )}
+        <Link href={buttonUrl || "/home"}>
+          {buttonText || "Browse Hostels"}
+        </Link>
       </Button>
     </section>
   );

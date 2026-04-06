@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, IndianRupee, Users, Search, ChevronDown } from "lucide-react";
 import { slugify, getCitySEOLink } from "@/lib/utils";
+import { getCities, getAreas } from "@/services/location.service";
 
 // --- Configuration & Constants ---
 const budgetOptions = [
@@ -77,12 +78,81 @@ export default function Hero({ title, subtitle }: HeroProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const [placeholder, setPlaceholder] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
+
+  const [dynamicWords, setDynamicWords] = useState([
+    "Hyderabad", "Bengaluru", "Mumbai", "Chennai", "Delhi", "Pune",
+    "KPHB Colony", "HSR Layout", "Gachibowli", "SR Nagar", "BTM Layout"
+  ]);
+
+  // Fetch dynamic location data from backend
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const [citiesData, areasData] = await Promise.all([
+          getCities(),
+          getAreas()
+        ]);
+
+        const cityNames = citiesData.map(c => c.name);
+        const areaNames = areasData.map(a => a.name);
+
+        // Combine cities first, then areas as requested
+        const combined = [...new Set([...cityNames, ...areaNames])];
+
+        if (combined.length > 0) {
+          setDynamicWords(combined);
+        }
+      } catch (error) {
+        console.error("Failed to fetch locations for dynamic search:", error);
+      }
+    };
+
+    fetchLocations();
+  }, []);
+
+  useEffect(() => {
+    if (dynamicWords.length === 0) return;
+
+    const currentFullWord = dynamicWords[placeholderIndex % dynamicWords.length];
+    const typeSpeed = isDeleting ? 40 : 60; // Faster speeds
+    const nextWordDelay = 500; // Shorter pause at the end
+
+    const timer = setTimeout(() => {
+      if (isDeleting) {
+        // Deleting
+        setPlaceholder(currentFullWord.substring(0, charIndex - 1));
+        setCharIndex(prev => prev - 1);
+
+        if (charIndex - 1 === 0) {
+          setIsDeleting(false);
+          setPlaceholderIndex((prev) => (prev + 1) % dynamicWords.length);
+          setCharIndex(0);
+        }
+      } else {
+        // Typing
+        setPlaceholder(currentFullWord.substring(0, charIndex + 1));
+        setCharIndex(prev => prev + 1);
+
+        if (charIndex + 1 === currentFullWord.length) {
+          // Finished typing, wait before deleting
+          setTimeout(() => setIsDeleting(true), nextWordDelay);
+        }
+      }
+    }, typeSpeed);
+
+    return () => clearTimeout(timer);
+  }, [charIndex, isDeleting, placeholderIndex, dynamicWords]);
+
   const handleSearch = useCallback(() => {
     const searchLocation = location.trim();
     if (!searchLocation) return;
 
-    const words = searchLocation.split(/\s+/);
-    const mapped_words = words.map((w) => {
+    const words_in_loc = searchLocation.split(/\s+/);
+    const mapped_words = words_in_loc.map((w) => {
       const lower = w.toLowerCase();
       return KEYWORD_MAPPINGS[lower] || w;
     });
@@ -132,7 +202,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
           {/* TOP TAG */}
           <div className="inline-flex items-center px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full mb-6 md:mb-8 border border-white/5">
             <span className="text-[10px] md:text-[12px] font-bold tracking-wider uppercase text-white/90">
-              Elevated Group Travel
+              Elevated Group Stay
             </span>
           </div>
 
@@ -179,10 +249,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                 <div className="w-full md:flex-[1.8] relative flex items-center px-6 gap-3 group border-b md:border-b-0 md:border-r border-gray-100 pb-3 md:pb-0 h-full">
                   <MapPin className="text-gray-400 group-focus-within:text-indigo-600 transition-colors shrink-0" size={18} />
                   <div className="flex flex-col w-full">
-                    <span className="hidden md:block text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Location</span>
+                    <span className="hidden md:block text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Search</span>
                     <input
                       type="text"
-                      placeholder="Where are you going?"
+                      placeholder={`Search ${placeholder}`}
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       onFocus={() => setOpenDropdown(null)}

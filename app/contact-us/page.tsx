@@ -81,7 +81,7 @@ export default async function ContactPage() {
           <ContactCTA
             title={data?.cta_title}
             buttonText={data?.cta_button_text}
-            buttonUrl={data?.cta_button_url}
+            buttonUrl="/home"
           />
         </SectionReveal>
       </main>
