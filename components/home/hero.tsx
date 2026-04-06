@@ -85,7 +85,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
 
   const [dynamicWords, setDynamicWords] = useState([
     "Hyderabad", "Bengaluru", "Mumbai", "Chennai", "Delhi", "Pune",
-    "KPHB Colony", "HSR Layout", "Gachibowli", "SR Nagar", "BTM Layout"
+    "KPHB Colony", "Gachibowli", "Hitech City", "SR Nagar", "Banjaara Hills"
   ]);
 
   // Fetch dynamic location data from backend
@@ -98,10 +98,17 @@ export default function Hero({ title, subtitle }: HeroProps) {
         ]);
 
         const cityNames = citiesData.map(c => c.name);
-        const areaNames = areasData.map(a => a.name);
+        
+        // Find Hyderabad city by name
+        const hydCity = citiesData.find(c => c.name.toLowerCase() === "hyderabad");
+        
+        // Filter areas to include only those in Hyderabad
+        const hydAreaNames = hydCity 
+          ? areasData.filter(a => a.city === hydCity.id).map(a => a.name)
+          : [];
 
-        // Combine cities first, then areas as requested
-        const combined = [...new Set([...cityNames, ...areaNames])];
+        // Combine all city names with Hyderabad-specific area names
+        const combined = [...new Set([...cityNames, ...hydAreaNames])];
 
         if (combined.length > 0) {
           setDynamicWords(combined);
