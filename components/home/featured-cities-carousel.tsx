@@ -40,10 +40,10 @@ export default function FeaturedCitiesCarousel({
                 {/* Navigation Buttons Moved to Top Right (relative to Carousel) */}
                 <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
                     <CarouselPrevious
-                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                     />
                     <CarouselNext
-                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                     />
                 </div>
 
@@ -57,7 +57,7 @@ export default function FeaturedCitiesCarousel({
                                 href={`/city/${city.slug}`}
                                 className="group block"
                             >
-                                <div className="relative h-44 rounded-3xl overflow-hidden shadow-md border border-slate-100/50 group-hover:shadow-2xl group-hover:shadow-[#8B5CF6]/30 transition-all duration-500 group-hover:-translate-y-2">
+                                <div className="relative h-44 rounded-3xl overflow-hidden shadow-md border border-slate-100/50 group-hover:shadow-2xl group-hover:shadow-[#10B981]/30 transition-all duration-500 group-hover:-translate-y-2">
                                     {city.city_image && (
                                         <Image
                                             src={toLocalMediaPath(city.city_image) || ""}
@@ -70,7 +70,7 @@ export default function FeaturedCitiesCarousel({
                                     )}
                                 </div>
                                 <div className="mt-3 w-full">
-                                    <p className="font-sans text-slate-800 font-medium text-base tracking-tight group-hover:text-[#8B5CF6] transition-all duration-300 text-center">
+                                    <p className="font-sans text-slate-800 font-medium text-base tracking-tight group-hover:text-[#10B981] transition-all duration-300 text-center">
                                         {city.name}
                                     </p>
                                 </div>

@@ -67,10 +67,10 @@ export default async function FeaturedHostels() {
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div>
-                        <div className="flex items-center gap-3 text-[#8B5CF6] mb-4">
+                        <div className="flex items-center gap-3 text-[#10B981] mb-4">
                             <span className="text-[11px] tracking-[0.25em] font-bold uppercase">Featured Selection</span>
                         </div>
-                        <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight mb-2">
+                        <h2 className="text-4xl sm:text-5xl font-bold text-[#1E1B4B] tracking-tight mb-2">
                             Curated <span className="italic text-[#64748B] font-medium">Hostels</span>
                         </h2>
                         <p className="text-lg text-[#64748B] font-medium">
@@ -80,9 +80,9 @@ export default async function FeaturedHostels() {
 
                     <Link
                         href="/hostels"
-                        className="group flex items-center gap-3 text-[15px] font-bold text-[#0F172A] hover:text-[#8B5CF6] transition-all bg-[#F8FAFC] px-6 py-3 rounded-full border border-slate-100"
+                        className="group flex items-center gap-3 text-[15px] font-bold text-[#1E1B4B] hover:text-[#10B981] transition-all bg-[#F8FAFC] px-6 py-3 rounded-full border border-slate-100"
                     >
-                        View All Listings 
+                        View All Listings
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </div>
@@ -129,10 +129,10 @@ export default async function FeaturedHostels() {
                     {/* Navigation */}
                     <div className="flex justify-end gap-3 mt-10">
                         <CarouselPrevious
-                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                         />
                         <CarouselNext
-                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#0F172A] shadow-sm hover:bg-[#0F172A] hover:text-white transition-all disabled:opacity-30"
+                            className="static translate-y-0 size-12 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                         />
                     </div>
                 </Carousel>

@@ -24,17 +24,15 @@ export default function RatingsSummary({
     roomRating,
 }: KeyInfoProps) {
     const subRatings = [
-        //  { label: "Hostel", val: hostelRating, icon: Building2, color: "text-blue-500", bg: "bg-blue-50", border: "border-blue-100" },
-        { label: "Food", val: foodRating, icon: UtensilsCrossed, color: "text-orange-500", bg: "bg-orange-50", border: "border-orange-100" },
-        
-        { label: "Room", val: roomRating, icon: BedDouble, color: "text-teal-500", bg: "bg-teal-50", border: "border-teal-100" }
+        { label: "Food", val: foodRating, icon: UtensilsCrossed, color: "text-[#312E81]", bg: "bg-indigo-50", border: "border-indigo-100" },
+        { label: "Room", val: roomRating, icon: BedDouble, color: "text-[#10B981]", bg: "bg-emerald-50", border: "border-emerald-100" }
     ];
 
     return (
         <div className="mb-10 mt-6 relative">
             {/* Primary Key Info Strip */}
             <div className="flex flex-wrap items-center gap-3 mb-6">
-                <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-full shadow-sm text-white">
+                <div className="flex items-center gap-2 px-4 py-2 bg-[#1E1B4B] border border-indigo-900 rounded-full shadow-sm text-white">
                     <Star size={16} className="fill-amber-400 text-amber-400" />
                     <span className="font-bold text-sm tracking-wide">{ratingAvg.toFixed(1)} Rating</span>
                 </div>
@@ -54,7 +52,7 @@ export default function RatingsSummary({
                 </div>
                 
                 <div className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-full shadow-sm text-emerald-700 ml-auto hidden sm:flex hover:bg-emerald-100 transition-all hover:-translate-y-0.5 cursor-default">
-                    <IndianRupee size={15} className="bg-emerald-600 text-white rounded-full p-0.5" />
+                    <IndianRupee size={15} className="bg-[#10B981] text-white rounded-full p-0.5" />
                     <span className="font-black text-sm tracking-tight">Starts at ₹{Number(price).toLocaleString()} <span className="text-[10px] opacity-70">/ MONTH</span></span>
                 </div>
             </div>
@@ -67,10 +65,10 @@ export default function RatingsSummary({
                             <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ${cat.color}`}>
                                 <cat.icon size={20} />
                             </div>
-                            <span className="font-bold text-slate-800 text-sm">{cat.label}</span>
+                            <span className="font-bold text-[#1E1B4B] text-sm">{cat.label}</span>
                         </div>
                         <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-white/50 shadow-sm">
-                            <span className="font-black text-slate-900">{Number(cat.val || 5.0).toFixed(1)}</span>
+                            <span className="font-black text-[#1E1B4B]">{Number(cat.val || 5.0).toFixed(1)}</span>
                             <Star size={12} className="fill-amber-400 text-amber-400" />
                         </div>
                     </div>

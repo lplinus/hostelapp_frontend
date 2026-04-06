@@ -48,9 +48,9 @@ function MobileSelect({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="w-full px-6 py-4 rounded-full border border-gray-200 focus:ring-2 focus:ring-[#8B5CF6] focus:outline-none text-[#0F172A] text-base bg-white text-left flex items-center justify-between gap-2 shadow-sm transition-all"
+        className="w-full px-6 py-4 rounded-full border border-gray-200 focus:ring-2 focus:ring-[#10B981] focus:outline-none text-[#1E1B4B] text-base bg-white text-left flex items-center justify-between gap-2 shadow-sm transition-all"
       >
-        <span className={value ? "text-[#0F172A] font-medium" : "text-gray-400"}>
+        <span className={value ? "text-[#1E1B4B] font-medium" : "text-gray-400"}>
           {selectedLabel}
         </span>
         <ChevronDown
@@ -85,7 +85,7 @@ function MobileSelect({
                   setOpen(false);
                 }}
                 className={`px-6 py-3 cursor-pointer text-[15px] hover:bg-[#F8FAFC] transition-colors ${value === opt.value
-                  ? "bg-[#8B5CF6]/5 text-[#8B5CF6] font-bold"
+                  ? "bg-[#10B981]/5 text-[#10B981] font-bold"
                   : "text-[#64748B]"
                   }`}
               >
@@ -237,7 +237,7 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
               "bg-white/95 backdrop-blur-2xl mx-auto border",
               isSticky
                 ? "w-full max-w-none shadow-md border-b border-slate-200 rounded-none h-20 flex items-center"
-                : "p-4 md:p-5 max-w-5xl border-[#0F172A]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
+                : "p-4 md:p-5 max-w-5xl border-[#312E81]/10 rounded-[2.5rem] shadow-[0_30px_70px_rgba(49,46,129,0.15)]"
             )
         )}
       >
@@ -256,7 +256,7 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
                 <div className="relative w-8 h-8 rounded-lg overflow-hidden shadow-sm">
                   <Image src="/images/icon.webp" alt="Logo" fill className="object-contain p-0.5" />
                 </div>
-                <span className="text-[16px] font-bold tracking-tight text-slate-900">Hostel In</span>
+                <span className="text-[16px] font-bold tracking-tight text-indigo-950">Hostel In</span>
               </Link>
             </motion.div>
           )}
@@ -270,12 +270,12 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
             {/* Location */}
             <motion.div layout className={clsx(
               "relative",
-              (isSticky || isHeaderMode) 
-                ? "flex-1 min-w-0 border-r border-slate-100 last:border-r-0" 
+              (isSticky || isHeaderMode)
+                ? "flex-1 min-w-0 border-r border-slate-100 last:border-r-0"
                 : "col-span-1"
             )}>
               <div className={clsx(
-                "absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none text-gray-400 group-focus-within/pill:text-[#8B5CF6]"
+                "absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-10 transition-colors pointer-events-none text-gray-400 group-focus-within/pill:text-[#10B981]"
               )}>
                 <MapPin size={(isSticky || isHeaderMode) ? 15 : 20} />
               </div>
@@ -285,10 +285,10 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className={clsx(
-                  "w-full pl-9 md:pl-12 pr-2 focus:outline-none text-[#0F172A] font-medium placeholder:text-gray-400/80 transition-all",
-                  (isSticky || isHeaderMode) 
-                    ? "h-11 text-sm md:text-[15px] bg-transparent rounded-full" 
-                    : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "w-full pl-9 md:pl-12 pr-2 focus:outline-none text-[#1E1B4B] font-medium placeholder:text-gray-400/80 transition-all",
+                  (isSticky || isHeaderMode)
+                    ? "h-11 text-sm md:text-[15px] bg-transparent rounded-full"
+                    : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#10B981]"
                 )}
               />
             </motion.div>
@@ -296,19 +296,19 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
             {/* Budget */}
             <motion.div layout className={clsx(
               "relative",
-              (isSticky || isHeaderMode) 
-                ? "hidden md:block flex-1 border-r border-slate-100" 
+              (isSticky || isHeaderMode)
+                ? "hidden md:block flex-1 border-r border-slate-100"
                 : "block"
             )}>
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#8B5CF6] transition-colors pointer-events-none">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#10B981] transition-colors pointer-events-none">
                 <IndianRupee size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <select
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 className={clsx(
-                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer bg-transparent",
-                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#1E1B4B] font-medium appearance-none transition-all cursor-pointer bg-transparent",
+                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#10B981]"
                 )}
               >
                 <option value="">Budget</option>
@@ -325,19 +325,19 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
             {/* Gender */}
             <motion.div layout className={clsx(
               "relative",
-              (isSticky || isHeaderMode) 
-                ? "hidden lg:block flex-1" 
+              (isSticky || isHeaderMode)
+                ? "hidden lg:block flex-1"
                 : "block"
             )}>
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#8B5CF6] transition-colors pointer-events-none">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-gray-400 group-focus-within/pill:text-[#10B981] transition-colors pointer-events-none">
                 <Users size={(isSticky || isHeaderMode) ? 14 : 18} />
               </div>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 className={clsx(
-                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#0F172A] font-medium appearance-none transition-all cursor-pointer bg-transparent",
-                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#8B5CF6]"
+                  "hidden md:block w-full pl-10 pr-8 focus:outline-none text-[#1E1B4B] font-medium appearance-none transition-all cursor-pointer bg-transparent",
+                  (isSticky || isHeaderMode) ? "h-11 text-sm md:text-[15px]" : "h-[58px] text-base rounded-full border border-slate-300 bg-white focus:ring-2 focus:ring-[#10B981]"
                 )}
               >
                 <option value="">Gender</option>
@@ -356,7 +356,7 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
               <button
                 onClick={handleSearch}
                 className={clsx(
-                  "flex items-center justify-center bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-full transition-all active:scale-95 group/btn",
+                  "flex items-center justify-center bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold rounded-full transition-all active:scale-95 group/btn",
                   (isSticky || isHeaderMode) ? "w-10 h-10 md:w-11 md:h-11" : "w-full h-[58px] px-8 gap-2"
                 )}
               >
@@ -376,13 +376,13 @@ export default function SearchBar({ variant }: { variant?: "default" | "header" 
               className="hidden lg:flex items-center gap-4 shrink-0"
             >
               <div className="flex items-center gap-4 text-slate-500 mr-2">
-                <Heart className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
-                <Moon className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
+                <Heart className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
+                <Moon className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
               </div>
               {isMounted && !isAuthenticated && !isLoggingOut && (
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-black hover:bg-blue-100 transition-all duration-200"
+                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-indigo-950 hover:bg-indigo-50 transition-all duration-200"
                 >
                   Login
                 </Link>

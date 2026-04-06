@@ -92,7 +92,7 @@ export default function ContactForm() {
                   }}
                   className={cn(
                     "rounded-xl",
-                    errors.name ? "border-red-500 focus:ring-red-500" : formData.name.trim().length >= 3 ? "border-green-500 focus:ring-green-500" : ""
+                    errors.name ? "border-red-500 focus:ring-red-500" : formData.name.trim().length >= 3 ? "border-[#10B981] focus:ring-[#10B981]" : ""
                   )}
                 />
                 {errors.name && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.name}</p>}
@@ -110,7 +110,7 @@ export default function ContactForm() {
                   }}
                   className={cn(
                     "rounded-xl",
-                    errors.email ? "border-red-500 focus:ring-red-500" : (formData.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ? "border-green-500 focus:ring-green-500" : ""
+                    errors.email ? "border-red-500 focus:ring-red-500" : (formData.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ? "border-[#10B981] focus:ring-[#10B981]" : ""
                   )}
                 />
                 {errors.email && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.email}</p>}
@@ -128,14 +128,14 @@ export default function ContactForm() {
                   }}
                   className={cn(
                     "rounded-xl",
-                    errors.message ? "border-red-500 focus:ring-red-500" : formData.message.trim().length >= 10 ? "border-green-500 focus:ring-green-500" : ""
+                    errors.message ? "border-red-500 focus:ring-red-500" : formData.message.trim().length >= 10 ? "border-[#10B981] focus:ring-[#10B981]" : ""
                   )}
                 />
                 {errors.message && <p className="text-[10px] text-red-500 font-bold ml-1">{errors.message}</p>}
               </div>
 
               {status === "success" && (
-                <p className="text-green-600 text-sm font-medium">
+                <p className="text-[#10B981] text-sm font-medium">
                   ✅ Message sent successfully! We'll get back to you soon.
                 </p>
               )}
@@ -149,7 +149,7 @@ export default function ContactForm() {
               <Button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 text-lg"
+                className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white rounded-xl h-12 text-lg"
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
               </Button>

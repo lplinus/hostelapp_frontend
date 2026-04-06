@@ -110,7 +110,7 @@ export default function BookingSidebar({
                                 )
                             )}
                         </div>
-                        
+
                         {/* Price Mode Toggle */}
                         <div className="inline-flex p-1 bg-gray-100/80 rounded-xl backdrop-blur-sm border border-gray-200">
                             {(["monthly", "daily"] as const).map((mode) => (
@@ -131,8 +131,8 @@ export default function BookingSidebar({
                     <div className="grid grid-cols-2 border-b border-gray-300">
                         <div className="p-3 border-r border-gray-300 hover:bg-gray-50 transition-colors relative">
                             <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Check-in</span>
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
                                 value={checkIn}
                                 onChange={(e) => setCheckIn(e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
@@ -141,8 +141,8 @@ export default function BookingSidebar({
                         </div>
                         <div className="p-3 hover:bg-gray-50 transition-colors relative">
                             <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Check-out</span>
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
                                 value={checkOut}
                                 onChange={(e) => setCheckOut(e.target.value)}
                                 min={checkIn}
@@ -154,7 +154,7 @@ export default function BookingSidebar({
                         <div className="flex-1">
                             <span className="block text-[10px] font-medium text-gray-800 uppercase tracking-wider mb-0.5">Guests</span>
                             <div className="flex items-center gap-4 mt-1">
-                                <button 
+                                <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); setGuests(Math.max(1, guests - 1)); }}
                                     className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-900 transition-colors text-gray-600 hover:text-gray-900"
@@ -162,7 +162,7 @@ export default function BookingSidebar({
                                     -
                                 </button>
                                 <span className="text-sm font-bold text-gray-900 min-w-[1rem] text-center">{guests}</span>
-                                <button 
+                                <button
                                     type="button"
                                     onClick={(e) => { e.preventDefault(); setGuests(Math.min(10, guests + 1)); }}
                                     className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-900 transition-colors text-gray-600 hover:text-gray-900"
@@ -178,7 +178,7 @@ export default function BookingSidebar({
                 <Button
                     asChild
                     size="lg"
-                    className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-medium h-14 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 mb-4 shadow-[0_8px_20px_rgba(30,58,138,0.2)] active:scale-[0.98] border-none text-[1.05rem]"
+                    className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium h-14 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 mb-4 shadow-[0_8px_20px_rgba(49,46,129,0.2)] active:scale-[0.98] border-none text-[1.05rem]"
                 >
                     <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
                         <Phone size={18} />
@@ -187,12 +187,12 @@ export default function BookingSidebar({
                 </Button>
 
                 <div className="space-y-3 mb-6">
-                    <div className="flex items-center gap-2.5 text-sm text-gray-600 font-medium bg-green-50/50 p-2.5 rounded-xl border border-green-100">
-                        <CheckCircle2 size={16} className="text-green-500" />
+                    <div className="flex items-center gap-2.5 text-sm text-gray-600 font-medium bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100">
+                        <CheckCircle2 size={16} className="text-[#10B981]" />
                         <span>Free cancellation available</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-sm text-gray-600 font-medium bg-blue-50/50 p-2.5 rounded-xl border border-blue-100">
-                        <ShieldCheck size={16} className="text-blue-500" />
+                    <div className="flex items-center gap-2.5 text-sm text-gray-600 font-medium bg-indigo-50/50 p-2.5 rounded-xl border border-indigo-100">
+                        <ShieldCheck size={16} className="text-[#312E81]" />
                         <span>Instant confirmation</span>
                     </div>
                 </div>
@@ -213,7 +213,7 @@ export default function BookingSidebar({
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 font-medium"
+                        className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] transition-all placeholder:text-gray-400 font-medium"
                     />
                     <input
                         type="tel"
@@ -221,7 +221,7 @@ export default function BookingSidebar({
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 font-medium"
+                        className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981] transition-all placeholder:text-gray-400 font-medium"
                     />
                     <Button
                         type="submit"

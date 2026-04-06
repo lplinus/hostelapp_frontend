@@ -12,14 +12,14 @@ export default function HostelTags({ isVerified, isFeatured, sharingOptions }: H
     return (
         <div className="flex flex-wrap gap-2.5 mb-8">
             {isVerified && (
-                <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
-                    <BadgeCheck size={16} className="mr-1.5 fill-blue-600 text-white" />
+                <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-indigo-50 text-[#312E81] border border-indigo-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+                    <BadgeCheck size={16} className="mr-1.5 fill-[#312E81] text-white" />
                     Verified Choice
                 </span>
             )}
             {isFeatured && (
-                <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
-                    <Sparkles size={16} className="mr-1.5 text-amber-500" />
+                <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-emerald-50 text-[#10B981] border border-emerald-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+                    <Sparkles size={16} className="mr-1.5 text-[#10B981]" />
                     Premium Selection
                 </span>
             )}

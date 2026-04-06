@@ -2,10 +2,9 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, Building2, MapPin, Grid, ListIcon, Search, X } from "lucide-react";
+import { SlidersHorizontal, Building2, MapPin, Search, X } from "lucide-react";
 import HostelCard from "@/components/hostels/hostel-card";
 import { TypeHostelResponse } from "@/types/hostel.types";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -156,7 +155,7 @@ export default function TypeClient({ data }: Props) {
                 const typeParam = `&type=${encodeURIComponent(currentTypeSlug)}`;
                 const roomTypeParam = appliedFilters.roomType !== "All Room Types" ? `&room_type=${encodeURIComponent(appliedFilters.roomType)}` : "";
                 const sharingParam = appliedFilters.sharingType !== "All Sharing Types" ? `&sharing=${encodeURIComponent(appliedFilters.sharingType)}` : "";
-                
+
                 const response = await fetch(`${baseUrl}/api/locations/inner-search/?q=${encodeURIComponent(searchQuery)}${cityParam}${typeParam}${roomTypeParam}${sharingParam}`);
                 if (response.ok) {
                     const searchData = await response.json();
@@ -201,12 +200,12 @@ export default function TypeClient({ data }: Props) {
         const categorized = resultsArr.map(hostel => {
             const hasRoomFilter = appliedFilters.roomType !== "All Room Types";
             const hasSharingFilter = appliedFilters.sharingType !== "All Sharing Types";
-            
-            const matchesRoom = !hasRoomFilter || 
-                hostel.room_types?.some((r: any) => 
+
+            const matchesRoom = !hasRoomFilter ||
+                hostel.room_types?.some((r: any) =>
                     appliedFilters.roomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
                 );
-            
+
             const matchesSharing = !hasSharingFilter ||
                 hostel.room_types?.some((r: any) => Number(r.sharing_type) === Number(appliedFilters.sharingType));
 
@@ -215,13 +214,13 @@ export default function TypeClient({ data }: Props) {
             // Determine Purity: Pure if ALL rooms match the filter
             let allRoomsMatch = true;
             if (hasRoomFilter) {
-                const pureRoom = hostel.room_types?.every((r: any) => 
+                const pureRoom = hostel.room_types?.every((r: any) =>
                     appliedFilters.roomType === "AC" ? r.room_category === "AC" : r.room_category === "NON_AC"
                 );
                 if (!pureRoom) allRoomsMatch = false;
             }
             if (hasSharingFilter) {
-                const pureSharing = hostel.room_types?.every((r: any) => 
+                const pureSharing = hostel.room_types?.every((r: any) =>
                     Number(r.sharing_type) === Number(appliedFilters.sharingType)
                 );
                 if (!pureSharing) allRoomsMatch = false;
@@ -292,23 +291,23 @@ export default function TypeClient({ data }: Props) {
             <div className="mb-6 lg:mb-10">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-teal-600 mb-2 uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-[#10B981] mb-2 uppercase tracking-wider">
                             <Building2 className="w-4 h-4" />
                             {data.type}
                         </div>
-                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E1B4B] tracking-tight">
                             Best {data.type}
                         </h1>
                         <p className="text-slate-500 font-medium mt-1">
                             Showing {filteredAndSortedResults.results.length} {filteredAndSortedResults.results.length === 1 ? 'hostel' : 'hostels'}
                             {appliedFilters.roomType !== "All Room Types" || appliedFilters.sharingType !== "All Sharing Types" ? (
-                                <span className="text-teal-600 ml-1 font-semibold">
+                                <span className="text-[#10B981] ml-1 font-semibold">
                                     ({filteredAndSortedResults.pureCount} only {
-                                        appliedFilters.roomType !== "All Room Types" && appliedFilters.sharingType !== "All Sharing Types" 
-                                        ? `${appliedFilters.roomType} ${appliedFilters.sharingType}-Sharing`
-                                        : appliedFilters.roomType !== "All Room Types" 
-                                        ? appliedFilters.roomType 
-                                        : `${appliedFilters.sharingType}-Sharing`
+                                        appliedFilters.roomType !== "All Room Types" && appliedFilters.sharingType !== "All Sharing Types"
+                                            ? `${appliedFilters.roomType} ${appliedFilters.sharingType}-Sharing`
+                                            : appliedFilters.roomType !== "All Room Types"
+                                                ? appliedFilters.roomType
+                                                : `${appliedFilters.sharingType}-Sharing`
                                     }, {filteredAndSortedResults.mixedCount} Mixed)
                                 </span>
                             ) : null}
@@ -318,7 +317,7 @@ export default function TypeClient({ data }: Props) {
 
                     <div className="flex-1 max-w-xl w-full">
                         <div className="relative group">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#10B981] transition-colors pointer-events-none">
                                 <Search size={22} />
                             </div>
                             <input
@@ -326,11 +325,11 @@ export default function TypeClient({ data }: Props) {
                                 placeholder={`Search in ${data.type}...`}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-12 py-4 rounded-[1.25rem] border border-slate-200 bg-white shadow-sm focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 focus:outline-none text-slate-900 font-medium placeholder:text-slate-400 transition-all"
+                                className="w-full pl-12 pr-12 py-4 rounded-[1.25rem] border border-slate-200 bg-white shadow-sm focus:ring-4 focus:ring-[#10B981]/10 focus:border-[#10B981] focus:outline-none text-slate-900 font-medium placeholder:text-slate-400 transition-all"
                             />
                             {isSearching && (
                                 <div className="absolute right-12 top-1/2 -translate-y-1/2">
-                                    <div className="w-5 h-5 border-2 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+                                    <div className="w-5 h-5 border-2 border-slate-200 border-t-[#10B981] rounded-full animate-spin"></div>
                                 </div>
                             )}
                             {searchQuery && (
@@ -352,10 +351,10 @@ export default function TypeClient({ data }: Props) {
                     <SheetTrigger asChild>
                         <Button variant="outline" className="w-full flex justify-between gap-2 rounded-xl h-10 border-slate-200 shadow-none bg-white font-bold text-slate-700 hover:bg-slate-50 active:scale-[0.98]">
                             <span className="flex items-center gap-1.5">
-                                <SlidersHorizontal className="w-3.5 h-3.5 text-teal-600" />
+                                <SlidersHorizontal className="w-3.5 h-3.5 text-[#10B981]" />
                                 <span className="text-sm">Filters & Sort</span>
                             </span>
-                            <span className="bg-teal-50 text-teal-600 px-2 py-0.5 rounded-lg text-[10px] uppercase border border-teal-100 tracking-wider">
+                            <span className="bg-emerald-50 text-[#10B981] px-2 py-0.5 rounded-lg text-[10px] uppercase border border-emerald-100 tracking-wider">
                                 Refine
                             </span>
                         </Button>
@@ -363,13 +362,13 @@ export default function TypeClient({ data }: Props) {
                     <SheetContent side="bottom" className="h-[88vh] rounded-t-[2rem] p-0 overflow-hidden flex flex-col border-none">
                         <SheetHeader className="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-5">
                             <div className="flex justify-between items-center">
-                                <SheetTitle className="flex items-center gap-2 text-xl font-bold text-slate-900">
-                                    <SlidersHorizontal className="w-5 h-5 text-teal-600" strokeWidth={2.5} />
+                                <SheetTitle className="flex items-center gap-2 text-xl font-bold text-[#1E1B4B]">
+                                    <SlidersHorizontal className="w-5 h-5 text-[#10B981]" strokeWidth={2.5} />
                                     Search Filters
                                 </SheetTitle>
                                 <button
                                     onClick={handleResetFilters}
-                                    className="text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors bg-teal-50 px-3 py-1.5 rounded-lg"
+                                    className="text-sm font-bold text-[#10B981] hover:text-[#059669] transition-colors bg-emerald-50 px-3 py-1.5 rounded-lg"
                                 >
                                     Reset
                                 </button>
@@ -501,7 +500,7 @@ export default function TypeClient({ data }: Props) {
                             <SheetClose asChild>
                                 <Button
                                     onClick={handleApplyFilters}
-                                    className="flex-[2] bg-teal-600 hover:bg-teal-700 text-white h-12 rounded-xl text-lg shadow-lg shadow-teal-600/10"
+                                    className="flex-[2] bg-[#312E81] hover:bg-[#1E1B4B] text-white h-12 rounded-xl text-lg shadow-lg shadow-[#10B981]/10"
                                 >
                                     Apply Filter
                                 </Button>
@@ -572,8 +571,8 @@ export default function TypeClient({ data }: Props) {
                                                         size="icon"
                                                         onClick={() => handlePageChange(page)}
                                                         className={`w-10 h-10 rounded-xl font-bold transition-all ${currentPage === page
-                                                                ? "bg-teal-600 hover:bg-teal-700 text-white shadow-md shadow-teal-600/20"
-                                                                : "border-slate-200 text-slate-600 hover:border-teal-600 hover:bg-teal-50 hover:text-teal-600"
+                                                            ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-md shadow-[#10B981]/20"
+                                                            : "border-slate-200 text-slate-600 hover:border-[#10B981] hover:bg-emerald-50 hover:text-[#10B981]"
                                                             }`}
                                                     >
                                                         {page}
@@ -611,7 +610,7 @@ export default function TypeClient({ data }: Props) {
                             <CardHeader className="bg-slate-50/50 px-6 py-5 border-b border-slate-100">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                                        <SlidersHorizontal className="w-5 h-5 text-teal-600" />
+                                        <SlidersHorizontal className="w-5 h-5 text-[#10B981]" />
                                         Search Filters
                                     </h2>
                                 </div>
@@ -738,7 +737,7 @@ export default function TypeClient({ data }: Props) {
                                         Reset
                                     </Button>
                                     <Button
-                                        className="flex-[2] h-12 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-lg shadow-teal-600/10 transition-all active:scale-95"
+                                        className="flex-[2] h-12 bg-[#10B981] hover:bg-[#059669] text-white font-bold rounded-xl shadow-lg shadow-[#10B981]/10 transition-all active:scale-95"
                                         onClick={handleApplyFilters}
                                         disabled={!hasUnappliedChanges}
                                     >

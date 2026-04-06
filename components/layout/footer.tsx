@@ -29,7 +29,7 @@ export default function Footer() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
+            <span className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-[#312E81] transition-colors">
               Hostel In
             </span>
           </Link>
@@ -59,12 +59,12 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold text-gray-900 mb-5 text-sm tracking-wide uppercase">Quick Links</h3>
           <ul className="space-y-3 font-medium text-sm text-gray-500">
-            <li><Link href="/" className="hover:text-blue-600 transition-colors">Home</Link></li>
-            {/* <li><Link href="/hostels" className="hover:text-blue-600 transition-colors">Hostels</Link></li> */}
-            {/* <li><Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link></li> */}
-            <li><Link href="/about-us" className="hover:text-blue-600 transition-colors">About Us</Link></li>
-            <li><Link href="/contact-us" className="hover:text-blue-600 transition-colors">Contact</Link></li>
-            <li><Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link></li>
+            <li><Link href="/" className="hover:text-[#312E81] transition-colors">Home</Link></li>
+            {/* <li><Link href="/hostels" className="hover:text-[#312E81] transition-colors">Hostels</Link></li> */}
+            {/* <li><Link href="/pricing" className="hover:text-[#312E81] transition-colors">Pricing</Link></li> */}
+            <li><Link href="/about-us" className="hover:text-[#312E81] transition-colors">About Us</Link></li>
+            <li><Link href="/contact-us" className="hover:text-[#312E81] transition-colors">Contact</Link></li>
+            <li><Link href="/blog" className="hover:text-[#312E81] transition-colors">Blog</Link></li>
           </ul>
         </div>
 
@@ -72,10 +72,10 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold text-gray-900 mb-5 text-sm tracking-wide uppercase">Legal</h3>
           <ul className="space-y-3 font-medium text-sm text-gray-500">
-            <li><Link href="/PrivacyPolicy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
-            <li><Link href="/Terms&Conditions" className="hover:text-blue-600 transition-colors">Terms & Conditions</Link></li>
-            <li><Link href="/faqs" className="hover:text-blue-600 transition-colors">FAQs</Link></li>
-            <li><Link href="/refunds" className="hover:text-blue-600 transition-colors">Refund Policy</Link></li>
+            <li><Link href="/PrivacyPolicy" className="hover:text-[#312E81] transition-colors">Privacy Policy</Link></li>
+            <li><Link href="/Terms&Conditions" className="hover:text-[#312E81] transition-colors">Terms & Conditions</Link></li>
+            <li><Link href="/faqs" className="hover:text-[#312E81] transition-colors">FAQs</Link></li>
+            <li><Link href="/refunds" className="hover:text-[#312E81] transition-colors">Refund Policy</Link></li>
           </ul>
         </div>
 
@@ -85,8 +85,8 @@ export default function Footer() {
 
           <div className="space-y-3">
             <div className="flex items-center gap-3 bg-gray-50/80 border border-gray-100 rounded-xl px-4 py-3 hover:bg-white hover:shadow-sm transition-all">
-              <div className="bg-orange-100 p-2 rounded-lg">
-                <Lock className="w-4 h-4 text-orange-600" />
+              <div className="bg-indigo-50 p-2 rounded-lg">
+                <Lock className="w-4 h-4 text-[#312E81]" />
               </div>
               <span className="text-sm text-gray-700 font-medium">
                 Secure Platform
@@ -94,8 +94,8 @@ export default function Footer() {
             </div>
 
             <div className="flex items-center gap-3 bg-gray-50/80 border border-gray-100 rounded-xl px-4 py-3 hover:bg-white hover:shadow-sm transition-all">
-              <div className="bg-green-100 p-2 rounded-lg">
-                <ShieldCheck className="w-4 h-4 text-green-600" />
+              <div className="bg-emerald-50 p-2 rounded-lg">
+                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
               </div>
               <span className="text-sm text-gray-700 font-medium">
                 Verified Listings
@@ -103,8 +103,8 @@ export default function Footer() {
             </div>
 
             <div className="flex items-center gap-3 bg-gray-50/80 border border-gray-100 rounded-xl px-4 py-3 hover:bg-white hover:shadow-sm transition-all">
-              <div className="bg-indigo-100 p-2 rounded-lg">
-                <GraduationCap className="w-4 h-4 text-indigo-600" />
+              <div className="bg-indigo-50 p-2 rounded-lg">
+                <GraduationCap className="w-4 h-4 text-[#312E81]" />
               </div>
               <span className="text-sm text-gray-700 font-medium">
                 Student Trusted

@@ -68,7 +68,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                     <div
                         key={room.id}
                         className={`rounded-[2rem] overflow-hidden border border-gray-200 transition-all duration-300 group ${room.is_available
-                            ? "bg-white hover:border-blue-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1"
+                            ? "bg-white hover:border-[#10B981] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1"
                             : "bg-gray-50 opacity-60"
                             }`}
                     >
@@ -81,14 +81,14 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                                             <span className="bg-red-50 text-red-500 font-bold px-2 py-0.5 rounded text-[10px] border border-red-200">Sold Out</span>
                                         )}
                                         {room.is_available && (
-                                            <span className="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded text-[10px] border border-blue-200">
+                                            <span className="bg-emerald-50 text-[#10B981] font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-200">
                                                 {room.available_beds} Beds Left
                                             </span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 mt-2">
                                         {room.room_category === "AC" ? (
-                                            <Snowflake size={16} className="text-blue-500" />
+                                            <Snowflake size={16} className="text-[#3B82F6]" />
                                         ) : (
                                             <Fan size={16} className="text-gray-500" />
                                         )}
@@ -114,7 +114,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                                     <span>Comfortable Beds</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-                                    <Check size={16} className="text-green-500" />
+                                    <Check size={16} className="text-[#10B981]" />
                                     <span>Cleaning included</span>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                             {room.is_available ? (
                                 <Link
                                     href={`/hostels/${hostelSlug}/book?roomId=${room.id}&priceMode=${priceMode}`}
-                                    className="w-full flex items-center justify-center py-3.5 text-sm font-bold text-white bg-slate-900 hover:bg-black rounded-xl transition-all shadow-md active:scale-[0.98]"
+                                    className="w-full flex items-center justify-center py-3.5 text-sm font-bold text-white bg-[#312E81] hover:bg-[#1E1B4B] rounded-xl transition-all shadow-md active:scale-[0.98]"
                                 >
                                     Select Room
                                 </Link>

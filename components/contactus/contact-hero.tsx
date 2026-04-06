@@ -9,7 +9,7 @@ interface ContactHeroProps {
 
 export default function ContactHero({ title, subtitle }: ContactHeroProps) {
   return (
-    <section className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-28 px-6 text-center">
+    <section className="bg-gradient-to-br from-[#312E81] to-[#1E1B4B] text-white py-28 px-6 text-center">
       <motion.h1
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,7 +23,7 @@ export default function ContactHero({ title, subtitle }: ContactHeroProps) {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9 }}
-        className="mt-6 text-lg text-blue-100 max-w-2xl mx-auto"
+        className="mt-6 text-lg text-indigo-100 max-w-2xl mx-auto"
       >
         {subtitle ||
           "Have questions about hostels or partnerships? We're here to help."}

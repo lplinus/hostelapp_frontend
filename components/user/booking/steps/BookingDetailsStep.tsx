@@ -27,6 +27,7 @@ interface BookingDetailsStepProps {
     openLegalDocument: (type: 'terms' | 'privacy', e: React.MouseEvent) => void;
     handleNext: () => void;
     isPhoneVerified: boolean;
+    bookingStatus: "pending" | "confirmed";
 }
 
 export function BookingDetailsStep({
@@ -43,23 +44,44 @@ export function BookingDetailsStep({
     setTermsError,
     openLegalDocument,
     handleNext,
-    isPhoneVerified
+    isPhoneVerified,
+    bookingStatus
 }: BookingDetailsStepProps) {
+    const isConfirmed = bookingStatus === "confirmed";
+
     return (
-        <Card className="border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl">
-            <CardHeader className="bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all" onClick={() => setStep(step === "details" ? null : "details")}>
+        <Card className={cn(
+            "border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl",
+            isConfirmed && "bg-gray-50/50 border-gray-100"
+        )}>
+            <CardHeader
+                className={cn(
+                    "bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all",
+                    isConfirmed && "cursor-default hover:bg-white"
+                )}
+                onClick={() => {
+                    if (isConfirmed) {
+                        setStep("details"); // Allow viewing but not editing is handled by disabled inputs
+                        return;
+                    }
+                    setStep(step === "details" ? null : "details")
+                }}
+            >
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold", (step !== "details" && isPhoneVerified) ? "bg-green-100 text-green-600" : "bg-blue-600 text-white")}>
-                            {(step !== "details" && isPhoneVerified) ? <CheckCircle2 size={16} /> : "1"}
+                        <div className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                            (step !== "details" && isPhoneVerified) || isConfirmed ? "bg-emerald-100 text-[#10B981]" : "bg-[#312E81] text-white"
+                        )}>
+                            {(step !== "details" && isPhoneVerified) || isConfirmed ? <CheckCircle2 size={16} /> : "1"}
                         </div>
                         <div>
                             <CardTitle className="text-xl text-gray-900 font-bold">Confirm Booking details</CardTitle>
                             {step !== "details" && (
                                 <p className="text-xs text-gray-500 mt-1 font-medium">
-                                    {form.guest_name} • {form.mobile_number} 
+                                    {form.guest_name} • {form.mobile_number}
                                     {isPhoneVerified ? (
-                                        <span className="ml-2 text-green-600 font-bold uppercase text-[9px]">Verified</span>
+                                        <span className="ml-2 text-[#10B981] font-bold uppercase text-[9px]">Verified</span>
                                     ) : (
                                         <span className="ml-2 text-orange-600 font-bold uppercase text-[9px]">Verification Pending</span>
                                     )}
@@ -68,10 +90,10 @@ export function BookingDetailsStep({
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        {step !== "details" && (
-                            <span className="text-xs font-bold text-blue-600">Change</span>
+                        {step !== "details" && !isConfirmed && (
+                            <span className="text-xs font-bold text-[#312E81]">Change</span>
                         )}
-                        <ChevronRight className={cn("h-5 w-5 text-black transition-transform duration-300", step === "details" ? "rotate-90" : "")} />
+                        <ChevronRight className={cn("h-5 w-5 text-gray-900 transition-transform duration-300", step === "details" ? "rotate-90" : "")} />
                     </div>
                 </div>
             </CardHeader>
@@ -80,39 +102,45 @@ export function BookingDetailsStep({
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="name" className="flex items-center gap-2 text-gray-700">
-                                <User size={14} className="text-blue-600" /> Full Name
+                                <User size={14} className="text-[#312E81]" /> Full Name
                             </Label>
                             <Input
                                 id="name"
                                 placeholder="John Doe"
                                 value={form.guest_name}
+                                disabled={isConfirmed}
+                                readOnly={isConfirmed}
                                 onChange={(e) => {
                                     setForm({ ...form, guest_name: e.target.value });
                                     if (errors.guest_name) setErrors(prev => ({ ...prev, guest_name: "" }));
                                 }}
                                 className={cn(
-                                    "rounded-xl border-gray-200 focus:ring-blue-500",
-                                    errors.guest_name ? "border-red-500 focus:ring-red-500" : form.guest_name.length > 2 ? "border-green-500 focus:ring-green-500" : ""
+                                    "rounded-xl border-gray-200 focus:ring-[#312E81]",
+                                    errors.guest_name ? "border-red-500 focus:ring-red-500" : form.guest_name.length > 2 ? "border-green-500 focus:ring-green-500" : "",
+                                    isConfirmed && "bg-gray-100 border-gray-200 text-gray-500 opacity-80 cursor-not-allowed"
                                 )}
                             />
                             {errors.guest_name && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_name}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="flex items-center gap-2 text-gray-700">
-                                <Mail size={14} className="text-blue-600" /> Email Address
+                            <Label htmlFor="email" className="flex items-center gap-2 text-slate-700">
+                                <Mail size={14} className="text-[#312E81]" /> Email Address
                             </Label>
                             <Input
                                 id="email"
                                 type="email"
                                 placeholder="john@example.com"
                                 value={form.guest_email}
+                                disabled={isConfirmed}
+                                readOnly={isConfirmed}
                                 onChange={(e) => {
                                     setForm({ ...form, guest_email: e.target.value });
                                     if (errors.guest_email) setErrors(prev => ({ ...prev, guest_email: "" }));
                                 }}
                                 className={cn(
-                                    "rounded-xl border-gray-200 focus:ring-blue-500",
-                                    errors.guest_email ? "border-red-500 focus:ring-red-500" : form.guest_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guest_email) ? "border-green-500 focus:ring-green-500" : ""
+                                    "rounded-xl border-slate-200 focus:ring-[#10B981]",
+                                    errors.guest_email ? "border-red-500 focus:ring-red-500" : form.guest_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guest_email) ? "border-[#10B981] focus:ring-[#10B981]" : "",
+                                    isConfirmed && "bg-slate-50 border-slate-200 text-slate-400 opacity-80 cursor-not-allowed"
                                 )}
                             />
                             {errors.guest_email && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_email}</p>}
@@ -121,13 +149,15 @@ export function BookingDetailsStep({
 
                     <div className="space-y-2">
                         <Label htmlFor="mobile" className="flex items-center gap-2 text-gray-700">
-                            <Phone size={14} className="text-blue-600" /> Mobile Number
+                            <Phone size={14} className="text-[#312E81]" /> Mobile Number
                         </Label>
                         <Input
                             id="mobile"
                             type="tel"
                             placeholder="+91 9876543210"
                             value={form.mobile_number}
+                            disabled={isConfirmed}
+                            readOnly={isConfirmed}
                             onChange={(e) => {
                                 let val = e.target.value;
                                 if (!val.startsWith("+91")) {
@@ -137,8 +167,9 @@ export function BookingDetailsStep({
                                 if (errors.mobile_number) setErrors(prev => ({ ...prev, mobile_number: "" }));
                             }}
                             className={cn(
-                                "rounded-xl border-gray-200 focus:ring-blue-500",
-                                errors.mobile_number ? "border-red-500 focus:ring-red-500" : form.mobile_number && /^\+?[\d\s-]{10,}$/.test(form.mobile_number) ? "border-green-500 focus:ring-green-500" : ""
+                                "rounded-xl border-gray-200 focus:ring-[#312E81]",
+                                errors.mobile_number ? "border-red-500 focus:ring-red-500" : form.mobile_number && /^\+?[\d\s-]{10,}$/.test(form.mobile_number) ? "border-green-500 focus:ring-green-500" : "",
+                                isConfirmed && "bg-gray-100 border-gray-200 text-gray-500 opacity-80 cursor-not-allowed"
                             )}
                         />
                         {errors.mobile_number && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.mobile_number}</p>}
@@ -147,40 +178,54 @@ export function BookingDetailsStep({
                     <div className="grid sm:grid-cols-3 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="age" className="flex items-center gap-2 text-gray-700">
-                                <Activity size={14} className="text-blue-600" /> Age
+                                <Activity size={14} className="text-[#312E81]" /> Age
                             </Label>
                             <Input
                                 id="age"
                                 type="number"
                                 value={form.guest_age}
+                                disabled={isConfirmed}
+                                readOnly={isConfirmed}
                                 onChange={(e) => {
                                     setForm({ ...form, guest_age: e.target.value });
                                     if (errors.guest_age) setErrors(prev => ({ ...prev, guest_age: "" }));
                                 }}
                                 className={cn(
-                                    "rounded-xl border-gray-200 focus:ring-blue-500",
-                                    errors.guest_age ? "border-red-500 focus:ring-red-500" : (Number(form.guest_age) >= 10 && Number(form.guest_age) <= 100) ? "border-green-500 focus:ring-green-500" : ""
+                                    "rounded-xl border-gray-200 focus:ring-[#312E81]",
+                                    errors.guest_age ? "border-red-500 focus:ring-red-500" : (Number(form.guest_age) >= 10 && Number(form.guest_age) <= 100) ? "border-green-500 focus:ring-green-500" : "",
+                                    isConfirmed && "bg-gray-100 border-gray-200 text-gray-500 opacity-80 cursor-not-allowed"
                                 )}
                             />
                             {errors.guest_age && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.guest_age}</p>}
                         </div>
                         <div className="space-y-2 text-left">
                             <Label htmlFor="adults" className="flex items-center gap-2 text-gray-700">
-                                <Users size={14} className="text-blue-600" /> Adults
+                                <Users size={14} className="text-[#312E81]" /> Adults
                             </Label>
-                            <div className="flex items-center justify-between h-10 px-2 border border-gray-200 rounded-xl bg-white shadow-sm">
-                                <button 
+                            <div className={cn(
+                                "flex items-center justify-between h-10 px-2 border border-slate-200 rounded-xl bg-white shadow-sm",
+                                isConfirmed && "bg-slate-50 opacity-80 cursor-not-allowed"
+                            )}>
+                                <button
                                     type="button"
+                                    disabled={isConfirmed}
                                     onClick={() => setForm({ ...form, adults: (Math.max(1, Number(form.adults) - 1)).toString() })}
-                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                    className={cn(
+                                        "w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-[#312E81] hover:text-white transition-all active:scale-95",
+                                        isConfirmed && "cursor-not-allowed opacity-50 hover:bg-slate-50 hover:text-inherit"
+                                    )}
                                 >
                                     -
                                 </button>
-                                <span className="text-sm font-black text-gray-900 mx-2">{form.adults}</span>
-                                <button 
+                                <span className="text-sm font-black text-slate-900 mx-2">{form.adults}</span>
+                                <button
                                     type="button"
+                                    disabled={isConfirmed}
                                     onClick={() => setForm({ ...form, adults: (Math.min(20, Number(form.adults) + 1)).toString() })}
-                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                    className={cn(
+                                        "w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center hover:bg-[#312E81] hover:text-white transition-all active:scale-95",
+                                        isConfirmed && "cursor-not-allowed opacity-50 hover:bg-slate-50 hover:text-inherit"
+                                    )}
                                 >
                                     +
                                 </button>
@@ -188,21 +233,32 @@ export function BookingDetailsStep({
                         </div>
                         <div className="space-y-2 text-left">
                             <Label htmlFor="children" className="flex items-center gap-2 text-gray-700">
-                                <Baby size={14} className="text-blue-600" /> Children
+                                <Baby size={14} className="text-[#312E81]" /> Children
                             </Label>
-                            <div className="flex items-center justify-between h-10 px-2 border border-gray-200 rounded-xl bg-white shadow-sm">
-                                <button 
+                            <div className={cn(
+                                "flex items-center justify-between h-10 px-2 border border-gray-200 rounded-xl bg-white shadow-sm",
+                                isConfirmed && "bg-gray-100 opacity-80 cursor-not-allowed"
+                            )}>
+                                <button
                                     type="button"
+                                    disabled={isConfirmed}
                                     onClick={() => setForm({ ...form, children: (Math.max(0, Number(form.children) - 1)).toString() })}
-                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                    className={cn(
+                                        "w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-[#312E81] hover:text-white transition-all active:scale-95",
+                                        isConfirmed && "cursor-not-allowed opacity-50 hover:bg-gray-50 hover:text-inherit"
+                                    )}
                                 >
                                     -
                                 </button>
                                 <span className="text-sm font-black text-gray-900 mx-2">{form.children}</span>
-                                <button 
+                                <button
                                     type="button"
+                                    disabled={isConfirmed}
                                     onClick={() => setForm({ ...form, children: (Math.min(20, Number(form.children) + 1)).toString() })}
-                                    className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                                    className={cn(
+                                        "w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-[#312E81] hover:text-white transition-all active:scale-95",
+                                        isConfirmed && "cursor-not-allowed opacity-50 hover:bg-gray-50 hover:text-inherit"
+                                    )}
                                 >
                                     +
                                 </button>
@@ -212,17 +268,25 @@ export function BookingDetailsStep({
 
                     <div className="space-y-2">
                         <Label className="flex items-center gap-2 text-gray-700">
-                            <CalendarIcon size={14} className="text-blue-600" /> Staying Dates
+                            <CalendarIcon size={14} className="text-[#312E81]" /> Staying Dates
                         </Label>
-                        <div className="flex flex-col sm:flex-row gap-4 p-4 border rounded-2xl bg-gray-50/30 border-gray-200">
+                        <div className={cn(
+                            "flex flex-col sm:flex-row gap-4 p-4 border rounded-2xl bg-gray-50/30 border-gray-200",
+                            isConfirmed && "opacity-80"
+                        )}>
                             <div className="flex-1 space-y-1.5">
                                 <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Check-In</p>
                                 <Input
                                     type="date"
+                                    disabled={isConfirmed}
+                                    readOnly={isConfirmed}
                                     value={format(form.check_in, "yyyy-MM-dd")}
                                     onChange={(e) => setForm({ ...form, check_in: parseISO(e.target.value) })}
                                     min={format(new Date(), "yyyy-MM-dd")}
-                                    className="border-none bg-transparent font-bold text-lg p-0 h-auto focus-visible:ring-0"
+                                    className={cn(
+                                        "border-none bg-transparent font-bold text-lg p-0 h-auto focus-visible:ring-0",
+                                        isConfirmed && "cursor-not-allowed"
+                                    )}
                                 />
                             </div>
                             <div className="hidden sm:flex items-center px-4">
@@ -232,6 +296,8 @@ export function BookingDetailsStep({
                                 <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Check-Out</p>
                                 <Input
                                     type="date"
+                                    disabled={isConfirmed}
+                                    readOnly={isConfirmed}
                                     value={format(form.check_out, "yyyy-MM-dd")}
                                     onChange={(e) => {
                                         setForm({ ...form, check_out: parseISO(e.target.value) });
@@ -240,13 +306,14 @@ export function BookingDetailsStep({
                                     min={format(addDays(form.check_in, 1), "yyyy-MM-dd")}
                                     className={cn(
                                         "border-none bg-transparent font-bold text-lg p-0 h-auto focus-visible:ring-0",
-                                        errors.dates ? "text-red-500" : nights > 0 ? "text-green-600" : ""
+                                        errors.dates ? "text-red-500" : nights > 0 ? "text-[#10B981]" : "",
+                                        isConfirmed && "cursor-not-allowed"
                                     )}
                                 />
                             </div>
                         </div>
                         {errors.dates && <p className="text-[10px] text-red-500 font-bold mt-1 ml-1">{errors.dates}</p>}
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-slate-500 mt-1">
                             Selected: <strong>{nights} {nights === 1 ? 'night' : 'nights'}</strong> stay.
                         </p>
                     </div>
@@ -254,10 +321,11 @@ export function BookingDetailsStep({
                     {form.booking_type === "stay" && (
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2 text-gray-700">
-                                <CalendarIcon size={14} className="text-blue-600" /> Preferred Duration (Optional)
+                                <CalendarIcon size={14} className="text-[#312E81]" /> Preferred Duration (Optional)
                             </Label>
                             <Select
                                 value={form.stay_duration}
+                                disabled={isConfirmed}
                                 onValueChange={(v) => {
                                     let newCheckOut = form.check_out;
                                     const checkIn = form.check_in;
@@ -273,7 +341,10 @@ export function BookingDetailsStep({
                                     if (errors.dates) setErrors(prev => ({ ...prev, dates: "" }));
                                 }}
                             >
-                                <SelectTrigger className="rounded-xl border-gray-200">
+                                <SelectTrigger className={cn(
+                                    "rounded-xl border-gray-200",
+                                    isConfirmed && "bg-gray-100 opacity-80 cursor-not-allowed"
+                                )}>
                                     <SelectValue placeholder="Select duration" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -296,16 +367,20 @@ export function BookingDetailsStep({
                             <input
                                 type="checkbox"
                                 id="terms"
+                                disabled={isConfirmed}
                                 checked={termsAccepted}
                                 onChange={(e) => {
                                     setTermsAccepted(e.target.checked);
                                     if (e.target.checked) setTermsError(false);
                                 }}
-                                className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className={cn(
+                                    "mt-1 w-4 h-4 rounded border-gray-300 text-[#312E81] focus:ring-[#312E81]",
+                                    isConfirmed && "cursor-not-allowed opacity-50"
+                                )}
                             />
                             <div className="space-y-1">
                                 <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700">
-                                    I accept the <button type="button" onClick={(e) => openLegalDocument('terms', e)} className="text-blue-600 hover:underline">Terms and Conditions</button> and <button type="button" onClick={(e) => openLegalDocument('privacy', e)} className="text-blue-600 hover:underline">Privacy Policy</button>
+                                    I accept the <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('terms', e)} className={cn("text-[#312E81] hover:underline", isConfirmed && "cursor-default text-blue-400 no-underline")}>Terms and Conditions</button> and <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('privacy', e)} className={cn("text-[#312E81] hover:underline", isConfirmed && "cursor-default text-blue-400 no-underline")}>Privacy Policy</button>
                                 </Label>
                                 {termsError && (
                                     <p className="text-[12px] text-red-500 font-bold mt-1">Accept terms and conditions to proceed</p>
@@ -313,15 +388,17 @@ export function BookingDetailsStep({
                             </div>
                         </div>
                     </div>
-                    <div className="pt-4 flex justify-end">
-                        <Button
-                            className="px-8 py-6 rounded-xl bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-100 font-bold"
-                            onClick={handleNext}
-                        >
-                            {form.booking_type === "visit" ? "Send Visit Request" : "Confirm Details"}
-                            <ChevronRight size={18} className="ml-1" />
-                        </Button>
-                    </div>
+                    {!isConfirmed && (
+                        <div className="pt-4 flex justify-end">
+                            <Button
+                                className="px-8 py-6 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] shadow-md shadow-indigo-100 font-bold"
+                                onClick={handleNext}
+                            >
+                                {form.booking_type === "visit" ? "Send Visit Request" : "Confirm Details"}
+                                <ChevronRight size={18} className="ml-1" />
+                            </Button>
+                        </div>
+                    )}
                 </CardContent>
             )}
         </Card>

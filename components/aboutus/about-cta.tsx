@@ -9,13 +9,13 @@ interface AboutCTAProps {
 
 export default function AboutCTA({ title, buttonText, buttonUrl }: AboutCTAProps) {
   return (
-    <section className="py-24 px-6 text-center bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+    <section className="py-24 px-6 text-center bg-gradient-to-r from-[#312E81] to-[#1E1B4B] text-white">
       <h2 className="text-4xl font-bold mb-6">
         {title || "Ready to Find Your Stay?"}
       </h2>
 
       <Button
-        className="bg-white text-blue-600 hover:bg-gray-100 rounded-xl px-8 py-3 text-lg"
+        className="bg-white text-[#312E81] hover:bg-gray-100 rounded-xl px-8 py-3 text-lg"
         asChild={!!buttonUrl}
       >
         {buttonUrl ? (

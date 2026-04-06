@@ -60,12 +60,12 @@ export default function WhyUs({ title, items }: WhyUsProps) {
   return (
     <section className="py-24 bg-[#F8FAFC] font-inter overflow-hidden relative">
       {/* Background visual elements */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#8B5CF6]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#312E81]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10 text-center">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto mb-20 lg:mb-24">
-          <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-6">
+          <div className="flex items-center justify-center gap-3 text-[#312E81] mb-6">
             <span className="text-[11px] tracking-[0.25em] font-bold uppercase">The Advantage</span>
           </div>
 
@@ -93,15 +93,15 @@ export default function WhyUs({ title, items }: WhyUsProps) {
             return (
               <div
                 key={feature.id || index}
-                className="group relative p-10 bg-white rounded-3xl border border-slate-100 hover:border-[#8B5CF6]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
+                className="group relative p-10 bg-white rounded-3xl border border-slate-100 hover:border-[#312E81]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Icon Container */}
-                <div className="mb-10 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#0F172A] group-hover:bg-[#8B5CF6] group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-sm">
+                <div className="mb-10 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#0F172A] group-hover:bg-[#312E81] group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-sm">
                   <IconComponent size={28} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#8B5CF6] mb-4 tracking-tight transition-colors">
+                <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#312E81] mb-4 tracking-tight transition-colors">
                   {feature.title}
                 </h3>
 
@@ -112,7 +112,7 @@ export default function WhyUs({ title, items }: WhyUsProps) {
 
                 {/* Decorative Visual Flair */}
                 <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-bounce" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-bounce" />
                 </div>
               </div>
             );

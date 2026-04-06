@@ -90,7 +90,7 @@ export default function Header() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="hidden md:block text-[18px] font-semibold tracking-tight text-slate-900 whitespace-nowrap">
+            <span className="hidden md:block text-[18px] font-semibold tracking-tight text-[#1E1B4B] whitespace-nowrap">
               Hostel In
             </span>
           </Link>
@@ -109,8 +109,8 @@ export default function Header() {
                 className={clsx(
                   "px-4 py-2 rounded-lg text-[14px] font-medium tracking-tight transition-all duration-200",
                   isActive
-                    ? "text-black bg-blue-100"
-                    : "text-slate-600 hover:text-black hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50"
+                    ? "text-[#1E1B4B] bg-indigo-50"
+                    : "text-slate-600 hover:text-[#1E1B4B] hover:bg-indigo-50 hover:shadow-md hover:shadow-indigo-200/50"
                 )}
               >
                 {link.name}
@@ -124,8 +124,8 @@ export default function Header() {
 
           {/* ICONS */}
           <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
-            <Moon className="w-5 h-5 cursor-pointer hover:text-black transition" strokeWidth={1.5} />
+            <Heart className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
+            <Moon className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
           </div>
 
           {/* BUTTONS */}
@@ -134,16 +134,16 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-black hover:bg-blue-100 hover:shadow-md hover:shadow-blue-200/50 transition-all duration-200"
+                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-[#1E1B4B] hover:bg-indigo-50 hover:shadow-md hover:shadow-indigo-200/50 transition-all duration-200"
                 >
-                 Login
+                  Login
                 </Link>
 
                 <Link
                   href="/register"
-                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-black bg-white border border-slate-200 hover:bg-blue-100 transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-blue-200/50"
+                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] bg-white border border-slate-200 hover:bg-indigo-50 transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-indigo-200/50"
                 >
-                 Register
+                  Register
                 </Link>
               </>
             )}

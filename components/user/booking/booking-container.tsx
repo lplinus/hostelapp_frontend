@@ -30,9 +30,9 @@ interface Props {
 
 export type Step = "details" | "payment" | "confirmation" | null;
 
-export default function BookingContainer({ 
-    hostel, 
-    initialRoomId, 
+export default function BookingContainer({
+    hostel,
+    initialRoomId,
     initialPriceMode,
     initialCheckIn,
     initialCheckOut,
@@ -61,6 +61,7 @@ export default function BookingContainer({
     const [guestOtpTimer, setGuestOtpTimer] = useState(0);
     const [isPhoneVerifiedManually, setIsPhoneVerifiedManually] = useState(false);
     const [isPaymentVerified, setIsPaymentVerified] = useState(false);
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
     const isPhoneVerified = profile?.is_phone_verified || isPhoneVerifiedManually;
 
     useEffect(() => {
@@ -127,6 +128,8 @@ export default function BookingContainer({
         return Math.ceil(dailyRate * nights * guestCount);
     }, [selectedRoom, nights, form.stay_duration, form.booking_type, form.adults]);
 
+    const [bookingStatus, setBookingStatus] = useState<"pending" | "confirmed">("pending");
+
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
     const [paymentId, setPaymentId] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<"online" | "on_arrival">("online");
@@ -138,6 +141,7 @@ export default function BookingContainer({
             // Only move to confirmation automatically for "visit" bookings
             // For "stay" bookings, we wait for Razorpay payment to complete or Pay at Property confirmation
             if (form.booking_type === "visit") {
+                setBookingStatus("confirmed");
                 setStep("confirmation");
                 toast.success("Visit request submitted successfully!");
             } else {
@@ -149,13 +153,36 @@ export default function BookingContainer({
             queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         },
         onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to create booking. Please try again.");
+            // Priority 1: Use the pre-processed error message from our APIClient's handleApiError
+            // Priority 2: Use error.response.data (Axios-style fallback if ever switched)
+            // Priority 3: Use raw error.message
+            const data = error.response?.data;
+            let msg = error.message || "An unexpected error occurred.";
+
+            if (data) {
+                if (typeof data === 'string') {
+                    msg = data;
+                } else if (data.non_field_errors) {
+                    msg = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
+                } else if (data.detail || data.error || data.message) {
+                    msg = data.detail || data.error || data.message;
+                } else {
+                    const values = Object.values(data);
+                    if (values.length > 0) {
+                        const firstVal = values[0];
+                        msg = Array.isArray(firstVal) ? firstVal[0] : String(firstVal);
+                    }
+                }
+            }
+
+            toast.error(msg, { duration: 5000 });
         }
     });
 
     const confirmPropertyPaymentMutation = useMutation({
         mutationFn: (bookingId: string) => confirmPayAtProperty(bookingId),
         onSuccess: () => {
+            setBookingStatus("confirmed");
             setStep("confirmation");
             toast.success("Booking confirmed! You can pay at the property.");
             queryClient.invalidateQueries({ queryKey: ["userBookings"] });
@@ -175,7 +202,7 @@ export default function BookingContainer({
         const hasAge = !Number.isNaN(age) && age >= 10 && age <= 100;
         const hasRoom = !!selectedRoomId;
         const hasDates = nights > 0;
-        
+
         return hasName && hasEmail && hasPhone && hasAge && hasRoom && hasDates && termsAccepted;
     }, [form, selectedRoomId, nights, termsAccepted]);
 
@@ -220,11 +247,13 @@ export default function BookingContainer({
 
         setTermsError(!termsAccepted);
         setErrors(newErrors);
-        
+
         return Object.keys(newErrors).length === 0 && termsAccepted;
     };
 
     const handleNext = () => {
+        if (bookingStatus === "confirmed") return;
+
         if (step === "details") {
             if (!validateForm()) return;
 
@@ -328,6 +357,7 @@ export default function BookingContainer({
     };
 
     const handleRazorpayPayment = async (bookingId: string) => {
+        setIsProcessingPayment(true);
         try {
             const order = await createRazorpayOrder(bookingId);
 
@@ -346,10 +376,11 @@ export default function BookingContainer({
                             signature: response.razorpay_signature
                         });
 
-                            setPaymentId(response.razorpay_payment_id);
-                            setIsPaymentVerified(true);
-                            setStep("confirmation");
-                            toast.success("Payment successful!");
+                        setPaymentId(response.razorpay_payment_id);
+                        setIsPaymentVerified(true);
+                        setBookingStatus("confirmed");
+                        setStep("confirmation");
+                        toast.success("Payment successful!");
                         queryClient.invalidateQueries({ queryKey: ["userBookings"] });
                     } catch (error) {
                         toast.error("Payment verification failed.");
@@ -374,6 +405,8 @@ export default function BookingContainer({
             } else {
                 toast.error(errorMsg);
             }
+        } finally {
+            setIsProcessingPayment(false);
         }
     };
 
@@ -392,6 +425,7 @@ export default function BookingContainer({
         });
         setConfirmedBookingId(null);
         setStep("details");
+        setBookingStatus("pending");
         setTermsAccepted(false);
         setErrors({});
         setIsPhoneVerifiedManually(false);
@@ -401,16 +435,16 @@ export default function BookingContainer({
 
 
     return (
-        <div className="max-w-5xl mx-auto py-10 px-4">
+        <div className="max-w-5xl mx-auto py-10 px-4 font-sans antialiased">
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors mb-6 group"
+                className="flex items-center gap-2 text-slate-500 hover:text-[#312E81] transition-colors mb-6 group"
             >
-                <div className="p-2 rounded-full border border-gray-200 group-hover:bg-gray-100 transition-all text-black">
+                <div className="p-2 rounded-full border border-slate-200 group-hover:bg-slate-50 transition-all text-slate-900">
                     <ArrowLeft size={18} />
                 </div>
-                <span className="font-medium">Back to Hostel</span>
+                <span className="font-semibold">Back to Hostel</span>
             </button>
 
             <div className="grid lg:grid-cols-[1fr_360px] gap-8">
@@ -431,6 +465,7 @@ export default function BookingContainer({
                         openLegalDocument={openLegalDocument}
                         handleNext={handleNext}
                         isPhoneVerified={isPhoneVerified}
+                        bookingStatus={bookingStatus}
                     />
 
                     {form.booking_type !== "visit" && (
@@ -451,6 +486,8 @@ export default function BookingContainer({
                             paymentMethod={paymentMethod}
                             setPaymentMethod={setPaymentMethod}
                             confirmPropertyPaymentMutation={confirmPropertyPaymentMutation}
+                            isProcessingPayment={isProcessingPayment}
+                            bookingStatus={bookingStatus}
                         />
                     )}
 
@@ -470,6 +507,7 @@ export default function BookingContainer({
                             isFormValid={isFormValid}
                             resetBooking={resetBooking}
                             isPaymentVerified={isPaymentVerified}
+                            bookingStatus={bookingStatus}
                         />
                     )}
                 </div>
@@ -485,6 +523,7 @@ export default function BookingContainer({
                         nights={nights}
                         totalPrice={totalPrice}
                         setStep={setStep}
+                        bookingStatus={bookingStatus}
                     />
 
                     <div className="p-4 bg-orange-50/30 rounded-2xl flex gap-3">
@@ -495,6 +534,7 @@ export default function BookingContainer({
                     </div>
                 </div>
             </div>
+
 
             <OtpVerificationModal
                 isOpen={showOtpModal}

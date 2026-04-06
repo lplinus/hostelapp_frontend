@@ -91,7 +91,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <Calendar size={14} className="text-blue-600" />
+                                            <Calendar size={14} className="text-[#312E81]" />
                                             <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Check-in</span>
                                         </div>
                                         <input
@@ -120,7 +120,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                 {/* Guests Selection */}
                                 <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200/50 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                        <div className="w-10 h-10 rounded-xl bg-indigo-100 text-[#312E81] flex items-center justify-center">
                                             <Users size={20} />
                                         </div>
                                         <div>
@@ -181,12 +181,12 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                     {/* Toggle Button */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-1.5 text-[10px] font-medium text-blue-600 uppercase tracking-widest mt-2 group"
+                        className="flex items-center gap-1.5 text-[10px] font-medium text-[#312E81] uppercase tracking-widest mt-2 group"
                     >
                         <span className="whitespace-nowrap">
                             {new Date(checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
-                        <span className="w-1 h-1 rounded-full bg-blue-300" />
+                        <span className="w-1 h-1 rounded-full bg-indigo-300" />
                         <span>{guests} Guest{guests > 1 ? 's' : ''}</span>
                         {isExpanded ? (
                             <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform ml-1" />
@@ -199,7 +199,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                 <Button
                     asChild
                     size="lg"
-                    className="bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-medium px-10 h-14 rounded-2xl transition-all active:scale-95 shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 text-[1.05rem] flex-shrink-0 border-none"
+                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium px-10 h-14 rounded-2xl transition-all active:scale-95 shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 text-[1.05rem] flex-shrink-0 border-none"
                 >
                     <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
                         Reserve

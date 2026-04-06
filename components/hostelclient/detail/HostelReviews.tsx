@@ -105,15 +105,15 @@ export default function HostelReviews({
         <div className="mb-12 pt-6 border-t border-gray-100">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div className="flex items-center gap-3">
-                    <Star size={28} className="fill-gray-900 text-gray-900" />
-                    <h2 className="text-3xl font-bold text-gray-900 flex items-baseline gap-2">
-                        {displayAvgRating.toFixed(1)} {/* <span className="text-xl text-gray-500 font-medium">· {displayReviewCount} reviews</span> */}
+                    <Star size={28} className="fill-[#1E1B4B] text-[#1E1B4B]" />
+                    <h2 className="text-3xl font-bold text-[#1E1B4B] flex items-baseline gap-2">
+                        {displayAvgRating.toFixed(1)}
                     </h2>
                 </div>
 
                 <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-slate-900 hover:bg-black text-white font-bold rounded-xl px-6 py-6 flex items-center gap-2 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+                        <Button className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold rounded-xl px-6 py-6 flex items-center gap-2 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
                             <MessageSquarePlus size={18} />
                             Write a Review
                         </Button>
@@ -131,7 +131,7 @@ export default function HostelReviews({
                                 <Input
                                     id="name"
                                     placeholder="e.g. John Doe (Optional)"
-                                    className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 py-3 font-medium bg-gray-50"
+                                    className="rounded-xl border-gray-200 focus:border-[#10B981] focus:ring-[#10B981]/20 py-3 font-medium bg-gray-50"
                                     value={reviewForm.name}
                                     onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
                                 />
@@ -172,7 +172,7 @@ export default function HostelReviews({
                                 <Textarea
                                     id="comment"
                                     placeholder="What did you love? What could be improved?"
-                                    className="rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 min-h-[120px] font-medium bg-gray-50 resize-none p-4"
+                                    className="rounded-xl border-gray-200 focus:border-[#10B981] focus:ring-[#10B981]/20 min-h-[120px] font-medium bg-gray-50 resize-none p-4"
                                     required
                                     value={reviewForm.comment}
                                     onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
@@ -181,7 +181,7 @@ export default function HostelReviews({
                             <Button
                                 type="submit"
                                 disabled={isSubmittingReview}
-                                className="w-full bg-slate-900 hover:bg-black text-white font-bold h-14 rounded-xl transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] active:scale-[0.98] text-[15px]"
+                                className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold h-14 rounded-xl transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] active:scale-[0.98] text-[15px]"
                             >
                                 {isSubmittingReview ? "Posting your review..." : "Post Review"}
                             </Button>
@@ -202,13 +202,13 @@ export default function HostelReviews({
                             className="flex flex-col gap-4 bg-white border border-gray-100 rounded-[2.5rem] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] snap-start min-w-[320px] md:min-w-[450px] flex-shrink-0 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 border-none group/card"
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100/50 flex items-center justify-center text-blue-700 font-bold text-lg shadow-sm group-hover/card:scale-105 transition-transform duration-300">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-50 to-emerald-50 border border-indigo-100/50 flex items-center justify-center text-[#312E81] font-bold text-lg shadow-sm group-hover/card:scale-105 transition-transform duration-300">
                                     {review.user_name?.charAt(0)?.toUpperCase() || "U"}
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900 text-[15px] leading-tight flex items-center gap-1.5">
+                                    <p className="font-bold text-[#1E1B4B] text-[15px] leading-tight flex items-center gap-1.5">
                                         {review.user_name || "Anonymous User"}
-                                        {review.rating >= 4 && <ShieldCheck size={14} className="text-green-500" />}
+                                        {review.rating >= 4 && <ShieldCheck size={14} className="text-[#10B981]" />}
                                     </p>
                                     <div className="flex items-center gap-2 mt-1">
                                         <StarRating rating={review.rating} size={11} />

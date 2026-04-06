@@ -40,7 +40,7 @@ export function GuestOtpModal({
                         variant="outline"
                         onClick={handleGuestOtpSend}
                         disabled={isGuestOtpVerifying || guestOtpTimer > 0}
-                        className="w-full h-11 rounded-xl border-blue-100 hover:bg-blue-50 hover:text-blue-600 transition-all font-semibold"
+                        className="w-full h-11 rounded-xl border-indigo-100 hover:bg-indigo-50 hover:text-[#312E81] transition-all font-semibold"
                     >
                         {isGuestOtpSent && guestOtpTimer > 0 ? (
                             `Resend OTP in ${guestOtpTimer}s`
@@ -73,7 +73,7 @@ export function GuestOtpModal({
                         <Button
                             onClick={handleGuestOtpVerify}
                             disabled={isGuestOtpVerifying || guestOtp.length < 6}
-                            className="flex-1 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all font-semibold"
+                            className="flex-1 h-11 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white shadow-md transition-all font-semibold"
                         >
                             {isGuestOtpVerifying ? "Verifying..." : "Verify & Proceed"}
                         </Button>

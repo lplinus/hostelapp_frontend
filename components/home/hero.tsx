@@ -216,7 +216,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
           {/* HEADLINE */}
           <h1 className="font-sans text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-white leading-[1.1] mb-6 tracking-tight">
             Find Your Perfect <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-100 to-blue-200">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-emerald-100 to-indigo-200">
               Hostel Stay
             </span>
           </h1>
@@ -238,7 +238,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                   className="flex md:hidden items-center justify-between w-full px-5 py-3 cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#1E3A8A]">
+                    <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-[#312E81]">
                       <Search size={18} strokeWidth={3} />
                     </div>
                     <div className="flex flex-col">
@@ -254,16 +254,16 @@ export default function Hero({ title, subtitle }: HeroProps) {
 
                 {/* 📍 Location */}
                 <div className="w-full md:flex-[1.8] relative flex items-center px-6 gap-3 group border-b md:border-b-0 md:border-r border-gray-100 pb-3 md:pb-0 h-full">
-                  <MapPin className="text-gray-400 group-focus-within:text-indigo-600 transition-colors shrink-0" size={18} />
+                  <MapPin className="text-gray-400 group-focus-within:text-[#10B981] transition-colors shrink-0" size={18} />
                   <div className="flex flex-col w-full">
-                    <span className="hidden md:block text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Search</span>
+                    <span className="hidden md:block text-[10px] font-bold text-[#10B981] uppercase tracking-wider mb-0.5">Search</span>
                     <input
                       type="text"
                       placeholder={`Search ${placeholder}`}
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       onFocus={() => setOpenDropdown(null)}
-                      className="w-full py-2 md:py-0 text-gray-800 text-[16px] font-bold placeholder:text-gray-400 focus:outline-none bg-transparent"
+                      className="w-full py-2 md:py-0 text-[#1E1B4B] text-[16px] font-bold placeholder:text-gray-400 focus:outline-none bg-transparent"
                     />
                   </div>
                 </div>
@@ -274,10 +274,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                   className="w-full md:flex-1 relative flex items-center px-6 gap-3 group border-b md:border-b-0 md:border-r border-gray-100 py-3 md:py-0 cursor-pointer h-full"
                   onClick={() => setOpenDropdown(openDropdown === "budget" ? null : "budget")}
                 >
-                  <IndianRupee className="text-gray-400 group-hover:text-indigo-600 shrink-0" size={16} />
+                  <IndianRupee className="text-gray-400 group-hover:text-[#10B981] transition-colors shrink-0" size={16} />
                   <div className="flex flex-col w-full overflow-hidden">
-                    <span className="hidden md:block text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Budget</span>
-                    <span className="text-gray-800 text-[16px] font-bold truncate">
+                    <span className="hidden md:block text-[10px] font-bold text-[#10B981] uppercase tracking-wider mb-0.5">Budget</span>
+                    <span className="text-[#1E1B4B] text-[16px] font-bold truncate">
                       {budget ? budgetOptions.find(o => o.value === budget)?.label : "Any Budget"}
                     </span>
                   </div>
@@ -296,7 +296,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                           <div
                             key={opt.value}
                             onClick={(e) => { e.stopPropagation(); setBudget(opt.value); setOpenDropdown(null); }}
-                            className={`px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${budget === opt.value ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50"}`}
+                            className={`px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${budget === opt.value ? "bg-indigo-50 text-[#312E81]" : "text-gray-700 hover:bg-gray-50"}`}
                           >
                             {opt.label}
                           </div>
@@ -312,10 +312,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                   className="w-full md:flex-1 relative flex items-center px-6 gap-3 group py-3 md:py-0 cursor-pointer h-full"
                   onClick={() => setOpenDropdown(openDropdown === "gender" ? null : "gender")}
                 >
-                  <Users className="text-gray-400 group-hover:text-indigo-600 shrink-0" size={16} />
+                  <Users className="text-gray-400 group-hover:text-[#10B981] transition-colors shrink-0" size={16} />
                   <div className="flex flex-col w-full overflow-hidden">
-                    <span className="hidden md:block text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Gender</span>
-                    <span className="text-gray-800 text-[16px] font-bold truncate">
+                    <span className="hidden md:block text-[10px] font-bold text-[#10B981] uppercase tracking-wider mb-0.5">Gender</span>
+                    <span className="text-[#1E1B4B] text-[16px] font-bold truncate">
                       {gender ? genderOptions.find(o => o.value === gender)?.label : "Any"}
                     </span>
                   </div>
@@ -334,7 +334,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                           <div
                             key={opt.value}
                             onClick={(e) => { e.stopPropagation(); setGender(opt.value); setOpenDropdown(null); }}
-                            className={`px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${gender === opt.value ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50"}`}
+                            className={`px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${gender === opt.value ? "bg-indigo-50 text-[#312E81]" : "text-gray-700 hover:bg-gray-50"}`}
                           >
                             {opt.label}
                           </div>
@@ -348,7 +348,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                 <div className="w-full md:w-auto mt-4 md:mt-0">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleSearch(); }}
-                    className="w-full bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-bold h-14 md:h-16 md:px-10 rounded-2xl md:rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-900/20"
+                    className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold h-14 md:h-16 md:px-10 rounded-2xl md:rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-indigo-900/20"
                   >
                     <Search size={22} strokeWidth={3} />
                     <span className="md:hidden lg:inline text-lg">Search</span>
@@ -375,7 +375,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
         }
         /* Active Link Underline */
         header nav a.active, header nav a:hover {
-          border-bottom: 2px solid #1E3A8A !important;
+          border-bottom: 2px solid #312E81 !important;
           border-radius: 0 !important;
         }
       ` }} />

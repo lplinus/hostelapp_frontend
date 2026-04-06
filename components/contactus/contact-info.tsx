@@ -48,7 +48,7 @@ export default function ContactInfo({ items }: ContactInfoProps) {
             key={item.title}
             className="p-8 rounded-3xl border shadow-sm hover:shadow-lg transition text-center"
           >
-            <item.icon className="w-10 h-10 text-blue-600 mx-auto mb-6" />
+            <item.icon className="w-10 h-10 text-[#312E81] mx-auto mb-6" />
             <h3 className="text-xl font-semibold mb-3">
               {item.title}
             </h3>

@@ -61,7 +61,7 @@ export default function HostelLocation({
                             rel="noopener noreferrer"
                             className="absolute top-6 right-6 px-5 py-3 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-xl font-bold text-[14px] flex items-center gap-2 transition-all hover:scale-105 active:scale-[0.98] border border-gray-200"
                         >
-                            <Navigation size={18} className="text-blue-600" />
+                            <Navigation size={18} className="text-[#312E81]" />
                             Get Directions
                         </a>
                     </>
@@ -81,18 +81,18 @@ export default function HostelLocation({
                         {landmarks.map((landmark) => (
                             <div
                                 key={landmark.id}
-                                className="flex items-center gap-3 py-2 px-4 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer group hover:-translate-y-0.5"
+                                className="flex items-center gap-3 py-2 px-4 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer group hover:-translate-y-0.5"
                             >
                                 {landmark.is_popular ? (
                                     <Star size={16} className="fill-amber-400 text-amber-400 group-hover:scale-110 transition-transform" />
                                 ) : (
-                                    <Building2 size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
+                                    <Building2 size={16} className="text-[#312E81] group-hover:scale-110 transition-transform" />
                                 )}
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[14px] font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                                    <span className="text-[14px] font-bold text-gray-900 group-hover:text-[#312E81] transition-colors">
                                         {landmark.name}
                                     </span>
-                                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded flex-shrink-0 font-semibold group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded flex-shrink-0 font-semibold group-hover:bg-indigo-50 group-hover:text-[#312E81] transition-colors">
                                         {landmark.distance}
                                     </span>
                                 </div>

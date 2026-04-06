@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Info, Calendar as CalendarIcon, Users } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import type { HostelDetail } from "@/types/hostel.types";
 
 interface BookingSummaryProps {
@@ -18,6 +19,7 @@ interface BookingSummaryProps {
     nights: number;
     totalPrice: number;
     setStep: (s: any) => void;
+    bookingStatus: "pending" | "confirmed";
 }
 
 export function BookingSummary({
@@ -28,8 +30,10 @@ export function BookingSummary({
     form,
     nights,
     totalPrice,
-    setStep
+    setStep,
+    bookingStatus
 }: BookingSummaryProps) {
+    const isConfirmed = bookingStatus === "confirmed";
     return (
         <Card className="border-2 border-gray-200 shadow-none overflow-hidden bg-white rounded-3xl">
             <CardHeader className="bg-transparent border-none">
@@ -52,14 +56,14 @@ export function BookingSummary({
                         )}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <Badge variant="outline" className="text-[10px] mb-1 font-bold bg-blue-50 text-blue-600 border-blue-100">
+                        <Badge variant="outline" className="text-[10px] mb-1 font-bold bg-indigo-50 text-[#312E81] border-indigo-100">
                             {form.booking_type === "visit" ? "Site Visit" : "Confirmed Booking"}
                         </Badge>
-                        <h4 className="font-bold text-gray-900 leading-tight line-clamp-2 mb-1">{hostel.name}</h4>
-                        <div className="flex items-center gap-1 text-[11px] text-gray-500">
+                        <h4 className="font-bold text-slate-900 leading-tight line-clamp-2 mb-1">{hostel.name}</h4>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500">
                             <span className="font-bold text-yellow-500">★ {hostel.rating_avg || "4.5"}</span>
                             <span>({hostel.rating_count || "0"})</span>
-                            <span className="text-gray-300">•</span>
+                            <span className="text-slate-300">•</span>
                             <span className="capitalize">{hostel.hostel_type}</span>
                         </div>
                     </div>
@@ -68,12 +72,15 @@ export function BookingSummary({
                 <div className="p-4 space-y-4">
                     {/* Room Selection in Summary */}
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Selected Room Type</Label>
-                        <Select value={selectedRoomId || ""} onValueChange={setSelectedRoomId}>
-                            <SelectTrigger className="w-full text-center h-auto py-3 px-4 pl-16 rounded-2xl border-gray-200 shadow-sm bg-white hover:bg-gray-50 transition-all focus:ring-2 focus:ring-blue-500/20 [&>span]:w-full [&>span]:text-center">
+                        <Label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Selected Room Type</Label>
+                        <Select value={selectedRoomId || ""} onValueChange={setSelectedRoomId} disabled={isConfirmed}>
+                            <SelectTrigger className={cn(
+                                "w-full text-center h-auto py-3 px-4 pl-16 rounded-2xl border-slate-200 shadow-sm bg-white hover:bg-slate-50 transition-all focus:ring-2 focus:ring-[#312E81]/20 [&>span]:w-full [&>span]:text-center",
+                                isConfirmed && "opacity-80 bg-slate-50 cursor-not-allowed"
+                            )}>
                                 <SelectValue placeholder="Select a room" />
                             </SelectTrigger>
-                            <SelectContent position="popper" className="max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-2xl border-gray-100 shadow-xl bg-white p-1">
+                            <SelectContent position="popper" className="max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-2xl border-slate-100 shadow-xl bg-white p-1">
                                 {(() => {
                                     const getSharingLevel = (s: string) => {
                                         const num = Number.parseInt(s);
@@ -100,11 +107,11 @@ export function BookingSummary({
                                         <SelectItem
                                             key={room.id}
                                             value={room.id.toString()}
-                                            className="rounded-xl focus:bg-blue-600 focus:text-white group px-3 py-2.5 mb-1 last:mb-0 transition-colors cursor-pointer"
+                                            className="rounded-xl focus:bg-[#312E81] focus:text-white group px-3 py-2.5 mb-1 last:mb-0 transition-colors cursor-pointer"
                                         >
                                             <div className="flex flex-col gap-0.5">
                                                 <span className="font-bold text-sm tracking-tight">{room.category_display}</span>
-                                                <span className="text-[11px] font-medium opacity-80 group-focus:text-blue-50 text-gray-500">
+                                                <span className="text-[11px] font-medium opacity-80 group-focus:text-indigo-50 text-slate-500">
                                                     ₹{room.base_price}/month • {room.sharing_display}
                                                 </span>
                                             </div>
@@ -146,12 +153,12 @@ export function BookingSummary({
                                         <span className="flex items-center gap-1">Service Fee <Info size={12} /></span>
                                         <span className="font-medium text-green-600 italic">Free</span>
                                     </div>
-                                    <div className="pt-2 border-t flex justify-between items-center bg-blue-50/50 -mx-4 px-4 py-3">
+                                    <div className="pt-2 border-t flex justify-between items-center bg-indigo-50/50 -mx-4 px-4 py-3">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-gray-900">Total (INR)</span>
-                                            <span className="text-[10px] text-gray-500">Incl. all taxes</span>
+                                            <span className="text-sm font-bold text-slate-900">Total (INR)</span>
+                                            <span className="text-[10px] text-slate-500">Incl. all taxes</span>
                                         </div>
-                                        <span className="text-xl font-black text-gray-900">₹{totalPrice.toLocaleString()}</span>
+                                        <span className="text-xl font-black text-[#312E81]">₹{totalPrice.toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>
