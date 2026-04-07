@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ChevronRight, Info } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Info, ArrowRight, RotateCcw, LayoutDashboard } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
@@ -44,147 +44,159 @@ export function ConfirmationStep({
 }: ConfirmationStepProps) {
     const isConfirmed = bookingStatus === "confirmed";
 
+    if (step !== "confirmation" && !isConfirmed) return null;
+
+    // Show when confirmation step is active or booking is confirmed
+    if (step !== "confirmation" && isConfirmed) return null;
+
     return (
         <Card className={cn(
-            "border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl",
-            isConfirmed && "border-green-200 shadow-lg shadow-green-50/50"
+            "border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 bg-white rounded-2xl",
+            isConfirmed && "border-[#10B981]/20 shadow-lg shadow-emerald-50/50"
         )}>
-            <CardHeader
-                className={cn(
-                    "bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all",
-                    isConfirmed && "cursor-default hover:bg-white"
-                )}
-                onClick={() => {
-                    if (isConfirmed) {
-                        setStep("confirmation");
-                        return;
-                    }
-
-                    if (step === "confirmation") {
-                        setStep(null);
-                        return;
-                    }
-
-                    if (!isFormValid) {
-                        validateForm();
-                        setStep("details");
-                        return;
-                    }
-
-                    if (!isPhoneVerified) {
-                        setStep("details");
-                        return;
-                    }
-
-                    if (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified) {
-                        setStep("payment");
-                        return;
-                    }
-
-                    setStep("confirmation");
-                }}
-            >
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                            isConfirmed ? "bg-[#10B981] text-white" : confirmedBookingId ? "bg-emerald-100 text-[#10B981]" : "bg-slate-200 text-slate-500"
-                        )}>
-                            {isConfirmed ? <CheckCircle2 size={16} /> : "3"}
-                        </div>
-                        <CardTitle className="text-xl text-slate-900 font-bold">Confirmation & QR Code</CardTitle>
+            {/* Step Header */}
+            <div className="px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3 mb-1">
+                    <div className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center",
+                        isConfirmed ? "bg-[#10B981]/10" : "bg-[#312E81]/10"
+                    )}>
+                        <CheckCircle2 size={16} className={isConfirmed ? "text-[#10B981]" : "text-[#312E81]"} />
                     </div>
-                    <ChevronRight className={cn("h-5 w-5 text-gray-900 transition-transform duration-300", (step === "confirmation" || isConfirmed) ? "rotate-90" : "")} />
+                    <div>
+                        <h2 className="text-lg font-bold text-gray-900">Booking Confirmation</h2>
+                        <p className="text-xs text-gray-500">Your booking details and QR code</p>
+                    </div>
                 </div>
-            </CardHeader>
-            {(step === "confirmation" || isConfirmed) && (
-                <CardContent className="space-y-6 pt-2 pb-8 px-6 animate-in slide-in-from-top-2 duration-300">
-                    {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified)) && !isConfirmed ? (
-                        <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            </div>
+
+            <CardContent className="space-y-5 pt-2 px-6 pb-6 animate-in fade-in slide-in-from-bottom-3 duration-400">
+                {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified)) && !isConfirmed ? (
+                    <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
+                        <div className="flex justify-center">
+                            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                <Info size={28} />
+                            </div>
+                        </div>
+                        <div className="space-y-1.5 max-w-xs mx-auto">
+                            <h4 className="font-bold text-gray-900">Previous Steps Incomplete</h4>
+                            <p className="text-xs text-gray-500 leading-relaxed">
+                                {!isFormValid
+                                    ? "Please complete guest details correctly first."
+                                    : !isPhoneVerified
+                                        ? "Please verify your mobile number first."
+                                        : "Please complete your payment to view confirmation."}
+                            </p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-xl font-bold border-gray-200 text-gray-700 hover:bg-gray-100"
+                            onClick={() => setStep(!isFormValid || !isPhoneVerified ? "details" : "payment")}
+                        >
+                            <ChevronLeft size={14} className="mr-1" />
+                            {!isFormValid || !isPhoneVerified ? "Go to Details" : "Go to Payment"}
+                        </Button>
+                    </div>
+                ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified || isConfirmed)) ? (
+                    <>
+                        {/* Success Banner */}
+                        <div className="text-center space-y-3 py-4">
                             <div className="flex justify-center">
-                                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                                    <Info size={28} />
+                                <div className="w-16 h-16 bg-gradient-to-br from-[#10B981] to-emerald-400 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-100">
+                                    <CheckCircle2 size={32} />
                                 </div>
                             </div>
-                            <div className="space-y-2 max-w-xs mx-auto">
-                                <h4 className="font-bold text-gray-900">Step Incomplete</h4>
-                                <p className="text-xs text-muted-foreground leading-relaxed">
-                                    {!isFormValid
-                                        ? "Please complete guest details correctly first."
-                                        : !isPhoneVerified
-                                            ? "Please verify your mobile number first."
-                                            : "Please complete your payment to view confirmation."}
+                            <div className="space-y-1">
+                                <h3 className="text-xl font-bold text-gray-900">Booking Confirmed!</h3>
+                                <p className="text-sm text-gray-500">
+                                    Your request has been sent to <strong className="text-gray-700">{hostelName}</strong>
                                 </p>
                             </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-blue-600 font-bold hover:bg-blue-50"
-                                onClick={() => setStep(!isFormValid || !isPhoneVerified ? "details" : "payment")}
-                            >
-                                {!isFormValid || !isPhoneVerified ? "Go to Details" : "Go to Payment"}
-                            </Button>
                         </div>
-                    ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified || isConfirmed)) ? (
-                        <>
-                            <div className="text-center space-y-4 mb-4">
-                                <div className="flex justify-center">
-                                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 shadow-sm">
-                                        <CheckCircle2 size={32} />
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <h3 className="text-2xl font-bold text-slate-900">Booking Confirmed!</h3>
-                                    <p className="text-slate-500 text-sm">
-                                        Your request has been sent to <strong>{hostelName}</strong>.
-                                    </p>
-                                </div>
-                            </div>
 
-                            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 shadow-sm">
-                                <div className="flex flex-col sm:flex-row gap-6">
-                                    <div className="flex-1 grid grid-cols-2 gap-y-3 gap-x-4 text-xs text-left text-slate-700">
-                                        <div className="text-slate-400 font-bold uppercase tracking-wider">Booking ID</div>
-                                        <div className="font-bold text-right font-mono text-[#312E81] text-sm">STN-{confirmedBookingId?.substring(0, 8).toUpperCase()}</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-wider">Guest</div>
-                                        <div className="font-semibold text-right">{form.guest_name}</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-wider">Dates</div>
-                                        <div className="font-semibold text-right">{format(form.check_in, "MMM d")} - {format(form.check_out, "MMM d")}</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-wider">Payment</div>
-                                        <div className={cn("font-bold text-right text-sm", paymentMethod === "on_arrival" ? "text-orange-600" : "text-[#10B981]")}>
+                        {/* Booking Details Card */}
+                        <div className="bg-gray-50 border border-gray-100 rounded-xl p-5">
+                            <div className="flex flex-col sm:flex-row gap-6">
+                                {/* Details Grid */}
+                                <div className="flex-1 space-y-3">
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Booking ID</span>
+                                        <span className="font-bold font-mono text-[#312E81] text-sm">STN-{confirmedBookingId?.substring(0, 8).toUpperCase()}</span>
+                                    </div>
+                                    <div className="w-full h-px bg-gray-200" />
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Guest</span>
+                                        <span className="font-semibold text-sm text-gray-900">{form.guest_name}</span>
+                                    </div>
+                                    <div className="w-full h-px bg-gray-200" />
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dates</span>
+                                        <span className="font-semibold text-sm text-gray-900">{format(form.check_in, "MMM d")} – {format(form.check_out, "MMM d")}</span>
+                                    </div>
+                                    <div className="w-full h-px bg-gray-200" />
+                                    <div className="flex items-center justify-between py-1.5">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment</span>
+                                        <span className={cn("font-bold text-sm", paymentMethod === "on_arrival" ? "text-orange-600" : "text-[#10B981]")}>
                                             {paymentMethod === "on_arrival" ? "Pay at Hostel" : "Paid Online"}
-                                        </div>
-                                        {paymentId && (
-                                            <>
-                                                <div className="text-slate-400 font-bold uppercase tracking-wider">Payment ID</div>
-                                                <div className="font-bold text-right font-mono text-[#312E81] text-[10px] break-all">{paymentId}</div>
-                                            </>
-                                        )}
+                                        </span>
                                     </div>
-                                    <div className="shrink-0 flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
-                                        <img
-                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
-                                                `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}`
-                                            )}`}
-                                            alt="Booking QR Code"
-                                            className="w-28 h-28"
-                                        />
-                                        <span className="text-[8px] text-gray-400 font-bold uppercase mt-2 tracking-widest">Scan to verify</span>
-                                    </div>
+                                    {paymentId && (
+                                        <>
+                                            <div className="w-full h-px bg-gray-200" />
+                                            <div className="flex items-center justify-between py-1.5">
+                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment ID</span>
+                                                <span className="font-bold font-mono text-[#312E81] text-[10px] break-all">{paymentId}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* QR Code */}
+                                <div className="shrink-0 flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                                    <img
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+                                            `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}`
+                                        )}`}
+                                        alt="Booking QR Code"
+                                        className="w-28 h-28"
+                                    />
+                                    <span className="text-[8px] text-gray-400 font-bold uppercase mt-2 tracking-widest">Scan to verify</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                                <Button variant="outline" className="flex-1 rounded-xl h-12 font-bold" onClick={() => router.push("/home")}>Browse Hostels</Button>
-                                <Button variant="outline" className="flex-1 rounded-xl h-12 border-indigo-200 text-[#312E81] font-bold" onClick={resetBooking}>Book Again</Button>
-                                {!isConfirmed && (
-                                    <Button className="flex-1 rounded-xl h-12 bg-[#312E81] font-bold shadow-md shadow-indigo-100" onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
-                                )}
-                            </div>
-                        </>
-                    ) : null}
-                </CardContent>
-            )}
+                        {/* Action Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                            <Button
+                                variant="outline"
+                                className="flex-1 rounded-xl h-11 font-bold border-gray-200 hover:bg-gray-50 text-gray-700"
+                                onClick={() => router.push("/home")}
+                            >
+                                Browse Hostels
+                                <ArrowRight size={14} className="ml-1.5" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="flex-1 rounded-xl h-11 border-[#312E81]/20 text-[#312E81] font-bold hover:bg-[#312E81]/5"
+                                onClick={resetBooking}
+                            >
+                                <RotateCcw size={14} className="mr-1.5" />
+                                Book Again
+                            </Button>
+                            {!isConfirmed && (
+                                <Button
+                                    className="flex-1 rounded-xl h-11 bg-[#312E81] font-bold shadow-md shadow-indigo-100 hover:bg-[#1E1B4B]"
+                                    onClick={() => router.push("/dashboard")}
+                                >
+                                    <LayoutDashboard size={14} className="mr-1.5" />
+                                    Dashboard
+                                </Button>
+                            )}
+                        </div>
+                    </>
+                ) : null}
+            </CardContent>
         </Card>
     );
 }

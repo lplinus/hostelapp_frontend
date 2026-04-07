@@ -18,6 +18,7 @@ import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { BookingSummary } from "./steps/BookingSummary";
 import { GuestOtpModal } from "./steps/GuestOtpModal";
 import { LegalDocumentModal } from "./steps/LegalDocumentModal";
+import { BookingProgressBar } from "./steps/BookingProgressBar";
 
 interface Props {
     hostel: HostelDetail;
@@ -446,6 +447,20 @@ export default function BookingContainer({
                 </div>
                 <span className="font-semibold">Back to Hostel</span>
             </button>
+
+            {/* Progress Bar */}
+            <BookingProgressBar
+                currentStep={step}
+                isPhoneVerified={isPhoneVerified}
+                isPaymentVerified={isPaymentVerified}
+                bookingStatus={bookingStatus}
+                bookingType={form.booking_type}
+                onStepClick={(clickedStep) => {
+                    if (bookingStatus === "confirmed") {
+                        setStep(clickedStep);
+                    }
+                }}
+            />
 
             <div className="grid lg:grid-cols-[1fr_360px] gap-8">
                 {/* Left Column: Form */}

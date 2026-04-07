@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, ChevronRight, CheckCircle2, Loader2 } from "lucide-react";
+import { CreditCard, ChevronLeft, CheckCircle2, Loader2, Shield, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
 import type { HostelDetail } from "@/types/hostel.types";
@@ -50,196 +50,204 @@ export function PaymentStep({
 }: PaymentStepProps) {
     const isConfirmed = bookingStatus === "confirmed";
 
+    if (step !== "payment") return null;
+
     return (
         <Card className={cn(
-            "border-2 border-gray-200 shadow-none overflow-hidden transition-all duration-300 bg-white rounded-3xl",
+            "border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 bg-white rounded-2xl",
             isConfirmed && "bg-gray-50/50 border-gray-100"
         )}>
-            <CardHeader
-                className={cn(
-                    "bg-white border-none cursor-pointer p-2 hover:bg-gray-50/80 rounded-2xl transition-all",
-                    isConfirmed && "cursor-default hover:bg-white"
-                )}
-                onClick={() => {
-                    if (isConfirmed) {
-                        setStep("payment"); // Allow viewing
-                        return;
-                    }
-                    if (step === "payment") {
-                        setStep(null);
-                        return;
-                    }
-
-                    if (!isFormValid) {
-                        validateForm();
-                        setStep("details");
-                        return;
-                    }
-
-                    if (!isPhoneVerified) {
-                        setStep("details");
-                        return;
-                    }
-
-                    setStep("payment");
-                }}
-            >
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                            isPaymentVerified || isConfirmed ? "bg-emerald-100 text-[#10B981]" : step === "payment" ? "bg-[#312E81] text-white" : "bg-slate-200 text-slate-500"
-                        )}>
-                            {isPaymentVerified || isConfirmed ? <CheckCircle2 size={16} /> : "2"}
-                        </div>
-                        <div>
-                            <CardTitle className="text-xl text-slate-900 font-bold">Add a payment method</CardTitle>
-                            {(isPaymentVerified || isConfirmed) && (
-                                <p className="text-[10px] text-[#10B981] font-bold uppercase mt-1 tracking-wider flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                                    {paymentMethod === "online" ? "Payment Successful • Paid" : "Pay at Property • Confirmed"}
-                                </p>
-                            )}
-                        </div>
+            {/* Step Header */}
+            <div className="px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3 mb-1">
+                    <div className="w-8 h-8 rounded-lg bg-[#312E81]/10 flex items-center justify-center">
+                        <CreditCard size={16} className="text-[#312E81]" />
                     </div>
-                    <ChevronRight className={cn("h-5 w-5 text-gray-900 transition-transform duration-300", step === "payment" ? "rotate-90" : "")} />
+                    <div>
+                        <h2 className="text-lg font-bold text-gray-900">Payment Method</h2>
+                        <p className="text-xs text-gray-500">Choose how you'd like to pay for your booking</p>
+                    </div>
                 </div>
-            </CardHeader>
-            {step === "payment" && (
-                <CardContent className="space-y-6 pt-4 px-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                    {(!isFormValid || !isPhoneVerified) ? (
-                        <div className="py-8 px-6 text-center space-y-4 bg-orange-50/50 rounded-2xl border border-dashed border-orange-200">
-                            <div className="flex justify-center">
-                                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
-                                    <CreditCard size={24} />
-                                </div>
+            </div>
+
+            <CardContent className="space-y-5 pt-2 px-6 pb-6 animate-in fade-in slide-in-from-bottom-3 duration-400">
+                {(!isFormValid || !isPhoneVerified) ? (
+                    <div className="py-10 px-6 text-center space-y-4 bg-orange-50/40 rounded-xl border border-dashed border-orange-200">
+                        <div className="flex justify-center">
+                            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
+                                <CreditCard size={22} />
                             </div>
-                            <div className="space-y-2">
-                                <h4 className="font-bold text-gray-900">Step Incomplete</h4>
-                                <p className="text-xs text-muted-foreground">
-                                    {!isFormValid
-                                        ? "Please complete and fix errors in guest details first."
-                                        : "Please verify your mobile number in the previous step first."}
-                                </p>
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-xl font-bold border-orange-200 text-orange-700 hover:bg-orange-100"
-                                onClick={() => setStep("details")}
-                            >
-                                Back to Step 1
-                            </Button>
                         </div>
-                    ) : (
-                        <>
-                            <div className="p-4 bg-indigo-50/30 text-[#312E81] rounded-2xl flex gap-3 text-sm">
-                                <CreditCard className="shrink-0 mt-0.5" size={18} />
-                                <div>
-                                    <p className="font-bold">Safe & Secure Payment</p>
-                                    <p className="text-slate-500">You will be redirected to Razorpay's secure checkout to complete your booking.</p>
-                                </div>
+                        <div className="space-y-1.5">
+                            <h4 className="font-bold text-gray-900">Complete Previous Step</h4>
+                            <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                                {!isFormValid
+                                    ? "Please complete and fix errors in guest details first."
+                                    : "Please verify your mobile number in the previous step first."}
+                            </p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="rounded-xl font-bold border-orange-200 text-orange-700 hover:bg-orange-100"
+                            onClick={() => setStep("details")}
+                        >
+                            <ChevronLeft size={14} className="mr-1" />
+                            Back to Guest Details
+                        </Button>
+                    </div>
+                ) : (
+                    <>
+                        {/* Security Notice */}
+                        <div className="p-4 bg-[#312E81]/5 rounded-xl flex gap-3 items-start">
+                            <Shield className="shrink-0 mt-0.5 text-[#312E81]" size={18} />
+                            <div>
+                                <p className="font-bold text-sm text-[#312E81]">Safe & Secure Payment</p>
+                                <p className="text-xs text-gray-500 mt-0.5">Your payment information is encrypted and secure. Choose your preferred method below.</p>
                             </div>
+                        </div>
 
-                            <div className="pt-4 space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Button
-                                        className="w-full rounded-2xl bg-orange-500 hover:bg-orange-600 h-16 text-sm font-bold shadow-lg shadow-orange-100 flex flex-col items-center justify-center gap-0.5 text-white border-none transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                        onClick={() => {
-                                            setPaymentMethod("online");
-                                            if (confirmedBookingId) {
-                                                handleRazorpayPayment(confirmedBookingId);
-                                            } else {
-                                                bookingMutation.mutate({
-                                                    hostel: hostel.id,
-                                                    room_type: selectedRoom!.id,
-                                                    guest_name: form.guest_name,
-                                                    guest_email: form.guest_email,
-                                                    mobile_number: form.mobile_number,
-                                                    guest_age: Number.parseInt(form.guest_age),
-                                                    adults: Number.parseInt(form.adults),
-                                                    children: Number.parseInt(form.children),
-                                                    check_in: form.check_in.toISOString().split('T')[0],
-                                                    check_out: form.check_out.toISOString().split('T')[0],
-                                                    guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-                                                    total_price: totalPrice,
-                                                    booking_type: "stay",
-                                                    stay_duration: form.stay_duration as any,
-                                                }, {
-                                                    onSuccess: (data: any) => {
-                                                        handleRazorpayPayment(data.id);
-                                                    }
-                                                });
-                                            }
-                                        }}
-                                        disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            {isProcessingPayment && paymentMethod === "online" ? (
-                                                <Loader2 size={18} className="animate-spin" />
-                                            ) : (
-                                                <CreditCard size={18} />
-                                            )}
-                                            <span>{isProcessingPayment && paymentMethod === "online" ? "Processing..." : "Pay Online"}</span>
-                                        </div>
-                                        <span className="text-[10px] opacity-80">Razorpay Secure</span>
-                                    </Button>
-
-                                    <Button
-                                        className="w-full rounded-2xl bg-gray-900 hover:bg-black h-16 text-sm font-bold shadow-lg shadow-gray-100 flex flex-col items-center justify-center gap-0.5 text-white border-none transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                        onClick={() => {
-                                            setPaymentMethod("on_arrival");
-                                            if (confirmedBookingId) {
-                                                confirmPropertyPaymentMutation.mutate(confirmedBookingId);
-                                            } else {
-                                                bookingMutation.mutate({
-                                                    hostel: hostel.id,
-                                                    room_type: selectedRoom!.id,
-                                                    guest_name: form.guest_name,
-                                                    guest_email: form.guest_email,
-                                                    mobile_number: form.mobile_number,
-                                                    guest_age: Number.parseInt(form.guest_age),
-                                                    adults: Number.parseInt(form.adults),
-                                                    children: Number.parseInt(form.children),
-                                                    check_in: form.check_in.toISOString().split('T')[0],
-                                                    check_out: form.check_out.toISOString().split('T')[0],
-                                                    guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-                                                    total_price: totalPrice,
-                                                    booking_type: "stay",
-                                                    stay_duration: form.stay_duration as any,
-                                                }, {
-                                                    onSuccess: (data: any) => {
-                                                        confirmPropertyPaymentMutation.mutate(data.id);
-                                                    }
-                                                });
-                                            }
-                                        }}
-                                        disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            {(confirmPropertyPaymentMutation.isPending || (isProcessingPayment && paymentMethod === "on_arrival")) ? (
-                                                <Loader2 size={18} className="animate-spin" />
-                                            ) : (
-                                                <CheckCircle2 size={18} />
-                                            )}
-                                            <span>{(confirmPropertyPaymentMutation.isPending || (isProcessingPayment && paymentMethod === "on_arrival")) ? "Processing..." : "Pay at Hostel"}</span>
-                                        </div>
-                                        <span className="text-[10px] opacity-80">Skip Payment Now</span>
-                                    </Button>
-                                </div>
-                                <div className="text-center space-y-1">
-                                    <p className="text-[10px] text-gray-400 font-medium">
-                                        Total Amount: <span className="text-gray-900 font-bold">₹{totalPrice.toLocaleString()}</span>
-                                    </p>
-                                    <p className="text-[9px] text-gray-400 font-medium leading-tight">
-                                        By selecting either option, you agree to our booking policies and local regulations.
-                                    </p>
-                                </div>
+                        {/* Total Amount Display */}
+                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div>
+                                <p className="text-xs text-gray-500 font-medium">Total Amount</p>
+                                <p className="text-2xl font-black text-[#312E81]">₹{totalPrice.toLocaleString()}</p>
                             </div>
-                        </>
-                    )}
-                </CardContent>
-            )}
+                            <div className="text-right">
+                                <p className="text-[10px] text-gray-400 font-medium">Including all taxes</p>
+                                <p className="text-[10px] text-[#10B981] font-bold">No hidden charges</p>
+                            </div>
+                        </div>
+
+                        {/* Payment Options */}
+                        <div className="space-y-3">
+                            {/* Pay Online */}
+                            <button
+                                className={cn(
+                                    "w-full group rounded-xl border-2 p-4 flex items-center gap-4 transition-all duration-200 text-left",
+                                    "hover:border-[#312E81]/30 hover:bg-[#312E81]/5",
+                                    (bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment) && "opacity-50 pointer-events-none",
+                                    "border-gray-200 bg-white"
+                                )}
+                                disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
+                                onClick={() => {
+                                    setPaymentMethod("online");
+                                    if (confirmedBookingId) {
+                                        handleRazorpayPayment(confirmedBookingId);
+                                    } else {
+                                        bookingMutation.mutate({
+                                            hostel: hostel.id,
+                                            room_type: selectedRoom!.id,
+                                            guest_name: form.guest_name,
+                                            guest_email: form.guest_email,
+                                            mobile_number: form.mobile_number,
+                                            guest_age: Number.parseInt(form.guest_age),
+                                            adults: Number.parseInt(form.adults),
+                                            children: Number.parseInt(form.children),
+                                            check_in: form.check_in.toISOString().split('T')[0],
+                                            check_out: form.check_out.toISOString().split('T')[0],
+                                            guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                                            total_price: totalPrice,
+                                            booking_type: "stay",
+                                            stay_duration: form.stay_duration as any,
+                                        }, {
+                                            onSuccess: (data: any) => {
+                                                handleRazorpayPayment(data.id);
+                                            }
+                                        });
+                                    }
+                                }}
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0 group-hover:bg-orange-100 transition-colors">
+                                    {isProcessingPayment && paymentMethod === "online" ? (
+                                        <Loader2 size={20} className="animate-spin text-orange-600" />
+                                    ) : (
+                                        <CreditCard size={20} className="text-orange-600" />
+                                    )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-gray-900 text-sm">
+                                        {isProcessingPayment && paymentMethod === "online" ? "Processing..." : "Pay Online"}
+                                    </p>
+                                    <p className="text-[11px] text-gray-500 mt-0.5">Razorpay Secure • UPI, Cards, Net Banking</p>
+                                </div>
+                                <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <CreditCard size={16} />
+                                </div>
+                            </button>
+
+                            {/* Pay at Hostel */}
+                            <button
+                                className={cn(
+                                    "w-full group rounded-xl border-2 p-4 flex items-center gap-4 transition-all duration-200 text-left",
+                                    "hover:border-gray-400/30 hover:bg-gray-50",
+                                    (bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment) && "opacity-50 pointer-events-none",
+                                    "border-gray-200 bg-white"
+                                )}
+                                disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
+                                onClick={() => {
+                                    setPaymentMethod("on_arrival");
+                                    if (confirmedBookingId) {
+                                        confirmPropertyPaymentMutation.mutate(confirmedBookingId);
+                                    } else {
+                                        bookingMutation.mutate({
+                                            hostel: hostel.id,
+                                            room_type: selectedRoom!.id,
+                                            guest_name: form.guest_name,
+                                            guest_email: form.guest_email,
+                                            mobile_number: form.mobile_number,
+                                            guest_age: Number.parseInt(form.guest_age),
+                                            adults: Number.parseInt(form.adults),
+                                            children: Number.parseInt(form.children),
+                                            check_in: form.check_in.toISOString().split('T')[0],
+                                            check_out: form.check_out.toISOString().split('T')[0],
+                                            guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                                            total_price: totalPrice,
+                                            booking_type: "stay",
+                                            stay_duration: form.stay_duration as any,
+                                        }, {
+                                            onSuccess: (data: any) => {
+                                                confirmPropertyPaymentMutation.mutate(data.id);
+                                            }
+                                        });
+                                    }
+                                }}
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 group-hover:bg-gray-200 transition-colors">
+                                    {(confirmPropertyPaymentMutation.isPending || (isProcessingPayment && paymentMethod === "on_arrival")) ? (
+                                        <Loader2 size={20} className="animate-spin text-gray-700" />
+                                    ) : (
+                                        <Building2 size={20} className="text-gray-700" />
+                                    )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-gray-900 text-sm">
+                                        {(confirmPropertyPaymentMutation.isPending || (isProcessingPayment && paymentMethod === "on_arrival")) ? "Processing..." : "Pay at Hostel"}
+                                    </p>
+                                    <p className="text-[11px] text-gray-500 mt-0.5">Skip payment now • Pay on arrival</p>
+                                </div>
+                                <div className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <CheckCircle2 size={16} />
+                                </div>
+                            </button>
+                        </div>
+
+                        {/* Back to details link */}
+                        <div className="flex items-center justify-between pt-2">
+                            <button
+                                onClick={() => setStep("details")}
+                                className="text-xs text-gray-500 hover:text-[#312E81] font-semibold flex items-center gap-1 transition-colors"
+                            >
+                                <ChevronLeft size={14} />
+                                Back to Details
+                            </button>
+                            <p className="text-[9px] text-gray-400 font-medium text-right max-w-[200px]">
+                                By selecting either option, you agree to our booking policies.
+                            </p>
+                        </div>
+                    </>
+                )}
+            </CardContent>
         </Card>
     );
 }

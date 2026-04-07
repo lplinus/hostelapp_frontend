@@ -50,7 +50,7 @@ export default function VendorSidebar() {
             { href: '/vendordashboard/vendors', icon: LayoutDashboard, label: 'Dashboard' },
             { href: '/vendordashboard/orders', icon: ShoppingCart, label: 'My Orders' },
             { href: '/vendordashboard/products', icon: Package, label: 'Products' },
-            { href: '/vendordashboard/vendorsubscription', icon: CreditCard, label: 'Subscription' },
+            // { href: '/vendordashboard/vendorsubscription', icon: CreditCard, label: 'Subscription' },
             { href: '/vendordashboard/vendorssettings', icon: Settings, label: 'Settings' },
             { href: '/profile', icon: UserCircle, label: 'Profile' }
         ]
@@ -58,7 +58,7 @@ export default function VendorSidebar() {
             { href: '/dashboard', icon: LayoutDashboard, label: 'Main Dashboard' },
             { href: '/vendordashboard/vendors', icon: Store, label: 'Marketplace' },
             { href: '/vendordashboard/orders', icon: ShoppingCart, label: 'My Orders' },
-            { href: '/vendordashboard/vendorsubscription', icon: CreditCard, label: 'Subscription' },
+            // { href: '/vendordashboard/vendorsubscription', icon: CreditCard, label: 'Subscription' },
             { href: '/vendordashboard/vendorssettings', icon: Settings, label: 'Settings' },
             { href: '/profile', icon: UserCircle, label: 'Profile' }
         ];
