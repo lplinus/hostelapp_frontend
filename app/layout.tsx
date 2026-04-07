@@ -40,14 +40,32 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online"
   ),
-  title: "Hostel In | Hostel Booking Platform",
-  description: "Find verified hostels across India with Hostel In.",
+  title: {
+    default: "Hostel In | Affordable Student Hostels Across India",
+    template: "%s | Hostel In",
+  },
+  description: "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, and book your perfect hostel with Hostel In.",
+  keywords: ["student hostels India", "hostel booking", "affordable hostels", "verified hostels"],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/images/favicon.webp",
     shortcut: "/images/favicon.webp",
     apple: "/images/favicon.webp",
+  },
+  alternates: {
+    canonical: "/",
   },
 };
 

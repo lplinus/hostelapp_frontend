@@ -25,7 +25,7 @@ function formatCityName(slug: string): string {
 
 async function getCityHostels(slug: string): Promise<CityHostelResponse | null> {
     if (!BASE_URL) return null;
-    
+
     // API expects the raw city slug (e.g. hyderabad)
     const citySlug = parseCitySlug(slug);
 
@@ -48,7 +48,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { seoSlug } = await params;
-    
+
     if (!isCitySEOSlug(seoSlug)) {
         return {};
     }

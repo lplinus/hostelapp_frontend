@@ -81,8 +81,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online";
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
-    // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "https://hostelin.online";
 
     const [hostels, cities, blogs, hostelTypes] = await Promise.all([
         safeFetch<HostelListItem>(`${apiUrl}/api/hostels/hostels/`),
@@ -94,16 +93,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // ✅ SEO Filter: Only index active, approved hostels with slugs
     const validHostels = hostels.filter(h => h.is_active && h.is_approved && h.slug);
 
-    // 1. Static Routes
+    // 1. Static Routes (Ensure trailing slashes)
     const staticRoutes: MetadataRoute.Sitemap = [
-        { url: baseUrl, priority: 1, lastModified: new Date(), changeFrequency: "daily" },
-        { url: `${baseUrl}/hostels`, priority: 0.9, lastModified: new Date(), changeFrequency: "daily" },
-        { url: `${baseUrl}/faqs`, priority: 0.7, lastModified: new Date(), changeFrequency: "weekly" },
-        { url: `${baseUrl}/about-us`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
-        { url: `${baseUrl}/contact-us`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
-        { url: `${baseUrl}/blog`, priority: 0.7, lastModified: new Date(), changeFrequency: "daily" },
-        { url: `${baseUrl}/pricing`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
-        { url: `${baseUrl}/PrivacyPolicy`, priority: 0.5, lastModified: new Date(), changeFrequency: "monthly" },
+        { url: `${baseUrl}/`, priority: 1, lastModified: new Date(), changeFrequency: "daily" },
+        { url: `${baseUrl}/hostels/`, priority: 0.9, lastModified: new Date(), changeFrequency: "daily" },
+        { url: `${baseUrl}/faqs/`, priority: 0.7, lastModified: new Date(), changeFrequency: "weekly" },
+        { url: `${baseUrl}/about-us/`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
+        { url: `${baseUrl}/contact-us/`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
+        { url: `${baseUrl}/blog/`, priority: 0.7, lastModified: new Date(), changeFrequency: "daily" },
+        { url: `${baseUrl}/pricing/`, priority: 0.6, lastModified: new Date(), changeFrequency: "monthly" },
+        { url: `${baseUrl}/PrivacyPolicy/`, priority: 0.5, lastModified: new Date(), changeFrequency: "monthly" },
     ];
 
     // 2. City Pages (Dynamic Aggregators)
@@ -116,7 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 3. Hostel Type Pages (Dynamic Aggregators)
     const typeRoutes: MetadataRoute.Sitemap = hostelTypes.map((type) => ({
-        url: `${baseUrl}/hostel-type/${type.hostel_type}`,
+        url: `${baseUrl}/hostel-type/${type.hostel_type}/`,
         priority: 0.8,
         lastModified: new Date(),
         changeFrequency: "weekly",
@@ -124,7 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 4. Hostel Pages (Dynamic Detail Pages)
     const hostelRoutes: MetadataRoute.Sitemap = validHostels.map((hostel) => ({
-        url: `${baseUrl}/hostels/${hostel.slug}`,
+        url: `${baseUrl}/hostels/${hostel.slug}/`,
         priority: 0.7,
         lastModified: hostel.created_at ? new Date(hostel.created_at) : new Date(),
         changeFrequency: "weekly",
@@ -132,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 5. Blog Posts (Dynamic Detail Pages)
     const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
-        url: `${baseUrl}/blog/${blog.slug}`,
+        url: `${baseUrl}/blog/${blog.slug}/`,
         priority: 0.6,
         lastModified: blog.created_at ? new Date(blog.created_at) : new Date(),
         changeFrequency: "monthly",

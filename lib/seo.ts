@@ -1,5 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
-// const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://34.80.15.95"
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://hostelin.online"
 
 export async function getSEO(page: string) {
     try {
@@ -38,12 +37,16 @@ export async function getSEO(page: string) {
     } catch (error) {
         console.error("SEO API Error:", error)
 
+        // Ensure canonical ends with /
+        const pagePath = page === "home" || page === "landing" ? "" : page;
+        const canonical = `https://hostelin.online/${pagePath}${pagePath ? "/" : ""}`;
+
         return {
             meta_title: "Affordable Student Hostels Across India | Hostel In",
             meta_description:
                 "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with Hostel In.",
             meta_keywords: "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, hostelin hostels",
-            canonical_url: "https://hostelin.online/",
+            canonical_url: canonical,
             og_title: "Affordable Student Hostels Across India | Hostel In",
             og_description: "Discover safe and verified student hostels across India. Hostel In helps students compare hostels, explore amenities and book their perfect stay near campus.",
             og_image: "https://hostelin.online/images/og-home.jpg",

@@ -4,12 +4,12 @@
 // ─────────────────────────────────────────────────────────────
 
 const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-// const API_BASE_URL =
-// process.env.NEXT_PUBLIC_API_BASE_URL || "http://34.80.15.95";
+    process.env.NEXT_PUBLIC_API_BASE_URL || "https://hostelin.online";
 
 const SITE_URL =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online";
+
+const REQUIRE_TRAILING_SLASH = true; // Match next.config.ts
 
 /**
  * Resolve an image path/URL to a fully qualified absolute URL
@@ -26,6 +26,7 @@ export function resolveImageUrl(url: string | null | undefined): string | undefi
     }
 
     // Relative path → prepend API base
+    // If it's a media URL, it should typically use the API base
     return `${API_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
@@ -33,7 +34,14 @@ export function resolveImageUrl(url: string | null | undefined): string | undefi
  * Build a canonical URL for a given path.
  */
 export function buildCanonicalUrl(path: string): string {
-    return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+    let cleanPath = path.startsWith("/") ? path : `/${path}`;
+    
+    // If trailing slash is required and the path doesn't have one (and isn't a file/root)
+    if (REQUIRE_TRAILING_SLASH && !cleanPath.endsWith("/") && !cleanPath.includes(".")) {
+        cleanPath = `${cleanPath}/`;
+    }
+
+    return `${SITE_URL}${cleanPath}`;
 }
 
 /**

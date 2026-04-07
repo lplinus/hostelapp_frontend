@@ -2,13 +2,16 @@ import { HostelDetail, CityHostel, HostelReview } from "@/types/hostel.types";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online";
 
+// Helper for trailing slash consistency in schema
+const withTrailingSlash = (url: string) => url.endsWith("/") ? url : `${url}/`;
+
 export function generateHostelSchema(data: HostelDetail) {
     const defaultImage = data.images?.[0]?.image || data.default_images?.image1 || `${baseUrl}/default-hostel.jpg`;
 
     return {
         "@context": "https://schema.org",
         "@type": "Hostel",
-        "@id": `${baseUrl}/hostels/${data.slug}#hostel`,
+        "@id": `${withTrailingSlash(`${baseUrl}/hostels/${data.slug}`)}#hostel`,
         name: data.name,
         description: data.description || data.short_description,
         image: defaultImage,
@@ -32,7 +35,7 @@ export function generateHostelSchema(data: HostelDetail) {
         } : undefined,
         priceRange: "₹₹",
         telephone: undefined, // Optionally add if available
-        url: `${baseUrl}/hostels/${data.slug}`,
+        url: withTrailingSlash(`${baseUrl}/hostels/${data.slug}`),
     };
 }
 
@@ -53,7 +56,7 @@ export function generateCityListingSchema(citySlug: string, cityName: string, ho
     return {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "@id": `${baseUrl}/city/${citySlug}#city`,
+        "@id": `${withTrailingSlash(`${baseUrl}/hostels-in-${citySlug}`)}#city`,
         name: `Hostels in ${cityName}`,
         description: `Top rated hostels available in ${cityName}`,
         itemListElement: hostels.map((hostel, index) => ({
@@ -62,7 +65,7 @@ export function generateCityListingSchema(citySlug: string, cityName: string, ho
             item: {
                 "@type": "Hostel",
                 name: hostel.name,
-                url: `${baseUrl}/hostels/${hostel.slug}`,
+                url: withTrailingSlash(`${baseUrl}/hostels/${hostel.slug}`),
                 image: hostel.thumbnail || `${baseUrl}/default-hostel.jpg`,
                 aggregateRating: hostel.rating > 0 ? {
                     "@type": "AggregateRating",
@@ -105,7 +108,7 @@ export function generateOrganizationSchema() {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "Hostel In",
-        url: baseUrl,
+        url: withTrailingSlash(baseUrl),
         logo: `${baseUrl}/logo.png`, // Use accurate URL in production
         sameAs: [
             "https://www.facebook.com/hostelin",
@@ -120,7 +123,7 @@ export function generateWebsiteSchema() {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "Hostel In",
-        url: baseUrl,
+        url: withTrailingSlash(baseUrl),
         potentialAction: {
             "@type": "SearchAction",
             target: `${baseUrl}/search?q={search_term_string}`,
