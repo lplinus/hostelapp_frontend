@@ -18,6 +18,8 @@ interface BookingSummaryProps {
     form: any;
     nights: number;
     totalPrice: number;
+    bookingFee: number;
+    finalTotalPrice: number;
     setStep: (s: any) => void;
     bookingStatus: "pending" | "confirmed";
 }
@@ -30,6 +32,8 @@ export function BookingSummary({
     form,
     nights,
     totalPrice,
+    bookingFee,
+    finalTotalPrice,
     setStep,
     bookingStatus
 }: BookingSummaryProps) {
@@ -150,15 +154,15 @@ export function BookingSummary({
                                         <span className="font-medium text-gray-900">₹{totalPrice.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
-                                        <span className="flex items-center gap-1">Service Fee <Info size={12} /></span>
-                                        <span className="font-medium text-green-600 italic">Free</span>
+                                        <span className="flex items-center gap-1">Booking Fee <Info size={12} /></span>
+                                        <span className="font-medium text-gray-900">₹{bookingFee}</span>
                                     </div>
                                     <div className="pt-2 border-t flex justify-between items-center bg-indigo-50/50 -mx-4 px-4 py-3">
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-slate-900">Total (INR)</span>
                                             <span className="text-[10px] text-slate-500">Incl. all taxes</span>
                                         </div>
-                                        <span className="text-xl font-black text-[#312E81]">₹{totalPrice.toLocaleString()}</span>
+                                        <span className="text-xl font-black text-[#312E81]">₹{finalTotalPrice.toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>

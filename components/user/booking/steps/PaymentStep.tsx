@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { CreditCard, ChevronLeft, CheckCircle2, Loader2, Shield, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
@@ -12,6 +13,8 @@ interface PaymentStepProps {
     setStep: (s: Step) => void;
     confirmedBookingId: string | null;
     totalPrice: number;
+    bookingFee: number;
+    finalTotalPrice: number;
     hostel: HostelDetail;
     selectedRoom: any;
     form: any;
@@ -33,6 +36,8 @@ export function PaymentStep({
     setStep,
     confirmedBookingId,
     totalPrice,
+    bookingFee,
+    finalTotalPrice,
     hostel,
     selectedRoom,
     form,
@@ -108,14 +113,27 @@ export function PaymentStep({
                         </div>
 
                         {/* Total Amount Display */}
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
-                            <div>
-                                <p className="text-xs text-gray-500 font-medium">Total Amount</p>
-                                <p className="text-2xl font-black text-[#312E81]">₹{totalPrice.toLocaleString()}</p>
+                        <div className="flex flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Hostel Price</p>
+                                    <p className="text-lg font-bold text-gray-900">₹{totalPrice.toLocaleString()}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Booking Fee</p>
+                                    <p className="text-lg font-bold text-[#312E81]">₹{bookingFee}</p>
+                                </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-[10px] text-gray-400 font-medium">Including all taxes</p>
-                                <p className="text-[10px] text-[#10B981] font-bold">No hidden charges</p>
+                            <Separator className="bg-gray-200/50" />
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Amount</p>
+                                    <p className="text-2xl font-black text-[#312E81]">₹{finalTotalPrice.toLocaleString()}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-gray-400 font-medium">Including all taxes</p>
+                                    <p className="text-[10px] text-[#10B981] font-bold">No hidden charges</p>
+                                </div>
                             </div>
                         </div>
 
@@ -147,9 +165,10 @@ export function PaymentStep({
                                             check_in: form.check_in.toISOString().split('T')[0],
                                             check_out: form.check_out.toISOString().split('T')[0],
                                             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-                                            total_price: totalPrice,
+                                            total_price: finalTotalPrice,
                                             booking_type: "stay",
                                             stay_duration: form.stay_duration as any,
+                                            payment_method: "online",
                                         }, {
                                             onSuccess: (data: any) => {
                                                 handleRazorpayPayment(data.id);
@@ -167,9 +186,9 @@ export function PaymentStep({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-gray-900 text-sm">
-                                        {isProcessingPayment && paymentMethod === "online" ? "Processing..." : "Pay Online"}
+                                        {isProcessingPayment && paymentMethod === "online" ? "Processing..." : `Pay Now (₹${bookingFee})`}
                                     </p>
-                                    <p className="text-[11px] text-gray-500 mt-0.5">Razorpay Secure • UPI, Cards, Net Banking</p>
+                                    <p className="text-[11px] text-gray-500 mt-0.5">Confirm booking with ₹{bookingFee} only • Pay balance at hostel</p>
                                 </div>
                                 <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <CreditCard size={16} />
@@ -202,9 +221,10 @@ export function PaymentStep({
                                             check_in: form.check_in.toISOString().split('T')[0],
                                             check_out: form.check_out.toISOString().split('T')[0],
                                             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-                                            total_price: totalPrice,
+                                            total_price: finalTotalPrice,
                                             booking_type: "stay",
                                             stay_duration: form.stay_duration as any,
+                                            payment_method: "on_arrival",
                                         }, {
                                             onSuccess: (data: any) => {
                                                 confirmPropertyPaymentMutation.mutate(data.id);
@@ -224,7 +244,7 @@ export function PaymentStep({
                                     <p className="font-bold text-gray-900 text-sm">
                                         {(confirmPropertyPaymentMutation.isPending || (isProcessingPayment && paymentMethod === "on_arrival")) ? "Processing..." : "Pay at Hostel"}
                                     </p>
-                                    <p className="text-[11px] text-gray-500 mt-0.5">Skip payment now • Pay on arrival</p>
+                                    <p className="text-[11px] text-gray-500 mt-0.5">Pay ₹{finalTotalPrice.toLocaleString()} at arrival • No payment now</p>
                                 </div>
                                 <div className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <CheckCircle2 size={16} />

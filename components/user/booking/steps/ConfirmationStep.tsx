@@ -14,6 +14,8 @@ interface ConfirmationStepProps {
     paymentId: string | null;
     form: any;
     totalPrice: number;
+    bookingFee: number;
+    finalTotalPrice: number;
     hostelName: string;
     router: any;
     isPhoneVerified: boolean;
@@ -32,6 +34,8 @@ export function ConfirmationStep({
     paymentId,
     form,
     totalPrice,
+    bookingFee,
+    finalTotalPrice,
     hostelName,
     router,
     isPhoneVerified,
@@ -91,7 +95,7 @@ export function ConfirmationStep({
                         <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-xl font-bold border-gray-200 text-gray-700 hover:bg-gray-100"
+                            className="rounded-xl font-bold border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                             onClick={() => setStep(!isFormValid || !isPhoneVerified ? "details" : "payment")}
                         >
                             <ChevronLeft size={14} className="mr-1" />
@@ -136,10 +140,20 @@ export function ConfirmationStep({
                                     </div>
                                     <div className="w-full h-px bg-gray-200" />
                                     <div className="flex items-center justify-between py-1.5">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment</span>
-                                        <span className={cn("font-bold text-sm", paymentMethod === "on_arrival" ? "text-orange-600" : "text-[#10B981]")}>
-                                            {paymentMethod === "on_arrival" ? "Pay at Hostel" : "Paid Online"}
-                                        </span>
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment Status</span>
+                                        <div className="text-right">
+                                            {paymentMethod === "online" ? (
+                                                <>
+                                                    <span className="font-bold text-sm text-[#10B981] block">₹{bookingFee} Paid Now</span>
+                                                    <span className="text-[10px] text-orange-600 font-bold">₹{totalPrice.toLocaleString()} due at property</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="font-bold text-sm text-orange-600 block">Pay at Property</span>
+                                                    <span className="text-[10px] text-slate-500 font-medium italic">₹{finalTotalPrice.toLocaleString()} pending</span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                     {paymentId && (
                                         <>
@@ -170,7 +184,7 @@ export function ConfirmationStep({
                         <div className="flex flex-col sm:flex-row gap-3 pt-2">
                             <Button
                                 variant="outline"
-                                className="flex-1 rounded-xl h-11 font-bold border-gray-200 hover:bg-gray-50 text-gray-700"
+                                className="flex-1 rounded-xl h-11 font-bold border-gray-200 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
                                 onClick={() => router.push("/home")}
                             >
                                 Browse Hostels
@@ -178,7 +192,7 @@ export function ConfirmationStep({
                             </Button>
                             <Button
                                 variant="outline"
-                                className="flex-1 rounded-xl h-11 border-[#312E81]/20 text-[#312E81] font-bold hover:bg-[#312E81]/5"
+                                className="flex-1 rounded-xl h-11 border-[#312E81]/20 text-[#312E81] font-bold hover:bg-[#312E81]/5 hover:text-[#312E81]"
                                 onClick={resetBooking}
                             >
                                 <RotateCcw size={14} className="mr-1.5" />

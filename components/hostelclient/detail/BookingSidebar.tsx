@@ -238,7 +238,7 @@ export default function BookingSidebar({
                         type="submit"
                         disabled={formSending}
                         variant="outline"
-                        className="w-full h-12 border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-xl transition-all duration-200 text-[14px] active:scale-[0.98] shadow-sm hover:border-gray-900"
+                        className="w-full h-12 border-gray-300 bg-white hover:bg-gray-50 text-gray-900 hover:text-gray-900 font-medium rounded-xl transition-all duration-200 text-[14px] active:scale-[0.98] shadow-sm hover:border-gray-900"
                     >
                         {formSending ? "Sending..." : formSent ? "✓ Request Sent!" : "Send Request"}
                     </Button>

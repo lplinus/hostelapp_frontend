@@ -130,6 +130,8 @@ export default function BookingContainer({
     }, [selectedRoom, nights, form.stay_duration, form.booking_type, form.adults]);
 
     const [bookingStatus, setBookingStatus] = useState<"pending" | "confirmed">("pending");
+    const bookingFee = 59;
+    const finalTotalPrice = useMemo(() => totalPrice > 0 ? totalPrice + bookingFee : 0, [totalPrice]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
     const [paymentId, setPaymentId] = useState<string | null>(null);
@@ -348,7 +350,7 @@ export default function BookingContainer({
             check_in: format(form.check_in, "yyyy-MM-dd"),
             check_out: format(form.check_out, "yyyy-MM-dd"),
             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-            total_price: form.booking_type === "visit" ? 0 : totalPrice,
+            total_price: form.booking_type === "visit" ? 0 : finalTotalPrice,
             booking_type: form.booking_type,
             stay_duration: form.stay_duration as any,
             payment_method: paymentMethod,
@@ -489,6 +491,8 @@ export default function BookingContainer({
                             setStep={setStep}
                             confirmedBookingId={confirmedBookingId}
                             totalPrice={totalPrice}
+                            bookingFee={bookingFee}
+                            finalTotalPrice={finalTotalPrice}
                             hostel={hostel}
                             selectedRoom={selectedRoom}
                             form={form}
@@ -515,6 +519,8 @@ export default function BookingContainer({
                             paymentMethod={paymentMethod}
                             form={form}
                             totalPrice={totalPrice}
+                            bookingFee={bookingFee}
+                            finalTotalPrice={finalTotalPrice}
                             hostelName={hostel.name}
                             router={router}
                             isPhoneVerified={isPhoneVerified}
@@ -537,6 +543,8 @@ export default function BookingContainer({
                         form={form}
                         nights={nights}
                         totalPrice={totalPrice}
+                        bookingFee={bookingFee}
+                        finalTotalPrice={finalTotalPrice}
                         setStep={setStep}
                         bookingStatus={bookingStatus}
                     />
