@@ -77,8 +77,8 @@ export const checkInBooking = async (booking_id: string): Promise<{ message: str
     return authApiClient.post<{ message: string, booking_id: string }>("/api/bookings/checkin/", { booking_id });
 };
 
-export const sendBookingOtp = async (phone: string): Promise<{ message: string }> => {
-    return apiClient.post<{ message: string }>("/api/bookings/send_otp/", { phone });
+export const sendBookingOtp = async (phone: string, hostelId?: number): Promise<{ message: string, verified?: boolean }> => {
+    return apiClient.post<{ message: string, verified?: boolean }>("/api/bookings/send_otp/", { phone, hostel_id: hostelId });
 };
 
 export const verifyBookingOtp = async (phone: string, code: string): Promise<{ message: string }> => {

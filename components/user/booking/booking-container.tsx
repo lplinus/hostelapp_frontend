@@ -254,42 +254,88 @@ export default function BookingContainer({
         return Object.keys(newErrors).length === 0 && termsAccepted;
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (bookingStatus === "confirmed") return;
 
         if (step === "details") {
             if (!validateForm()) return;
 
-            // Verification check
-            if (profile) {
-                if (!profile.is_phone_verified) {
-                    setShowOtpModal(true);
+            // 1. Initial verification check (If already verified in current session/profile)
+            if (isPhoneVerified) {
+                if (form.booking_type === "visit") {
+                    handleConfirmBooking();
                     return;
                 }
-            } else {
-                // Mobile verification for guest booking
-                setShowGuestOtp(true);
+                setStep("payment");
                 return;
             }
 
-            if (form.booking_type === "visit") {
-                handleConfirmBooking();
-                return;
-            }
+            // 2. Combined Smart Move: Checking for duplicates AND previous verification
+            try {
+                // Pass hostel.id to check for 24-hour duplicate bookings
+                const response = await sendBookingOtp(form.mobile_number, hostel.id);
+                
+                // If backend returns verified: true, it means they've booked before (Smart OTP)
+                if (response.verified) {
+                    setIsPhoneVerifiedManually(true);
+                    toast.success("Welcome back! Phone verified via previous booking.");
+                    if (form.booking_type === "visit") {
+                        handleConfirmBooking();
+                    } else {
+                        setStep("payment");
+                    }
+                    return;
+                }
 
-            setStep("payment");
+                // If not previously verified, the backend has now sent an OTP
+                if (profile) {
+                    setShowOtpModal(true);
+                } else {
+                    setShowGuestOtp(true);
+                    // Initialize the guest modal with 'OTP sent' state
+                    setIsGuestOtpSent(true);
+                    setGuestOtpTimer(60);
+                }
+            } catch (error: any) {
+                // Handle duplicate booking error or other issues
+                const errorData = error.response?.data;
+                const errorMsg = errorData?.error || error.message || "Failed to initiate verification";
+                
+                if (errorData?.is_duplicate) {
+                    toast.error(errorMsg, {
+                        duration: 6000,
+                        description: "Please check your existing bookings or try again later."
+                    });
+                } else {
+                    toast.error(errorMsg);
+                }
+            }
         }
     };
 
     const handleGuestOtpSend = async () => {
         setIsGuestOtpSent(true);
         try {
-            await sendBookingOtp(form.mobile_number);
+            const response = await sendBookingOtp(form.mobile_number, hostel.id);
+            
+            if (response.verified) {
+                setIsPhoneVerifiedManually(true);
+                toast.success("Phone verified via previous booking!");
+                setShowGuestOtp(false);
+                if (form.booking_type === "visit") {
+                    handleConfirmBooking();
+                } else {
+                    setStep("payment");
+                }
+                return;
+            }
+
             toast.success(`OTP sent to ${form.mobile_number}`);
             setGuestOtpTimer(60);
         } catch (error: any) {
             setIsGuestOtpSent(false);
-            toast.error(error.response?.data?.error || "Failed to send OTP");
+            const errorMsg = error.response?.data?.error || "Failed to send OTP";
+            toast.error(errorMsg);
         }
     };
 
