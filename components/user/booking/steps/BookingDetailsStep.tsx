@@ -28,6 +28,8 @@ interface BookingDetailsStepProps {
     handleNext: () => void;
     isPhoneVerified: boolean;
     bookingStatus: "pending" | "confirmed";
+    cooldownRemaining: number | null;
+    formatCooldown: (s: number) => string;
 }
 
 export function BookingDetailsStep({
@@ -45,7 +47,9 @@ export function BookingDetailsStep({
     openLegalDocument,
     handleNext,
     isPhoneVerified,
-    bookingStatus
+    bookingStatus,
+    cooldownRemaining,
+    formatCooldown
 }: BookingDetailsStepProps) {
     const isConfirmed = bookingStatus === "confirmed";
 
@@ -338,6 +342,39 @@ export function BookingDetailsStep({
                         </Select>
                     </div>
                 )}
+                {/* Confirmation Box */}
+                <div className="space-y-4 pt-1">
+                    <div className="flex items-start gap-3 p-3 rounded-xl bg-[#312E81]/5 border border-[#312E81]/10">
+                        <input
+                            type="checkbox"
+                            id="confirm_booking"
+                            disabled={isConfirmed}
+                            checked={form.confirm_booking}
+                            onChange={(e) => {
+                                setForm({ ...form, confirm_booking: e.target.checked });
+                                if (errors.confirm_booking) setErrors(prev => ({ ...prev, confirm_booking: "" }));
+                            }}
+                            className={cn(
+                                "mt-1 w-4 h-4 rounded border-gray-300 text-[#312E81] focus:ring-[#312E81] accent-[#312E81]",
+                                isConfirmed && "cursor-not-allowed opacity-50",
+                                errors.confirm_booking && "border-red-500 ring-2 ring-red-100"
+                            )}
+                        />
+                        <div className="space-y-1">
+                            <Label htmlFor="confirm_booking" className="text-sm font-bold text-[#312E81] cursor-pointer">
+                                Confirm this booking
+                            </Label>
+                            <p className="text-[11px] text-[#312E81]/80 font-medium leading-tight">
+                                By confirming, you acknowledge that you cannot book any other hostel for the next 24 hours.
+                            </p>
+                            {errors.confirm_booking && (
+                                <p className="text-[11px] text-red-500 font-bold mt-1 animate-pulse">
+                                    {errors.confirm_booking}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
 
                 <Separator className="bg-gray-100" />
 
@@ -371,15 +408,27 @@ export function BookingDetailsStep({
 
                 {/* Continue Button */}
                 {!isConfirmed && (
-                    <div className="pt-2 flex justify-end">
-                        <Button
-                            className="px-8 h-12 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] shadow-lg shadow-indigo-100 font-bold text-sm transition-all hover:shadow-xl hover:shadow-indigo-100 active:scale-[0.98]"
-                            onClick={handleNext}
-                        >
-                            {form.booking_type === "visit" ? "Send Visit Request" : "Continue to Payment"}
-                            <ChevronRight size={16} className="ml-1" />
-                        </Button>
-                    </div>
+                    <Button
+                        onClick={handleNext}
+                        disabled={cooldownRemaining !== null && cooldownRemaining > 0}
+                        className={cn(
+                            "w-full h-14 rounded-xl text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl active:scale-[0.98]",
+                            cooldownRemaining !== null && cooldownRemaining > 0
+                                ? "bg-gray-400 cursor-not-allowed text-white"
+                                : "bg-[#312E81] hover:bg-[#252361] text-white"
+                        )}
+                    >
+                        {cooldownRemaining !== null && cooldownRemaining > 0 ? (
+                            <div className="flex items-center gap-2">
+                                <span>Cooldown: {formatCooldown(cooldownRemaining)}</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <span>{form.booking_type === "visit" ? "Send Visit Request" : "Continue to Payment"}</span>
+                                <ChevronRight className="w-5 h-5" />
+                            </div>
+                        )}
+                    </Button>
                 )}
             </CardContent>
         </Card>

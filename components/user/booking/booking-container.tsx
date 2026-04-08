@@ -90,9 +90,12 @@ export default function BookingContainer({
         check_out: initialCheckOut ? parseISO(initialCheckOut) : (initialPriceMode === "monthly" ? addMonths(new Date(), 1) : addDays(new Date(), 1)),
         booking_type: "stay" as "stay" | "visit",
         stay_duration: initialPriceMode === "monthly" ? "1_month" : "none",
+        confirm_booking: false,
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [cooldownRemaining, setCooldownRemaining] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const selectedRoom = useMemo(() =>
         hostel.room_types?.find(r => r.id.toString() === selectedRoomId),
@@ -134,6 +137,24 @@ export default function BookingContainer({
     const finalTotalPrice = useMemo(() => totalPrice > 0 ? totalPrice + bookingFee : 0, [totalPrice]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
+
+    // Cooldown Timer Effect
+    useEffect(() => {
+        if (cooldownRemaining === null || cooldownRemaining <= 0) return;
+
+        const timer = setInterval(() => {
+            setCooldownRemaining((prev) => (prev !== null && prev > 0 ? prev - 1 : 0));
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [cooldownRemaining]);
+
+    const formatCooldown = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
     const [paymentId, setPaymentId] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<"online" | "on_arrival">("online");
 
@@ -248,6 +269,10 @@ export default function BookingContainer({
             newErrors.dates = "Check-out date must be after check-in date.";
         }
 
+        if (!form.confirm_booking) {
+            newErrors.confirm_booking = "Please confirm this booking to proceed.";
+        }
+
         setTermsError(!termsAccepted);
         setErrors(newErrors);
 
@@ -274,7 +299,7 @@ export default function BookingContainer({
             try {
                 // Pass hostel.id to check for 24-hour duplicate bookings
                 const response = await sendBookingOtp(form.mobile_number, hostel.id);
-                
+
                 // If backend returns verified: true, it means they've booked before (Smart OTP)
                 if (response.verified) {
                     setIsPhoneVerifiedManually(true);
@@ -297,18 +322,29 @@ export default function BookingContainer({
                     setGuestOtpTimer(60);
                 }
             } catch (error: any) {
-                // Handle duplicate booking error or other issues
                 const errorData = error.response?.data;
-                const errorMsg = errorData?.error || error.message || "Failed to initiate verification";
+                const backendMsg = errorData?.error || errorData?.message;
                 
-                if (errorData?.is_duplicate) {
-                    toast.error(errorMsg, {
-                        duration: 6000,
-                        description: "Please check your existing bookings or try again later."
+                if (errorData?.is_cooldown) {
+                    setCooldownRemaining(errorData.remaining_seconds);
+                    toast.error(backendMsg || `Cooldown active. Try again in ${formatCooldown(errorData.remaining_seconds)}`, {
+                        duration: 5000,
+                        icon: "⏳",
                     });
-                } else {
-                    toast.error(errorMsg);
+                    return;
                 }
+
+                if (errorData?.is_duplicate) {
+                    toast.error(backendMsg || "Duplicate booking detected.", {
+                        duration: 6000,
+                        icon: "🚫",
+                    });
+                    return;
+                }
+
+                toast.error(backendMsg || error.message || "Failed to initiate verification");
+            } finally {
+                setIsSubmitting(false);
             }
         }
     };
@@ -321,21 +357,25 @@ export default function BookingContainer({
             if (response.verified) {
                 setIsPhoneVerifiedManually(true);
                 toast.success("Phone verified via previous booking!");
-                setShowGuestOtp(false);
-                if (form.booking_type === "visit") {
-                    handleConfirmBooking();
-                } else {
-                    setStep("payment");
-                }
+                setStep("payment");
                 return;
             }
 
-            toast.success(`OTP sent to ${form.mobile_number}`);
+            toast.success("New verification code sent!");
+            setErrors({});
             setGuestOtpTimer(60);
         } catch (error: any) {
+            const errorData = error.response?.data;
+            const backendMsg = errorData?.error || errorData?.message;
+
+            if (errorData?.is_cooldown) {
+                setCooldownRemaining(errorData.remaining_seconds);
+                toast.error(backendMsg || `Cooldown active: ${formatCooldown(errorData.remaining_seconds)} remaining`);
+            } else {
+                toast.error(backendMsg || "Failed to resend code");
+            }
+        } finally {
             setIsGuestOtpSent(false);
-            const errorMsg = error.response?.data?.error || "Failed to send OTP";
-            toast.error(errorMsg);
         }
     };
 
@@ -471,8 +511,10 @@ export default function BookingContainer({
             check_out: addDays(new Date(), 1),
             booking_type: "stay",
             stay_duration: "none",
+            confirm_booking: false,
         });
         setConfirmedBookingId(null);
+        setCooldownRemaining(null);
         setStep("details");
         setBookingStatus("pending");
         setTermsAccepted(false);
@@ -529,6 +571,8 @@ export default function BookingContainer({
                         handleNext={handleNext}
                         isPhoneVerified={isPhoneVerified}
                         bookingStatus={bookingStatus}
+                        cooldownRemaining={cooldownRemaining}
+                        formatCooldown={formatCooldown}
                     />
 
                     {form.booking_type !== "visit" && (
