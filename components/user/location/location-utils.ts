@@ -74,3 +74,40 @@ export const reverseGeocode = async (lat: number, lon: number): Promise<string> 
         throw error;
     }
 };
+
+/**
+ * Forward geocode: converts an address string into coordinates.
+ * Calls our backend which proxies Nominatim server-side (avoids CORS).
+ * Returns multiple suggestions for the user to choose from.
+ */
+export interface GeocodeSuggestion {
+    lat: number;
+    lng: number;
+    displayName: string;
+}
+
+export const forwardGeocode = async (
+    address: string
+): Promise<GeocodeSuggestion[]> => {
+    try {
+        const response = await fetch(
+            `/api/locations/geocode/?address=${encodeURIComponent(address)}&limit=5`
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || "Forward geocoding request failed");
+        }
+
+        const data = await response.json();
+
+        return (data.results || []).map((r: { lat: number; lng: number; display_name: string }) => ({
+            lat: r.lat,
+            lng: r.lng,
+            displayName: r.display_name || address,
+        }));
+    } catch (error) {
+        console.error("Forward geocoding error:", error);
+        throw error;
+    }
+};

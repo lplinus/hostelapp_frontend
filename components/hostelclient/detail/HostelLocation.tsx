@@ -72,6 +72,23 @@ export default function HostelLocation({
                 )}
             </div>
 
+            {address && (
+                <div className="flex items-start gap-3.5 p-5 rounded-2xl bg-gray-50 border border-gray-100 mb-8">
+                    <div className="mt-0.5 p-2 bg-white rounded-xl shadow-sm border border-gray-100 flex-shrink-0">
+                        <MapPin size={20} className="text-[#312E81]" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Address</p>
+                        <p className="text-[15px] font-semibold text-gray-800 leading-relaxed break-words">
+                            {address}
+                        </p>
+                        {cityName && (
+                            <p className="text-sm text-gray-500 mt-1 font-medium">{cityName}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+
             {landmarks && landmarks.length > 0 && (
                 <div>
                     <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">
