@@ -156,6 +156,10 @@ export default function HostelManagement() {
             toast.success("Images uploaded successfully!");
         },
         onError: (error: any) => {
+            if (error?.status === 413 || error?.response?.status === 413) {
+                toast.error("Total upload size too large. Please upload fewer images at once or reduce image resolution.");
+                return;
+            }
             const message = error.errors ? Object.values(error.errors).flat().join(", ") : error.message;
             toast.error(message || "Failed to upload images.");
         }
@@ -169,6 +173,10 @@ export default function HostelManagement() {
             toast.success("Images updated successfully!");
         },
         onError: (error: any) => {
+            if (error?.status === 413 || error?.response?.status === 413) {
+                toast.error("Total upload size too large. Please upload fewer images at once or reduce image resolution.");
+                return;
+            }
             const message = error.errors ? Object.values(error.errors).flat().join(", ") : error.message;
             toast.error(message || "Failed to update images.");
         }
