@@ -261,6 +261,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                     className="w-full h-11 rounded-xl border-gray-200 bg-gray-50/50 px-4 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
                                     required
                                 >
+                                    <option value="0">Private Room</option>
                                     <option value="1">Single Occupancy</option>
                                     <option value="2">Double Occupancy</option>
                                     <option value="3">Triple Occupancy</option>

@@ -159,6 +159,7 @@ function FiltersContent({ isMobile = false }: FiltersContentProps) {
            onValueChange={setSharing} 
            options={[
               {value: "All Sharing", label: "All Sharing"},
+              {value: "0", label: "Private Room"},
               {value: "1", label: "Single Sharing"},
               {value: "2", label: "Double Sharing"},
               {value: "3", label: "Triple Sharing"}
