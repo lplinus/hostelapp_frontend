@@ -80,11 +80,11 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode }: HostelRoom
                                         {!room.is_available && (
                                             <span className="bg-red-50 text-red-500 font-bold px-2 py-0.5 rounded text-[10px] border border-red-200">Sold Out</span>
                                         )}
-                                        {room.is_available && (
+                                        {/* {room.is_available && (
                                             <span className="bg-emerald-50 text-[#10B981] font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-200">
                                                 {room.available_beds} Beds Left
                                             </span>
-                                        )}
+                                        )} */}
                                     </div>
                                     <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 mt-2">
                                         {room.room_category === "AC" ? (

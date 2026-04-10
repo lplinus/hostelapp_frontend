@@ -1,4 +1,8 @@
-import { MapPin, Star, Building2, Navigation } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { MapPin, Star, Building2, Navigation, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 interface Landmark {
     id: number;
@@ -24,6 +28,15 @@ export default function HostelLocation({
     longitude,
     landmarks,
 }: HostelLocationProps) {
+    const [copied, setCopied] = useState(false);
+    
+    const handleCopy = () => {
+        const fullAddress = `${address}${cityName ? `, ${cityName} ` : ""}`;
+        navigator.clipboard.writeText(fullAddress);
+        toast.success("Address copied to clipboard!");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
     const lat = typeof latitude === 'string' ? Number.parseFloat(latitude) : latitude;
     const lng = typeof longitude === 'string' ? Number.parseFloat(longitude) : longitude;
 
@@ -40,7 +53,7 @@ export default function HostelLocation({
                 Where you'll be
             </h2>
 
-            <div className="relative group rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 h-[380px] w-full mb-8">
+            <div className="relative group rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 h-[280px] w-full mb-8">
                 {mapSrc ? (
                     <>
                         <iframe
@@ -73,18 +86,24 @@ export default function HostelLocation({
             </div>
 
             {address && (
-                <div className="flex items-start gap-3.5 p-5 rounded-2xl bg-gray-50 border border-gray-100 mb-8">
-                    <div className="mt-0.5 p-2 bg-white rounded-xl shadow-sm border border-gray-100 flex-shrink-0">
+                <div 
+                    className="flex items-start gap-4 p-5 rounded-[1.5rem] bg-gray-50 border border-gray-100 mb-8 cursor-pointer group/address hover:border-indigo-100 transition-colors"
+                    onClick={handleCopy}
+                >
+                    <div className="mt-0.5 p-2 bg-white rounded-xl shadow-sm border border-gray-100 flex-shrink-0 group-hover/address:border-indigo-200 transition-colors">
                         <MapPin size={20} className="text-[#312E81]" />
                     </div>
-                    <div className="min-w-0">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Address</p>
+                    <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Location Details</p>
                         <p className="text-[15px] font-semibold text-gray-800 leading-relaxed break-words">
                             {address}
                         </p>
                         {cityName && (
-                            <p className="text-sm text-gray-500 mt-1 font-medium">{cityName}</p>
+                            <p className="text-sm text-gray-500 mt-0.5 font-medium">{cityName}</p>
                         )}
+                    </div>
+                    <div className="flex-shrink-0 self-center p-2.5 rounded-xl bg-white border border-gray-100 text-gray-400 group-hover/address:text-[#312E81] group-hover/address:border-indigo-200 transition-all">
+                        {copied ? <Check size={18} className="text-[#10B981]" /> : <Copy size={18} />}
                     </div>
                 </div>
             )}
