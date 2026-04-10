@@ -64,222 +64,240 @@ export default function HostelCard({
 
   if (layout === "grid") {
     return (
-      <div className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-[#312E81]/5 transition-all duration-500 hover:-translate-y-1 border border-slate-200/60 flex flex-col h-full">
-        {/* IMAGE BOX */}
-        <Link href={`/hostels/${slug}`} className="relative block h-56 overflow-hidden shrink-0">
+      <div className="group bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 border border-slate-200/80 hover:border-slate-300/80 flex flex-col h-full"
+        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.03)' }}
+        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(49,46,129,0.08), 0 2px 8px rgba(0,0,0,0.04)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.03)'; }}
+      >
+        {/* IMAGE */}
+        <Link href={`/hostels/${slug}`} className="relative block aspect-[4/3] overflow-hidden shrink-0">
           {image ? (
             <Image
               src={image}
               alt={name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               unoptimized={isExternalImage(image)}
             />
           ) : (
-            <div className="w-full h-full bg-[#F8FAFC] flex items-center justify-center">
-              <Building2 className="w-12 h-12 text-slate-200" />
+            <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+              <Building2 className="w-10 h-10 text-slate-200" />
             </div>
           )}
 
-          {/* BADGES */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
+          {/* Soft gradient overlay at bottom for text readability */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+
+          {/* Top-left badges */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5">
             {isVerified && (
-              <div className="bg-white/95 backdrop-blur-md text-[#10B981] text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1.5 border border-[#10B981]/10">
+              <div className="bg-white/95 backdrop-blur-sm text-[#10B981] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
                 <CheckCircle className="w-3 h-3" />
                 Verified
               </div>
             )}
             {isFeatured && (
-              <div className="bg-[#312E81]/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm border border-white/10">
+              <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
                 Popular
               </div>
             )}
           </div>
 
+          {/* Wishlist */}
           <button
-            className="absolute top-4 right-4 bg-white/95 backdrop-blur-md hover:bg-[#312E81] text-[#312E81] hover:text-white rounded-full p-2.5 shadow-sm transition-all duration-300 group-hover:scale-110"
+            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm hover:bg-white text-slate-400 hover:text-red-500 rounded-full p-2 shadow-sm transition-all duration-300 hover:scale-110"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
           >
             <Heart className="w-4 h-4" />
           </button>
+
+          {/* Discount badge bottom-left */}
+          {isDiscounted && discountPercentage && (
+            <div className="absolute bottom-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wide">
+              {discountPercentage}% OFF
+            </div>
+          )}
         </Link>
 
         {/* CONTENT */}
-        <div className="p-6 flex flex-col flex-1">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-1.5 bg-[#F0FDF4] text-[#059669] text-[10px] font-bold px-3 py-1.5 rounded-full border border-[#DCFCE7]/50 shadow-[0_2px_10px_rgba(16,185,129,0.05)] uppercase tracking-tight">
-              <Building2 className="w-3 h-3 transition-transform group-hover:scale-110" />
+        <div className="p-5 flex flex-col flex-1">
+          {/* Gender + Rating row */}
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="bg-[#F0FDF4] text-[#059669] text-[10px] font-bold px-2.5 py-1 rounded-md border border-[#DCFCE7] uppercase tracking-wide flex items-center gap-1">
+              <div className="w-1 h-1 rounded-full bg-[#059669]" />
               {gender.replace('_', ' ')}
             </div>
-            {isDiscounted && discountPercentage && (
-              <div className="bg-red-50 text-red-600 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase border border-red-100/50">
-                {discountPercentage}% OFF
+            <div className="flex items-center gap-1.5">
+              <div className="w-8 h-8 bg-[#312E81] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm transition-colors duration-300 group-hover:bg-[#10B981]">
+                {rating.toFixed(1)}
               </div>
-            )}
+            </div>
           </div>
 
-          <Link href={`/hostels/${slug}`} className="block mb-2 group/title">
-            <h2 className="text-xl font-bold text-[#312E81] leading-tight group-hover/title:text-[#10B981] transition-colors">
+          {/* Title */}
+          <Link href={`/hostels/${slug}`} className="block mb-1.5 group/title">
+            <h2 className="text-lg font-bold text-[#312E81] leading-snug group-hover/title:text-[#10B981] transition-colors line-clamp-2">
               {name}
             </h2>
           </Link>
 
-          <div className="flex items-center gap-1.5 text-sm text-[#64748B] mb-6 line-clamp-1">
-            <MapPin className="w-4 h-4 shrink-0" />
-            {location}
+          {/* Location */}
+          <div className="flex items-center gap-1.5 text-[13px] text-[#64748B] mb-auto pb-4 line-clamp-1">
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
+            <span className="truncate">{location}</span>
           </div>
 
-          <div className="mt-auto space-y-5">
-            <div className="flex items-center justify-between">
+          {/* Price + CTA */}
+          <div className="border-t border-slate-100 pt-4">
+            <div className="flex items-end justify-between">
               <div className="flex flex-col">
                 {isDiscounted && originalPrice && (
-                  <span className="text-xs text-slate-400 line-through mb-0.5">₹{originalPrice.toLocaleString()}</span>
+                  <span className="text-xs text-slate-400 line-through leading-none mb-1">₹{originalPrice.toLocaleString()}</span>
                 )}
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-[#312E81]">₹{price.toLocaleString()}</span>
-                  <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">/ Mo</span>
+                  <span className="text-xl font-extrabold text-[#312E81]">₹{price.toLocaleString()}</span>
+                  <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">/ mo</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col items-end">
-                  {/* <span className="text-[11px] font-bold text-[#312E81] leading-none mb-0.5">{getRatingText(rating)}</span> */}
-                  {/* <span className="text-[10px] text-[#64748B] leading-none font-bold italic tracking-tight">({reviewsCount || 0}) Reviews</span> */}
-                </div>
-                <div className="w-10 h-10 bg-[#312E81] text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-sm group-hover:bg-[#10B981] transition-colors">
-                  {rating.toFixed(1)}
-                </div>
-              </div>
+              <Link
+                href={`/hostels/${slug}`}
+                className="bg-[#312E81] hover:bg-[#10B981] text-white px-5 py-2.5 rounded-xl font-bold transition-all text-[13px] shadow-md hover:shadow-lg active:scale-95"
+              >
+                View
+              </Link>
             </div>
-
-            <Link
-              href={`/hostels/${slug}`}
-              className="w-full bg-[#312E81] hover:bg-[#10B981] text-white py-4 rounded-2xl font-bold transition-all shadow-xl shadow-[#312E81]/10 hover:shadow-[#10B981]/20 text-center text-[15px] group-hover:scale-[1.02] active:scale-95 block"
-            >
-              View Property
-            </Link>
           </div>
         </div>
       </div>
     );
   }
 
-  // LIST LAYOUT
+  // ──────────────────── LIST LAYOUT ────────────────────
   return (
-    <div className="group bg-white rounded-[2rem] p-4 sm:p-5 flex flex-col md:flex-row gap-6 md:gap-8 items-stretch shadow-sm hover:shadow-2xl hover:shadow-[#312E81]/5 transition-all duration-500 border border-slate-200/60 w-full">
+    <Link
+      href={`/hostels/${slug}`}
+      className="group block bg-white rounded-2xl overflow-hidden transition-all duration-400 border border-slate-200/80 hover:border-slate-300/80 w-full"
+      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.03)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(49,46,129,0.08), 0 2px 8px rgba(0,0,0,0.04)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.03)'; }}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-stretch min-h-[280px]">
+        {/* IMAGE SECTION */}
+        <div className="relative w-full sm:w-[280px] md:w-[300px] aspect-[4/3] sm:aspect-auto shrink-0 overflow-hidden">
+          {image ? (
+            <Image
+              src={image}
+              alt={name}
+              fill
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              unoptimized={isExternalImage(image)}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+              <Building2 className="w-12 h-12 text-slate-200" />
+            </div>
+          )}
 
-      {/* LEFT SECTION (IMAGE) */}
-      <Link href={`/hostels/${slug}`} className="relative w-full md:w-72 h-52 md:h-auto rounded-[1.5rem] overflow-hidden shrink-0 shadow-inner group/img block">
-        {image ? (
-          <Image
-            src={image}
-            alt={name}
-            fill
-            className="object-cover transition-transform duration-700 group-hover/img:scale-110"
-            unoptimized={isExternalImage(image)}
-          />
-        ) : (
-          <div className="w-full h-full bg-[#F8FAFC] flex items-center justify-center font-bold">
-            <Building2 className="w-14 h-14 text-slate-200" />
+          {/* Badges on image */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+            {isVerified && (
+              <div className="bg-white/95 backdrop-blur-sm text-[#10B981] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                <CheckCircle className="w-3 h-3" />
+                Verified
+              </div>
+            )}
+            {isFeatured && (
+              <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+                Hostel Hub Choice
+              </div>
+            )}
           </div>
-        )}
 
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {isVerified && (
-            <div className="bg-white/95 backdrop-blur-md text-[#10B981] text-[10px] font-bold px-3 py-1.5 rounded-full uppercase border border-[#10B981]/10 shadow-sm flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5" />
-              Verified
+          {/* Wishlist button */}
+          <button
+            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm hover:bg-white text-slate-400 hover:text-red-500 rounded-full p-2 shadow-sm transition-all duration-300 hover:scale-110 z-10"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <Heart className="w-4 h-4" />
+          </button>
+
+          {/* Discount tag on image */}
+          {isDiscounted && discountPercentage && (
+            <div className="absolute bottom-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wide">
+              {discountPercentage}% OFF
             </div>
           )}
         </div>
 
-        <button
-          className="absolute top-4 right-4 bg-white/95 backdrop-blur-md hover:bg-[#312E81] text-[#312E81] hover:text-white rounded-full p-2.5 shadow-sm transition-all duration-300 hover:scale-110 z-10"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-        >
-          <Heart className="w-4 h-4" />
-        </button>
-      </Link>
-
-      {/* RIGHT SIDE CONTAINER */}
-      <div className="flex-1 flex flex-col justify-between py-2">
-
-        <div>
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#F0FDF4] text-[#059669] text-[10px] font-bold px-4 py-2 rounded-full border border-[#DCFCE7]/50 shadow-[0_2px_10px_rgba(16,185,129,0.05)] uppercase tracking-wide flex items-center gap-1.5">
-                  <div className="w-1 h-1 rounded-full bg-[#059669]" />
-                  {gender.replace('_', ' ')}
-                </div>
-                {isFeatured && (
-                  <div className="bg-[#312E81] text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase border border-slate-100">
-                    Hostel Hub Choice
-                  </div>
-                )}
-              </div>
-
-              <Link href={`/hostels/${slug}`} className="block group/title">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#312E81] leading-tight group-hover/title:text-[#10B981] transition-colors">
-                  {name}
-                </h2>
-              </Link>
-
-              <div className="flex items-center gap-2 text-sm text-[#64748B] font-medium">
-                <MapPin className="w-4 h-4 text-[#10B981]" />
-                {location}
+        {/* CONTENT SECTION */}
+        <div className="flex-1 flex flex-col p-5 sm:py-4 sm:px-5 md:px-6 min-w-0">
+          {/* Top row: Type badge + Rating */}
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="bg-[#F0FDF4] text-[#059669] text-[10px] font-bold px-2.5 py-1 rounded-md border border-[#DCFCE7] uppercase tracking-wide flex items-center gap-1">
+                <div className="w-1 h-1 rounded-full bg-[#059669]" />
+                {gender.replace('_', ' ')}
               </div>
             </div>
 
-            <div className="flex items-center gap-3 bg-[#F8FAFC] p-3 rounded-2xl border border-slate-50 self-start">
-              <div className="w-12 h-12 bg-[#312E81] text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
+            {/* Rating badge */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-col items-end">
+                <span className="text-[11px] font-bold text-[#312E81] leading-none">{getRatingText(rating)}</span>
+              </div>
+              <div className="w-10 h-10 bg-[#312E81] text-white rounded-lg flex items-center justify-center font-bold text-sm transition-colors duration-300 group-hover:bg-[#10B981]">
                 {rating.toFixed(1)}
               </div>
-              <div className="flex flex-col">
-                {/* <span className="text-[13px] font-bold text-[#0F172A] leading-tight">
-                  {getRatingText(rating)}
-                </span> */}
-                {/* <span className="text-[12px] font-black text-[#64748B] tracking-tight">
-                  ({reviewsCount || 0}) Reviews
-                </span> */}
-              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-8">
-            {features.map((feature) => (
-              <span key={feature} className="text-[11px] font-bold text-[#64748B] bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
-                {feature}
-              </span>
-            ))}
-          </div>
-        </div>
+          {/* Title */}
+          <h2 className="text-xl md:text-[22px] font-bold text-[#312E81] leading-snug group-hover:text-[#10B981] transition-colors mb-1.5 line-clamp-1">
+            {name}
+          </h2>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-50 pt-6 overflow-hidden">
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-[0.1em] mb-1.5">Price starts from</span>
-            <div className="flex items-center flex-wrap gap-2">
-              <span className="text-2xl font-bold text-[#312E81]">₹{price.toLocaleString()}</span>
-              {isDiscounted && originalPrice && (
-                <div className="flex items-center gap-1.5 min-w-0">
+          {/* Location */}
+          <div className="flex items-center gap-1.5 text-[13px] text-[#64748B] font-medium mb-3">
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
+            <span className="truncate">{location}</span>
+          </div>
+
+          {/* Features row */}
+          {features.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {features.map((feature) => (
+                <span key={feature} className="text-[10px] font-semibold text-[#64748B] bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                  {feature}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Spacer to push price/CTA to bottom */}
+          <div className="flex-1" />
+
+          {/* Price + CTA row */}
+          <div className="flex items-end justify-between gap-4 border-t border-slate-100 pt-3 mt-1">
+            <div className="flex flex-col min-w-0">
+              <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider mb-0.5">Price starts from</span>
+              <div className="flex items-baseline flex-wrap gap-2">
+                <span className="text-2xl font-extrabold text-[#312E81]">₹{price.toLocaleString()}</span>
+                {isDiscounted && originalPrice && (
                   <span className="text-sm text-slate-400 line-through">₹{originalPrice.toLocaleString()}</span>
-                  <span className="text-[9px] font-bold text-white bg-red-600 px-2 py-1 rounded-full shadow-[0_2px_10px_rgba(220,38,38,0.2)] whitespace-nowrap">
-                    {discountPercentage}% OFF
-                  </span>
-                </div>
-              )}
+                )}
+              </div>
+              <span className="text-[10px] text-[#94A3B8] mt-0.5">Inclusive of all local taxes</span>
             </div>
-            <span className="text-[11px] font-bold text-[#64748B] mt-1.5 opacity-80">Inclusive of all local taxes</span>
-          </div>
 
-          <Link
-            href={`/hostels/${slug}`}
-            className="bg-[#312E81] hover:bg-[#10B981] text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-[#312E81]/10 hover:shadow-[#10B981]/20 text-center hover:-translate-y-1 active:scale-95 whitespace-nowrap shrink-0 block text-[14px]"
-          >
-            Explore Selection
-          </Link>
+            <div
+              className="bg-[#312E81] hover:bg-[#10B981] text-white px-6 py-3 rounded-xl font-bold transition-all text-[13px] shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap shrink-0"
+            >
+              Explore Selection
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
