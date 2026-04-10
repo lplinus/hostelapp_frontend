@@ -89,12 +89,14 @@ export default function HostelCard({
             </div>
           )}
 
-          {/* Top-right Rating Badge (Matching Image) */}
-          <div className="absolute top-3 right-3 z-10">
-            <div className="bg-[#312E81] text-white rounded-lg px-2.5 py-1.5 font-bold text-[14px] shadow-lg flex items-center justify-center min-w-[38px]">
-              {rating.toFixed(1)}
+          {/* Top-right Rating Badge (Matching Image) - hidden when rating is 0 */}
+          {rating > 0 && (
+            <div className="absolute top-3 right-3 z-10">
+              <div className="bg-[#312E81] text-white rounded-lg px-2.5 py-1.5 font-bold text-[14px] shadow-lg flex items-center justify-center min-w-[38px]">
+                {rating.toFixed(1)}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Top-left badges */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
@@ -135,11 +137,13 @@ export default function HostelCard({
 
           {/* Stars + Location */}
           <div className="flex flex-col gap-1.5 mb-auto">
-            <div className="flex items-center gap-1 text-orange-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className={cn("w-3.5 h-3.5 fill-current", i >= Math.floor(rating / 2) && "text-slate-200 fill-none")} />
-              ))}
-            </div>
+            {rating > 0 && (
+              <div className="flex items-center gap-1 text-orange-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={cn("w-3.5 h-3.5 fill-current", i >= Math.round(rating) && "text-slate-200 fill-none")} />
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center gap-1.5 text-[13px] text-[#64748B] line-clamp-1">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
@@ -246,15 +250,17 @@ export default function HostelCard({
               </div>
             </div>
 
-            {/* Rating badge */}
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="flex flex-col items-end">
-                <span className="text-[11px] font-bold text-[#312E81] leading-none">{getRatingText(rating)}</span>
+            {/* Rating badge - hidden when rating is 0 */}
+            {rating > 0 && (
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-col items-end">
+                  <span className="text-[11px] font-bold text-[#312E81] leading-none">{getRatingText(rating)}</span>
+                </div>
+                <div className="w-10 h-10 bg-[#312E81] text-white rounded-lg flex items-center justify-center font-bold text-sm transition-colors duration-300 group-hover:bg-[#10B981]">
+                  {rating.toFixed(1)}
+                </div>
               </div>
-              <div className="w-10 h-10 bg-[#312E81] text-white rounded-lg flex items-center justify-center font-bold text-sm transition-colors duration-300 group-hover:bg-[#10B981]">
-                {rating.toFixed(1)}
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Title */}
