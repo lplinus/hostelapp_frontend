@@ -20,6 +20,8 @@ export const API_ENDPOINTS = {
     HOSTELS: {
         LIST: '/api/hostels/',
         DETAIL: (id: string | number) => `/api/hostels/${id}/`,
+        TOP_RATED: '/api/hostels/top-rated/',
+        FEATURED: '/api/hostels/featured/',
     },
     ADMIN: {
         HOMEPAGE: '/api/publicpages/admin/homepage/',

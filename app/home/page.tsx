@@ -7,13 +7,29 @@ import FeaturedCities from "@/components/home/featured-cities";
 import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
 // import TopHostels from "@/components/home/top-hostels";
 // import FeaturedHostels from "@/components/home/featured-hostels";
+import RecommendedHostels from "@/components/home/recommended-hostels";
+import TopRatedHostelsDynamic from "@/components/home/top-rated-hostels-dynamic";
 import WhyUs from "@/components/home/why-us";
 import CTA from "@/components/home/cta";
 import SectionReveal from "@/components/ui/section-reveal";
 import { getHomePage } from "@/services/public.service";
+import { getHostels, getFeaturedHostels, getTopRatedHostels } from "@/services/hostel.service";
 import type { HomePageResponse } from "@/types/public.types";
 
 import { getSEO } from "@/lib/seo";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+async function getCities() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/locations/cities/`, {
+      next: { revalidate: 60 },
+    });
+    return res.json();
+  } catch (err) {
+    return [];
+  }
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO("home");
@@ -42,6 +58,12 @@ export default async function HomePage() {
   let homepageData: HomePageResponse | null = null;
   const seo = await getSEO("home");
 
+  const [featuredHostels, topRatedHostels, cities] = await Promise.all([
+    getFeaturedHostels(),
+    getTopRatedHostels(),
+    getCities()
+  ]);
+
   try {
     homepageData = await getHomePage();
   } catch (error) {
@@ -67,15 +89,6 @@ export default async function HomePage() {
           subtitle={homepageData?.hero_subtitle}
         />
 
-        {/* SEARCH BAR (Commented out - now in Header) */}
-        {/* 
-        <div className="z-[40] w-full px-4 sm:px-6 -mt-10 sm:-mt-12 lg:-mt-16 mb-4">
-          <div className="max-w-5xl mx-auto">
-            <SearchBar />
-          </div>
-        </div> 
-        */}
-
         {/* Content sections with breathing room */}
         <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">
           <SectionReveal>
@@ -84,6 +97,14 @@ export default async function HomePage() {
 
           <SectionReveal delay={0.05}>
             <FeaturedHostelTypes />
+          </SectionReveal>
+
+          <SectionReveal delay={0.1}>
+            <RecommendedHostels hostels={featuredHostels} cities={cities} />
+          </SectionReveal>
+
+          <SectionReveal delay={0.15}>
+            <TopRatedHostelsDynamic hostels={topRatedHostels} cities={cities} />
           </SectionReveal>
 
           {/* <SectionReveal delay={0.1}>
@@ -101,14 +122,6 @@ export default async function HomePage() {
             />
           </SectionReveal>
         </div>
-
-        {/* <SectionReveal delay={0.2}>
-          <CTA
-            title={homepageData?.cta_title}
-            subtitle={homepageData?.cta_subtitle}
-            buttonText={homepageData?.cta_button_text}
-          />
-        </SectionReveal> */}
       </main>
     </>
   );

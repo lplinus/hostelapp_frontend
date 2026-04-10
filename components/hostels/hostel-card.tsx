@@ -6,9 +6,11 @@ import {
   CheckCircle,
   Heart,
   Building2,
-  MapPin
+  MapPin,
+  Star,
+  ArrowRight
 } from "lucide-react";
-import { isExternalImage } from "@/lib/utils";
+import { isExternalImage, cn } from "@/lib/utils";
 
 export interface HostelCardProps {
   readonly id: string;
@@ -31,6 +33,7 @@ export interface HostelCardProps {
   readonly isTopRated?: boolean;
   readonly layout?: "grid" | "list";
   readonly availableRooms?: number;
+  readonly pricePerDay?: number;
 }
 
 export default function HostelCard({
@@ -52,7 +55,8 @@ export default function HostelCard({
   isApproved = false,
   isTopRated = false,
   layout = "list",
-  availableRooms
+  availableRooms,
+  pricePerDay
 }: HostelCardProps) {
 
   const getRatingText = (rating: number) => {
@@ -70,7 +74,7 @@ export default function HostelCard({
         onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.03)'; }}
       >
         {/* IMAGE */}
-        <Link href={`/hostels/${slug}`} className="relative block aspect-[4/3] overflow-hidden shrink-0">
+        <Link href={`/hostels/${slug}`} className="relative block aspect-[5/4] sm:aspect-[4/3] overflow-hidden shrink-0">
           {image ? (
             <Image
               src={image}
@@ -85,11 +89,15 @@ export default function HostelCard({
             </div>
           )}
 
-          {/* Soft gradient overlay at bottom for text readability */}
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+          {/* Top-right Rating Badge (Matching Image) */}
+          <div className="absolute top-3 right-3 z-10">
+            <div className="bg-[#312E81] text-white rounded-lg px-2.5 py-1.5 font-bold text-[14px] shadow-lg flex items-center justify-center min-w-[38px]">
+              {rating.toFixed(1)}
+            </div>
+          </div>
 
           {/* Top-left badges */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
             {isVerified && (
               <div className="bg-white/95 backdrop-blur-sm text-[#10B981] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
                 <CheckCircle className="w-3 h-3" />
@@ -98,74 +106,66 @@ export default function HostelCard({
             )}
             {isFeatured && (
               <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
-                Popular
+                Featured
+              </div>
+            )}
+            {isTopRated && (
+              <div className="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+                Top Rated
               </div>
             )}
           </div>
 
-          {/* Wishlist */}
-          <button
-            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm hover:bg-white text-slate-400 hover:text-red-500 rounded-full p-2 shadow-sm transition-all duration-300 hover:scale-110"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-          >
-            <Heart className="w-4 h-4" />
-          </button>
-
           {/* Discount badge bottom-left */}
           {isDiscounted && discountPercentage && (
-            <div className="absolute bottom-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wide">
+            <div className="absolute bottom-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wide z-10">
               {discountPercentage}% OFF
             </div>
           )}
         </Link>
 
         {/* CONTENT */}
-        <div className="p-5 flex flex-col flex-1">
-          {/* Gender + Rating row */}
-          <div className="flex items-center justify-between mb-2.5">
-            <div className="bg-[#F0FDF4] text-[#059669] text-[10px] font-bold px-2.5 py-1 rounded-md border border-[#DCFCE7] uppercase tracking-wide flex items-center gap-1">
-              <div className="w-1 h-1 rounded-full bg-[#059669]" />
-              {gender.replace('_', ' ')}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-8 h-8 bg-[#312E81] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm transition-colors duration-300 group-hover:bg-[#10B981]">
-                {rating.toFixed(1)}
-              </div>
-            </div>
-          </div>
-
+        <div className="p-4 sm:p-5 flex flex-col flex-1">
           {/* Title */}
-          <Link href={`/hostels/${slug}`} className="block mb-1.5 group/title">
-            <h2 className="text-lg font-bold text-[#312E81] leading-snug group-hover/title:text-[#10B981] transition-colors line-clamp-2">
+          <Link href={`/hostels/${slug}`} className="block mb-2 group/title">
+            <h2 className="text-[17px] font-bold text-gray-900 leading-tight group-hover/title:text-[#10B981] transition-colors line-clamp-1">
               {name}
             </h2>
           </Link>
 
-          {/* Location */}
-          <div className="flex items-center gap-1.5 text-[13px] text-[#64748B] mb-auto pb-4 line-clamp-1">
-            <MapPin className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
-            <span className="truncate">{location}</span>
+          {/* Stars + Location */}
+          <div className="flex flex-col gap-1.5 mb-auto">
+            <div className="flex items-center gap-1 text-orange-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className={cn("w-3.5 h-3.5 fill-current", i >= Math.floor(rating / 2) && "text-slate-200 fill-none")} />
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5 text-[13px] text-[#64748B] line-clamp-1">
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-[#10B981]" />
+              <span className="truncate">{location}</span>
+            </div>
           </div>
 
-          {/* Price + CTA */}
-          <div className="border-t border-slate-100 pt-4">
-            <div className="flex items-end justify-between">
+          {/* Price Section */}
+          <div className="mt-4 pt-4 border-t border-slate-50">
+            <p className="text-[11px] text-slate-500 font-medium mb-1">Starting from per night</p>
+            <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                {isDiscounted && originalPrice && (
-                  <span className="text-xs text-slate-400 line-through leading-none mb-1">₹{originalPrice.toLocaleString()}</span>
-                )}
-                <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-extrabold text-[#312E81]">₹{price.toLocaleString()}</span>
-                  <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">/ mo</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-xl font-extrabold text-[#312E81]">
+                    INR {pricePerDay ? pricePerDay.toLocaleString() : (price / 30).toFixed(0)}
+                  </span>
+                  <span className="text-[10px] font-bold text-[#64748B]">/ day</span>
                 </div>
+                {isDiscounted && originalPrice && (
+                  <span className="text-[10px] text-slate-400 line-through">₹{originalPrice.toLocaleString()} / mo</span>
+                )}
               </div>
-
-              <Link
-                href={`/hostels/${slug}`}
-                className="bg-[#312E81] hover:bg-[#10B981] text-white px-5 py-2.5 rounded-xl font-bold transition-all text-[13px] shadow-md hover:shadow-lg active:scale-95"
-              >
-                View
-              </Link>
+              
+              <div className="flex items-center gap-1 text-[11px] font-bold text-[#10B981] group-hover:translate-x-1 transition-transform">
+                Explore <ArrowRight className="w-3.5 h-3.5" />
+              </div>
             </div>
           </div>
         </div>
@@ -209,7 +209,12 @@ export default function HostelCard({
             )}
             {isFeatured && (
               <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
-                Hostel Hub Choice
+                Featured Selection
+              </div>
+            )}
+            {isTopRated && (
+              <div className="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+                Top Rated
               </div>
             )}
           </div>

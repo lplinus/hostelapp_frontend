@@ -88,15 +88,52 @@ export async function getHostels(): Promise<HostelListItem[]> {
         default_images: processDefaultImages(hostel.default_images),
     }));
 }
+import { API_ENDPOINTS } from "@/lib/api/endpoints";
 
 export async function getFeaturedHostels(): Promise<HostelListItem[]> {
-    const hostels = await getHostels();
-    return hostels.filter((h) => h.is_featured);
+    const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.HOSTELS.FEATURED}`, {
+        next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+        console.error("Failed to fetch featured hostels");
+        return [];
+    }
+
+    const data = await res.json();
+
+    const hostels: HostelListItem[] = Array.isArray(data)
+        ? data
+        : data?.results || [];
+
+    return hostels.map((hostel) => ({
+        ...hostel,
+        images: processHostelImages(hostel.images || []),
+        default_images: processDefaultImages(hostel.default_images),
+    }));
 }
 
 export async function getTopRatedHostels(): Promise<HostelListItem[]> {
-    const hostels = await getHostels();
-    return hostels.filter((h) => h.is_toprated);
+    const res = await fetch(`${API_BASE_URL}${API_ENDPOINTS.HOSTELS.TOP_RATED}`, {
+        next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+        console.error("Failed to fetch top rated hostels");
+        return [];
+    }
+
+    const data = await res.json();
+
+    const hostels: HostelListItem[] = Array.isArray(data)
+        ? data
+        : data?.results || [];
+
+    return hostels.map((hostel) => ({
+        ...hostel,
+        images: processHostelImages(hostel.images || []),
+        default_images: processDefaultImages(hostel.default_images),
+    }));
 }
 
 export async function getHostelBySlug(

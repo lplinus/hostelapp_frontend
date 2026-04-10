@@ -114,6 +114,7 @@ export default async function TopHostels() {
                     name={hostel.name}
                     location={`${hostel.area?.name || ""}, ${hostel.city.name}`}
                     price={hostel.final_price ?? (Number(hostel.price) || 0)}
+                    pricePerDay={hostel.final_price_per_day ?? (hostel.price_per_day ? Number(hostel.price_per_day) : undefined)}
                     originalPrice={hostel.is_discounted ? Number(hostel.price) || 0 : undefined}
                     isDiscounted={!!hostel.is_discounted}
                     discountPercentage={hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined}
