@@ -250,6 +250,18 @@ export default function SearchClient({
                 return a.matchType === 'pure' ? -1 : 1;
             }
 
+            // When user explicitly picks a sort, use it as the primary sort
+            if (appliedSortBy === "Price: Low to High") {
+                return (a.hostel.final_price ?? (Number(a.hostel.price) || 0)) - (b.hostel.final_price ?? (Number(b.hostel.price) || 0));
+            }
+            if (appliedSortBy === "Price: High to Low") {
+                return (b.hostel.final_price ?? (Number(b.hostel.price) || 0)) - (a.hostel.final_price ?? (Number(a.hostel.price) || 0));
+            }
+            if (appliedSortBy === "Highest Rated") {
+                return (b.hostel.rating || 0) - (a.hostel.rating || 0);
+            }
+
+            // "Recommended" sort: verified + discounted priority, then rating
             const getPriority = (h: any) => {
                 if (h.is_verified && h.is_discounted) return 1;
                 if (h.is_verified) return 2;
@@ -259,10 +271,7 @@ export default function SearchClient({
             const priorityA = getPriority(a.hostel);
             const priorityB = getPriority(b.hostel);
             if (priorityA !== priorityB) return priorityA - priorityB;
-            if (appliedSortBy === "Price: Low to High") return (a.hostel.final_price ?? (Number(a.hostel.price) || 0)) - (b.hostel.final_price ?? (Number(b.hostel.price) || 0));
-            if (appliedSortBy === "Price: High to Low") return (b.hostel.final_price ?? (Number(b.hostel.price) || 0)) - (a.hostel.final_price ?? (Number(a.hostel.price) || 0));
-            if (appliedSortBy === "Highest Rated") return (b.hostel.rating || 0) - (a.hostel.rating || 0);
-            return 0;
+            return (b.hostel.rating || 0) - (a.hostel.rating || 0);
         });
 
         const finalResults = categorized.map(i => i.hostel);
