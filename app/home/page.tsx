@@ -90,7 +90,7 @@ export default async function HomePage() {
         />
 
         {/* Content sections with breathing room */}
-        <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 lg:mt-8">
+        <div className="flex flex-col mt-4 sm:mt-6 lg:mt-8">
           <SectionReveal>
             <FeaturedCities />
           </SectionReveal>

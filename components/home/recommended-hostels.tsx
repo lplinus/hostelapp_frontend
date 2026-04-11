@@ -51,7 +51,7 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
     if (dynamicCities.length === 0) return null;
 
     return (
-        <section className="py-12 sm:py-16 bg-white font-inter">
+        <section className="pt-12 pb-6 sm:pt-16 sm:pb-8 bg-white font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 {/* Header */}
                 <div className="mb-10">

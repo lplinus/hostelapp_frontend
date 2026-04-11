@@ -101,18 +101,22 @@ export default function HostelCard({
           {/* Top-left badges */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
             {isVerified && (
-              <div className="bg-white/95 backdrop-blur-sm text-[#10B981] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                <CheckCircle className="w-3 h-3" />
-                Verified
+              <div 
+                className="group/badge bg-white/90 backdrop-blur-md text-[#10B981] p-1.5 rounded-lg shadow-sm flex items-center border border-white/50 transition-all duration-300 cursor-default"
+              >
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                <span className="max-w-0 overflow-hidden opacity-0 group-hover/badge:max-w-[60px] group-hover/badge:opacity-100 group-hover/badge:ml-1 transition-all duration-300 ease-in-out whitespace-nowrap text-[10px] font-bold uppercase tracking-wider">
+                  Verified
+                </span>
               </div>
             )}
             {isFeatured && (
-              <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+              <div className="bg-gradient-to-br from-[#312E81]/95 to-[#4F46E5]/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(49,46,129,0.4),inset_0_1px_1px_rgba(255,255,255,0.4)]">
                 Featured
               </div>
             )}
             {isTopRated && (
-              <div className="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+              <div className="bg-gradient-to-br from-amber-500/95 to-orange-500/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(249,115,22,0.4),inset_0_1px_1px_rgba(255,255,255,0.5)]">
                 Top Rated
               </div>
             )}
@@ -206,18 +210,22 @@ export default function HostelCard({
           {/* Badges on image */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5">
             {isVerified && (
-              <div className="bg-white/95 backdrop-blur-sm text-[#10B981] text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                <CheckCircle className="w-3 h-3" />
-                Verified
+              <div 
+                className="group/badge bg-white/90 backdrop-blur-md text-[#10B981] p-1.5 rounded-lg shadow-sm flex items-center border border-white/50 transition-all duration-300 cursor-default"
+              >
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                <span className="max-w-0 overflow-hidden opacity-0 group-hover/badge:max-w-[60px] group-hover/badge:opacity-100 group-hover/badge:ml-1 transition-all duration-300 ease-in-out whitespace-nowrap text-[10px] font-bold uppercase tracking-wider">
+                  Verified
+                </span>
               </div>
             )}
             {isFeatured && (
-              <div className="bg-[#312E81]/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+              <div className="bg-gradient-to-br from-[#312E81]/95 to-[#4F46E5]/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(49,46,129,0.4),inset_0_1px_1px_rgba(255,255,255,0.4)]">
                 Featured Selection
               </div>
             )}
             {isTopRated && (
-              <div className="bg-orange-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+              <div className="bg-gradient-to-br from-amber-500/95 to-orange-500/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(249,115,22,0.4),inset_0_1px_1px_rgba(255,255,255,0.5)]">
                 Top Rated
               </div>
             )}
