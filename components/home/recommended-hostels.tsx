@@ -53,54 +53,60 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
     return (
         <section className="pt-12 pb-6 sm:pt-16 sm:pb-8 bg-white font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-                {/* Header */}
-                <div className="mb-10">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
-                        Featured homes recommended for you
-                    </h2>
+                <Carousel opts={{ align: "start", loop: false }} className="w-full">
+                    {/* Header */}
+                    <div className="mb-10">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
+                            Featured Hostels recommended for you
+                        </h2>
 
-                    {/* Tabs + Link Row */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b border-slate-100">
-                        <div className="flex flex-wrap gap-6 sm:gap-10">
-                            {dynamicCities.map((city) => (
-                                <button
-                                    key={city.id}
-                                    onClick={() => setActiveCityId(city.id)}
-                                    className={cn(
-                                        "pb-4 text-base font-semibold transition-all relative",
-                                        activeCityId === city.id
-                                            ? "text-[#312E81]"
-                                            : "text-slate-400 hover:text-slate-600"
-                                    )}
+                        {/* Tabs + Link Row */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 pb-2 border-b border-slate-100">
+                            <div className="flex overflow-x-auto gap-6 sm:gap-10 whitespace-nowrap w-full sm:w-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                {dynamicCities.map((city) => (
+                                    <button
+                                        key={city.id}
+                                        onClick={() => setActiveCityId(city.id)}
+                                        className={cn(
+                                            "pb-4 text-base font-semibold transition-all relative",
+                                            activeCityId === city.id
+                                                ? "text-[#312E81]"
+                                                : "text-slate-400 hover:text-slate-600"
+                                        )}
+                                    >
+                                        {city.name}
+                                        {activeCityId === city.id && (
+                                            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#312E81] rounded-full" />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto mt-2 sm:mt-0">
+                                <Link
+                                    href={activeCitySlug ? `/hostels-in-${activeCitySlug}/` : "/hostels"}
+                                    className="flex items-center gap-2 text-[14px] sm:text-[15px] font-bold text-[#312E81] hover:text-[#10B981] transition-all group shrink-0"
                                 >
-                                    {city.name}
-                                    {activeCityId === city.id && (
-                                        <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#312E81] rounded-full" />
-                                    )}
-                                </button>
-                            ))}
+                                    See more
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </Link>
+                                <div className="flex items-center gap-2">
+                                    <CarouselPrevious className="static translate-y-0 size-8 sm:size-10 rounded-full border-slate-200 hover:bg-[#312E81] hover:text-white transition-all" />
+                                    <CarouselNext className="static translate-y-0 size-8 sm:size-10 rounded-full border-slate-200 hover:bg-[#312E81] hover:text-white transition-all" />
+                                </div>
+                            </div>
                         </div>
-
-                        <Link
-                            href={activeCitySlug ? `/hostels-in-${activeCitySlug}/` : "/hostels"}
-                            className="flex items-center gap-2 text-[15px] font-bold text-[#312E81] hover:text-[#10B981] transition-all group shrink-0"
-                        >
-                            See more ({activeCityName}) properties
-                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                        </Link>
                     </div>
-                </div>
 
                 {/* Content Sections */}
                 <div className="space-y-16">
                     {/* Featured Section */}
                     {featuredInCity.length > 0 && (
                         <div className="relative">
-                            <div className="flex items-center justify-between mb-6">
+                            {/* <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-xl font-bold text-[#1E1B4B]">Featured in {activeCityName}</h3>
-                            </div>
+                            </div> */}
 
-                            <Carousel opts={{ align: "start", loop: false }} className="w-full">
                                 <CarouselContent className="-ml-6">
                                     {featuredInCity.map((hostel) => (
                                         <CarouselItem key={hostel.id} className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
@@ -130,15 +136,12 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
                                         </CarouselItem>
                                     ))}
                                 </CarouselContent>
-                                <div className="hidden sm:flex justify-end gap-2 mt-4">
-                                    <CarouselPrevious className="static translate-y-0 size-10 rounded-full border-slate-200" />
-                                    <CarouselNext className="static translate-y-0 size-10 rounded-full border-slate-200" />
-                                </div>
-                            </Carousel>
+
                         </div>
                     )}
 
                 </div>
+                </Carousel>
             </div>
         </section>
     );
