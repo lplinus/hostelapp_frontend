@@ -6,8 +6,9 @@ const API_BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BA
 
 function toRelativeImageUrl(url: string | null): string | null {
     if (!url) return null;
-    // If it's an ImageKit URL, return it as-is (external CDN)
-    if (url.includes("ik.imagekit.io")) return url;
+    // CDN URLs — return as-is (no transformation needed)
+    if (url.includes("ik.imagekit.io")) return url;       // ImageKit
+    if (url.includes("res.cloudinary.com")) return url;  // Cloudinary
     try {
         const parsed = new URL(url);
         // Only strip to pathname for our own backend URLs
