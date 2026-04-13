@@ -86,6 +86,13 @@ export default function HostelDetailClient({ hostel }: Props) {
                     isFeatured={hostel.is_featured}
                 />
 
+                <h1 
+                    className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1E1B4B] tracking-tight mt-8 mb-2" 
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                    {hostel.name}
+                </h1>
+
                 <RatingsSummary
                     ratingAvg={currentHostel.rating_avg}
                     ratingCount={currentHostel.rating_count}

@@ -51,12 +51,12 @@ export default function RatingsSummary({
             </div>
 
             {/* Sub-ratings Breakdown */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {subRatings.map((cat, idx) => (
-                    <div key={idx} className={`rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${cat.bg} ${cat.border}`}>
-                        <div className="flex items-center gap-3 mb-2 sm:mb-0">
-                            <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ${cat.color}`}>
-                                <cat.icon size={20} />
+                    <div key={idx} className={`rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${cat.bg} ${cat.border}`}>
+                        <div className="flex items-center gap-2 mb-2 sm:mb-0">
+                            <div className={`w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm ${cat.color}`}>
+                                <cat.icon size={16} />
                             </div>
                             <span className="font-bold text-[#1E1B4B] text-sm">{cat.label}</span>
                         </div>

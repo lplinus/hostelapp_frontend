@@ -88,18 +88,8 @@ export default function HostelGallery({
                             </span>
                         )}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-2 drop-shadow-xl tracking-tight">
-                        {hostelName}
-                    </h1>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
                         {/* Rating removed per user request */}
-                        {/* <div className="flex items-center gap-2.5 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] transition-all hover:scale-105 group/rating overflow-hidden relative">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent opacity-50 group-hover/rating:opacity-100 transition-opacity" />
-                            <Star size={20} className="fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" />
-                            <span className="font-black text-white text-2xl leading-none tracking-tighter relative z-10">
-                                {ratingAvg.toFixed(1)}
-                            </span>
-                        </div> */}
                     </div>
                 </div>
 
@@ -206,18 +196,8 @@ export default function HostelGallery({
                         )}
                     </div>
                     
-                    <h1 className="text-3xl font-black text-white leading-tight mb-2 drop-shadow-xl">
-                        {hostelName}
-                    </h1>
-                    
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
                         {/* Rating removed per user request */}
-                        {/* <div className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-lg border border-white/30 rounded-2xl shadow-xl">
-                            <Star size={16} className="fill-amber-400 text-amber-400" />
-                            <span className="font-black text-white text-xl leading-none tracking-tighter">
-                                {ratingAvg.toFixed(1)}
-                            </span>
-                        </div> */}
                     </div>
                 </div>
 

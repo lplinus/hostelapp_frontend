@@ -62,8 +62,8 @@ export default function HostelAmenities({ amenities }: HostelAmenitiesProps) {
                             key={amenity.id}
                             className="flex flex-row items-center gap-4 px-5 py-4 rounded-2xl border border-gray-200 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 hover:border-blue-100 transition-all duration-300 group"
                         >
-                            <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 transition-colors">
-                                <IconComp size={22} className="text-slate-700 group-hover:text-blue-600 transition-colors stroke-[1.5]" />
+                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 transition-colors">
+                                <IconComp size={18} className="text-slate-700 group-hover:text-blue-600 transition-colors stroke-[1.5]" />
                             </div>
                             <span className="text-[15px] text-gray-700 font-medium leading-tight group-hover:text-gray-900 transition-colors">{amenity.name}</span>
                         </div>
