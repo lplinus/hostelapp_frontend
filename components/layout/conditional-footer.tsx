@@ -26,7 +26,9 @@ export default function ConditionalFooter() {
         pathname === "/help&support" ||
         pathname.startsWith("/help&support/") ||
         pathname.startsWith("/vendordashboard") ||
-        pathname.startsWith("/usermarketplace");
+        pathname.startsWith("/usermarketplace") ||
+        pathname === "/login" ||
+        pathname === "/register";
 
     if (isDashboardRoute) {
         return null;

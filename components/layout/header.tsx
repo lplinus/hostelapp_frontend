@@ -62,7 +62,9 @@ export default function Header() {
     pathname === "/bookings" ||
     pathname.startsWith("/bookings/") ||
     pathname.startsWith("/vendordashboard") ||
-    pathname.startsWith("/usermarketplace");
+    pathname.startsWith("/usermarketplace") ||
+    pathname === "/login" ||
+    pathname === "/register";
 
   if (isDashboardRoute) return null;
   if (isMounted && (isAuthenticated || isLoggingOut)) return null;
