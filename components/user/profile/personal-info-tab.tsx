@@ -249,7 +249,8 @@ export default function PersonalInfoTab({
                                     toast.error("Please enter a valid 10-digit phone number first.");
                                     return;
                                 }
-                                setShowOtpModal(true);
+                                // setShowOtpModal(true);
+                                toast.success("OTP verification disabled. Proceeding...");
                             }}
                             className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95 whitespace-nowrap"
                         >

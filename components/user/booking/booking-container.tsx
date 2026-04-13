@@ -133,7 +133,8 @@ export default function BookingContainer({
     }, [selectedRoom, nights, form.stay_duration, form.booking_type, form.adults]);
 
     const [bookingStatus, setBookingStatus] = useState<"pending" | "confirmed">("pending");
-    const bookingFee = 59;
+    // const bookingFee = 59;
+    const bookingFee = 0;
     const finalTotalPrice = useMemo(() => totalPrice > 0 ? totalPrice + bookingFee : 0, [totalPrice]);
 
     const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
@@ -296,6 +297,7 @@ export default function BookingContainer({
             }
 
             // 2. Combined Smart Move: Checking for duplicates AND previous verification
+            /*
             try {
                 // Pass hostel.id to check for 24-hour duplicate bookings
                 const response = await sendBookingOtp(form.mobile_number, hostel.id);
@@ -346,6 +348,16 @@ export default function BookingContainer({
             } finally {
                 setIsSubmitting(false);
             }
+            */
+
+           // Bypassed OTP flow
+           setIsPhoneVerifiedManually(true);
+           if (form.booking_type === "visit") {
+               handleConfirmBooking();
+           } else {
+               setStep("payment");
+           }
+
         }
     };
 

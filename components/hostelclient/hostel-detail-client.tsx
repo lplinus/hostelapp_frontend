@@ -52,9 +52,23 @@ export default function HostelDetailClient({ hostel }: Props) {
     const currentHostel = hostelData || hostel;
     const hostelImages = useHostelImages(hostel);
 
-    const sharingOptions = useMemo(() =>
-        Array.from(new Set(hostel.room_types?.map((r) => r.sharing_display).filter(Boolean) || [])),
-        [hostel.room_types]);
+    const sharingOptions = useMemo(() => {
+        const getNumeric = (val: string | undefined | null) => {
+            if (!val) return "";
+            const s = String(val).toLowerCase();
+            if (s.includes('single')) return '1';
+            if (s.includes('double')) return '2';
+            if (s.includes('triple')) return '3';
+            if (s.includes('quad') || s.includes('four')) return '4';
+            if (s.includes('five')) return '5';
+            if (s.includes('six')) return '6';
+            const match = s.match(/\d+/);
+            if (match) return match[0];
+            return String(val);
+        };
+        const opts = Array.from(new Set(hostel.room_types?.map((r) => getNumeric(r.sharing_display)).filter(Boolean) as string[]));
+        return opts.sort((a, b) => String(b).localeCompare(String(a), undefined, { numeric: true }));
+    }, [hostel.room_types]);
 
     return (
         <div className="hostel-detail-page bg-white min-h-screen pb-24 lg:pb-0">

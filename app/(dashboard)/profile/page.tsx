@@ -118,8 +118,8 @@ export default function ProfilePage() {
             (profile?.phone && formData.phone !== profile.phone) // Phone was changed
         );
         if (phoneChanged && !isVerified) {
-            setShowOtpModal(true);
-            return;
+            // setShowOtpModal(true);
+            // return;
         }
 
         const data = new FormData();

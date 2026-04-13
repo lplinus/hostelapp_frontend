@@ -140,6 +140,7 @@ export function PaymentStep({
                         {/* Payment Options */}
                         <div className="space-y-3">
                             {/* Pay Online */}
+                            {/* 
                             <button
                                 className={cn(
                                     "w-full group rounded-xl border-2 p-4 flex items-center gap-4 transition-all duration-200 text-left",
@@ -186,14 +187,15 @@ export function PaymentStep({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-gray-900 text-sm">
-                                        {isProcessingPayment && paymentMethod === "online" ? "Processing..." : `Pay Now (₹${bookingFee})`}
+                                        {isProcessingPayment && paymentMethod === "online" ? "Processing..." : `Pay Now (₹${finalTotalPrice.toLocaleString()})`}
                                     </p>
-                                    <p className="text-[11px] text-gray-500 mt-0.5">Confirm booking with ₹{bookingFee} only • Pay balance at hostel</p>
+                                    <p className="text-[11px] text-gray-500 mt-0.5">Pay full hostel amount now</p>
                                 </div>
                                 <div className="text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <CreditCard size={16} />
                                 </div>
                             </button>
+                            */}
 
                             {/* Pay at Hostel */}
                             <button
