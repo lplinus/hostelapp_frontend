@@ -229,11 +229,52 @@ export default function HostelReviews({
                 </div>
             </div>
 
-            {reviewsToShow.length > 5 && (
-                <div className="mt-4">
-                    <button className="px-6 py-3 border border-gray-900 rounded-xl text-[15px] font-bold text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]">
-                        Show all {displayReviewCount} reviews
-                    </button>
+            {reviewsToShow.length > 0 && (
+                <div className="mt-8">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <button className="px-6 py-3 border border-gray-900 rounded-xl text-[15px] font-bold text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]">
+                                Show all {displayReviewCount} reviews
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-xl rounded-3xl p-5 md:p-6 max-h-[80vh] overflow-y-auto w-[95%] border-0 shadow-2xl">
+                            <DialogHeader className="mb-4">
+                                <DialogTitle className="text-2xl font-bold font-sans tracking-tight text-[#1E1B4B]">All Reviews</DialogTitle>
+                                <DialogDescription className="text-sm font-medium text-gray-500">
+                                    What others are saying about this hostel.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                {reviewsToShow.map((review) => (
+                                    <div key={review.id} className="flex flex-col gap-3 bg-gray-50 border-0 rounded-2xl p-5 shadow-none">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-50 to-emerald-50 border border-indigo-100/50 flex flex-shrink-0 items-center justify-center text-[#312E81] font-bold text-base">
+                                                {review.user_name?.charAt(0)?.toUpperCase() || "U"}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-[#1E1B4B] text-[14px] leading-tight flex items-center gap-1.5">
+                                                    {review.user_name || "Anonymous User"}
+                                                    {review.rating >= 4 && <ShieldCheck size={14} className="text-[#10B981]" />}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <StarRating rating={review.rating} size={10} />
+                                                    <span className="text-[11px] text-gray-500 font-medium">
+                                                        · {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                                            month: "short",
+                                                            year: "numeric",
+                                                        })}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-700 text-[14px] leading-relaxed italic">
+                                            "{review.comment}"
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             )}
         </div>
