@@ -16,14 +16,14 @@ export default function HostelTags({ isVerified, isFeatured, sharingOptions }: H
             {(isVerified || isFeatured) && (
                 <div className="flex flex-wrap gap-2.5">
                     {isVerified && (
-                        <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-indigo-50 text-[#312E81] border border-indigo-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
-                            <BadgeCheck size={16} className="mr-1.5 fill-[#312E81] text-white" />
+                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 text-[12px] sm:text-sm font-bold rounded-full bg-indigo-50 text-[#312E81] border border-indigo-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap shrink-0">
+                            <BadgeCheck className="mr-1.5 fill-[#312E81] text-white w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Verified Choice
                         </span>
                     )}
                     {isFeatured && (
-                        <span className="inline-flex items-center px-4 py-1.5 text-sm font-bold rounded-full bg-emerald-50 text-[#10B981] border border-emerald-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
-                            <Sparkles size={16} className="mr-1.5 text-[#10B981]" />
+                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 text-[12px] sm:text-sm font-bold rounded-full bg-emerald-50 text-[#10B981] border border-emerald-200 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap shrink-0">
+                            <Sparkles className="mr-1.5 text-[#10B981] w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Premium Selection
                         </span>
                     )}

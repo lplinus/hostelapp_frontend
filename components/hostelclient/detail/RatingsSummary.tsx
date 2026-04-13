@@ -31,22 +31,15 @@ export default function RatingsSummary({
     return (
         <div className="mb-10 mt-6 relative">
             {/* Primary Key Info Strip */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-                <div className="flex items-center gap-2 px-4 py-2 bg-[#1E1B4B] border border-indigo-900 rounded-full shadow-sm text-white">
-                    <Star size={16} className="fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-sm tracking-wide">{ratingAvg.toFixed(1)} Rating</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#1E1B4B] border border-indigo-900 rounded-full shadow-sm text-white shrink-0">
+                    <Star size={14} className="fill-amber-400 text-amber-400 sm:w-4 sm:h-4 w-3.5 h-3.5" />
+                    <span className="font-bold text-xs sm:text-sm tracking-wide">{ratingAvg.toFixed(1)} Rating</span>
                 </div>
                 
-                {/* 
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-100 rounded-full shadow-sm text-rose-700 hover:bg-rose-100 transition-all hover:-translate-y-0.5 cursor-default">
-                    <MessageCircle size={16} className="text-rose-500 fill-rose-500/10" />
-                    <span className="font-bold text-sm">{ratingCount} Reviews</span>
-                </div>
-                */}
-                
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 border border-indigo-100 rounded-full shadow-sm text-indigo-700 hover:bg-indigo-100 transition-all hover:-translate-y-0.5 cursor-default">
-                    <MapPin size={16} className="text-indigo-500 fill-indigo-500/10" />
-                    <span className="font-bold text-sm truncate max-w-[200px]">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 bg-indigo-50 border border-indigo-100 rounded-full shadow-sm text-indigo-700 hover:bg-indigo-100 transition-all hover:-translate-y-0.5 cursor-default shrink-0">
+                    <MapPin size={14} className="text-indigo-500 fill-indigo-500/10 sm:w-4 sm:h-4 w-3.5 h-3.5" />
+                    <span className="font-bold text-xs sm:text-sm truncate max-w-[130px] sm:max-w-[200px]">
                         {areaName ? `${areaName}, ` : ""}{cityName || "Location"}
                     </span>
                 </div>
@@ -58,7 +51,7 @@ export default function RatingsSummary({
             </div>
 
             {/* Sub-ratings Breakdown */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {subRatings.map((cat, idx) => (
                     <div key={idx} className={`rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${cat.bg} ${cat.border}`}>
                         <div className="flex items-center gap-3 mb-2 sm:mb-0">
