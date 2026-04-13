@@ -732,14 +732,14 @@ export default function HostelManagement() {
                                                             >
                                                                 <ImageIcon size={18} />
                                                             </button>
-                                                            <button
+                                                            {/* <button
                                                                 onClick={() => handleDelete(h.id)}
                                                                 disabled={deleteMutation.isPending}
                                                                 className="text-red-600 hover:text-red-900 bg-red-50 p-2 rounded-md transition disabled:opacity-50"
                                                                 title="Delete"
                                                             >
                                                                 {deleteMutation.isPending ? "..." : <Trash2 size={18} />}
-                                                            </button>
+                                                            </button> */}
                                                         </div>
                                                     </td>
                                                 </tr>

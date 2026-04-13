@@ -303,7 +303,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="beds-input" className="text-sm font-bold text-gray-700">Inventory Volume (Beds)</label>
+                                <label htmlFor="beds-input" className="text-sm font-bold text-gray-700">Inventory Volume (Beds) <span className="text-gray-400 font-normal ml-1">(Optional)</span></label>
                                 <div className="relative">
                                     <input
                                         id="beds-input"
@@ -314,7 +314,6 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                         placeholder="Number of beds"
                                         className="w-full h-11 rounded-xl border-gray-200 bg-gray-50/50 px-4 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
                                         title="Beds are permanently generated and available"
-                                        required
                                     />
                                 </div>
                             </div>
@@ -433,14 +432,14 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                         <div className="flex items-center gap-3">
                                                                             <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                                                                                 <div
-                                                                                    className={`h-full transition-all duration-700 ${room.available_beds === 0 ? 'bg-red-500' : 'bg-blue-500'}`}
-                                                                                    style={{ width: `${(room.available_beds / room.total_beds) * 100}%` }}
+                                                                                    className={`h-full transition-all duration-700 ${room.available_beds === 0 && room.total_beds ? 'bg-red-500' : 'bg-blue-500'}`}
+                                                                                    style={{ width: `${room.total_beds ? ((room.available_beds || 0) / room.total_beds) * 100 : 0}%` }}
                                                                                 />
                                                                             </div>
                                                                             <span className="text-xs font-bold text-gray-600">
-                                                                                <span className={room.available_beds > 0 ? "text-blue-600" : "text-red-500"}>{room.available_beds}</span>
+                                                                                <span className={(room.available_beds || 0) > 0 ? "text-blue-600" : "text-gray-500"}>{room.available_beds || 0}</span>
                                                                                 <span className="px-1 text-gray-300">/</span>
-                                                                                {room.total_beds}
+                                                                                {room.total_beds || "N/A"}
                                                                             </span>
                                                                         </div>
                                                                     </TableCell>

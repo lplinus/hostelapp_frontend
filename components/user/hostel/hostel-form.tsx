@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createCity, createArea } from "@/services/location.service";
+import { createAmenity } from "@/services/amenity.service";
 
 interface HostelFormProps {
     initialData?: HostelListItem | null;
@@ -72,6 +73,9 @@ const HostelForm: React.FC<HostelFormProps> = ({
     const [isAddingArea, setIsAddingArea] = useState(false);
     const [newAreaName, setNewAreaName] = useState("");
 
+    const [isAddingAmenity, setIsAddingAmenity] = useState(false);
+    const [newAmenityName, setNewAmenityName] = useState("");
+
     const createCityMutation = useMutation({
         mutationFn: createCity,
         onSuccess: (data) => {
@@ -95,6 +99,17 @@ const HostelForm: React.FC<HostelFormProps> = ({
             toast.success("New area added!");
         },
         onError: (err: any) => toast.error(err.message || "Failed to add area"),
+    });
+
+    const createAmenityMutation = useMutation({
+        mutationFn: createAmenity,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["amenities"] });
+            setIsAddingAmenity(false);
+            setNewAmenityName("");
+            toast.success("New amenity added!");
+        },
+        onError: (err: any) => toast.error(err.message || "Failed to add amenity"),
     });
 
     // Location States
@@ -489,7 +504,35 @@ const HostelForm: React.FC<HostelFormProps> = ({
 
                     {/* Amenities */}
                     <div className="col-span-1 md:col-span-2 space-y-2 mt-4">
-                        <p className="block text-sm font-semibold text-gray-700">Amenities</p>
+                        <div className="flex justify-between items-center">
+                            <p className="block text-sm font-semibold text-gray-700">Amenities</p>
+                            <button
+                                type="button"
+                                onClick={() => setIsAddingAmenity(!isAddingAmenity)}
+                                className="text-sm text-blue-600 font-semibold hover:underline"
+                            >
+                                + Add amenities
+                            </button>
+                        </div>
+                        {isAddingAmenity && (
+                            <div className="flex flex-col sm:flex-row gap-2 mb-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <input
+                                    type="text"
+                                    placeholder="Enter new amenity name..."
+                                    value={newAmenityName}
+                                    onChange={(e) => setNewAmenityName(e.target.value)}
+                                    className="flex-1 border border-gray-300 p-2.5 rounded-lg text-sm outline-none font-medium text-gray-900"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => createAmenityMutation.mutate(newAmenityName)}
+                                    disabled={!newAmenityName || createAmenityMutation.isPending}
+                                    className="bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-lg text-sm disabled:opacity-50 transition-colors hover:bg-blue-700 shadow-sm whitespace-nowrap"
+                                >
+                                    {createAmenityMutation.isPending ? "Adding..." : "Add"}
+                                </button>
+                            </div>
+                        )}
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200 max-h-56 overflow-y-auto">
                             {amenities
                                 ?.slice()
