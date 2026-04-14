@@ -74,7 +74,7 @@ export default async function FeaturedHostelTypes() {
                             />
                         </div>
 
-                        <CarouselContent className="-ml-4 sm:-ml-6">
+                        <CarouselContent className="-ml-4 sm:-ml-6 items-stretch">
                             {hostelTypes.map((type) => (
                                 <CarouselItem
                                     key={type.id}
@@ -100,11 +100,11 @@ export default async function FeaturedHostelTypes() {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="px-1 flex flex-col flex-grow">
-                                            <p className="font-bold text-[15px] sm:text-[16px] text-gray-900 leading-tight group-hover:text-[#312E81] transition-colors min-h-[2.5rem]">
+                                        <div className="px-1 flex flex-col flex-1">
+                                            <h3 className="font-bold text-[15px] sm:text-[16px] text-gray-900 leading-tight group-hover:text-[#312E81] transition-colors line-clamp-2 min-h-[2.5rem]">
                                                 {type.name}
-                                            </p>
-                                            <p className="text-[12px] sm:text-[13px] text-gray-500 mt-auto pt-1 font-medium">
+                                            </h3>
+                                            <p className="text-[12px] sm:text-[13px] text-gray-500 mt-auto pt-2 font-medium">
                                                 {type.hostels_count ? `${type.hostels_count.toLocaleString()} accommodations` : "View properties"}
                                             </p>
                                         </div>
