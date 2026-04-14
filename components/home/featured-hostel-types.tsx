@@ -101,7 +101,7 @@ export default async function FeaturedHostelTypes() {
                                             )}
                                         </div>
                                         <div className="px-1">
-                                            <h3 className="font-bold text-[15px] sm:text-[16px] text-gray-900 leading-tight group-hover:text-[#312E81] transition-colors line-clamp-2 min-h-[2.5rem]">
+                                            <h3 className="font-bold text-[15px] sm:text-[16px] text-gray-900 leading-tight group-hover:text-[#312E81] transition-colors line-clamp-1">
                                                 {type.name}
                                             </h3>
                                             <p className="text-[12px] sm:text-[13px] text-gray-500 mt-1 font-medium">
