@@ -43,19 +43,19 @@ export default async function FeaturedHostelTypes() {
 
     if (!hostelTypes?.length) return null;
     return (
-        <section className="pt-0 pb-16 bg-white font-inter">
+        <section className="pt-16 pb-16 bg-white font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
-                    <div>
-                        <div className="flex items-center gap-3 text-[#10B981] mb-3">
-                            <span className="text-[11px] tracking-[0.25em] font-semibold uppercase font-sans">Categories</span>
-                        </div>
-                        <h2 className="text-3xl sm:text-4xl font-semibold text-[#1E1B4B] tracking-tight font-sans">
-                            Browse by <span className="text-slate-500 font-medium">Hostel Type</span>
-                        </h2>
+                {/* Section Header */}
+                <div className="mb-12 sm:mb-8">
+                    <div className="flex items-center gap-3 text-[#10B981] mb-3">
+                        <span className="text-[11px] tracking-[0.25em] font-semibold uppercase font-sans">Categories</span>
                     </div>
+                    <h2 className="text-3xl sm:text-4xl font-semibold text-[#1E1B4B] tracking-tight font-sans">
+                        <span className="text-slate-500 font-medium">Hostel Type</span>
+                    </h2>
                 </div>
 
+                {/* Carousel with arrows positioned like Popular Cities */}
                 <div className="relative group/carousel">
                     <Carousel
                         opts={{
@@ -64,13 +64,13 @@ export default async function FeaturedHostelTypes() {
                         }}
                         className="w-full"
                     >
-                        {/* Navigation Buttons */}
+                        {/* Navigation Buttons - Absolutely positioned top-right, matching Popular Cities */}
                         <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
                             <CarouselPrevious
-                                className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
+                                className="static translate-y-0 size-8 md:size-9 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                             />
                             <CarouselNext
-                                className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
+                                className="static translate-y-0 size-8 md:size-9 rounded-full border border-slate-200 bg-white text-[#1E1B4B] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                             />
                         </div>
 

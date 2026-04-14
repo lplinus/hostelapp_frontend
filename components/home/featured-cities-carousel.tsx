@@ -44,10 +44,10 @@ export default function FeaturedCitiesCarousel({
                 {/* Navigation Buttons */}
                 <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
                     <CarouselPrevious
-                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
+                        className="static translate-y-0 size-8 md:size-9 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                     />
                     <CarouselNext
-                        className="static translate-y-0 size-11 md:size-12 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
+                        className="static translate-y-0 size-8 md:size-9 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                     />
                 </div>
 
