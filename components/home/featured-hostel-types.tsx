@@ -78,11 +78,11 @@ export default async function FeaturedHostelTypes() {
                             {hostelTypes.map((type) => (
                                 <CarouselItem
                                     key={type.id}
-                                    className="pl-4 sm:pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
+                                    className="pl-4 sm:pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 h-full"
                                 >
                                     <Link
                                         href={`/hostel-type/${type.hostel_type}`}
-                                        className="group block"
+                                        className="group flex flex-col h-full"
                                     >
                                         <div className="relative aspect-square rounded-[1.25rem] overflow-hidden shadow-sm border border-slate-100 mb-3">
                                             {type.image ? (
@@ -100,11 +100,11 @@ export default async function FeaturedHostelTypes() {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="px-1">
+                                        <div className="px-1 flex flex-col flex-grow">
                                             <p className="font-bold text-[15px] sm:text-[16px] text-gray-900 leading-tight group-hover:text-[#312E81] transition-colors min-h-[2.5rem]">
                                                 {type.name}
                                             </p>
-                                            <p className="text-[12px] sm:text-[13px] text-gray-500 mt-1 font-medium">
+                                            <p className="text-[12px] sm:text-[13px] text-gray-500 mt-auto pt-1 font-medium">
                                                 {type.hostels_count ? `${type.hostels_count.toLocaleString()} accommodations` : "View properties"}
                                             </p>
                                         </div>
