@@ -15,7 +15,6 @@ import RatingsSummary from "./detail/RatingsSummary";
 import HostelTags from "./detail/HostelTags";
 import HostelDescription from "./detail/HostelDescription";
 import HostelAmenities from "./detail/HostelAmenities";
-import HostelExtraCharges from "./detail/HostelExtraCharges";
 import HostelRooms from "./detail/HostelRooms";
 import HostelLocation from "./detail/HostelLocation";
 import HostelReviews from "./detail/HostelReviews";
@@ -116,12 +115,12 @@ export default function HostelDetailClient({ hostel }: Props) {
                         <HostelDescription description={hostel.description} />
 
                         <HostelAmenities amenities={hostel.amenities} />
-                        <HostelExtraCharges extraCharges={hostel.extra_charges} />
 
                         <HostelRooms
                             rooms={hostel.room_types}
                             hostelSlug={hostel.slug}
                             priceMode={priceMode}
+                            extraCharges={hostel.extra_charges}
                         />
 
                         <HostelLocation

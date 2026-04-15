@@ -631,6 +631,7 @@ export default function BookingContainer({
                             resetBooking={resetBooking}
                             isPaymentVerified={isPaymentVerified}
                             bookingStatus={bookingStatus}
+                            extraCharges={hostel.extra_charges}
                         />
                     )}
                 </div>

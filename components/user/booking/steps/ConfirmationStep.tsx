@@ -6,6 +6,7 @@ import { CheckCircle2, ChevronLeft, Info, ArrowRight, RotateCcw, LayoutDashboard
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
+import type { ExtraCharge } from "@/types/hostel.types";
 
 interface ConfirmationStepProps {
     step: Step;
@@ -25,6 +26,7 @@ interface ConfirmationStepProps {
     isPaymentVerified: boolean;
     paymentMethod: "online" | "on_arrival";
     bookingStatus: "pending" | "confirmed";
+    extraCharges?: readonly ExtraCharge[];
 }
 
 export function ConfirmationStep({
@@ -44,7 +46,8 @@ export function ConfirmationStep({
     resetBooking,
     isPaymentVerified,
     paymentMethod,
-    bookingStatus
+    bookingStatus,
+    extraCharges
 }: ConfirmationStepProps) {
     const isConfirmed = bookingStatus === "confirmed";
 
@@ -170,7 +173,7 @@ export function ConfirmationStep({
                                 <div className="shrink-0 flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
                                     <img
                                         src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
-                                            `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}`
+                                            `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}${extraCharges && extraCharges.length > 0 ? extraCharges.map(c => `\n${c.charge_type.replace('_',' ')}: ₹${c.amount}${c.description ? ` (${c.description})` : ''}`).join('') : ''}`
                                         )}`}
                                         alt="Booking QR Code"
                                         className="w-28 h-28"
@@ -179,6 +182,32 @@ export function ConfirmationStep({
                                 </div>
                             </div>
                         </div>
+
+                        {/* Extra Charges */}
+                        {extraCharges && extraCharges.length > 0 && (
+                            <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-5">
+                                <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider mb-3">Extra Charges (billed separately)</p>
+                                {extraCharges.map((charge, i) => (
+                                    <div
+                                        key={charge.id ?? i}
+                                        className={`flex justify-between items-start py-2 ${i !== extraCharges.length - 1 ? 'border-b border-amber-100' : ''}`}
+                                    >
+                                        <div className="min-w-0 flex-1 mr-3">
+                                            <span className="text-sm font-semibold text-gray-800 capitalize">
+                                                {charge.charge_type.replace('_', ' ')}
+                                            </span>
+                                            {charge.description && (
+                                                <p className="text-[11px] text-gray-400 leading-tight mt-0.5">{charge.description}</p>
+                                            )}
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900 whitespace-nowrap tabular-nums">
+                                            ₹{Number(charge.amount).toLocaleString()}
+                                            <span className="text-[10px] font-medium text-gray-400">/mo</span>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-3 pt-2">

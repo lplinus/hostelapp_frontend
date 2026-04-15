@@ -166,6 +166,42 @@ export function BookingSummary({
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Extra Charges */}
+                            {hostel.extra_charges && hostel.extra_charges.length > 0 && (
+                                <>
+                                    <Separator className="bg-gray-100" />
+                                    <div className="space-y-3">
+                                        <h5 className="text-[11px] font-bold text-gray-900 uppercase tracking-wide">Extra Charges</h5>
+                                        <div className="space-y-0">
+                                            {hostel.extra_charges.map((charge, i) => (
+                                                <div
+                                                    key={charge.id ?? i}
+                                                    className={`flex justify-between items-start py-2.5 ${
+                                                        i !== hostel.extra_charges!.length - 1 ? "border-b border-gray-50" : ""
+                                                    }`}
+                                                >
+                                                    <div className="min-w-0 flex-1 mr-3">
+                                                        <span className="text-sm font-semibold text-gray-800 capitalize">
+                                                            {charge.charge_type.replace('_', ' ')}
+                                                        </span>
+                                                        {charge.description && (
+                                                            <p className="text-[11px] text-gray-400 leading-tight mt-0.5 font-medium">{charge.description}</p>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-sm font-bold text-gray-900 whitespace-nowrap tabular-nums">
+                                                        ₹{Number(charge.amount).toLocaleString()}
+                                                        <span className="text-[10px] font-medium text-gray-400">/mo</span>
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <p className="text-[10px] text-gray-400 font-medium leading-snug">
+                                            These charges are billed separately by the hostel and are not included in the room price above.
+                                        </p>
+                                    </div>
+                                </>
+                            )}
                         </>
                     )}
                 </div>
