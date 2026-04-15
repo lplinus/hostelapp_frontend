@@ -75,6 +75,13 @@ export interface DefaultHostelImage {
     readonly alt_text: string;
 }
 
+export interface ExtraCharge {
+    readonly id?: number;
+    readonly charge_type: "electricity" | "water" | "maintenance" | "wifi" | "laundry" | "other";
+    readonly amount: string;
+    readonly description?: string | null;
+}
+
 export interface Bed {
     readonly id: number;
     readonly bed_number: string;
@@ -135,6 +142,7 @@ export interface HostelListItem {
     readonly amenities: readonly HostelAmenity[];
     readonly images: readonly HostelImage[];
     readonly default_images: DefaultHostelImage | null;
+    readonly extra_charges?: readonly ExtraCharge[];
     readonly available_rooms?: number;
     readonly created_at: string;
 }

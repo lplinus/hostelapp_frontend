@@ -21,6 +21,13 @@ interface HostelFormProps {
     amenities: any[] | undefined;
 }
 
+export type ExtraChargeForm = {
+    id?: number;
+    charge_type: "electricity" | "water" | "maintenance" | "wifi" | "laundry" | "other";
+    amount: string;
+    description: string;
+};
+
 const AmenityItem = ({ am, isInitiallySelected }: { am: any; isInitiallySelected: boolean }) => {
     const [checked, setChecked] = useState(isInitiallySelected);
 
@@ -112,11 +119,28 @@ const HostelForm: React.FC<HostelFormProps> = ({
         onError: (err: any) => toast.error(err.message || "Failed to add amenity"),
     });
 
-    // Location States
     const [lat, setLat] = useState(initialData?.latitude?.toString() || "");
     const [lng, setLng] = useState(initialData?.longitude?.toString() || "");
     const [address, setAddress] = useState(initialData?.address || "");
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const [extraCharges, setExtraCharges] = useState<ExtraChargeForm[]>(
+        (initialData?.extra_charges as ExtraChargeForm[]) || []
+    );
+
+    const handleAddExtraCharge = () => {
+        setExtraCharges([...extraCharges, { charge_type: "electricity", amount: "", description: "" }]);
+    };
+
+    const handleUpdateExtraCharge = (index: number, field: keyof ExtraChargeForm, value: string) => {
+        const updated = [...extraCharges];
+        updated[index] = { ...updated[index], [field]: value };
+        setExtraCharges(updated);
+    };
+
+    const handleRemoveExtraCharge = (index: number) => {
+        setExtraCharges(extraCharges.filter((_, i) => i !== index));
+    };
 
     useEffect(() => {
         if (initialData) {
@@ -130,6 +154,7 @@ const HostelForm: React.FC<HostelFormProps> = ({
             setLat("");
             setLng("");
             setAddress("");
+            setExtraCharges([]);
         }
     }, [initialData]);
 
@@ -552,6 +577,79 @@ const HostelForm: React.FC<HostelFormProps> = ({
                                 ))}
                             {!amenities?.length && <p className="text-gray-400 text-sm col-span-full py-4 text-center italic">No amenities available.</p>}
                         </div>
+                    </div>
+
+                    {/* Extra Charges */}
+                    <div className="col-span-1 md:col-span-2 space-y-4 pt-4 border-t border-gray-100">
+                        <div className="flex justify-between items-center">
+                            <p className="block text-sm font-semibold text-gray-700">Extra Charges</p>
+                            <button
+                                type="button"
+                                onClick={handleAddExtraCharge}
+                                className="text-sm text-blue-600 font-semibold hover:underline"
+                            >
+                                + Add extra charge
+                            </button>
+                        </div>
+                        <input type="hidden" name="extra_charges_json" value={JSON.stringify(extraCharges)} />
+                        {extraCharges.length > 0 ? (
+                            <div className="space-y-4">
+                                {extraCharges.map((charge, idx) => (
+                                    <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                        <div className="md:col-span-3 space-y-2">
+                                            <label className="block text-xs font-semibold text-gray-600">Type</label>
+                                            <select
+                                                required
+                                                value={charge.charge_type}
+                                                onChange={(e) => handleUpdateExtraCharge(idx, "charge_type", e.target.value)}
+                                                className="w-full border border-gray-300 p-2 rounded-lg bg-white focus:ring-1 focus:ring-blue-500 outline-none text-sm font-medium"
+                                            >
+                                                <option value="electricity">Electricity</option>
+                                                <option value="water">Water</option>
+                                                <option value="maintenance">Maintenance</option>
+                                                <option value="wifi">WiFi</option>
+                                                <option value="laundry">Laundry</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className="md:col-span-3 space-y-2">
+                                            <label className="block text-xs font-semibold text-gray-600">Amount (₹)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                required
+                                                value={charge.amount}
+                                                onChange={(e) => handleUpdateExtraCharge(idx, "amount", e.target.value)}
+                                                placeholder="e.g. 500"
+                                                className="w-full border border-gray-300 p-2 rounded-lg bg-white focus:ring-1 focus:ring-blue-500 outline-none text-sm font-medium"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-5 space-y-2">
+                                            <label className="block text-xs font-semibold text-gray-600">Description (Optional)</label>
+                                            <input
+                                                type="text"
+                                                value={charge.description}
+                                                onChange={(e) => handleUpdateExtraCharge(idx, "description", e.target.value)}
+                                                placeholder="e.g. Fixed per month"
+                                                className="w-full border border-gray-300 p-2 rounded-lg bg-white focus:ring-1 focus:ring-blue-500 outline-none text-sm font-medium"
+                                            />
+                                        </div>
+                                        <div className="md:col-span-1 text-right mb-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveExtraCharge(idx)}
+                                                className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-md transition"
+                                                title="Remove"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-400 text-sm py-2 italic font-medium">No extra charges added.</p>
+                        )}
                     </div>
                 </div>
 

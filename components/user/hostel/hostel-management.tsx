@@ -108,7 +108,7 @@ export default function HostelManagement() {
 
     // ── Create ────────────────────────────────────────────────────
     const createMutation = useMutation({
-        mutationFn: (data: FormData) => createHostel(data),
+        mutationFn: (data: Record<string, any>) => createHostel(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["myHostels"] });
             setIsCreating(false);
@@ -206,18 +206,32 @@ export default function HostelManagement() {
 
     const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
+        const fd = new FormData(e.currentTarget);
+        const payload: Record<string, any> = {};
 
-        // Handle checkboxes
-        if (!formData.get("is_active")) formData.set("is_active", "false");
-        if (!formData.get("is_discounted")) formData.set("is_discounted", "false");
+        if (!fd.get("is_active")) payload.is_active = false;
+        if (!fd.get("is_discounted")) payload.is_discounted = false;
 
-        // Handle amenities (multiple checkbox values)
-        const amenityIds = formData.getAll("amenities");
-        formData.delete("amenities");
-        amenityIds.forEach((id) => formData.append("amenities", id as string));
+        const amenityIds = fd.getAll("amenities").map(Number);
+        payload.amenities = amenityIds;
+        
+        fd.forEach((value, key) => {
+            if (key === "amenities" || key === "extra_charges_json") return; // already handled
+            if (value !== "") payload[key] = value;
+        });
 
-        createMutation.mutate(formData);
+        const extraChargesJson = fd.get("extra_charges_json") as string;
+        if (extraChargesJson) {
+            try {
+                payload.extra_charges = JSON.parse(extraChargesJson);
+            } catch (e) {
+                payload.extra_charges = [];
+            }
+        } else {
+            payload.extra_charges = [];
+        }
+
+        createMutation.mutate(payload);
     };
 
     const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -233,9 +247,21 @@ export default function HostelManagement() {
         payload.amenities = amenityIds;
 
         fd.forEach((value, key) => {
-            if (key === "amenities") return; // already handled
+            if (key === "amenities" || key === "extra_charges_json") return; // already handled
             if (value !== "") payload[key] = value;
         });
+
+        const extraChargesJson = fd.get("extra_charges_json") as string;
+        if (extraChargesJson) {
+            try {
+                payload.extra_charges = JSON.parse(extraChargesJson);
+            } catch (e) {
+                payload.extra_charges = [];
+            }
+        } else {
+            payload.extra_charges = [];
+        }
+
         updateMutation.mutate({ id: editingHostel.id, data: payload });
     };
 

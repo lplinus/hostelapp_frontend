@@ -172,7 +172,7 @@ export async function getMyHostelById(id: number | string): Promise<HostelListIt
     return authApiClient.get<HostelListItem>(`/api/hostels/hostels/my-hostels/${id}/`);
 }
 
-export async function createHostel(data: FormData): Promise<any> {
+export async function createHostel(data: Record<string, any>): Promise<any> {
     return authApiClient.post("/api/hostels/hostels/", data);
 }
 
