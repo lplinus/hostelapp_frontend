@@ -11,6 +11,8 @@ import Script from "next/script";
 import { cookies } from "next/headers";
 import Providers from "./providers";
 import { Toaster } from "sonner";
+import ChatWidget from "@/components/chat/ChatWidget";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -93,8 +95,10 @@ export default async function RootLayout({
           <Header />
           {children}
           <ConditionalFooter />
+          <ChatWidget />
           <Toaster position="bottom-right" richColors />
         </Providers>
+
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"

@@ -114,4 +114,12 @@
     @apply bg-background text-foreground font-sans;
     scrollbar-gutter: stable;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
