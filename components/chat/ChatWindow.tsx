@@ -105,7 +105,7 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
 
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: data.reply || "I'm having trouble connecting right now. Please try again!",
+        text: data.reply || "the server is down. Please try again later!",
         sender: "bot",
         timestamp: new Date(),
       };
