@@ -109,6 +109,7 @@ export interface HostelListItem {
     readonly name: string;
     readonly slug: string;
     readonly hostel_type: string;
+    readonly suitable_for: string[];
     readonly owner: number;
     readonly city: HostelCity;
     readonly area: HostelArea | null;
@@ -168,6 +169,7 @@ export interface CityHostel {
     readonly name: string;
     readonly slug: string;
     readonly hostel_type: string;
+    readonly suitable_for: string[];
     readonly price: string;
     readonly price_per_day: string | null;
     readonly is_discounted: boolean | null;

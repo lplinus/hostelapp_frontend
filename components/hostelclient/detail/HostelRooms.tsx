@@ -22,12 +22,13 @@ interface HostelRoomsProps {
     hostelSlug: string;
     priceMode: "monthly" | "daily";
     extraCharges?: readonly ExtraCharge[];
+    suitableFor?: string[];
 }
 
-export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges }: HostelRoomsProps) {
+export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges, suitableFor }: HostelRoomsProps) {
     const [showAll, setShowAll] = useState(false);
     const hasExtraCharges = extraCharges && extraCharges.length > 0;
-    const [activeTab, setActiveTab] = useState<"sharing" | "extra">("sharing");
+    const [activeTab, setActiveTab] = useState<"sharing" | "extra" | "suitable">("sharing");
     const LIMIT = 4;
 
     if (!rooms || rooms.length === 0) return null;
@@ -67,29 +68,43 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
     return (
         <div className="mb-12 pt-6 border-t border-gray-100">
             {/* Tab Header */}
-            <div className="flex items-center gap-1 mb-8">
-                <button
-                    onClick={() => setActiveTab("sharing")}
-                    className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
-                        ${activeTab === "sharing"
-                            ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
-                            : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                        }`}
-                >
-                    Available Options
-                </button>
-                {hasExtraCharges && (
+            <div className="flex items-center justify-between gap-1 mb-8">
+                <div className="flex items-center gap-1">
                     <button
-                        onClick={() => setActiveTab("extra")}
+                        onClick={() => setActiveTab("sharing")}
                         className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
-                            ${activeTab === "extra"
+                            ${activeTab === "sharing"
                                 ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
                                 : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                             }`}
                     >
-                        Extra Charges
+                        Available Options
                     </button>
-                )}
+                    {hasExtraCharges && (
+                        <button
+                            onClick={() => setActiveTab("extra")}
+                            className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
+                                ${activeTab === "extra"
+                                    ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
+                                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                                }`}
+                        >
+                            Extra Charges
+                        </button>
+                    )}
+                    {suitableFor && suitableFor.length > 0 && (
+                        <button
+                            onClick={() => setActiveTab("suitable")}
+                            className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
+                                ${activeTab === "suitable"
+                                    ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
+                                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                                }`}
+                        >
+                            Suitable For
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Sharing Tab Content */}
@@ -211,6 +226,32 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                             </span>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Suitable For Tab Content */}
+            {activeTab === "suitable" && suitableFor && suitableFor.length > 0 && (
+                <div className="py-2 animate-in fade-in duration-500">
+                    <div className="space-y-0">
+                        {suitableFor.map((item, i) => (
+                            <div 
+                                key={item} 
+                                className={`flex items-center justify-between py-5 ${
+                                    i !== suitableFor.length - 1 ? "border-b border-gray-100" : ""
+                                }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                    <h4 className="text-[17px] font-semibold text-gray-900 capitalize tracking-tight">
+                                        {item.replace(/_/g, " ")}
+                                    </h4>
+                                </div>
+                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">
+                                    Suitable
+                                </span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

@@ -28,6 +28,62 @@ export type ExtraChargeForm = {
     description: string;
 };
 
+const SUITABLE_OPTIONS = [
+    { id: "student", name: "Student" },
+    { id: "job_holder", name: "Job Holder" },
+    { id: "working_professional", name: "Working Professional" },
+    { id: "both", name: "Both" },
+    { id: "anyone", name: "Anyone" },
+];
+
+const SuitableForDropdown = ({ idPrefix, initialSelected }: { idPrefix: string; initialSelected: string[] }) => {
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState<string[]>(initialSelected);
+
+    useEffect(() => { setSelected(initialSelected); }, [initialSelected]);
+
+    const toggle = (id: string) => {
+        setSelected(prev => prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]);
+    };
+
+    const label = selected.length === 0
+        ? "Select..."
+        : selected.map(s => SUITABLE_OPTIONS.find(o => o.id === s)?.name).filter(Boolean).join(", ");
+
+    return (
+        <div className="space-y-3.5 transition-all relative">
+            <label htmlFor={`${idPrefix}-suitable_for`} className="block text-sm font-semibold text-gray-700">Suitable For</label>
+            {selected.map(id => <input key={id} type="hidden" name="suitable_for" value={id} />)}
+            <div
+                onClick={() => setOpen(!open)}
+                className="w-full border border-gray-300 p-2.5 rounded-lg bg-white cursor-pointer flex items-center justify-between focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none font-medium"
+            >
+                <span className={`truncate text-sm ${selected.length === 0 ? "text-gray-400" : "text-gray-900"}`}>{label}</span>
+                <svg className={`w-4 h-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            {open && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+                    <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                        {SUITABLE_OPTIONS.map(opt => (
+                            <div
+                                key={opt.id}
+                                onClick={() => toggle(opt.id)}
+                                className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                            >
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center text-white text-[10px] transition-all ${selected.includes(opt.id) ? "bg-blue-600 border-blue-600" : "border-gray-300"}`}>
+                                    {selected.includes(opt.id) && "✓"}
+                                </div>
+                                <span className="text-sm font-medium text-gray-700">{opt.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
 const AmenityItem = ({ am, isInitiallySelected }: { am: any; isInitiallySelected: boolean }) => {
     const [checked, setChecked] = useState(isInitiallySelected);
 
@@ -257,6 +313,11 @@ const HostelForm: React.FC<HostelFormProps> = ({
                             <option value="pg">PG</option>
                         </select>
                     </div>
+
+                    <SuitableForDropdown
+                        idPrefix={idPrefix}
+                        initialSelected={initialData?.suitable_for || []}
+                    />
 
                     <div className="space-y-3.5 transition-all">
                         <label htmlFor={`${idPrefix}-city`} className="block text-sm font-semibold text-gray-700">City</label>

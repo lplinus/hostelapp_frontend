@@ -215,8 +215,11 @@ export default function HostelManagement() {
         const amenityIds = fd.getAll("amenities").map(Number);
         payload.amenities = amenityIds;
         
+        const suitableFor = fd.getAll("suitable_for").filter(Boolean);
+        payload.suitable_for = suitableFor;
+        
         fd.forEach((value, key) => {
-            if (key === "amenities" || key === "extra_charges_json") return; // already handled
+            if (key === "amenities" || key === "extra_charges_json" || key === "suitable_for") return; // already handled
             if (value !== "") payload[key] = value;
         });
 
@@ -246,8 +249,11 @@ export default function HostelManagement() {
         const amenityIds = fd.getAll("amenities").map(Number);
         payload.amenities = amenityIds;
 
+        const suitableFor = fd.getAll("suitable_for").filter(Boolean);
+        payload.suitable_for = suitableFor;
+
         fd.forEach((value, key) => {
-            if (key === "amenities" || key === "extra_charges_json") return; // already handled
+            if (key === "amenities" || key === "extra_charges_json" || key === "suitable_for") return; // already handled
             if (value !== "") payload[key] = value;
         });
 

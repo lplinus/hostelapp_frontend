@@ -121,6 +121,7 @@ export default function HostelDetailClient({ hostel }: Props) {
                             hostelSlug={hostel.slug}
                             priceMode={priceMode}
                             extraCharges={hostel.extra_charges}
+                            suitableFor={hostel.suitable_for}
                         />
 
                         <HostelLocation
