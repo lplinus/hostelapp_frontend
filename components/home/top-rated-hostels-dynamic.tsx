@@ -57,7 +57,7 @@ export default function TopRatedHostelsDynamic({ hostels, cities }: TopRatedHost
                     {/* Header */}
                     <div className="mb-10">
                         <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
-                            Top Rated Hostels in India
+                            Top Rated Hostels 
                         </h2>
 
                         {/* Tabs + Link Row */}

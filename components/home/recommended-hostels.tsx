@@ -57,7 +57,7 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
                     {/* Header */}
                     <div className="mb-10">
                         <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
-                            Featured Hostels recommended for you
+                            Featured Hostels for you
                         </h2>
 
                         {/* Tabs + Link Row */}

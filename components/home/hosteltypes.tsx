@@ -82,7 +82,7 @@ export default function HostelTypes({ hostels }: HostelTypesProps) {
                     {/* Header */}
                     <div className="mb-10">
                         <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
-                            Explore by Hostel Type
+                            Hostel Type
                         </h2>
 
                         {/* Tabs + Link Row */}
