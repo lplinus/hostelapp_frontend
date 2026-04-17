@@ -76,6 +76,12 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // Add this to remotePatterns:
+      {
+        protocol: "https",
+        hostname: "hostelin.online",
+        pathname: "/media/**",
+      },
     ],
   },
 };
