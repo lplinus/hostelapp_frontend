@@ -1,15 +1,44 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Headset, X, Send, Phone as WhatsApp, User, Bot, Sparkles } from "lucide-react";
 
 import ChatWindow from "./ChatWindow";
 
 const ChatWidget = () => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [activeTab, setActiveTab] = useState<"menu" | "chat">("menu");
+
+  // Hide on all internal/dashboard routes — only show on public pages
+  const isInternalRoute =
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/profile" ||
+    pathname.startsWith("/profile/") ||
+    pathname === "/hostel" ||
+    pathname.startsWith("/hostel/") ||
+    pathname === "/rooms" ||
+    pathname.startsWith("/rooms/") ||
+    pathname === "/bookings" ||
+    pathname.startsWith("/bookings/") ||
+    pathname === "/subscription" ||
+    pathname.startsWith("/subscription/") ||
+    pathname === "/settings" ||
+    pathname.startsWith("/settings/") ||
+    pathname === "/help&support" ||
+    pathname.startsWith("/help&support/") ||
+    pathname.startsWith("/vendordashboard") ||
+    pathname.startsWith("/usermarketplace") ||
+    pathname === "/login" ||
+    pathname === "/register";
+
+  if (isInternalRoute) {
+    return null;
+  }
 
   const toggleWidget = () => {
     if (isOpen) {
