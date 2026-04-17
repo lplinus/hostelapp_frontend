@@ -45,6 +45,7 @@ export interface BookingRequest {
     booking_type: 'stay' | 'visit';
     stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
     payment_method?: 'online' | 'on_arrival';
+    recaptcha_token?: string;
 }
 
 export const getOwnerBookings = async (params?: any): Promise<Booking[]> => {

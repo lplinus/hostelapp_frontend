@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp, createRazorpayOrder, verifyRazorpayPayment, confirmPayAtProperty } from "@/services/booking.service";
 import { getUserProfile } from "@/services/user.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import type { HostelDetail } from "@/types/hostel.types";
 import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
@@ -45,6 +46,7 @@ export default function BookingContainer({
         initialRoomId || hostel.room_types?.[0]?.id.toString() || null
     );
     const { user } = useAuth();
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const queryClient = useQueryClient();
     const { data: profile } = useQuery({
         queryKey: ["userProfile"],
@@ -433,28 +435,49 @@ export default function BookingContainer({
         }
     };
 
-    const handleConfirmBooking = () => {
+    const handleConfirmBooking = async () => {
         if (!selectedRoom) return;
 
-        const bookingData: BookingRequest = {
-            hostel: hostel.id,
-            room_type: selectedRoom.id,
-            guest_name: form.guest_name,
-            guest_email: form.guest_email,
-            mobile_number: form.mobile_number,
-            guest_age: Number.parseInt(form.guest_age),
-            adults: Number.parseInt(form.adults),
-            children: Number.parseInt(form.children),
-            check_in: format(form.check_in, "yyyy-MM-dd"),
-            check_out: format(form.check_out, "yyyy-MM-dd"),
-            guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
-            total_price: form.booking_type === "visit" ? 0 : finalTotalPrice,
-            booking_type: form.booking_type,
-            stay_duration: form.stay_duration as any,
-            payment_method: paymentMethod,
-        } as any;
+        let recaptchaToken = "";
+        const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+        const hasSiteKey = siteKey.length > 0 && !siteKey.startsWith("YOUR_");
+        
+        if (hasSiteKey) {
+            if (!executeRecaptcha) {
+                toast.error("Security verification (reCAPTCHA) is not ready yet. Please wait a second and try again.");
+                return;
+            }
+            try {
+                recaptchaToken = await executeRecaptcha("booking");
+            } catch (captchaError) {
+                console.warn("reCAPTCHA failed or missing site key. Proceeding without it.", captchaError);
+            }
+        }
 
-        bookingMutation.mutate(bookingData);
+        try {
+            const bookingData: BookingRequest = {
+                hostel: hostel.id,
+                room_type: selectedRoom.id,
+                guest_name: form.guest_name,
+                guest_email: form.guest_email,
+                mobile_number: form.mobile_number,
+                guest_age: Number.parseInt(form.guest_age),
+                adults: Number.parseInt(form.adults),
+                children: Number.parseInt(form.children),
+                check_in: format(form.check_in, "yyyy-MM-dd"),
+                check_out: format(form.check_out, "yyyy-MM-dd"),
+                guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                total_price: form.booking_type === "visit" ? 0 : finalTotalPrice,
+                booking_type: form.booking_type,
+                stay_duration: form.stay_duration as any,
+                payment_method: paymentMethod,
+                recaptcha_token: recaptchaToken,
+            };
+
+            bookingMutation.mutate(bookingData);
+        } catch (error) {
+            toast.error("Failed to process booking. Please try again.");
+        }
     };
 
     const handleRazorpayPayment = async (bookingId: string) => {
