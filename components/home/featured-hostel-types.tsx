@@ -74,11 +74,11 @@ export default async function FeaturedHostelTypes() {
                             />
                         </div>
 
-                        <CarouselContent className="-ml-4 sm:-ml-6">
+                        <CarouselContent className="ml-0 gap-4 sm:gap-6">
                             {hostelTypes.map((type) => (
                                 <CarouselItem
                                     key={type.id}
-                                    className="pl-4 sm:pl-6 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
+                                    className="pl-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
                                 >
                                     <Link
                                         href={`/hostel-type/${type.hostel_type}`}

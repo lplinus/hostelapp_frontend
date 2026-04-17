@@ -5,8 +5,7 @@ import Hero from "@/components/home/hero";
 import SearchBar from "@/components/home/search-bar";
 import FeaturedCities from "@/components/home/featured-cities";
 import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
-// import TopHostels from "@/components/home/top-hostels";
-// import FeaturedHostels from "@/components/home/featured-hostels";
+
 import RecommendedHostels from "@/components/home/recommended-hostels";
 import TopRatedHostelsDynamic from "@/components/home/top-rated-hostels-dynamic";
 import WhyUs from "@/components/home/why-us";
@@ -107,13 +106,7 @@ export default async function HomePage() {
             <TopRatedHostelsDynamic hostels={topRatedHostels} cities={cities} />
           </SectionReveal>
 
-          {/* <SectionReveal delay={0.1}>
-          <FeaturedHostels />
-        </SectionReveal> */}
 
-          {/* <SectionReveal delay={0.15}>
-          <TopHostels />
-        </SectionReveal> */}
 
           <SectionReveal delay={0.2}>
             <WhyUs
