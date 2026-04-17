@@ -42,7 +42,7 @@ export default function FeaturedCitiesCarousel({
                 className="w-full"
             >
                 {/* Navigation Buttons */}
-                <div className="absolute -top-14 sm:-top-16 right-0 flex gap-2 sm:gap-3 z-20">
+                <div className="absolute -top-[5.5rem] sm:-top-[4.5rem] right-0 flex gap-2 sm:gap-3 z-20">
                     <CarouselPrevious
                         className="static translate-y-0 size-8 md:size-9 rounded-full border border-slate-200 bg-white text-[#312E81] shadow-sm hover:bg-[#312E81] hover:text-white transition-all disabled:opacity-30"
                     />
