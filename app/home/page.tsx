@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import Hero from "@/components/home/hero";
 import SearchBar from "@/components/home/search-bar";
 import FeaturedCities from "@/components/home/featured-cities";
-import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
+// import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
+import HostelTypes from "@/components/home/hosteltypes";
 
 import RecommendedHostels from "@/components/home/recommended-hostels";
 import TopRatedHostelsDynamic from "@/components/home/top-rated-hostels-dynamic";
@@ -57,10 +58,11 @@ export default async function HomePage() {
   let homepageData: HomePageResponse | null = null;
   const seo = await getSEO("home");
 
-  const [featuredHostels, topRatedHostels, cities] = await Promise.all([
+  const [featuredHostels, topRatedHostels, cities, allHostels] = await Promise.all([
     getFeaturedHostels(),
     getTopRatedHostels(),
-    getCities()
+    getCities(),
+    getHostels()
   ]);
 
   try {
@@ -97,6 +99,9 @@ export default async function HomePage() {
           {/* <SectionReveal delay={0.05}>
             <FeaturedHostelTypes />
           </SectionReveal> */}
+          <SectionReveal delay={0.05}>
+            <HostelTypes hostels={allHostels} />
+          </SectionReveal>
 
           <SectionReveal delay={0.1}>
             <RecommendedHostels hostels={featuredHostels} cities={cities} />
