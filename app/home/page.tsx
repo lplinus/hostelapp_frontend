@@ -94,9 +94,9 @@ export default async function HomePage() {
             <FeaturedCities />
           </SectionReveal>
 
-          <SectionReveal delay={0.05}>
+          {/* <SectionReveal delay={0.05}>
             <FeaturedHostelTypes />
-          </SectionReveal>
+          </SectionReveal> */}
 
           <SectionReveal delay={0.1}>
             <RecommendedHostels hostels={featuredHostels} cities={cities} />
