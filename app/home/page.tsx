@@ -25,7 +25,8 @@ async function getCities() {
     const res = await fetch(`${BASE_URL}/api/locations/cities/`, {
       next: { revalidate: 60 },
     });
-    return res.json();
+    const data = await res.json();
+    return data;
   } catch (err) {
     return [];
   }

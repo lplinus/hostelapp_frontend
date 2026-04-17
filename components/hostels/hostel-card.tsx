@@ -101,7 +101,7 @@ export default function HostelCard({
           {/* Top-left badges */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
             {isVerified && (
-              <div 
+              <div
                 className="group/badge bg-white/90 backdrop-blur-md text-[#10B981] p-1.5 rounded-lg shadow-sm flex items-center border border-white/50 transition-all duration-300 cursor-default"
               >
                 <CheckCircle className="w-4 h-4 shrink-0" />
@@ -170,9 +170,9 @@ export default function HostelCard({
                   <span className="text-[10px] text-slate-400 line-through">₹{originalPrice.toLocaleString()} / mo</span>
                 )}
               </div>
-              
+
               <div className="flex items-center gap-1 text-[11px] font-bold text-[#10B981] group-hover:translate-x-1 transition-transform">
-                Explore <ArrowRight className="w-3.5 h-3.5" />
+                View details <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function HostelCard({
           {/* Badges on image */}
           <div className="absolute top-3 left-3 flex items-center gap-1.5">
             {isVerified && (
-              <div 
+              <div
                 className="group/badge bg-white/90 backdrop-blur-md text-[#10B981] p-1.5 rounded-lg shadow-sm flex items-center border border-white/50 transition-all duration-300 cursor-default"
               >
                 <CheckCircle className="w-4 h-4 shrink-0" />
@@ -312,7 +312,7 @@ export default function HostelCard({
             <div
               className="bg-[#312E81] hover:bg-[#10B981] text-white px-6 py-3 rounded-xl font-bold transition-all text-[13px] shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap shrink-0"
             >
-              Explore Selection
+              view details
             </div>
           </div>
         </div>
