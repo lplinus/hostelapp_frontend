@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
 import { useAuth } from "@/hooks/useAuth";
 import { toLocalMediaPath } from "@/lib/utils";
+import NotificationBell from "@/components/user/notification/NotificationBell";
 
 export default function DashboardHeader() {
     const { user, logout, isLoggingOut } = useAuth();
@@ -60,9 +61,7 @@ export default function DashboardHeader() {
 
             <div className="flex items-center gap-4">
 
-                <button className="p-2 rounded-lg hover:bg-gray-100">
-                    <Bell size={20} />
-                </button>
+                <NotificationBell />
 
                 <button className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-all">
                     {isMounted && user?.profile_picture ? (

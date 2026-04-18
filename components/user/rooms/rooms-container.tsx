@@ -59,6 +59,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
         queryKey: ["groupedRooms"],
         queryFn: getGroupedMyRooms,
         initialData: Array.from(initialGroupedRooms), // Convert readonly to mutable for useQuery if needed
+        refetchInterval: 5000,
     });
 
     const { data: hostels } = useQuery({

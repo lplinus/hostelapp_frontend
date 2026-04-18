@@ -24,6 +24,7 @@ export default function HostelManagement() {
     const { data: hostels, isLoading } = useQuery({
         queryKey: ["myHostels"],
         queryFn: getMyHostels,
+        refetchInterval: 5000,
     });
 
     const { data: cities } = useQuery({
