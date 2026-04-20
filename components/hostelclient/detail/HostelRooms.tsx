@@ -15,6 +15,8 @@ interface RoomType {
     available_beds: number;
     total_beds: number;
     is_available: boolean;
+    features?: string;
+    features_list?: readonly string[];
 }
 
 interface HostelRoomsProps {
@@ -65,8 +67,14 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
     const displayed = showAll ? orderedRooms : orderedRooms.slice(0, LIMIT);
 
-    // Room feature bullets based on room type
+    // Room feature bullets — use backend data if available, otherwise static fallback
     const getRoomFeatures = (room: RoomType): string[] => {
+        // If backend has features, use them
+        if (room.features_list && room.features_list.length > 0) {
+            return [...room.features_list];
+        }
+
+        // Static fallback when no features are set in backend
         const features: string[] = [];
         if (room.room_category === "AC") {
             features.push("Air conditioning included");

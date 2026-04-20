@@ -74,6 +74,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
         room_category: "NON_AC",
         sharing_type: "1",
         show_this_price: false,
+        features: "",
     });
 
     const createMutation = useMutation({
@@ -81,7 +82,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["groupedRooms"] });
             setIsCreating(false);
-            setFormData({ room_category: "NON_AC", sharing_type: "1" });
+            setFormData({ room_category: "NON_AC", sharing_type: "1", features: "" });
             toast.success("Room type created successfully!");
         },
         onError: (error: any) => {
@@ -100,7 +101,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
             setIsCreating(false);
             setIsEditing(false);
             setEditingId(null);
-            setFormData({ room_category: "NON_AC", sharing_type: "1" });
+            setFormData({ room_category: "NON_AC", sharing_type: "1", features: "" });
             toast.success("Room type updated successfully!");
         },
         onError: (error: any) => {
@@ -141,6 +142,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
             price_per_day: room.price_per_day,
             total_beds: room.total_beds,
             show_this_price: !!room.show_this_price,
+            features: room.features || "",
         });
         setEditingId(room.id as number);
         setIsEditing(true);
@@ -152,7 +154,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
         setIsCreating(false);
         setIsEditing(false);
         setEditingId(null);
-        setFormData({ room_category: "NON_AC", sharing_type: "1", show_this_price: false });
+        setFormData({ room_category: "NON_AC", sharing_type: "1", show_this_price: false, features: "" });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -334,6 +336,32 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                             </div>
                         </div>
 
+                        {/* Room Features */}
+                        <div className="space-y-2">
+                            <label htmlFor="features-input" className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                Room Features / Highlights
+                                <span className="text-gray-400 font-normal text-xs">(comma separated)</span>
+                            </label>
+                            <textarea
+                                id="features-input"
+                                name="features"
+                                value={formData.features || ""}
+                                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                                placeholder="e.g. Air conditioning included, Privacy pods with curtains, Individual lockable lockers, Attached bathroom"
+                                rows={3}
+                                className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none resize-none"
+                            />
+                            {formData.features && (
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                    {formData.features.split(",").filter(f => f.trim()).map((feature, idx) => (
+                                        <span key={idx} className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                                            {feature.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex justify-end gap-3 pt-4">
                             <button
                                 type="button"
@@ -415,8 +443,8 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Sharing Configuration</TableHead>
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Tariff ({priceView})</TableHead>
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Capacity Details</TableHead>
+                                                                <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Features</TableHead>
                                                                 <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Status</TableHead>
-                                                                <TableHead className="px-6 py-4 text-left text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Featured Price</TableHead>
                                                                 <TableHead className="px-6 py-4 text-right text-[11px] font-black text-gray-900 uppercase tracking-[0.1em]">Actions</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
@@ -444,6 +472,22 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                             </span>
                                                                         </div>
                                                                     </TableCell>
+                                                                    <TableCell className="px-6 py-5">
+                                                                        {room.features_list && room.features_list.length > 0 ? (
+                                                                            <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                                                                {room.features_list.slice(0, 2).map((f: string, i: number) => (
+                                                                                    <span key={i} className="inline-block px-2 py-0.5 text-[10px] font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">
+                                                                                        {f}
+                                                                                    </span>
+                                                                                ))}
+                                                                                {room.features_list.length > 2 && (
+                                                                                    <span className="text-[10px] text-gray-400 font-medium">+{room.features_list.length - 2} more</span>
+                                                                                )}
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span className="text-xs text-gray-400 font-medium italic">Default</span>
+                                                                        )}
+                                                                    </TableCell>
                                                                     <TableCell className="px-6 py-5 whitespace-nowrap">
                                                                         <Badge
                                                                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border-none ${room.is_available
@@ -453,13 +497,6 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                                                                         >
                                                                             {room.is_available ? "Live" : "Inactive"}
                                                                         </Badge>
-                                                                    </TableCell>
-                                                                    <TableCell className="px-6 py-5 whitespace-nowrap">
-                                                                        {room.show_this_price ? (
-                                                                            <Badge className="bg-blue-100 text-blue-700 border-none font-bold text-[10px]">Hostel Card Price</Badge>
-                                                                        ) : (
-                                                                            <span className="text-xs text-gray-400 font-medium italic">Standard</span>
-                                                                        )}
                                                                     </TableCell>
                                                                     <TableCell className="px-6 py-5 whitespace-nowrap text-right">
                                                                         <TooltipProvider>

@@ -102,6 +102,8 @@ export interface RoomType {
     readonly total_beds: number;
     readonly available_beds: number;
     readonly beds: readonly Bed[];
+    readonly features?: string;
+    readonly features_list?: readonly string[];
 }
 
 export interface HostelListItem {

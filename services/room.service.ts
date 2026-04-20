@@ -13,17 +13,23 @@ export interface RoomType {
     total_beds?: number;
     available_beds?: number;
     show_this_price?: boolean;
+    features?: string;
+    features_list?: string[];
 }
 
 export interface GroupedRoom {
     id: number;
     sharing: string;
+    sharing_type: number;
+    room_category: string;
     price: string | number;
     price_per_day: string | number;
     total_beds: number;
     available_beds: number;
     is_available: boolean;
     show_this_price: boolean;
+    features: string;
+    features_list: string[];
 }
 
 export interface GroupedRoomCategory {
