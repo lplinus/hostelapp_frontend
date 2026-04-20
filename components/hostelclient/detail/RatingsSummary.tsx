@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, MapPin, IndianRupee, UtensilsCrossed, BedDouble } from "lucide-react";
+import { Star, MapPin, UtensilsCrossed, Armchair, ShieldCheck, Sparkles } from "lucide-react";
 
 interface KeyInfoProps {
     ratingAvg: number;
@@ -23,46 +23,44 @@ export default function RatingsSummary({
     foodRating,
     roomRating,
 }: KeyInfoProps) {
-    const subRatings = [
-        { label: "Food", val: foodRating, icon: UtensilsCrossed, color: "text-[#312E81]", bg: "bg-indigo-50", border: "border-indigo-100" },
-        { label: "Room", val: roomRating, icon: BedDouble, color: "text-[#10B981]", bg: "bg-emerald-50", border: "border-emerald-100" }
+    const highlights = [
+        { icon: UtensilsCrossed, label: "Curated Meals", sub: "Nutritious & fresh" },
+        { icon: Armchair, label: "Ergo Design", sub: "Comfort-first spaces" },
+        { icon: ShieldCheck, label: "24/7 Safety", sub: "Secure campus" },
+        { icon: Sparkles, label: "Sanitized Daily", sub: "Deep-cleaned rooms" },
     ];
 
     return (
-        <div className="mb-10 mt-6 relative">
-            {/* Primary Key Info Strip */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
-                <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#1E1B4B] border border-indigo-900 rounded-full shadow-sm text-white shrink-0">
-                    <Star size={14} className="fill-amber-400 text-amber-400 sm:w-4 sm:h-4 w-3.5 h-3.5" />
-                    <span className="font-bold text-xs sm:text-sm tracking-wide">{ratingAvg.toFixed(1)} Rating</span>
-                </div>
-                
-                <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 bg-indigo-50 border border-indigo-100 rounded-full shadow-sm text-indigo-700 hover:bg-indigo-100 transition-all hover:-translate-y-0.5 cursor-default shrink-0">
-                    <MapPin size={14} className="text-indigo-500 fill-indigo-500/10 sm:w-4 sm:h-4 w-3.5 h-3.5" />
-                    <span className="font-bold text-xs sm:text-sm truncate max-w-[130px] sm:max-w-[200px]">
+        <div className="mb-8 mt-4">
+            {/* Location & Rating Row */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-6">
+                <div className="flex items-center gap-1.5 text-gray-500 text-sm font-medium">
+                    <MapPin size={14} className="text-gray-400" />
+                    <span>
                         {areaName ? `${areaName}, ` : ""}{cityName || "Location"}
                     </span>
                 </div>
-                
-                <div className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-full shadow-sm text-emerald-700 ml-auto hidden sm:flex hover:bg-emerald-100 transition-all hover:-translate-y-0.5 cursor-default">
-                    <IndianRupee size={15} className="bg-[#10B981] text-white rounded-full p-0.5" />
-                    <span className="font-black text-sm tracking-tight">Starts at ₹{Number(price).toLocaleString()} <span className="text-[10px] opacity-70">/ MONTH</span></span>
+                <span className="text-gray-300 hidden sm:inline">·</span>
+                <div className="flex items-center gap-1.5">
+                    <Star size={14} className="fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-semibold text-gray-900">{ratingAvg.toFixed(1)}</span>
+                    <span className="text-sm text-gray-400">({ratingCount} reviews)</span>
                 </div>
             </div>
 
-            {/* Sub-ratings Breakdown */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {subRatings.map((cat, idx) => (
-                    <div key={idx} className={`rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md ${cat.bg} ${cat.border}`}>
-                        <div className="flex items-center gap-2 mb-2 sm:mb-0">
-                            <div className={`w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm ${cat.color}`}>
-                                <cat.icon size={16} />
-                            </div>
-                            <span className="font-bold text-[#1E1B4B] text-sm">{cat.label}</span>
+            {/* Property Highlights Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 py-6 border-y border-gray-100">
+                {highlights.map((item, idx) => (
+                    <div
+                        key={idx}
+                        className="flex flex-col items-center text-center gap-2 py-3 group cursor-default"
+                    >
+                        <div className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-colors duration-300">
+                            <item.icon size={20} className="text-gray-600 group-hover:text-[#312E81] transition-colors duration-300" strokeWidth={1.5} />
                         </div>
-                        <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-white/50 shadow-sm">
-                            <span className="font-black text-[#1E1B4B]">{Number(cat.val || 5.0).toFixed(1)}</span>
-                            <Star size={12} className="fill-amber-400 text-amber-400" />
+                        <div>
+                            <p className="text-[13px] font-semibold text-gray-800 leading-tight">{item.label}</p>
+                            <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{item.sub}</p>
                         </div>
                     </div>
                 ))}

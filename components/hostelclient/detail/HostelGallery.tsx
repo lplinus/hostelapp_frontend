@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { LayoutGrid, X, ChevronLeft, ChevronRight, Star, ShieldCheck, Share2, Heart } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { LayoutGrid, X, ChevronLeft, ChevronRight, Share2, Heart } from "lucide-react";
 import { isExternalImage } from "@/lib/utils";
 
 interface HostelGalleryProps {
@@ -16,12 +16,12 @@ interface HostelGalleryProps {
     isFeatured?: boolean | null;
 }
 
-export default function HostelGallery({ 
-    images, 
-    hostelName, 
-    ratingAvg = 0, 
-    ratingCount = 0, 
-    areaName, 
+export default function HostelGallery({
+    images,
+    hostelName,
+    ratingAvg = 0,
+    ratingCount = 0,
+    areaName,
     cityName,
     isTopRated,
     isFeatured
@@ -30,13 +30,44 @@ export default function HostelGallery({
     const [showGallery, setShowGallery] = useState(false);
     const [saved, setSaved] = useState(false);
 
+    // Keyboard navigation for gallery modal
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (!showGallery) return;
+        if (e.key === "Escape") setShowGallery(false);
+    }, [showGallery]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [handleKeyDown]);
+
+    // Touch swipe for mobile
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStart === null) return;
+        const diff = touchStart - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                setActiveImg((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+            } else {
+                setActiveImg((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+            }
+        }
+        setTouchStart(null);
+    };
+
     return (
-        <div className="mb-0 md:mb-8 relative group">
-            {/* Desktop Hero Grid */}
-            <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-2 h-[560px] rounded-[2rem] overflow-hidden shadow-sm relative relative-overlay">
-                
+        <div className="gallery-section">
+            {/* ─── Desktop Hero Grid ─── */}
+            <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-[6px] h-[480px] lg:h-[520px] rounded-2xl overflow-hidden relative">
+
                 {/* Main Full-Height Left Image */}
-                <div 
+                <div
                     className="col-span-2 row-span-2 relative cursor-pointer overflow-hidden group/main"
                     onClick={() => setShowGallery(true)}
                 >
@@ -44,13 +75,12 @@ export default function HostelGallery({
                         src={images[0]?.src || "/images/hero1.webp"}
                         alt={images[0]?.alt || hostelName}
                         fill
-                        className="object-cover group-hover/main:scale-105 transition-transform duration-700 ease-out"
+                        className="object-cover group-hover/main:scale-[1.03] transition-transform duration-700 ease-out"
                         priority
-                        sizes="(max-width: 1200px) 50vw, 800px"
+                        sizes="(max-width: 1200px) 50vw, 600px"
                         unoptimized={isExternalImage(images[0]?.src)}
                     />
-                    {/* Gradient overlay for text visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/[0.03] group-hover/main:bg-black/[0.08] transition-colors duration-300" />
                 </div>
 
                 {/* Right Side 4 smaller images */}
@@ -64,39 +94,28 @@ export default function HostelGallery({
                             src={images[i]?.src || images[0]?.src || "/images/hero1.webp"}
                             alt={images[i]?.alt || hostelName}
                             fill
-                            className="object-cover group-hover/thumb:scale-110 transition-transform duration-700 ease-out"
-                            sizes="(max-width: 1200px) 25vw, 400px"
+                            className="object-cover group-hover/thumb:scale-110 transition-transform duration-500 ease-out"
+                            sizes="(max-width: 1200px) 25vw, 300px"
                             unoptimized={isExternalImage(images[i]?.src || images[0]?.src)}
                         />
-                        <div className="absolute inset-0 bg-black/10 group-hover/thumb:bg-transparent transition-colors duration-300 pointer-events-none" />
+                        <div className="absolute inset-0 bg-black/[0.03] group-hover/thumb:bg-black/[0.08] transition-colors duration-300" />
+
+                        {/* "View all photos" overlay on last image */}
+                        {i === 4 && images.length > 5 && (
+                            <div className="absolute inset-0 bg-black/40 flex items-end justify-end p-4 pointer-events-none">
+                                <span className="flex items-center gap-2 bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-semibold px-4 py-2 rounded-lg shadow-md">
+                                    <LayoutGrid size={14} />
+                                    View all photos
+                                </span>
+                            </div>
+                        )}
                     </div>
                 ))}
 
-                {/* Overlay Details (Name, Location, Badges) */}
-                <div className="absolute bottom-8 left-8 pointer-events-none z-10 max-w-[50%]">
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                        {isTopRated && (
-                            <span className="backdrop-blur-md bg-white/20 border border-white/30 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
-                                <Star size={12} className="fill-amber-400 text-amber-400" />
-                                Top Rated
-                            </span>
-                        )}
-                        {isFeatured && (
-                            <span className="backdrop-blur-md bg-blue-600/80 text-white border border-blue-400/50 px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1.5">
-                                <ShieldCheck size={12} />
-                                Popular Choice
-                            </span>
-                        )}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
-                        {/* Rating removed per user request */}
-                    </div>
-                </div>
-
-                {/* Top Right Action Buttons */}
-                <div className="absolute top-6 right-6 flex items-center gap-3 z-20">
+                {/* Top Right Actions */}
+                <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
                     <button
-                        className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-md hover:bg-white text-gray-800 shadow-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                        className="w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center transition-all hover:shadow-lg hover:scale-105 active:scale-95 text-gray-700"
                         onClick={(e) => {
                             e.stopPropagation();
                             navigator.share?.({
@@ -105,33 +124,29 @@ export default function HostelGallery({
                             });
                         }}
                     >
-                        <Share2 size={18} />
+                        <Share2 size={15} />
                     </button>
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setSaved(!saved);
                         }}
-                        className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-md hover:bg-white text-gray-800 shadow-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                        className="w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center transition-all hover:shadow-lg hover:scale-105 active:scale-95 text-gray-700"
                     >
                         <Heart
-                            size={18}
+                            size={15}
                             className={saved ? "fill-red-500 text-red-500 transition-colors" : "transition-colors"}
                         />
                     </button>
                 </div>
-
-                <button
-                    onClick={() => setShowGallery(true)}
-                    className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md hover:bg-white text-slate-900 border border-white/20 px-5 py-2.5 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-2.5 transition-all active:scale-95 z-20 hover:scale-105"
-                >
-                    <LayoutGrid size={18} />
-                    <span>View all photos</span>
-                </button>
             </div>
 
-            {/* Mobile View with swipe layout */}
-            <div className="md:hidden relative aspect-[4/5] sm:aspect-[4/4] rounded-none sm:rounded-[2rem] -mx-5 sm:mx-0 overflow-hidden shadow-2xl">
+            {/* ─── Mobile Swipe Gallery ─── */}
+            <div
+                className="md:hidden relative aspect-[4/3] rounded-xl overflow-hidden shadow-sm -mx-1"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+            >
                 {images.length > 0 ? (
                     <Image
                         src={images[activeImg].src}
@@ -147,14 +162,11 @@ export default function HostelGallery({
                         No images
                     </div>
                 )}
-                
-                {/* Mobile Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-900/40 to-slate-900/20 pointer-events-none" />
 
-                {/* Mobile Actions Overlay */}
-                <div className="absolute top-4 right-4 flex items-center gap-2 z-20 pointer-events-auto">
+                {/* Mobile Top Right Actions */}
+                <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
                     <button
-                        className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all active:scale-90 shadow-lg"
+                        className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700"
                         onClick={(e) => {
                             e.stopPropagation();
                             navigator.share?.({
@@ -163,91 +175,86 @@ export default function HostelGallery({
                             });
                         }}
                     >
-                        <Share2 size={16} />
+                        <Share2 size={14} />
                     </button>
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setSaved(!saved);
                         }}
-                        className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all active:scale-90 shadow-lg"
+                        className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700"
                     >
                         <Heart
-                            size={16}
+                            size={14}
                             className={saved ? "fill-red-500 text-red-500" : ""}
                         />
                     </button>
                 </div>
 
-                {/* Mobile Badges & Info Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 pointer-events-none z-10 flex flex-col justify-end">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                        {isTopRated && (
-                            <span className="backdrop-blur-md bg-white/20 border border-white/30 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-1">
-                                <Star size={10} className="fill-amber-400 text-amber-400" />
-                                Top Rated
-                            </span>
-                        )}
-                        {isFeatured && (
-                            <span className="backdrop-blur-md bg-blue-600/80 text-white border border-blue-400/50 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg flex items-center gap-1">
-                                <ShieldCheck size={10} />
-                                Popular
-                            </span>
-                        )}
-                    </div>
-                    
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
-                        {/* Rating removed per user request */}
-                    </div>
-                </div>
-
+                {/* Mobile Arrows */}
                 {images.length > 1 && (
-                    <div className="absolute top-1/2 -translate-y-1/2 inset-x-0 flex items-center justify-between px-3 pointer-events-none z-20">
+                    <div className="absolute top-1/2 -translate-y-1/2 inset-x-0 flex items-center justify-between px-2 pointer-events-none z-20">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setActiveImg((prev) => (prev > 0 ? prev - 1 : images.length - 1));
                             }}
-                            className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-xl pointer-events-auto active:scale-90 transition-all"
+                            className="w-8 h-8 rounded-full bg-white/90 shadow-sm flex items-center justify-center text-gray-700 pointer-events-auto active:scale-90 transition-all"
                         >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={18} />
                         </button>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setActiveImg((prev) => (prev < images.length - 1 ? prev + 1 : 0));
                             }}
-                            className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-xl pointer-events-auto active:scale-90 transition-all"
+                            className="w-8 h-8 rounded-full bg-white/90 shadow-sm flex items-center justify-center text-gray-700 pointer-events-auto active:scale-90 transition-all"
                         >
-                            <ChevronRight size={20} />
+                            <ChevronRight size={18} />
                         </button>
                     </div>
                 )}
 
-                <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full border border-white/20 shadow-md">
-                    {activeImg + 1} / {images.length}
-                </div>
+                {/* Dot indicators */}
+                {images.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                        {images.slice(0, Math.min(images.length, 7)).map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setActiveImg(idx)}
+                                className={`rounded-full transition-all duration-300 ${
+                                    idx === activeImg
+                                        ? "w-6 h-2 bg-white"
+                                        : "w-2 h-2 bg-white/50"
+                                }`}
+                            />
+                        ))}
+                        {images.length > 7 && (
+                            <span className="text-[9px] text-white/70 font-medium ml-1">+{images.length - 7}</span>
+                        )}
+                    </div>
+                )}
             </div>
 
-            {/* Gallery Full-screen Modal */}
+            {/* ─── Full-screen Gallery Modal ─── */}
             {showGallery && (
-                <div className="fixed inset-0 z-[9999] bg-white flex flex-col animate-in fade-in duration-300">
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white/90 backdrop-blur-xl sticky top-0 z-10">
+                <div className="fixed inset-0 z-[9999] bg-white flex flex-col animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
                         <button
                             onClick={() => setShowGallery(false)}
-                            className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full transition-colors backdrop-blur-md"
+                            className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
                         >
                             <X size={20} />
                         </button>
-                        <div className="text-sm font-bold text-gray-800 bg-gray-100 px-4 py-1.5 rounded-full">
+                        <span className="text-sm font-semibold text-gray-800">
                             {images.length} Photos
-                        </div>
-                        <div className="w-10"></div>
+                        </span>
+                        <div className="w-10" />
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 bg-white scroll-smooth cursor-default">
-                        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-4">
+                    <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 bg-gray-50/50 scroll-smooth">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {images.map((img, idx) => (
-                                <div key={idx} className="relative w-full aspect-[3/2] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 transition-transform hover:scale-[1.01] hover:shadow-lg cursor-pointer">
+                                <div key={idx} className="relative w-full aspect-[3/2] rounded-xl overflow-hidden bg-gray-100 transition-transform hover:scale-[1.01] hover:shadow-md cursor-pointer">
                                     <Image
                                         src={img.src}
                                         alt={img.alt}

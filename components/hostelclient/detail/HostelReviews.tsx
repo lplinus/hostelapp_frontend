@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { MessageSquarePlus, Star, ShieldCheck } from "lucide-react";
+import { MessageSquarePlus, Star, ShieldCheck, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -102,181 +102,175 @@ export default function HostelReviews({
     const displayAvgRating = hasRealReviews ? ratingAvg : 4.5;
 
     return (
-        <div className="mb-12 pt-6 border-t border-gray-100">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                <div className="flex items-center gap-3">
-                    <Star size={28} className="fill-[#1E1B4B] text-[#1E1B4B]" />
-                    <h2 className="text-3xl font-bold text-[#1E1B4B] flex items-baseline gap-2">
-                        {displayAvgRating.toFixed(1)}
-                    </h2>
-                </div>
-
-                <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
+        <section className="mb-10 pt-8 border-t border-gray-100">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-gray-900">What Guests Say</h2>
+                <Dialog>
                     <DialogTrigger asChild>
-                        <Button className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold rounded-xl px-6 py-6 flex items-center gap-2 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-                            <MessageSquarePlus size={18} />
-                            Write a Review
-                        </Button>
+                        <button className="text-sm font-semibold text-[#312E81] hover:text-[#1E1B4B] flex items-center gap-0.5 transition-colors">
+                            View all reviews
+                            <ChevronRight size={16} />
+                        </button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] rounded-3xl p-6 border-0 shadow-2xl">
-                        <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold font-sans tracking-tight">Rate your stay</DialogTitle>
-                            <DialogDescription className="text-sm font-medium text-gray-500">
-                                Share your experience to help others make better choices.
+                    <DialogContent className="max-w-xl rounded-2xl p-5 md:p-6 max-h-[80vh] overflow-y-auto w-[95%] border-0 shadow-2xl">
+                        <DialogHeader className="mb-4">
+                            <DialogTitle className="text-xl font-bold text-gray-900">All Reviews</DialogTitle>
+                            <DialogDescription className="text-sm text-gray-500">
+                                What others are saying about this hostel.
                             </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={handleReviewSubmit} className="space-y-5 pt-4">
-                            <div className="space-y-2.5">
-                                <Label htmlFor="name" className="text-sm font-bold text-gray-700">Display Name</Label>
-                                <Input
-                                    id="name"
-                                    placeholder="e.g. John Doe (Optional)"
-                                    className="rounded-xl border-gray-200 focus:border-[#10B981] focus:ring-[#10B981]/20 py-3 font-medium bg-gray-50"
-                                    value={reviewForm.name}
-                                    onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
-                                />
-                            </div>
-                            <div className="grid grid-cols-1 gap-4 bg-gray-50/80 p-5 rounded-2xl border border-gray-200/60">
-                                {[
-                                    { field: "food_rating", label: "Food & Dining" },
-                                    { field: "room_rating", label: "Room Comfort" }
-                                ].map((cat) => (
-                                    <div key={cat.field} className="flex items-center justify-between">
-                                        <Label className="text-sm font-bold text-gray-700 tracking-wide">{cat.label}</Label>
-                                        <div className="flex items-center gap-1.5">
-                                            {[1, 2, 3, 4, 5].map((star) => {
-                                                const ratingValue = reviewForm[cat.field as keyof typeof reviewForm] as number;
-                                                return (
-                                                    <button
-                                                        key={star}
-                                                        type="button"
-                                                        onClick={() => setReviewForm({ ...reviewForm, [cat.field]: star })}
-                                                        className="transition-transform hover:scale-110 active:scale-90"
-                                                    >
-                                                        <Star
-                                                            size={22}
-                                                            className={`${star <= ratingValue
-                                                                ? "fill-amber-400 text-amber-400"
-                                                                : "text-gray-300 fill-gray-100"
-                                                                }`}
-                                                        />
-                                                    </button>
-                                                )
-                                            })}
+                        <div className="space-y-3">
+                            {reviewsToShow.map((review) => (
+                                <div key={review.id} className="flex flex-col gap-3 bg-gray-50 rounded-xl p-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex flex-shrink-0 items-center justify-center text-[#312E81] font-bold text-sm">
+                                            {review.user_name?.charAt(0)?.toUpperCase() || "U"}
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+                                                {review.user_name || "Anonymous User"}
+                                                {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
+                                            </p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <StarRating rating={review.rating} size={10} />
+                                                <span className="text-[11px] text-gray-400">
+                                                    · {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    })}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="space-y-2.5">
-                                <Label htmlFor="comment" className="text-sm font-bold text-gray-700">Your Experience</Label>
-                                <Textarea
-                                    id="comment"
-                                    placeholder="What did you love? What could be improved?"
-                                    className="rounded-xl border-gray-200 focus:border-[#10B981] focus:ring-[#10B981]/20 min-h-[120px] font-medium bg-gray-50 resize-none p-4"
-                                    required
-                                    value={reviewForm.comment}
-                                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                                />
-                            </div>
-                            <Button
-                                type="submit"
-                                disabled={isSubmittingReview}
-                                className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold h-14 rounded-xl transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] active:scale-[0.98] text-[15px]"
-                            >
-                                {isSubmittingReview ? "Posting your review..." : "Post Review"}
-                            </Button>
-                        </form>
+                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                        {review.comment}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
                     </DialogContent>
                 </Dialog>
             </div>
 
-            <div className="relative group/reviews">
-                <style jsx>{`
-                    .scrollbar-hide::-webkit-scrollbar { display: none; }
-                    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-                `}</style>
-                <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-6 pb-6 -mx-2 px-2">
-                    {reviewsToShow.map((review) => (
-                        <div
-                            key={review.id}
-                            className="flex flex-col gap-4 bg-white border border-gray-100 rounded-[2.5rem] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] snap-start min-w-[320px] md:min-w-[450px] flex-shrink-0 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 border-none group/card"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-50 to-emerald-50 border border-indigo-100/50 flex items-center justify-center text-[#312E81] font-bold text-lg shadow-sm group-hover/card:scale-105 transition-transform duration-300">
-                                    {review.user_name?.charAt(0)?.toUpperCase() || "U"}
-                                </div>
-                                <div>
-                                    <p className="font-bold text-[#1E1B4B] text-[15px] leading-tight flex items-center gap-1.5">
-                                        {review.user_name || "Anonymous User"}
-                                        {review.rating >= 4 && <ShieldCheck size={14} className="text-[#10B981]" />}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <StarRating rating={review.rating} size={11} />
-                                        <span className="text-[12px] text-gray-500 font-medium">
-                                            · {new Date(review.created_at).toLocaleDateString("en-IN", {
-                                                month: "short",
-                                                year: "numeric",
-                                            })}
-                                        </span>
-                                    </div>
+            {/* Review Cards - Horizontal Scroll */}
+            <style jsx>{`
+                .scrollbar-hide::-webkit-scrollbar { display: none; }
+                .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
+            <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 pb-4 -mx-1 px-1">
+                {reviewsToShow.map((review) => (
+                    <div
+                        key={review.id}
+                        className="flex flex-col gap-4 bg-white border border-gray-100 rounded-2xl p-6 snap-start min-w-[280px] sm:min-w-[340px] md:min-w-[380px] flex-shrink-0 hover:shadow-md transition-shadow duration-300"
+                    >
+                        {/* Reviewer */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center text-[#312E81] font-bold text-base flex-shrink-0">
+                                {review.user_name?.charAt(0)?.toUpperCase() || "U"}
+                            </div>
+                            <div>
+                                <p className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+                                    {review.user_name || "Anonymous User"}
+                                    {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <StarRating rating={review.rating} size={11} />
+                                    <span className="text-xs text-gray-400">
+                                        · {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                            month: "short",
+                                            year: "numeric",
+                                        })}
+                                    </span>
                                 </div>
                             </div>
-                            <p className="text-gray-700 text-[15px] leading-relaxed line-clamp-4 italic">
-                                "{review.comment}"
-                            </p>
                         </div>
-                    ))}
-                </div>
+                        {/* Comment */}
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                            {review.comment}
+                        </p>
+                    </div>
+                ))}
             </div>
 
-            {reviewsToShow.length > 0 && (
-                <div className="mt-8">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <button className="px-6 py-3 border border-gray-900 rounded-xl text-[15px] font-bold text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]">
-                                Show all {displayReviewCount} reviews
-                            </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-xl rounded-3xl p-5 md:p-6 max-h-[80vh] overflow-y-auto w-[95%] border-0 shadow-2xl">
-                            <DialogHeader className="mb-4">
-                                <DialogTitle className="text-2xl font-bold font-sans tracking-tight text-[#1E1B4B]">All Reviews</DialogTitle>
-                                <DialogDescription className="text-sm font-medium text-gray-500">
-                                    What others are saying about this hostel.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                {reviewsToShow.map((review) => (
-                                    <div key={review.id} className="flex flex-col gap-3 bg-gray-50 border-0 rounded-2xl p-5 shadow-none">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-50 to-emerald-50 border border-indigo-100/50 flex flex-shrink-0 items-center justify-center text-[#312E81] font-bold text-base">
-                                                {review.user_name?.charAt(0)?.toUpperCase() || "U"}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-[#1E1B4B] text-[14px] leading-tight flex items-center gap-1.5">
-                                                    {review.user_name || "Anonymous User"}
-                                                    {review.rating >= 4 && <ShieldCheck size={14} className="text-[#10B981]" />}
-                                                </p>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <StarRating rating={review.rating} size={10} />
-                                                    <span className="text-[11px] text-gray-500 font-medium">
-                                                        · {new Date(review.created_at).toLocaleDateString("en-IN", {
-                                                            month: "short",
-                                                            year: "numeric",
-                                                        })}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p className="text-gray-700 text-[14px] leading-relaxed italic">
-                                            "{review.comment}"
-                                        </p>
+            {/* Write Review Button */}
+            <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
+                <DialogTrigger asChild>
+                    <button className="mt-4 flex items-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 transition-all active:scale-[0.98]">
+                        <MessageSquarePlus size={16} />
+                        Write a Review
+                    </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-2xl p-6 border-0 shadow-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-gray-900">Rate your stay</DialogTitle>
+                        <DialogDescription className="text-sm text-gray-500">
+                            Share your experience to help others make better choices.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleReviewSubmit} className="space-y-5 pt-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Display Name</Label>
+                            <Input
+                                id="name"
+                                placeholder="e.g. John Doe (Optional)"
+                                className="rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 py-3 bg-gray-50"
+                                value={reviewForm.name}
+                                onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            {[
+                                { field: "food_rating", label: "Food & Dining" },
+                                { field: "room_rating", label: "Room Comfort" }
+                            ].map((cat) => (
+                                <div key={cat.field} className="flex items-center justify-between">
+                                    <Label className="text-sm font-semibold text-gray-700">{cat.label}</Label>
+                                    <div className="flex items-center gap-1.5">
+                                        {[1, 2, 3, 4, 5].map((star) => {
+                                            const ratingValue = reviewForm[cat.field as keyof typeof reviewForm] as number;
+                                            return (
+                                                <button
+                                                    key={star}
+                                                    type="button"
+                                                    onClick={() => setReviewForm({ ...reviewForm, [cat.field]: star })}
+                                                    className="transition-transform hover:scale-110 active:scale-90"
+                                                >
+                                                    <Star
+                                                        size={22}
+                                                        className={`${star <= ratingValue
+                                                            ? "fill-amber-400 text-amber-400"
+                                                            : "text-gray-300 fill-gray-100"
+                                                            }`}
+                                                    />
+                                                </button>
+                                            )
+                                        })}
                                     </div>
-                                ))}
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            )}
-        </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="comment" className="text-sm font-semibold text-gray-700">Your Experience</Label>
+                            <Textarea
+                                id="comment"
+                                placeholder="What did you love? What could be improved?"
+                                className="rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 min-h-[120px] bg-gray-50 resize-none p-4"
+                                required
+                                value={reviewForm.comment}
+                                onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                            />
+                        </div>
+                        <Button
+                            type="submit"
+                            disabled={isSubmittingReview}
+                            className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold h-12 rounded-xl transition-all active:scale-[0.98]"
+                        >
+                            {isSubmittingReview ? "Posting your review..." : "Post Review"}
+                        </Button>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </section>
     );
 }

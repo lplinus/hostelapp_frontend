@@ -74,7 +74,7 @@ export default function HostelDetailClient({ hostel }: Props) {
         <div className="hostel-detail-page bg-white min-h-screen pb-24 lg:pb-0">
             <Breadcrumb hostelName={hostel.name} />
 
-            <div className="max-w-[1200px] mx-auto px-5 pb-16">
+            <div className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-16">
                 <HostelGallery
                     images={hostelImages}
                     hostelName={hostel.name}
@@ -86,9 +86,19 @@ export default function HostelDetailClient({ hostel }: Props) {
                     isFeatured={hostel.is_featured}
                 />
 
-                <h1 
-                    className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1E1B4B] tracking-tight mt-8 mb-2" 
-                    style={{ fontFamily: "'Inter', sans-serif" }}
+                {/* Verified Badge */}
+                {hostel.is_verified && (
+                    <div className="mt-6 mb-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold rounded bg-indigo-50 text-[#312E81] border border-indigo-200 uppercase tracking-wider">
+                            ● Verified Stay
+                        </span>
+                    </div>
+                )}
+
+                {/* Hostel Name */}
+                <h1
+                    className="text-2xl sm:text-3xl lg:text-[2.2rem] font-bold text-gray-900 tracking-tight mt-3 mb-1 leading-tight"
+                    style={{ fontFamily: "'Inter', 'system-ui', sans-serif" }}
                 >
                     {hostel.name}
                 </h1>
@@ -104,7 +114,8 @@ export default function HostelDetailClient({ hostel }: Props) {
                     roomRating={currentHostel.room_rating_avg}
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 min-w-0">
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10 min-w-0">
                     <div className="min-w-0">
                         <HostelTags
                             isVerified={hostel.is_verified}
@@ -114,14 +125,22 @@ export default function HostelDetailClient({ hostel }: Props) {
 
                         <HostelDescription description={hostel.description} />
 
-                        <HostelAmenities amenities={hostel.amenities} />
-
                         <HostelRooms
                             rooms={hostel.room_types}
                             hostelSlug={hostel.slug}
                             priceMode={priceMode}
                             extraCharges={hostel.extra_charges}
                             suitableFor={hostel.suitable_for}
+                        />
+
+                        <HostelAmenities amenities={hostel.amenities} />
+
+                        <HostelReviews
+                            hostelId={hostel.id}
+                            reviews={currentHostel.reviews}
+                            ratingAvg={currentHostel.rating_avg}
+                            ratingCount={currentHostel.rating_count}
+                            onReviewSubmitted={() => setIsWaitingForApproval(true)}
                         />
 
                         <HostelLocation
@@ -131,14 +150,6 @@ export default function HostelDetailClient({ hostel }: Props) {
                             latitude={hostel.latitude}
                             longitude={hostel.longitude}
                             landmarks={hostel.landmarks}
-                        />
-
-                        <HostelReviews
-                            hostelId={hostel.id}
-                            reviews={currentHostel.reviews}
-                            ratingAvg={currentHostel.rating_avg}
-                            ratingCount={currentHostel.rating_count}
-                            onReviewSubmitted={() => setIsWaitingForApproval(true)}
                         />
                     </div>
 

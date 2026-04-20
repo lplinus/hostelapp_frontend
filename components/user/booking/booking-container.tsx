@@ -561,16 +561,16 @@ export default function BookingContainer({
 
 
     return (
-        <div className="max-w-5xl mx-auto py-10 px-4 font-sans antialiased">
+        <div className="max-w-[1100px] mx-auto py-8 px-4 sm:px-6 font-sans antialiased min-h-screen">
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-slate-500 hover:text-[#312E81] transition-colors mb-6 group"
+                className="flex items-center gap-2 text-gray-500 hover:text-[#312E81] transition-colors mb-8 group"
             >
-                <div className="p-2 rounded-full border border-slate-200 group-hover:bg-slate-50 transition-all text-slate-900">
-                    <ArrowLeft size={18} />
+                <div className="p-1.5 rounded-full border border-gray-200 group-hover:bg-gray-50 transition-all text-gray-600">
+                    <ArrowLeft size={16} />
                 </div>
-                <span className="font-semibold">Back to Hostel</span>
+                <span className="text-sm font-semibold">Back to Hostel</span>
             </button>
 
             {/* Progress Bar */}
@@ -587,9 +587,9 @@ export default function BookingContainer({
                 }}
             />
 
-            <div className="grid lg:grid-cols-[1fr_360px] gap-8">
+            <div className="grid lg:grid-cols-[1fr_380px] gap-8">
                 {/* Left Column: Form */}
-                <div className="space-y-6">
+                <div className="min-w-0">
                     <BookingDetailsStep
                         step={step}
                         setStep={setStep}
@@ -660,7 +660,7 @@ export default function BookingContainer({
                 </div>
 
                 {/* Right Column: Summary Sticky Card */}
-                <div className="lg:sticky lg:top-6 self-start space-y-6">
+                <div className="lg:sticky lg:top-6 self-start space-y-4">
                     <BookingSummary
                         hostel={hostel}
                         selectedRoom={selectedRoom}
@@ -675,9 +675,9 @@ export default function BookingContainer({
                         bookingStatus={bookingStatus}
                     />
 
-                    <div className="p-4 bg-orange-50/30 rounded-2xl flex gap-3">
-                        <Activity className="shrink-0 text-orange-600" size={18} />
-                        <p className="text-[11px] text-orange-800 leading-relaxed font-semibold">
+                    <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 flex gap-3">
+                        <Activity className="shrink-0 text-orange-500" size={18} />
+                        <p className="text-[11px] text-orange-700 leading-relaxed font-medium">
                             Free cancellation available 24 hours before check-in. Book with confidence.
                         </p>
                     </div>

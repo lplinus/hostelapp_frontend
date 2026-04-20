@@ -72,32 +72,32 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsExpanded(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[-1]"
+                            className="fixed inset-0 bg-black/30 backdrop-blur-[1px] z-[-1]"
                         />
                         <motion.div
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             exit={{ y: "100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-[0_-20px_50px_rgba(0,0,0,0.15)] border-t border-gray-100"
+                            className="bg-white rounded-t-2xl p-6 pb-10 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] border-t border-gray-100"
                         >
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-xl font-medium text-gray-900 tracking-tight">Booking Details</h3>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-bold text-gray-900">Booking Details</h3>
                                 <button
                                     onClick={() => setIsExpanded(false)}
-                                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                                    className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
                                 >
-                                    <ChevronDown size={24} />
+                                    <ChevronDown size={20} />
                                 </button>
                             </div>
 
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 {/* Dates Selection */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Calendar size={14} className="text-[#312E81]" />
-                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Check-in</span>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-gray-50 rounded-xl p-3.5 border border-gray-100">
+                                        <div className="flex items-center gap-1.5 mb-1.5">
+                                            <Calendar size={12} className="text-[#312E81]" />
+                                            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Check-in</span>
                                         </div>
                                         <input
                                             type="date"
@@ -107,10 +107,10 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                             className="text-sm font-medium text-gray-900 bg-transparent w-full focus:outline-none"
                                         />
                                     </div>
-                                    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Calendar size={14} className="text-indigo-600" />
-                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Check-out</span>
+                                    <div className="bg-gray-50 rounded-xl p-3.5 border border-gray-100">
+                                        <div className="flex items-center gap-1.5 mb-1.5">
+                                            <Calendar size={12} className="text-[#312E81]" />
+                                            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Check-out</span>
                                         </div>
                                         <input
                                             type="date"
@@ -123,27 +123,27 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                                 </div>
 
                                 {/* Guests Selection */}
-                                <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200/50 flex items-center justify-between">
+                                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-indigo-100 text-[#312E81] flex items-center justify-center">
-                                            <Users size={20} />
+                                        <div className="w-9 h-9 rounded-lg bg-indigo-50 text-[#312E81] flex items-center justify-center">
+                                            <Users size={18} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-0.5">Guests</p>
+                                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Guests</p>
                                             <p className="text-sm font-medium text-gray-900">{guests} Guest{guests > 1 ? 's' : ''}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-5">
+                                    <div className="flex items-center gap-4">
                                         <button
                                             onClick={() => setGuests(Math.max(1, guests - 1))}
-                                            className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-xl font-medium text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-all active:scale-90"
+                                            className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center text-lg text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-all active:scale-90"
                                         >
-                                            -
+                                            −
                                         </button>
-                                        <span className="text-lg font-medium text-gray-900 min-w-[20px] text-center">{guests}</span>
+                                        <span className="text-base font-medium text-gray-900 min-w-[16px] text-center">{guests}</span>
                                         <button
                                             onClick={() => setGuests(Math.min(10, guests + 1))}
-                                            className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-xl font-medium text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-all active:scale-90"
+                                            className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center text-lg text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-all active:scale-90"
                                         >
                                             +
                                         </button>
@@ -155,48 +155,41 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                 )}
             </AnimatePresence>
 
-            <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 px-6 py-5 shadow-[0_-20px_50px_rgba(0,0,0,0.12)] flex items-center justify-between relative z-10">
+            {/* Sticky Bottom Bar */}
+            <div className="bg-white border-t border-gray-100 px-5 py-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] flex items-center justify-between relative z-10">
                 <div className="flex flex-col">
-                    <div className="flex flex-col gap-1">
-                        {showDiscount && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-400 line-through font-medium">₹{Math.round(totalOriginalPrice).toLocaleString()}</span>
-                                <span className="text-[10px] font-black bg-red-100 text-red-600 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                    <TrendingDown size={10} />
-                                    {Math.round(Number(hostel.discount_percentage))}%
-                                </span>
-                            </div>
-                        )}
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-medium text-gray-900 tracking-tight">
-                                ₹{Math.round(totalPrice).toLocaleString()}
-                            </span>
-                            <span className="text-gray-500 text-[10px] font-medium uppercase tracking-widest ml-1">
-                                {nights} {nights === 1 ? 'Night' : 'Nights'} Total
+                    {showDiscount && (
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className="text-xs text-gray-400 line-through">₹{Math.round(totalOriginalPrice).toLocaleString()}</span>
+                            <span className="text-[10px] font-bold bg-red-50 text-red-500 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <TrendingDown size={9} />
+                                {Math.round(Number(hostel.discount_percentage))}%
                             </span>
                         </div>
-                        <div className="flex items-center gap-1.5 font-medium text-gray-900">
-                            <span className="text-[14px]">{(hostel.rating_avg || 5).toFixed(1)}</span>
-                            <div className="flex items-center text-yellow-500">
-                                {"★".repeat(Math.round(hostel.rating_avg || 5))}
-                            </div>
-                        </div>
+                    )}
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-gray-900 tracking-tight">
+                            ₹{Math.round(totalPrice).toLocaleString()}
+                        </span>
+                        <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">
+                            total
+                        </span>
                     </div>
 
-                    {/* Toggle Button */}
+                    {/* Toggle */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-1.5 text-[10px] font-medium text-[#312E81] uppercase tracking-widest mt-2 group"
+                        className="flex items-center gap-1 text-[10px] font-medium text-[#312E81] uppercase tracking-wider mt-1 group"
                     >
-                        <span className="whitespace-nowrap">
-                            {new Date(checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        <span>
+                            {new Date(checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – {new Date(checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
-                        <span className="w-1 h-1 rounded-full bg-indigo-300" />
+                        <span className="w-0.5 h-0.5 rounded-full bg-indigo-400" />
                         <span>{guests} Guest{guests > 1 ? 's' : ''}</span>
                         {isExpanded ? (
-                            <ChevronDown size={14} className="group-hover:translate-y-0.5 transition-transform ml-1" />
+                            <ChevronDown size={12} className="ml-0.5" />
                         ) : (
-                            <ChevronUp size={14} className="group-hover:-translate-y-0.5 transition-transform ml-1" />
+                            <ChevronUp size={12} className="ml-0.5" />
                         )}
                     </button>
                 </div>
@@ -204,7 +197,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                 <Button
                     asChild
                     size="lg"
-                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium px-10 h-14 rounded-2xl transition-all active:scale-95 shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 text-[1.05rem] flex-shrink-0 border-none"
+                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold px-8 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 text-sm flex-shrink-0 border-none"
                 >
                     <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
                         Reserve

@@ -1,8 +1,7 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ChevronLeft, Info, ArrowRight, RotateCcw, LayoutDashboard } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Info, ArrowRight, RotateCcw, Search, Mail, FileText, CalendarPlus, Headphones } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
@@ -52,33 +51,12 @@ export function ConfirmationStep({
     const isConfirmed = bookingStatus === "confirmed";
 
     if (step !== "confirmation" && !isConfirmed) return null;
-
-    // Show when confirmation step is active or booking is confirmed
     if (step !== "confirmation" && isConfirmed) return null;
 
     return (
-        <Card className={cn(
-            "border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 bg-white rounded-2xl",
-            isConfirmed && "border-[#10B981]/20 shadow-lg shadow-emerald-50/50"
-        )}>
-            {/* Step Header */}
-            <div className="px-6 pt-6 pb-2">
-                <div className="flex items-center gap-3 mb-1">
-                    <div className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center",
-                        isConfirmed ? "bg-[#10B981]/10" : "bg-[#312E81]/10"
-                    )}>
-                        <CheckCircle2 size={16} className={isConfirmed ? "text-[#10B981]" : "text-[#312E81]"} />
-                    </div>
-                    <div>
-                        <h2 className="text-lg font-bold text-gray-900">Booking Confirmation</h2>
-                        <p className="text-xs text-gray-500">Your booking details and QR code</p>
-                    </div>
-                </div>
-            </div>
-
-            <CardContent className="space-y-5 pt-2 px-6 pb-6 animate-in fade-in slide-in-from-bottom-3 duration-400">
-                {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified)) && !isConfirmed ? (
+        <div>
+            {(!isFormValid || !isPhoneVerified || (!confirmedBookingId && form.booking_type !== "visit") || (form.booking_type === "stay" && paymentMethod === "online" && !isPaymentVerified)) && !isConfirmed ? (
+                <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
                     <div className="py-12 px-6 text-center space-y-4 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
                         <div className="flex justify-center">
                             <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
@@ -105,141 +83,165 @@ export function ConfirmationStep({
                             {!isFormValid || !isPhoneVerified ? "Go to Details" : "Go to Payment"}
                         </Button>
                     </div>
-                ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified || isConfirmed)) ? (
-                    <>
-                        {/* Success Banner */}
-                        <div className="text-center space-y-3 py-4">
-                            <div className="flex justify-center">
-                                <div className="w-16 h-16 bg-gradient-to-br from-[#10B981] to-emerald-400 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-100">
-                                    <CheckCircle2 size={32} />
-                                </div>
-                            </div>
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-gray-900">Booking Confirmed!</h3>
-                                <p className="text-sm text-gray-500">
-                                    Your request has been sent to <strong className="text-gray-700">{hostelName}</strong>
-                                </p>
+                </div>
+            ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified || isConfirmed)) ? (
+                <div className="space-y-6">
+                    {/* ═══ Success Hero ═══ */}
+                    <div className="text-center py-8">
+                        <div className="flex justify-center mb-5">
+                            <div className="w-20 h-20 bg-gradient-to-br from-[#10B981] to-emerald-400 rounded-full flex items-center justify-center text-white shadow-xl shadow-emerald-100/50">
+                                <CheckCircle2 size={40} strokeWidth={2.5} />
                             </div>
                         </div>
+                        <h2 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Booking Confirmed!</h2>
+                        <p className="text-gray-500">Your booking has been successfully created</p>
+                    </div>
 
-                        {/* Booking Details Card */}
-                        <div className="bg-gray-50 border border-gray-100 rounded-xl p-5">
-                            <div className="flex flex-col sm:flex-row gap-6">
-                                {/* Details Grid */}
-                                <div className="flex-1 space-y-3">
-                                    <div className="flex items-center justify-between py-1.5">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Booking ID</span>
-                                        <span className="font-bold font-mono text-[#312E81] text-sm">STN-{confirmedBookingId?.substring(0, 8).toUpperCase()}</span>
-                                    </div>
-                                    <div className="w-full h-px bg-gray-200" />
-                                    <div className="flex items-center justify-between py-1.5">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Guest</span>
-                                        <span className="font-semibold text-sm text-gray-900">{form.guest_name}</span>
-                                    </div>
-                                    <div className="w-full h-px bg-gray-200" />
-                                    <div className="flex items-center justify-between py-1.5">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dates</span>
-                                        <span className="font-semibold text-sm text-gray-900">{format(form.check_in, "MMM d")} – {format(form.check_out, "MMM d")}</span>
-                                    </div>
-                                    <div className="w-full h-px bg-gray-200" />
-                                    <div className="flex items-center justify-between py-1.5">
-                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment Status</span>
-                                        <div className="text-right">
-                                            {paymentMethod === "online" ? (
-                                                <>
-                                                    <span className="font-bold text-sm text-[#10B981] block">₹{bookingFee} Paid Now</span>
-                                                    <span className="text-[10px] text-orange-600 font-bold">₹{totalPrice.toLocaleString()} due at property</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span className="font-bold text-sm text-orange-600 block">Pay at Property</span>
-                                                    <span className="text-[10px] text-slate-500 font-medium italic">₹{finalTotalPrice.toLocaleString()} pending</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {paymentId && (
-                                        <>
-                                            <div className="w-full h-px bg-gray-200" />
-                                            <div className="flex items-center justify-between py-1.5">
-                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment ID</span>
-                                                <span className="font-bold font-mono text-[#312E81] text-[10px] break-all">{paymentId}</span>
-                                            </div>
-                                        </>
-                                    )}
+                    {/* ═══ Booking Details Card ═══ */}
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div className="p-6 sm:p-8">
+                            {/* Confirmation Code & Status */}
+                            <div className="flex items-start justify-between mb-6">
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Confirmation Code</p>
+                                    <p className="text-xl font-bold font-mono text-[#312E81] tracking-wider">
+                                        NS-{confirmedBookingId?.substring(0, 4).toUpperCase()}-{confirmedBookingId?.substring(4, 6).toUpperCase()}
+                                    </p>
                                 </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Status</p>
+                                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[#10B981]">
+                                        <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
 
-                                {/* QR Code */}
-                                <div className="shrink-0 flex flex-col items-center justify-center p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-                                    <img
-                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
-                                            `Booking ID: STN-${confirmedBookingId?.substring(0, 8).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}${extraCharges && extraCharges.length > 0 ? extraCharges.map(c => `\n${c.charge_type.replace('_',' ')}: ₹${c.amount}${c.description ? ` (${c.description})` : ''}`).join('') : ''}`
-                                        )}`}
-                                        alt="Booking QR Code"
-                                        className="w-28 h-28"
-                                    />
-                                    <span className="text-[8px] text-gray-400 font-bold uppercase mt-2 tracking-widest">Scan to verify</span>
+                            <div className="h-px bg-gray-100 mb-6" />
+
+                            {/* Details Grid */}
+                            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 mb-6">
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Guest Name</p>
+                                    <p className="font-semibold text-gray-900">{form.guest_name}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Dates</p>
+                                    <p className="font-semibold text-gray-900">{format(form.check_in, "MMM d")} — {format(form.check_out, "MMM d, yyyy")}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Accommodation</p>
+                                    <p className="font-semibold text-gray-900">{hostelName}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Payment Method</p>
+                                    <p className="font-semibold text-gray-900 flex items-center gap-1.5">
+                                        {paymentMethod === "on_arrival" ? "💳 Pay at Hostel" : "💳 Paid Online"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="h-px bg-gray-100 mb-6" />
+
+                            {/* Hostel Mini Card with Total */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg">🏠</div>
+                                    <div>
+                                        <p className="font-semibold text-gray-900 text-sm">{hostelName}</p>
+                                        <p className="text-xs text-gray-400">Booking confirmed</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Total Amount</p>
+                                    <p className="text-xl font-bold text-[#312E81]">₹{finalTotalPrice.toLocaleString()}</p>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Extra Charges */}
-                        {extraCharges && extraCharges.length > 0 && (
-                            <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-5">
-                                <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider mb-3">Extra Charges (billed separately)</p>
-                                {extraCharges.map((charge, i) => (
-                                    <div
-                                        key={charge.id ?? i}
-                                        className={`flex justify-between items-start py-2 ${i !== extraCharges.length - 1 ? 'border-b border-amber-100' : ''}`}
-                                    >
-                                        <div className="min-w-0 flex-1 mr-3">
-                                            <span className="text-sm font-semibold text-gray-800 capitalize">
-                                                {charge.charge_type.replace('_', ' ')}
-                                            </span>
-                                            {charge.description && (
-                                                <p className="text-[11px] text-gray-400 leading-tight mt-0.5">{charge.description}</p>
-                                            )}
-                                        </div>
-                                        <span className="text-sm font-bold text-gray-900 whitespace-nowrap tabular-nums">
-                                            ₹{Number(charge.amount).toLocaleString()}
-                                            <span className="text-[10px] font-medium text-gray-400">/mo</span>
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                    {/* ═══ QR Code Section ═══ */}
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center">
+                        <div className="inline-block p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-4">
+                            <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+                                    `Booking ID: NS-${confirmedBookingId?.substring(0, 4).toUpperCase()}-${confirmedBookingId?.substring(4, 6).toUpperCase()}\nGuest: ${form.guest_name}\nHostel: ${hostelName}\nDates: ${format(form.check_in, "MMM d, yyyy")} - ${format(form.check_out, "MMM d, yyyy")}\nPayment: ${paymentMethod === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}${paymentId ? `\nPayment ID: ${paymentId}` : ''}${extraCharges && extraCharges.length > 0 ? extraCharges.map(c => `\n${c.charge_type.replace('_',' ')}: ₹${c.amount}${c.description ? ` (${c.description})` : ''}`).join('') : ''}`
+                                )}`}
+                                alt="Booking QR Code"
+                                className="w-32 h-32"
+                            />
+                        </div>
+                        <h4 className="font-bold text-gray-900 mb-1">Check-in Pass</h4>
+                        <p className="text-xs text-gray-500">Scan this QR code at the hostel front desk to expedite your check-in process.</p>
+                    </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                            <Button
-                                variant="outline"
-                                className="flex-1 rounded-xl h-11 font-bold border-gray-200 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
-                                onClick={() => router.push("/home")}
-                            >
-                                Browse Hostels
-                                <ArrowRight size={14} className="ml-1.5" />
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="flex-1 rounded-xl h-11 border-[#312E81]/20 text-[#312E81] font-bold hover:bg-[#312E81]/5 hover:text-[#312E81]"
-                                onClick={resetBooking}
-                            >
-                                <RotateCcw size={14} className="mr-1.5" />
-                                Book Again
-                            </Button>
-                            {!isConfirmed && (
-                                <Button
-                                    className="flex-1 rounded-xl h-11 bg-[#312E81] font-bold shadow-md shadow-indigo-100 hover:bg-[#1E1B4B]"
-                                    onClick={() => router.push("/dashboard")}
+                    {/* ═══ Extra Charges ═══ */}
+                    {extraCharges && extraCharges.length > 0 && (
+                        <div className="bg-amber-50/70 border border-amber-100 rounded-2xl p-6">
+                            <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider mb-3">Extra Charges (billed separately)</p>
+                            {extraCharges.map((charge, i) => (
+                                <div
+                                    key={charge.id ?? i}
+                                    className={`flex justify-between items-start py-2.5 ${i !== extraCharges.length - 1 ? 'border-b border-amber-100' : ''}`}
                                 >
-                                    <LayoutDashboard size={14} className="mr-1.5" />
-                                    Dashboard
-                                </Button>
-                            )}
+                                    <div className="min-w-0 flex-1 mr-3">
+                                        <span className="text-sm font-semibold text-gray-800 capitalize">
+                                            {charge.charge_type.replace('_', ' ')}
+                                        </span>
+                                        {charge.description && (
+                                            <p className="text-[11px] text-gray-400 leading-tight mt-0.5">{charge.description}</p>
+                                        )}
+                                    </div>
+                                    <span className="text-sm font-bold text-gray-900 whitespace-nowrap tabular-nums">
+                                        ₹{Number(charge.amount).toLocaleString()}
+                                        <span className="text-[10px] font-medium text-gray-400">/mo</span>
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                    </>
-                ) : null}
-            </CardContent>
-        </Card>
+                    )}
+
+                    {/* ═══ Action Buttons ═══ */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <Button
+                            className="flex-1 h-12 rounded-2xl bg-[#312E81] hover:bg-[#252361] text-white font-bold shadow-md transition-all active:scale-[0.98]"
+                            onClick={() => router.push("/home")}
+                        >
+                            <Search size={16} className="mr-2" />
+                            Browse Hostels
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="flex-1 h-12 rounded-2xl border-gray-200 bg-gray-50 text-gray-700 font-bold hover:bg-gray-100 transition-all active:scale-[0.98]"
+                            onClick={resetBooking}
+                        >
+                            <RotateCcw size={16} className="mr-2" />
+                            Book Again
+                        </Button>
+                    </div>
+
+                    {/* ═══ Email Notice ═══ */}
+                    <div className="text-center py-2">
+                        <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
+                            <Mail size={14} className="text-gray-400" />
+                            A confirmation email was sent to <strong className="text-gray-700">{form.guest_email}</strong>
+                        </p>
+                    </div>
+
+                    {/* ═══ Quick Links ═══ */}
+                    <div className="flex items-center justify-center gap-6 pt-2 pb-4">
+                        <button className="text-xs font-semibold text-[#312E81] hover:underline underline-offset-2 flex items-center gap-1">
+                            <FileText size={12} /> Download Invoice
+                        </button>
+                        <button className="text-xs font-semibold text-[#312E81] hover:underline underline-offset-2 flex items-center gap-1">
+                            <CalendarPlus size={12} /> Add to Calendar
+                        </button>
+                        <button className="text-xs font-semibold text-[#312E81] hover:underline underline-offset-2 flex items-center gap-1">
+                            <Headphones size={12} /> Contact Support
+                        </button>
+                    </div>
+                </div>
+            ) : null}
+        </div>
     );
 }

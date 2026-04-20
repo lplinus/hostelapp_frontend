@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { User, CreditCard, CheckCircle2, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import type { Step } from "../booking-container";
 
 interface BookingProgressBarProps {
@@ -15,9 +15,9 @@ interface BookingProgressBarProps {
 }
 
 const STEPS = [
-    { id: "details" as const, label: "Guest Details", icon: User },
-    { id: "payment" as const, label: "Payment", icon: CreditCard },
-    { id: "confirmation" as const, label: "Confirmation", icon: CheckCircle2 },
+    { id: "details" as const, label: "Guest Details", number: 1 },
+    { id: "payment" as const, label: "Payment", number: 2 },
+    { id: "confirmation" as const, label: "Confirmation", number: 3 },
 ];
 
 export function BookingProgressBar({
@@ -67,82 +67,78 @@ export function BookingProgressBar({
     };
 
     return (
-        <div className="w-full mb-8">
-            <div className="relative flex items-center justify-between">
-                {/* Connecting line (background) */}
-                <div className="absolute top-5 left-0 right-0 h-[2px] bg-gray-200 mx-12" />
-
-                {/* Connecting line (progress fill) */}
-                <div
-                    className="absolute top-5 left-0 h-[2px] bg-gradient-to-r from-[#312E81] to-[#10B981] mx-12 transition-all duration-700 ease-out"
-                    style={{
-                        width: (() => {
-                            const currentIdx = steps.findIndex(
-                                (s) => s.id === currentStep
-                            );
-                            if (isConfirmed) return `calc(100% - 6rem)`;
-                            if (currentIdx <= 0) return "0%";
-                            const pct =
-                                (currentIdx / (steps.length - 1)) * 100;
-                            return `calc(${pct}% - ${(6 * (100 - pct)) / 100}rem)`;
-                        })(),
-                    }}
-                />
-
-                {steps.map((step) => {
+        <div className="w-full mb-10 px-4">
+            <div className="relative flex items-start justify-between max-w-lg mx-auto">
+                {steps.map((step, idx) => {
                     const status = getStepStatus(step.id);
-                    const Icon = step.icon;
                     const isClickable = isConfirmed;
+                    const isLast = idx === steps.length - 1;
 
                     return (
-                        <button
-                            key={step.id}
-                            type="button"
-                            onClick={() => handleClick(step.id)}
-                            disabled={!isClickable}
-                            className={cn(
-                                "relative z-10 flex flex-col items-center gap-2 bg-transparent border-none outline-none",
-                                isClickable ? "cursor-pointer group" : "cursor-default"
-                            )}
-                        >
-                            {/* Step circle */}
-                            <div
+                        <React.Fragment key={step.id}>
+                            <button
+                                type="button"
+                                onClick={() => handleClick(step.id)}
+                                disabled={!isClickable}
                                 className={cn(
-                                    "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ease-out border-2",
-                                    status === "active" &&
-                                        "bg-[#312E81] border-[#312E81] text-white shadow-lg shadow-indigo-200 scale-110",
-                                    status === "completed" &&
-                                        "bg-[#10B981] border-[#10B981] text-white shadow-md shadow-emerald-100",
-                                    status === "inactive" &&
-                                        "bg-white border-gray-200 text-gray-400",
-                                    isClickable && status === "completed" && "group-hover:scale-110 group-hover:shadow-lg"
+                                    "relative z-10 flex flex-col items-center gap-2.5 bg-transparent border-none outline-none",
+                                    isClickable ? "cursor-pointer group" : "cursor-default"
                                 )}
                             >
-                                {status === "completed" ? (
-                                    <Check size={18} strokeWidth={3} />
-                                ) : (
-                                    <Icon size={18} />
-                                )}
-                            </div>
+                                {/* Step circle */}
+                                <div
+                                    className={cn(
+                                        "w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ease-out text-sm font-bold",
+                                        status === "active" &&
+                                            "bg-[#312E81] text-white shadow-lg shadow-indigo-200/60 ring-4 ring-[#312E81]/10",
+                                        status === "completed" &&
+                                            "bg-[#10B981] text-white shadow-md shadow-emerald-100",
+                                        status === "inactive" &&
+                                            "bg-white border-2 border-gray-200 text-gray-400",
+                                        isClickable && status === "completed" && "group-hover:scale-110 group-hover:shadow-lg"
+                                    )}
+                                >
+                                    {status === "completed" ? (
+                                        <Check size={18} strokeWidth={3} />
+                                    ) : (
+                                        <span>{step.number}</span>
+                                    )}
+                                </div>
 
-                            {/* Label */}
-                            <span
-                                className={cn(
-                                    "text-[11px] font-bold tracking-wide transition-colors duration-300 whitespace-nowrap",
-                                    status === "active" && "text-[#312E81]",
-                                    status === "completed" && "text-[#10B981]",
-                                    status === "inactive" && "text-gray-400",
-                                    isClickable && status === "completed" && "group-hover:text-[#312E81]"
-                                )}
-                            >
-                                {step.label}
-                            </span>
+                                {/* Label */}
+                                <span
+                                    className={cn(
+                                        "text-xs font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap",
+                                        status === "active" && "text-[#312E81]",
+                                        status === "completed" && "text-[#10B981]",
+                                        status === "inactive" && "text-gray-400",
+                                        isClickable && status === "completed" && "group-hover:text-[#312E81]"
+                                    )}
+                                >
+                                    {step.label}
+                                </span>
+                            </button>
 
-                            {/* Active pulse ring */}
-                            {status === "active" && !isConfirmed && (
-                                <div className="absolute top-0 w-10 h-10 rounded-full border-2 border-[#312E81]/30 animate-ping" />
+                            {/* Connecting line */}
+                            {!isLast && (
+                                <div className="flex-1 flex items-center mt-[22px] px-2">
+                                    <div className="w-full h-[2px] relative bg-gray-200 rounded-full overflow-hidden">
+                                        <div
+                                            className={cn(
+                                                "absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out",
+                                                (() => {
+                                                    const nextStep = steps[idx + 1];
+                                                    const nextStatus = getStepStatus(nextStep.id);
+                                                    if (nextStatus === "completed" || nextStatus === "active") return "w-full bg-[#312E81]";
+                                                    if (status === "completed" || status === "active") return "w-1/2 bg-[#312E81]";
+                                                    return "w-0";
+                                                })()
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                             )}
-                        </button>
+                        </React.Fragment>
                     );
                 })}
             </div>

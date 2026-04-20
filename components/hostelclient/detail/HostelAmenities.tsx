@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
     Wifi, Wind, Droplets, WashingMachine, Dumbbell, Lightbulb, Zap,
     UtensilsCrossed, Tv, ParkingCircle, Cctv, ShieldCheck, BookOpen,
-    BedDouble, Shirt, Volume2, CircleDot
+    BedDouble, Shirt, Volume2, CircleDot, Coffee, Laptop
 } from "lucide-react";
 
 const AMENITY_ICON_MAP: Record<string, React.ElementType> = {
@@ -29,6 +29,9 @@ const AMENITY_ICON_MAP: Record<string, React.ElementType> = {
     "washing machine": WashingMachine,
     "iron": Shirt,
     noise: Volume2,
+    cafe: Coffee,
+    "co-working": Laptop,
+    coworking: Laptop,
 };
 
 function getAmenityIcon(name: string): React.ElementType {
@@ -45,27 +48,27 @@ interface HostelAmenitiesProps {
 
 export default function HostelAmenities({ amenities }: HostelAmenitiesProps) {
     const [showAll, setShowAll] = useState(false);
-    const LIMIT = 6;
+    const LIMIT = 8;
 
     if (!amenities || amenities.length === 0) return null;
 
     const displayed = showAll ? amenities : amenities.slice(0, LIMIT);
 
     return (
-        <div className="mb-10 pt-4 border-t border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">What this place offers</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <section className="mb-10 pt-8 border-t border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 mb-5">Amenities</h2>
+
+            {/* Horizontal scrollable chip layout */}
+            <div className="flex flex-wrap gap-2.5">
                 {displayed.map((amenity) => {
                     const IconComp = getAmenityIcon(amenity.name);
                     return (
                         <div
                             key={amenity.id}
-                            className="flex flex-row items-center gap-4 px-5 py-4 rounded-2xl border border-gray-200 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 hover:border-blue-100 transition-all duration-300 group"
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all duration-200 cursor-default group"
                         >
-                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 transition-colors">
-                                <IconComp size={18} className="text-slate-700 group-hover:text-blue-600 transition-colors stroke-[1.5]" />
-                            </div>
-                            <span className="text-[15px] text-gray-700 font-medium leading-tight group-hover:text-gray-900 transition-colors">{amenity.name}</span>
+                            <IconComp size={16} className="text-gray-400 group-hover:text-[#312E81] transition-colors" strokeWidth={1.5} />
+                            <span>{amenity.name}</span>
                         </div>
                     );
                 })}
@@ -74,11 +77,11 @@ export default function HostelAmenities({ amenities }: HostelAmenitiesProps) {
             {amenities.length > LIMIT && (
                 <button
                     onClick={() => setShowAll(!showAll)}
-                    className="mt-6 px-6 py-3 border border-gray-900 rounded-xl text-[15px] font-bold text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]"
+                    className="mt-4 text-sm font-semibold text-[#312E81] hover:text-[#1E1B4B] underline underline-offset-4 decoration-indigo-200 hover:decoration-indigo-400 transition-colors"
                 >
-                    {showAll ? "Show Less" : `View all ${amenities.length} amenities`}
+                    {showAll ? "Show less" : `Show all ${amenities.length} amenities`}
                 </button>
             )}
-        </div>
+        </section>
     );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Snowflake, Fan, BedDouble, Check } from "lucide-react";
+import { Snowflake, Fan, Check, Lock } from "lucide-react";
 import type { ExtraCharge } from "@/types/hostel.types";
 
 interface RoomType {
@@ -65,136 +65,155 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
     const displayed = showAll ? orderedRooms : orderedRooms.slice(0, LIMIT);
 
+    // Room feature bullets based on room type
+    const getRoomFeatures = (room: RoomType): string[] => {
+        const features: string[] = [];
+        if (room.room_category === "AC") {
+            features.push("Air conditioning included");
+        } else {
+            features.push("Well-ventilated room");
+        }
+        if (room.sharing_display.toLowerCase().includes("single") || getSharingLevel(room.sharing_display) === 1) {
+            features.push("Private room with workspace");
+            features.push("En-suite private bathroom");
+        } else {
+            features.push("Privacy pods with curtains");
+            features.push("Individual lockable lockers");
+        }
+        return features;
+    };
+
     return (
-        <div className="mb-12 pt-6 border-t border-gray-100">
-            {/* Tab Header */}
-            <div className="flex items-center justify-between gap-1 mb-8">
-                <div className="flex items-center gap-1">
+        <section className="mb-10 pt-8 border-t border-gray-100">
+            {/* Section Header */}
+            <h2 className="text-lg font-bold text-gray-900 mb-6">Select your Room</h2>
+
+            {/* Tab Navigation */}
+            <div className="flex items-center gap-1 mb-6 bg-gray-50 rounded-xl p-1 w-fit">
+                <button
+                    onClick={() => setActiveTab("sharing")}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                        ${activeTab === "sharing"
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-500 hover:text-gray-700"
+                        }`}
+                >
+                    Rooms
+                </button>
+                {hasExtraCharges && (
                     <button
-                        onClick={() => setActiveTab("sharing")}
-                        className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
-                            ${activeTab === "sharing"
-                                ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
-                                : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                        onClick={() => setActiveTab("extra")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                            ${activeTab === "extra"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
                             }`}
                     >
-                        Available Options
+                        Extra Charges
                     </button>
-                    {hasExtraCharges && (
-                        <button
-                            onClick={() => setActiveTab("extra")}
-                            className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
-                                ${activeTab === "extra"
-                                    ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
-                                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                                }`}
-                        >
-                            Extra Charges
-                        </button>
-                    )}
-                    {suitableFor && suitableFor.length > 0 && (
-                        <button
-                            onClick={() => setActiveTab("suitable")}
-                            className={`px-5 py-2.5 rounded-full text-[15px] font-semibold tracking-tight transition-all duration-200
-                                ${activeTab === "suitable"
-                                    ? "bg-[#1E1B4B] text-white shadow-lg shadow-indigo-200/50"
-                                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                                }`}
-                        >
-                            Suitable For
-                        </button>
-                    )}
-                </div>
+                )}
+                {suitableFor && suitableFor.length > 0 && (
+                    <button
+                        onClick={() => setActiveTab("suitable")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                            ${activeTab === "suitable"
+                                ? "bg-white text-gray-900 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                            }`}
+                    >
+                        Suitable For
+                    </button>
+                )}
             </div>
 
             {/* Sharing Tab Content */}
             {activeTab === "sharing" && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        {displayed.map((room) => (
-                            <div
-                                key={room.id}
-                                className={`rounded-[2rem] overflow-hidden border border-gray-200 transition-all duration-300 group ${room.is_available
-                                    ? "bg-white hover:border-[#10B981] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1"
-                                    : "bg-gray-50 opacity-60"
-                                    }`}
-                            >
-                                <div className="p-6">
-                                    <div className="flex items-start justify-between mb-3 gap-2">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h3 className="text-xl font-bold text-gray-900 leading-none">{room.sharing_display}</h3>
-                                                {!room.is_available && (
-                                                    <span className="bg-red-50 text-red-500 font-bold px-2 py-0.5 rounded text-[10px] border border-red-200">Sold Out</span>
-                                                )}
-                                                {/* {room.is_available && (
-                                                    <span className="bg-emerald-50 text-[#10B981] font-bold px-2 py-0.5 rounded text-[10px] border border-emerald-200">
-                                                        {room.available_beds} Beds Left
-                                                    </span>
-                                                )} */}
-                                            </div>
-                                            <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 mt-2">
-                                                {room.room_category === "AC" ? (
-                                                    <Snowflake size={16} className="text-[#3B82F6]" />
-                                                ) : (
-                                                    <Fan size={16} className="text-gray-500" />
-                                                )}
-                                                <span>{room.category_display}</span>
-                                            </div>
-                                        </div>
-
-                                        {(() => {
-                                            const displayPrice = priceMode === "monthly" 
-                                                ? room.base_price 
-                                                : (room.price_per_day || (room.base_price ? (Number(room.base_price) / 30).toString() : null));
-                                            
-                                            if (!displayPrice) return null;
-
-                                            return (
-                                                <div className="text-right flex flex-col items-end">
-                                                    <div className="flex items-baseline gap-1">
-                                                        <span className="font-black text-2xl text-gray-900 tracking-tight">
-                                                            ₹{Number(displayPrice).toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{priceMode === "monthly" ? "/month" : "/day"}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {displayed.map((room) => {
+                            const features = getRoomFeatures(room);
+                            return (
+                                <div
+                                    key={room.id}
+                                    className={`rounded-2xl border transition-all duration-300 ${room.is_available
+                                        ? "bg-white border-gray-200 hover:border-indigo-200 hover:shadow-lg"
+                                        : "bg-gray-50 border-gray-100 opacity-60"
+                                        }`}
+                                >
+                                    <div className="p-5">
+                                        {/* Room Header */}
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div>
+                                                <h3 className="text-base font-bold text-gray-900 mb-1">{room.sharing_display}</h3>
+                                                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                                                    {room.room_category === "AC" ? (
+                                                        <Snowflake size={13} className="text-blue-500" />
+                                                    ) : (
+                                                        <Fan size={13} className="text-gray-400" />
+                                                    )}
+                                                    <span className="font-medium">{room.category_display}</span>
+                                                    {!room.is_available && (
+                                                        <span className="ml-1 bg-red-50 text-red-500 text-[10px] font-bold px-1.5 py-0.5 rounded">Sold Out</span>
+                                                    )}
                                                 </div>
-                                            );
-                                        })()}
-                                    </div>
+                                            </div>
 
-                                    <div className="flex items-center gap-4 mt-6 mb-6">
-                                        <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-                                            <BedDouble size={16} className="text-gray-400" />
-                                            <span>Comfortable Beds</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-                                            <Check size={16} className="text-[#10B981]" />
-                                            <span>Cleaning included</span>
-                                        </div>
-                                    </div>
+                                            {(() => {
+                                                const displayPrice = priceMode === "monthly" 
+                                                    ? room.base_price 
+                                                    : (room.price_per_day || (room.base_price ? (Number(room.base_price) / 30).toString() : null));
+                                                
+                                                if (!displayPrice) return null;
 
-                                    {room.is_available ? (
-                                        <Link
-                                            href={`/hostels/${hostelSlug}/book?roomId=${room.id}&priceMode=${priceMode}`}
-                                            className="w-full flex items-center justify-center py-3.5 text-sm font-bold text-white bg-[#312E81] hover:bg-[#1E1B4B] rounded-xl transition-all shadow-md active:scale-[0.98]"
-                                        >
-                                            Select Room
-                                        </Link>
-                                    ) : (
-                                        <button disabled className="w-full flex items-center justify-center py-3.5 text-sm font-bold text-gray-400 bg-gray-100 rounded-xl cursor-not-allowed">
-                                            Unavailable
-                                        </button>
-                                    )}
+                                                return (
+                                                    <div className="text-right">
+                                                        <div className="flex items-baseline gap-0.5">
+                                                            <span className="text-xl font-bold text-gray-900">
+                                                                ₹{Number(displayPrice).toLocaleString()}
+                                                            </span>
+                                                            <span className="text-[10px] text-gray-400 font-medium">
+                                                                {priceMode === "monthly" ? "/mo" : "/day"}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })()}
+                                        </div>
+
+                                        {/* Room Features */}
+                                        <ul className="space-y-2 mb-5">
+                                            {features.map((feature, idx) => (
+                                                <li key={idx} className="flex items-center gap-2 text-sm text-gray-600">
+                                                    <Check size={14} className="text-indigo-500 flex-shrink-0" />
+                                                    <span>{feature}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        {/* CTA */}
+                                        {room.is_available ? (
+                                            <Link
+                                                href={`/hostels/${hostelSlug}/book?roomId=${room.id}&priceMode=${priceMode}`}
+                                                className="w-full flex items-center justify-center py-3 text-sm font-bold text-white bg-[#312E81] hover:bg-[#1E1B4B] rounded-xl transition-all active:scale-[0.98] shadow-sm"
+                                            >
+                                                Select Room
+                                            </Link>
+                                        ) : (
+                                            <button disabled className="w-full flex items-center justify-center py-3 text-sm font-medium text-gray-400 bg-gray-100 rounded-xl cursor-not-allowed gap-2">
+                                                <Lock size={14} />
+                                                Unavailable
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {rooms.length > LIMIT && (
                         <button
                             onClick={() => setShowAll(!showAll)}
-                            className="mt-6 px-6 py-3 border border-gray-900 rounded-xl text-[15px] font-bold text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]"
+                            className="mt-5 px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]"
                         >
                             {showAll ? "Show Less" : `View all ${rooms.length} room types`}
                         </button>
@@ -204,25 +223,25 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
             {/* Extra Charges Tab Content */}
             {activeTab === "extra" && hasExtraCharges && (
-                <div className="space-y-0">
+                <div className="space-y-0 bg-gray-50 rounded-2xl p-5">
                     {extraCharges!.map((charge, i) => (
                         <div
                             key={i}
-                            className={`flex items-center justify-between py-5 ${
-                                i !== extraCharges!.length - 1 ? "border-b border-gray-100" : ""
+                            className={`flex items-center justify-between py-4 ${
+                                i !== extraCharges!.length - 1 ? "border-b border-gray-200" : ""
                             }`}
                         >
                             <div>
-                                <h4 className="text-[17px] font-semibold text-gray-900 capitalize tracking-tight">
+                                <h4 className="text-sm font-semibold text-gray-800 capitalize">
                                     {charge.charge_type.replace('_', ' ')}
                                 </h4>
                                 {charge.description && (
-                                    <p className="text-sm text-gray-400 mt-0.5 font-medium">{charge.description}</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">{charge.description}</p>
                                 )}
                             </div>
-                            <span className="text-xl font-bold text-[#1E1B4B] tracking-tight tabular-nums">
+                            <span className="text-sm font-bold text-gray-900 tabular-nums">
                                 ₹{Number(charge.amount).toLocaleString()}
-                                <span className="text-xs font-semibold text-gray-400 ml-1">/mo</span>
+                                <span className="text-xs font-medium text-gray-400 ml-0.5">/mo</span>
                             </span>
                         </div>
                     ))}
@@ -231,29 +250,17 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
             {/* Suitable For Tab Content */}
             {activeTab === "suitable" && suitableFor && suitableFor.length > 0 && (
-                <div className="py-2 animate-in fade-in duration-500">
-                    <div className="space-y-0">
-                        {suitableFor.map((item, i) => (
-                            <div 
-                                key={item} 
-                                className={`flex items-center justify-between py-5 ${
-                                    i !== suitableFor.length - 1 ? "border-b border-gray-100" : ""
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                                    <h4 className="text-[17px] font-semibold text-gray-900 capitalize tracking-tight">
-                                        {item.replace(/_/g, " ")}
-                                    </h4>
-                                </div>
-                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">
-                                    Suitable
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+                <div className="flex flex-wrap gap-2">
+                    {suitableFor.map((item) => (
+                        <span
+                            key={item}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full"
+                        >
+                            {item.replace(/_/g, " ")}
+                        </span>
+                    ))}
                 </div>
             )}
-        </div>
+        </section>
     );
 }

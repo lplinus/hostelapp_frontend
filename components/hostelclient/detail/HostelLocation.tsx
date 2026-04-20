@@ -48,12 +48,11 @@ export default function HostelLocation({
             : null;
 
     return (
-        <div className="mb-12 pt-6 border-t border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                Where you'll be
-            </h2>
+        <section className="mb-10 pt-8 border-t border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 mb-5">Where you'll be</h2>
 
-            <div className="relative group rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 h-[280px] w-full mb-8">
+            {/* Map Container */}
+            <div className="relative rounded-2xl overflow-hidden border border-gray-100 h-[240px] sm:h-[280px] w-full mb-5 group">
                 {mapSrc ? (
                     <>
                         <iframe
@@ -65,78 +64,76 @@ export default function HostelLocation({
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
                             title={`${name} location`}
-                            className="transition-transform duration-[10s] group-hover:scale-105 ease-out grayscale-[0.2] contrast-[1.1]"
+                            className="grayscale-[0.15] contrast-[1.05]"
                         />
-                        <div className="absolute inset-0 bg-black/5 pointer-events-none group-hover:bg-transparent transition-colors duration-300" />
                         <a
                             href={hasCoords ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${address}, ${cityName ?? ""}`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="absolute top-6 right-6 px-5 py-3 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-xl font-bold text-[14px] flex items-center gap-2 transition-all hover:scale-105 active:scale-[0.98] border border-gray-200"
+                            className="absolute bottom-4 left-4 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-lg font-semibold text-sm flex items-center gap-2 transition-all hover:shadow-xl active:scale-[0.98] border border-gray-100"
                         >
-                            <Navigation size={18} className="text-[#312E81]" />
+                            <Navigation size={15} className="text-[#312E81]" />
                             Get Directions
                         </a>
                     </>
                 ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400 text-sm font-medium">
-                        <MapPin className="mr-2" size={20} /> Map data currently unavailable
+                        <MapPin className="mr-2" size={18} /> Map data currently unavailable
                     </div>
                 )}
             </div>
 
+            {/* Address Block */}
             {address && (
                 <div 
-                    className="flex items-start gap-4 p-5 rounded-[1.5rem] bg-gray-50 border border-gray-100 mb-8 cursor-pointer group/address hover:border-indigo-100 transition-colors"
+                    className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100 mb-5 cursor-pointer group/address hover:border-indigo-100 transition-colors"
                     onClick={handleCopy}
                 >
-                    <div className="mt-0.5 p-2 bg-white rounded-xl shadow-sm border border-gray-100 flex-shrink-0 group-hover/address:border-indigo-200 transition-colors">
-                        <MapPin size={20} className="text-[#312E81]" />
+                    <div className="mt-0.5 flex-shrink-0">
+                        <MapPin size={16} className="text-[#312E81]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Location Details</p>
-                        <p className="text-[15px] font-semibold text-gray-800 leading-relaxed break-words">
+                        <p className="text-sm font-medium text-gray-800 leading-relaxed">
                             {address}
                         </p>
                         {cityName && (
-                            <p className="text-sm text-gray-500 mt-0.5 font-medium">{cityName}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">{cityName}</p>
                         )}
                     </div>
-                    <div className="flex-shrink-0 self-center p-2.5 rounded-xl bg-white border border-gray-100 text-gray-400 group-hover/address:text-[#312E81] group-hover/address:border-indigo-200 transition-all">
-                        {copied ? <Check size={18} className="text-[#10B981]" /> : <Copy size={18} />}
+                    <div className="flex-shrink-0 self-center text-gray-400 group-hover/address:text-[#312E81] transition-colors">
+                        {copied ? <Check size={16} className="text-[#10B981]" /> : <Copy size={16} />}
                     </div>
                 </div>
             )}
 
+            {/* Nearby Landmarks */}
             {landmarks && landmarks.length > 0 && (
                 <div>
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">
-                        What's nearby?
+                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                        Nearby
                     </h3>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-2">
                         {landmarks.map((landmark) => (
                             <div
                                 key={landmark.id}
-                                className="flex items-center gap-3 py-2 px-4 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer group hover:-translate-y-0.5"
+                                className="flex items-center gap-2 py-2 px-3 rounded-full bg-white border border-gray-200 text-sm hover:border-indigo-200 transition-colors cursor-default group"
                             >
                                 {landmark.is_popular ? (
-                                    <Star size={16} className="fill-amber-400 text-amber-400 group-hover:scale-110 transition-transform" />
+                                    <Star size={13} className="fill-amber-400 text-amber-400" />
                                 ) : (
-                                    <Building2 size={16} className="text-[#312E81] group-hover:scale-110 transition-transform" />
+                                    <Building2 size={13} className="text-gray-400 group-hover:text-[#312E81] transition-colors" />
                                 )}
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[14px] font-bold text-gray-900 group-hover:text-[#312E81] transition-colors">
-                                        {landmark.name}
-                                    </span>
-                                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded flex-shrink-0 font-semibold group-hover:bg-indigo-50 group-hover:text-[#312E81] transition-colors">
-                                        {landmark.distance}
-                                    </span>
-                                </div>
+                                <span className="font-medium text-gray-700 text-[13px]">
+                                    {landmark.name}
+                                </span>
+                                <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded font-medium">
+                                    {landmark.distance}
+                                </span>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 }
