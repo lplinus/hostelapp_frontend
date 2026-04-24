@@ -24,7 +24,7 @@ export interface AuthUser {
     first_name: string;
     last_name: string;
     phone: string;
-    role: 'guest' | 'hostel_owner' | 'vendor';
+    role: 'guest' | 'hostel_owner' | 'vendor' | 'service';
     is_verified: boolean;
     profile_picture?: string;
     date_joined: string;
@@ -54,7 +54,7 @@ export interface RegisterData {
     first_name?: string;
     last_name?: string;
     phone?: string;
-    role?: 'guest' | 'hostel_owner' | 'vendor';
+    role?: 'guest' | 'hostel_owner' | 'vendor' | 'service';
 }
 
 export interface HomepageResponse {

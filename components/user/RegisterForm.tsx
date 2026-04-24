@@ -22,6 +22,7 @@ import {
   Star,
   MapPin,
   CheckCircle2,
+  Wrench,
 } from "lucide-react";
 import {
   RadioGroup,
@@ -39,7 +40,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"guest" | "hostel_owner" | "vendor">("guest");
+  const [role, setRole] = useState<"guest" | "hostel_owner" | "vendor" | "service">("guest");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -278,16 +279,16 @@ export default function RegisterForm() {
               <RadioGroup
                 value={role}
                 onValueChange={(value: any) => setRole(value)}
-                className="grid grid-cols-3 gap-3"
+                className="grid grid-cols-4 gap-2"
               >
                 <div className="relative">
                   <RadioGroupItem value="guest" id="guest" className="peer sr-only" />
                   <Label
                     htmlFor="guest"
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                    className="flex flex-col items-center justify-center p-2 rounded-xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
                   >
-                    <User className={cn("w-5 h-5 mb-1.5 transition-colors", role === "guest" ? "text-indigo-600" : "text-gray-400")} />
-                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-indigo-700" : "text-gray-500")}>Guest</span>
+                    <User className={cn("w-4 h-4 mb-1 transition-colors", role === "guest" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[9px] font-bold tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-indigo-700" : "text-gray-500")}>Guest</span>
                   </Label>
                 </div>
 
@@ -295,10 +296,10 @@ export default function RegisterForm() {
                   <RadioGroupItem value="hostel_owner" id="hostel_owner" className="peer sr-only" />
                   <Label
                     htmlFor="hostel_owner"
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                    className="flex flex-col items-center justify-center p-2 rounded-xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
                   >
-                    <Building2 className={cn("w-5 h-5 mb-1.5 transition-colors", role === "hostel_owner" ? "text-indigo-600" : "text-gray-400")} />
-                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-indigo-700" : "text-gray-500")}>Hostel<br/>Owner</span>
+                    <Building2 className={cn("w-4 h-4 mb-1 transition-colors", role === "hostel_owner" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[9px] font-bold tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-indigo-700" : "text-gray-500")}>Owner</span>
                   </Label>
                 </div>
 
@@ -306,10 +307,21 @@ export default function RegisterForm() {
                   <RadioGroupItem value="vendor" id="vendor" className="peer sr-only" />
                   <Label
                     htmlFor="vendor"
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                    className="flex flex-col items-center justify-center p-2 rounded-xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
                   >
-                    <Zap className={cn("w-5 h-5 mb-1.5 transition-colors", role === "vendor" ? "text-indigo-600" : "text-gray-400")} />
-                    <span className={cn("text-[10px] font-bold tracking-tight text-center leading-tight transition-colors", role === "vendor" ? "text-indigo-700" : "text-gray-500")}>Vendor</span>
+                    <Zap className={cn("w-4 h-4 mb-1 transition-colors", role === "vendor" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[9px] font-bold tracking-tight text-center leading-tight transition-colors", role === "vendor" ? "text-indigo-700" : "text-gray-500")}>Vendor</span>
+                  </Label>
+                </div>
+
+                <div className="relative">
+                  <RadioGroupItem value="service" id="service" className="peer sr-only" />
+                  <Label
+                    htmlFor="service"
+                    className="flex flex-col items-center justify-center p-2 rounded-xl border-2 peer-data-[state=checked]:border-indigo-600 peer-data-[state=checked]:bg-indigo-50/50 hover:bg-gray-50/50 cursor-pointer transition-all duration-200 h-full border-gray-100"
+                  >
+                    <Wrench className={cn("w-4 h-4 mb-1 transition-colors", role === "service" ? "text-indigo-600" : "text-gray-400")} />
+                    <span className={cn("text-[9px] font-bold tracking-tight text-center leading-tight transition-colors", role === "service" ? "text-indigo-700" : "text-gray-500")}>Service</span>
                   </Label>
                 </div>
               </RadioGroup>

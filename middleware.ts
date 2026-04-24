@@ -54,8 +54,19 @@ export function middleware(request: NextRequest) {
         (request.nextUrl.pathname.startsWith('/hostel') && !request.nextUrl.pathname.startsWith('/hostels')) ||
         request.nextUrl.pathname.startsWith('/rooms') ||
         request.nextUrl.pathname.startsWith('/bookings') ||
-        request.nextUrl.pathname.endsWith('/book')
+        request.nextUrl.pathname.startsWith('/settings') ||
+        request.nextUrl.pathname.startsWith('/help') ||
+        request.nextUrl.pathname.startsWith('/usermarketplace') ||
+        request.nextUrl.pathname.startsWith('/subscription') ||
+        request.nextUrl.pathname.startsWith('/notification')
     ) {
+        if (!isAuthenticated) {
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
+    }
+
+    // Protect /vendordashboard routes
+    if (request.nextUrl.pathname.startsWith('/vendordashboard')) {
         if (!isAuthenticated) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
@@ -80,5 +91,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/home', '/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/login', '/register'],
+    matcher: ['/', '/home', '/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/settings/:path*', '/help:path*', '/usermarketplace/:path*', '/subscription/:path*', '/notification/:path*', '/vendordashboard/:path*', '/login', '/register', '/help&support'],
 };
