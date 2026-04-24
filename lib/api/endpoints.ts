@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
     BOOKINGS: {
         CREATE: '/api/bookings/',
         LIST: '/api/bookings/',
+        INQUIRIES: '/api/bookings/inquiries/',
         SEND_OTP: '/api/bookings/send_otp/',
         VERIFY_OTP: '/api/bookings/verify_otp/',
     },

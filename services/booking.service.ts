@@ -29,6 +29,19 @@ export interface Booking {
     payment_method?: 'online' | 'on_arrival';
 }
 
+export interface HostelInquiry {
+    id: string;
+    hostel: number;
+    hostel_name?: string;
+    user: number | null;
+    guest_name: string;
+    guest_email: string;
+    mobile_number: string;
+    message?: string;
+    status: string;
+    created_at?: string;
+}
+
 export interface BookingRequest {
     hostel: number;
     room_type: number;
@@ -111,4 +124,21 @@ export const confirmPayAtProperty = async (bookingId: string): Promise<any> => {
         options.headers = { 'Authorization': `Bearer ${token}` };
     }
     return apiClient.post<any>(`/api/bookings/${bookingId}/confirm_pay_at_property/`, {}, options);
+};
+
+export const createHostelInquiry = async (data: Partial<HostelInquiry>): Promise<HostelInquiry> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = {};
+    if (token) {
+        options.headers = { 'Authorization': `Bearer ${token}` };
+    }
+    return apiClient.post<HostelInquiry>("/api/bookings/inquiries/", data, options);
+};
+
+export const getOwnerInquiries = async (params?: any): Promise<HostelInquiry[]> => {
+    return authApiClient.get<HostelInquiry[]>("/api/bookings/inquiries/", { params });
+};
+
+export const updateInquiryStatus = async (id: string, status: string): Promise<HostelInquiry> => {
+    return authApiClient.patch<HostelInquiry>(`/api/bookings/inquiries/${id}/`, { status });
 };

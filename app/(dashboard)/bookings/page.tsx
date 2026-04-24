@@ -3,9 +3,9 @@
 import { useState } from "react";
 import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import { getOwnerBookings, updateBookingStatus, deleteBooking, checkInBooking } from "@/services/booking.service";
+import { getOwnerBookings, updateBookingStatus, deleteBooking, checkInBooking, getOwnerInquiries, updateInquiryStatus } from "@/services/booking.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, QrCode, Search, Calendar, X } from "lucide-react";
+import { Trash2, QrCode, Search, Calendar, X, Phone } from "lucide-react";
 import { toast } from "sonner";
 import BookingQRScanner from "@/components/user/qr/BookingQRScanner";
 
@@ -15,6 +15,7 @@ export default function BookingsPage() {
     const [search, setSearch] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [view, setView] = useState<"bookings" | "inquiries">("bookings");
 
     const { data: bookings, isLoading } = useQuery({
         queryKey: ["ownerBookings", search, startDate, endDate],
@@ -24,6 +25,13 @@ export default function BookingsPage() {
             check_in__lte: endDate || undefined
         }),
         refetchInterval: 5000,
+    });
+
+    const { data: inquiries, isLoading: isInquiriesLoading } = useQuery({
+        queryKey: ["ownerInquiries"],
+        queryFn: () => getOwnerInquiries(),
+        refetchInterval: 5000,
+        enabled: view === "inquiries"
     });
 
     const checkInMutation = useMutation({
@@ -52,6 +60,17 @@ export default function BookingsPage() {
         }
     });
 
+    const inquiryStatusMutation = useMutation({
+        mutationFn: ({ id, status }: { id: string, status: string }) => updateInquiryStatus(id, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["ownerInquiries"] });
+            toast.success("Inquiry status updated successfully");
+        },
+        onError: () => {
+            toast.error("Failed to update inquiry status");
+        }
+    });
+
     const deleteMutation = useMutation({
         mutationFn: (id: string) => deleteBooking(id),
         onSuccess: () => {
@@ -66,6 +85,10 @@ export default function BookingsPage() {
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>, id: string) => {
         statusMutation.mutate({ id, status: e.target.value });
+    };
+
+    const handleInquiryStatusChange = (e: React.ChangeEvent<HTMLSelectElement>, id: string) => {
+        inquiryStatusMutation.mutate({ id, status: e.target.value });
     };
 
     const handleDelete = (id: string) => {
@@ -117,6 +140,28 @@ export default function BookingsPage() {
                     >
                         <QrCode size={18} />
                         Scan QR specifically
+                    </button>
+                </div>
+
+                {/* View Toggle Tabs */}
+                <div className="flex p-1 bg-gray-100 rounded-xl w-fit mb-4">
+                    <button
+                        onClick={() => setView("bookings")}
+                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${view === "bookings"
+                                ? "bg-white text-[#312E81] shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                            }`}
+                    >
+                        Bookings
+                    </button>
+                    <button
+                        onClick={() => setView("inquiries")}
+                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${view === "inquiries"
+                                ? "bg-white text-[#312E81] shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                            }`}
+                    >
+                        Inquiries (Contact Owner)
                     </button>
                 </div>
 
@@ -177,119 +222,186 @@ export default function BookingsPage() {
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <table className="min-w-full divide-y divide-gray-200 flex-1">
                         <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hostel</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Room Type</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status & Actions</th>
-                            </tr>
+                            {view === "bookings" ? (
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hostel</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Room Type</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status & Actions</th>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest Details</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hostel</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                </tr>
+                            )}
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {isLoading && (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                                        Loading bookings...
-                                    </td>
-                                </tr>
-                            )}
-                            {!isLoading && (!bookings || bookings.length === 0) && (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500 italic">
-                                        No bookings found.
-                                    </td>
-                                </tr>
-                            )}
-                            {!isLoading && [...(bookings || [])]
-                                .sort((a, b) => new Date(b.created_at ?? b.check_in).getTime() - new Date(a.created_at ?? a.check_in).getTime())
-                                .map((b) => (
-                                    <tr key={b.id}>
-                                        <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
-                                            STN-{b.id.substring(0, 8).toUpperCase()}
-                                            <div className="mt-1">
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${b.booking_type === 'visit'
-                                                        ? 'bg-orange-100 text-orange-700'
-                                                        : 'bg-indigo-100 text-indigo-700'
-                                                    }`}>
-                                                    {b.booking_type}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <div className="font-medium text-gray-900">{b.guest_name}</div>
-                                            <div className="text-gray-500">{b.guest_email}</div>
-                                            <div className="text-cyan-700 font-medium flex items-center gap-1 mt-0.5">
-                                                <span className="text-[10px] text-gray-400 font-normal">Mob:</span> {b.mobile_number}
-                                            </div>
-                                            <div className="text-[11px] text-gray-400">Age: {b.guest_age}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{b.hostel_name || `Hostel ID: ${b.hostel}`}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            <div>{b.room_category || `Room Type: ${b.room_type}`}</div>
-                                            <div className="text-xs text-gray-400">{b.adults} Adults, {b.children} Children</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            {new Date(b.check_in).toLocaleDateString()} - <br />
-                                            {new Date(b.check_out).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <div className="space-y-2">
-                                                <div className="flex gap-1 flex-wrap">
-                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_method === 'on_arrival'
-                                                            ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                                            : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                                                        }`}>
-                                                        {b.payment_method === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}
-                                                    </span>
-                                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_status === 'paid' || b.payment_status === 'captured'
-                                                            ? 'bg-green-50 text-green-700 border-green-200'
-                                                            : b.payment_status === 'failed'
-                                                                ? 'bg-red-50 text-red-700 border-red-200'
-                                                                : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                                                        }`}>
-                                                        {b.payment_status || 'Pending'}
-                                                    </span>
-                                                </div>
-                                                {b.payment_id && (
-                                                    <div className="font-mono text-[8px] text-gray-400 break-all max-w-[120px] leading-tight">
-                                                        ID: {b.payment_id}
+                            {view === "bookings" ? (
+                                <>
+                                    {isLoading && (
+                                        <tr>
+                                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                                                Loading bookings...
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!isLoading && (!bookings || bookings.length === 0) && (
+                                        <tr>
+                                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500 italic">
+                                                No bookings found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!isLoading && [...(bookings || [])]
+                                        .sort((a, b) => new Date(b.created_at ?? b.check_in).getTime() - new Date(a.created_at ?? a.check_in).getTime())
+                                        .map((b) => (
+                                            <tr key={b.id}>
+                                                <td className="px-6 py-4 text-sm font-mono text-gray-900 font-medium">
+                                                    STN-{b.id.substring(0, 8).toUpperCase()}
+                                                    <div className="mt-1">
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${b.booking_type === 'visit'
+                                                            ? 'bg-orange-100 text-orange-700'
+                                                            : 'bg-indigo-100 text-indigo-700'
+                                                            }`}>
+                                                            {b.booking_type}
+                                                        </span>
                                                     </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <div className="flex items-center gap-3">
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="font-medium text-gray-900">{b.guest_name}</div>
+                                                    <div className="text-gray-500">{b.guest_email}</div>
+                                                    <div className="text-cyan-700 font-medium flex items-center gap-1 mt-0.5">
+                                                        <span className="text-[10px] text-gray-400 font-normal">Mob:</span> {b.mobile_number}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-500">{b.hostel_name || `Hostel ID: ${b.hostel}`}</td>
+                                                <td className="px-6 py-4 text-sm text-gray-500">
+                                                    <div>{b.room_category || `Room Type: ${b.room_type}`}</div>
+                                                    <div className="text-xs text-gray-400">{b.adults} Adults, {b.children} Children</div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-500">
+                                                    {new Date(b.check_in).toLocaleDateString()} - <br />
+                                                    {new Date(b.check_out).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="space-y-2">
+                                                        <div className="flex gap-1 flex-wrap">
+                                                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_method === 'on_arrival'
+                                                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                                : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                                                                }`}>
+                                                                {b.payment_method === 'on_arrival' ? 'Pay at Hostel' : 'Paid Online'}
+                                                            </span>
+                                                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${b.payment_status === 'paid' || b.payment_status === 'captured'
+                                                                ? 'bg-green-50 text-green-700 border-green-200'
+                                                                : b.payment_status === 'failed'
+                                                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                                                }`}>
+                                                                {b.payment_status || 'Pending'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="flex items-center gap-3">
+                                                        <select
+                                                            value={b.status}
+                                                            onChange={(e) => handleStatusChange(e, b.id)}
+                                                            disabled={statusMutation.isPending || b.status === "completed" || b.status === "cancelled"}
+                                                            className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${b.status === "completed"
+                                                                ? "text-green-600 border-green-200 bg-green-50 font-bold"
+                                                                : b.status === "cancelled"
+                                                                    ? "text-red-600 border-red-200 bg-red-50 font-bold"
+                                                                    : "text-gray-700"
+                                                                }`}
+                                                        >
+                                                            <option value="pending">Pending</option>
+                                                            <option value="confirmed">Confirmed</option>
+                                                            <option value="cancelled">Cancelled</option>
+                                                            <option value="completed" className="text-green-600 font-bold">Completed</option>
+                                                        </select>
+                                                        <button
+                                                            onClick={() => handleDelete(b.id)}
+                                                            className="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
+                                                            title="Delete Booking"
+                                                            disabled={deleteMutation.isPending}
+                                                        >
+                                                            <Trash2 className="w-5 h-5" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </>
+                            ) : (
+                                <>
+                                    {isInquiriesLoading && (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                                                Loading inquiries...
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!isInquiriesLoading && (!inquiries || inquiries.length === 0) && (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-4 text-center text-gray-500 italic">
+                                                No inquiries found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {!isInquiriesLoading && (Array.isArray(inquiries) ? inquiries : (inquiries as any)?.results || [])?.map((iq: any) => (
+                                        <tr key={iq.id}>
+                                            <td className="px-6 py-4 text-sm text-gray-500">
+                                                {iq.created_at ? new Date(iq.created_at).toLocaleDateString() : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm">
+                                                <div className="font-medium text-gray-900">{iq.guest_name}</div>
+                                                <div className="text-gray-500 text-xs">{iq.guest_email}</div>
+                                                <div className="text-cyan-700 font-medium text-xs mt-0.5">{iq.mobile_number}</div>
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-500">
+                                                {iq.hostel_name || `ID: ${iq.hostel}`}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                                                {iq.message || <span className="italic text-gray-400">No message</span>}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm">
                                                 <select
-                                                    value={b.status}
-                                                    onChange={(e) => handleStatusChange(e, b.id)}
-                                                    disabled={statusMutation.isPending || b.status === "completed" || b.status === "cancelled"}
-                                                    className={`border rounded p-1 text-sm bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${b.status === "completed"
-                                                            ? "text-green-600 border-green-200 bg-green-50 font-bold"
-                                                            : b.status === "cancelled"
-                                                                ? "text-red-600 border-red-200 bg-red-50 font-bold"
-                                                                : "text-gray-700"
+                                                    value={iq.status || 'pending'}
+                                                    onChange={(e) => handleInquiryStatusChange(e, iq.id)}
+                                                    disabled={inquiryStatusMutation.isPending || iq.status === "enquired"}
+                                                    className={`border rounded p-1 text-[11px] bg-white disabled:bg-gray-100 disabled:cursor-not-allowed font-bold uppercase tracking-wider ${iq.status === "enquired"
+                                                        ? "text-blue-600 border-blue-200 bg-blue-50"
+                                                        : "text-gray-600"
                                                         }`}
                                                 >
                                                     <option value="pending">Pending</option>
-                                                    <option value="confirmed">Confirmed</option>
-                                                    <option value="cancelled">Cancelled</option>
-                                                    <option value="completed" className="text-green-600 font-bold">Completed</option>
+                                                    <option value="enquired">Enquired</option>
+                                                    <option value="responded">Responded</option>
+                                                    <option value="completed">Completed</option>
                                                 </select>
-                                                <button
-                                                    onClick={() => handleDelete(b.id)}
-                                                    className="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
-                                                    title="Delete Booking"
-                                                    disabled={deleteMutation.isPending}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm">
+                                                <span 
+                                                    title="This feature is available soon"
+                                                    className="text-gray-400 cursor-not-allowed font-semibold flex items-center gap-1 opacity-60"
                                                 >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                            <div className="mt-1 font-bold text-gray-900">₹{Number.parseFloat(b.total_price).toLocaleString()}</div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    <Phone size={14} /> Call Guest
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </>
+                            )}
                         </tbody>
                     </table>
                 </div>

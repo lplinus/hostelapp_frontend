@@ -5,7 +5,20 @@ import Link from "next/link";
 import { Phone, Users, CheckCircle2, ShieldCheck, TrendingDown, Clock, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { sendContactMessage } from "@/services/public.service";
+import { createHostelInquiry } from "@/services/booking.service";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, MessageSquare } from "lucide-react";
 
 interface BookingSidebarProps {
     hostel: {
@@ -37,6 +50,33 @@ export default function BookingSidebar({
     const [checkIn, setCheckIn] = useState<string>(new Date().toISOString().split('T')[0]);
     const [checkOut, setCheckOut] = useState<string>(new Date(Date.now() + 86400000).toISOString().split('T')[0]);
     const [guests, setGuests] = useState<number>(1);
+
+    // Contact Owner Modal State
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
+    const [isContactSending, setIsContactSending] = useState(false);
+
+    const handleContactSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsContactSending(true);
+        try {
+            await createHostelInquiry({
+                hostel: hostel.id,
+                guest_name: contactForm.name,
+                guest_email: contactForm.email,
+                mobile_number: contactForm.phone,
+                message: contactForm.message,
+            });
+            toast.success("Inquiry sent successfully!");
+            setIsContactModalOpen(false);
+            setContactForm({ name: "", email: "", phone: "", message: "" });
+        } catch (error) {
+            console.error("Failed to send inquiry:", error);
+            toast.error("Failed to send inquiry. Please try again.");
+        } finally {
+            setIsContactSending(false);
+        }
+    };
 
     const handleFormSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -104,11 +144,10 @@ export default function BookingSidebar({
                             <button
                                 key={mode}
                                 onClick={() => setPriceMode(mode)}
-                                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                                    priceMode === mode
+                                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${priceMode === mode
                                         ? "bg-white text-gray-900 shadow-sm"
                                         : "text-gray-500 hover:text-gray-700"
-                                }`}
+                                    }`}
                             >
                                 {mode === "monthly" ? "MONTHLY" : "DAILY"}
                             </button>
@@ -176,6 +215,95 @@ export default function BookingSidebar({
                             Reserve Now
                         </Link>
                     </Button>
+
+                    {/* Contact Owner Button */}
+                    <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="default"
+                                size="lg"
+                                className="w-full mt-3 bg-[#312E81] hover:bg-[#1E1B4B] text-white border-none font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] text-[15px] shadow-sm"
+                            >
+                                <MessageSquare size={18} className="text-white" />
+                                Contact Owner
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl p-0 overflow-hidden bg-white">
+                            <div className="bg-[#312E81] p-6 text-white relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+                                <DialogHeader className="relative z-10">
+                                    <DialogTitle className="text-2xl font-bold tracking-tight text-white">Contact Owner</DialogTitle>
+                                    <DialogDescription className="text-blue-100/80 font-medium">
+                                        Send your details and the owner will get back to you shortly.
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </div>
+
+                            <form onSubmit={handleContactSubmit} className="p-6 space-y-5">
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="contact-name" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="contact-name"
+                                                placeholder="Enter your name"
+                                                required
+                                                value={contactForm.name}
+                                                onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                                                className="h-11 pl-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="contact-email" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email</Label>
+                                            <Input
+                                                id="contact-email"
+                                                type="email"
+                                                placeholder="your@email.com"
+                                                required
+                                                value={contactForm.email}
+                                                onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                                                className="h-11 px-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="contact-phone" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Mobile</Label>
+                                            <Input
+                                                id="contact-phone"
+                                                type="tel"
+                                                placeholder="Mobile Number"
+                                                required
+                                                value={contactForm.phone}
+                                                onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                                                className="h-11 px-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="contact-message" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Message (Optional)</Label>
+                                        <Textarea
+                                            id="contact-message"
+                                            placeholder="Tell the owner what you're looking for..."
+                                            value={contactForm.message}
+                                            onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                                            className="min-h-[100px] rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all resize-none font-medium p-4"
+                                        />
+                                    </div>
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    disabled={isContactSending}
+                                    className="w-full h-12 bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98]"
+                                >
+                                    {isContactSending ? "Sending Inquiry..." : "Submit Inquiry"}
+                                </Button>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
 
                     {/* Trust Signals */}
                     <div className="mt-4 space-y-2.5">
