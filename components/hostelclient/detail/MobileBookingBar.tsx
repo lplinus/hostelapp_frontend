@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronUp, ChevronDown, Calendar, Users, TrendingDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,33 @@ interface MobileBookingBarProps {
 
 export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBarProps) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const observer = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                const height = entry.contentRect.height;
+                // Add a small buffer for spacing
+                document.documentElement.style.setProperty('--booking-bar-height', `${height + 16}px`);
+                // Dispatch event for components that prefer state over CSS variables
+                window.dispatchEvent(new CustomEvent('booking-bar-resize', { 
+                    detail: { height: height + 16, isExpanded } 
+                }));
+            }
+        });
+
+        observer.observe(containerRef.current);
+        
+        return () => {
+            observer.disconnect();
+            document.documentElement.style.setProperty('--booking-bar-height', '0px');
+            window.dispatchEvent(new CustomEvent('booking-bar-resize', { 
+                detail: { height: 0, isExpanded: false } 
+            }));
+        };
+    }, [isExpanded]);
 
     // Booking States
     const [checkIn, setCheckIn] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -33,7 +60,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
     // 1. Determine Rate Mode based on Duration (align with booking summary)
     const nights = Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)));
     const isMonthlyStay = nights >= 30;
-    
+
     // 2. Extract Base Rates (Direct values from hostel object)
     const getBaseRate = (mode: "monthly" | "daily", type: "current" | "original") => {
         if (mode === "monthly") {
@@ -43,27 +70,27 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
         // Daily Mode
         const originalDaily = Number(hostel.price_per_day || (Number(hostel.price) / 30));
         if (type === "original") return originalDaily;
-        
-        const discountedDaily = hostel.discounted_price_per_day 
-            ? Number(hostel.discounted_price_per_day) 
+
+        const discountedDaily = hostel.discounted_price_per_day
+            ? Number(hostel.discounted_price_per_day)
             : (hostel.discounted_price ? (Number(hostel.discounted_price) / 30) : originalDaily);
-            
+
         return Number(hostel.is_discounted ? discountedDaily : originalDaily);
     };
 
     // 3. Compute Final Values
     const baseRate = getBaseRate(isMonthlyStay ? "monthly" : "daily", "current");
     const originalRate = getBaseRate(isMonthlyStay ? "monthly" : "daily", "original");
-    
+
     // Stay Factor: nights for daily, (nights/30) for monthly
     const stayFactor = isMonthlyStay ? (nights / 30) : nights;
     const totalPrice = baseRate * guests * stayFactor;
     const totalOriginalPrice = originalRate * guests * stayFactor;
-    
+
     const showDiscount = hostel.is_discounted;
 
     return (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100]">
+        <div ref={containerRef} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100]">
             <AnimatePresence>
                 {isExpanded && (
                     <>

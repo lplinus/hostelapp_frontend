@@ -12,6 +12,20 @@ const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [activeTab, setActiveTab] = useState<"menu" | "chat">("menu");
+  const [bookingBarHeight, setBookingBarHeight] = useState(0);
+
+  useEffect(() => {
+    // Sync with CSS variable for resilience
+    const currentHeight = document.documentElement.style.getPropertyValue('--booking-bar-height');
+    if (currentHeight) setBookingBarHeight(parseInt(currentHeight));
+
+    const handleResize = (e: any) => {
+      setBookingBarHeight(e.detail.height);
+    };
+
+    window.addEventListener('booking-bar-resize', handleResize);
+    return () => window.removeEventListener('booking-bar-resize', handleResize);
+  }, []);
 
   // Hide on all internal/dashboard routes — only show on public pages
   const isInternalRoute =
@@ -61,7 +75,19 @@ const ChatWidget = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-4">
+    <motion.div 
+      initial={false}
+      animate={{ 
+        bottom: `calc(1.5rem + ${bookingBarHeight}px)` 
+      }}
+      transition={{ 
+        type: "spring", 
+        damping: 30, 
+        stiffness: 300,
+        mass: 1
+      }}
+      className="fixed right-6 z-[9999] flex flex-col items-end gap-4"
+    >
       {/* Floating Menu / Chat Window */}
       <AnimatePresence>
         {isOpen && (
@@ -123,11 +149,10 @@ const ChatWidget = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleWidget}
-        className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all ${
-          isOpen 
-            ? "bg-black" 
+        className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all ${isOpen
+            ? "bg-black"
             : "bg-gradient-to-br from-slate-900 via-indigo-950 to-black hover:shadow-emerald-500/20"
-        }`}
+          }`}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
@@ -157,7 +182,7 @@ const ChatWidget = () => {
           )}
         </AnimatePresence>
       </motion.button>
-    </div>
+    </motion.div>
   );
 };
 
