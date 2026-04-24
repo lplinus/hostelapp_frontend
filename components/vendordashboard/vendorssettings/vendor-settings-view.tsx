@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import ChangePasswordForm from '@/components/user/settings/change-password-form';
 
 export default function VendorSettingsView() {
     const [isLoading, setIsLoading] = useState(false);
@@ -109,6 +110,7 @@ export default function VendorSettingsView() {
 
                 {/* Security Tab */}
                 <TabsContent value="security" className="space-y-6">
+                    <ChangePasswordForm />
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Account Protection</CardTitle>

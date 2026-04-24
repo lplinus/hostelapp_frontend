@@ -17,10 +17,10 @@ interface PersonalInfoTabProps {
     setIsEmailEditable: (val: boolean) => void;
     isPhoneEditable: boolean;
     setIsPhoneEditable: (val: boolean) => void;
-    isPasswordEditable: boolean;
-    setIsPasswordEditable: (val: boolean) => void;
-    showPassword: boolean;
-    setShowPassword: (val: boolean) => void;
+    // isPasswordEditable: boolean;
+    // setIsPasswordEditable: (val: boolean) => void;
+    // showPassword: boolean;
+    // setShowPassword: (val: boolean) => void;
     isVerified: boolean;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -39,10 +39,10 @@ export default function PersonalInfoTab({
     setIsEmailEditable,
     isPhoneEditable,
     setIsPhoneEditable,
-    isPasswordEditable,
-    setIsPasswordEditable,
-    showPassword,
-    setShowPassword,
+    // isPasswordEditable,
+    // setIsPasswordEditable,
+    // showPassword,
+    // setShowPassword,
     isVerified,
     handleChange,
     handleFileChange,
@@ -85,8 +85,8 @@ export default function PersonalInfoTab({
                 </div>
             </div>
 
-            {/* Password Section */}
-            <div>
+            {/* Password Section - MOVED TO SETTINGS */}
+            {/* <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                 <div className="mt-1 flex items-center gap-2">
                     <div className="relative flex-1">
@@ -180,7 +180,7 @@ export default function PersonalInfoTab({
                         </div>
                     </div>
                 )}
-            </div>
+            </div> */}
 
             <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>

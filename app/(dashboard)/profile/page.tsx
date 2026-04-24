@@ -29,8 +29,8 @@ export default function ProfilePage() {
     const [storageSettings, setStorageSettings] = useState<StorageSettings>({ max_image_size_mb: 15 });
     const [isEmailEditable, setIsEmailEditable] = useState(false);
     const [isPhoneEditable, setIsPhoneEditable] = useState(false);
-    const [isPasswordEditable, setIsPasswordEditable] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
+    // const [isPasswordEditable, setIsPasswordEditable] = useState(false);
+    // const [showPassword, setShowPassword] = useState(false);
     const [selectedVendorTypes, setSelectedVendorTypes] = useState<string[]>([]);
     const [isVendorTypeDropdownOpen, setIsVendorTypeDropdownOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'personal' | 'business'>('personal');
@@ -220,10 +220,10 @@ export default function ProfilePage() {
                                     setIsEmailEditable={setIsEmailEditable}
                                     isPhoneEditable={isPhoneEditable}
                                     setIsPhoneEditable={setIsPhoneEditable}
-                                    isPasswordEditable={isPasswordEditable}
-                                    setIsPasswordEditable={setIsPasswordEditable}
-                                    showPassword={showPassword}
-                                    setShowPassword={setShowPassword}
+                                    // isPasswordEditable={isPasswordEditable}
+                                    // setIsPasswordEditable={setIsPasswordEditable}
+                                    // showPassword={showPassword}
+                                    // setShowPassword={setShowPassword}
                                     isVerified={!!isVerified}
                                     handleChange={handleChange}
                                     handleFileChange={handleFileChange}

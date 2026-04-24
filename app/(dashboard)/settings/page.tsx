@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import DashboardHeader from "@/components/user/dashboard/dashboard-header";
 import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import ChangePasswordForm from "@/components/user/settings/change-password-form";
 
 export const metadata: Metadata = {
     title: "Settings | Hostel In",
@@ -51,27 +52,7 @@ export default function SettingsPage() {
                         </Card>
 
                         {/* Security Section */}
-                        <Card className="border-muted shadow-sm hover:shadow-md transition-shadow">
-                            <CardHeader className="flex flex-row items-center gap-4 pb-4">
-                                <div className="p-3 bg-orange-100/50 text-orange-600 rounded-xl">
-                                    <Shield size={20} />
-                                </div>
-                                <div className="space-y-1">
-                                    <CardTitle className="text-xl">Privacy & Security</CardTitle>
-                                    <CardDescription>Manage your password and security protocols.</CardDescription>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <Separator />
-                                <div className="flex justify-between items-center pt-2">
-                                    <div>
-                                        <p className="font-medium text-gray-900">Two-Factor Authentication</p>
-                                        <p className="text-sm text-muted-foreground">Add an extra layer of security to your account.</p>
-                                    </div>
-                                    <Badge variant="secondary">Disabled</Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <ChangePasswordForm />
 
                         {/* App Settings */}
                         <Card className="border-muted shadow-sm hover:shadow-md transition-shadow">
