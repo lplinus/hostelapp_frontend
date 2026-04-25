@@ -126,7 +126,7 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="flex h-[450px] flex-col overflow-hidden bg-white dark:bg-slate-900">
+    <div className="flex h-[450px] max-h-[85vh] flex-col overflow-hidden bg-white dark:bg-slate-900">
       {/* Header */}
       <div className="flex items-center gap-3 border-b border-slate-100 bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-slate-800/50">
         <button
