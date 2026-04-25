@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { marketplaceService } from '@/services/marketplaceservices/marketplace.service';
 import { vendorService } from '@/services/marketplaceservices/vendor.service';
-import { Vendor } from '@/types/marketplace.types';
+import { Vendor, Product, Order } from '@/types/marketplace.types';
 import Image from 'next/image';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import {
     Search,
     Store,
@@ -19,7 +21,14 @@ import {
     UserCircle,
     Package,
     ShoppingCart,
-    CheckCircle2
+    CheckCircle2,
+    Truck,
+    XCircle,
+    Clock,
+    Settings2,
+    FileText,
+    ClipboardList,
+    Image as ImageIcon
 } from 'lucide-react';
 import { authApiClient } from '@/lib/api/auth-client';
 import { toast } from 'sonner';
@@ -36,6 +45,8 @@ export default function VendorsPage() {
     const role = user?.role;
     const [vendors, setVendors] = useState<Vendor[]>([]);
     const [myVendor, setMyVendor] = useState<Vendor | null>(null);
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [currentSubscription, setCurrentSubscription] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -63,11 +74,17 @@ export default function VendorsPage() {
     const fetchVendorData = async () => {
         setIsLoading(true);
         try {
-            const profile = await vendorService.getMyVendorProfile();
+            const [profile, fetchedOrders, fetchedProducts] = await Promise.all([
+                vendorService.getMyVendorProfile(),
+                vendorService.getVendorOrders(),
+                vendorService.getMyProducts()
+            ]);
             setMyVendor(profile);
+            setOrders(fetchedOrders);
+            setProducts(fetchedProducts);
         } catch (error) {
             console.error('Error fetching vendor profile:', error);
-            toast.error('Failed to load your vendor profile.');
+            toast.error('Failed to load your vendor dashboard data.');
         } finally {
             setIsLoading(false);
         }
@@ -113,7 +130,7 @@ export default function VendorsPage() {
                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md text-xs font-medium animate-in fade-in slide-in-from-top-1">
                             <CheckCircle2 size={13} className="shrink-0 text-white" strokeWidth={3} />
                             <span>
-                                <strong className="font-extrabold tracking-wide uppercase mr-1">{currentSubscription.plan_name}</strong> 
+                                <strong className="font-extrabold tracking-wide uppercase mr-1">{currentSubscription.plan_name}</strong>
                                 <span className="opacity-90">Active until {new Date(currentSubscription.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                             </span>
                         </div>
@@ -138,53 +155,115 @@ export default function VendorsPage() {
             {role === 'vendor' ? (
                 /* ─── Vendor Dashboard ─── */
                 <div className="space-y-6">
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {[
-                            {
-                                label: 'Total Sales',
-                                value: '₹1,24,500',
-                                change: '+12% this month',
-                                changeColor: 'text-emerald-600',
-                                icon: TrendingUp,
-                                iconBg: 'bg-blue-50',
-                                iconColor: 'text-blue-600',
-                            },
-                            {
-                                label: 'Active Products',
-                                value: '42',
-                                change: 'View all products',
-                                changeColor: 'text-primary',
-                                icon: Package,
-                                iconBg: 'bg-indigo-50',
-                                iconColor: 'text-indigo-600',
-                            },
-                            {
-                                label: 'Pending Orders',
-                                value: '18',
-                                change: 'Manage orders',
-                                changeColor: 'text-amber-600',
-                                icon: ShoppingCart,
-                                iconBg: 'bg-amber-50',
-                                iconColor: 'text-amber-600',
-                            },
-                        ].map((stat, i) => (
-                            <Card key={i} className="py-5 hover:shadow-md transition-shadow duration-300">
-                                <CardContent className="px-5 py-0">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={`p-2.5 rounded-lg ${stat.iconBg}`}>
-                                            <stat.icon size={20} className={stat.iconColor} />
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground font-medium mb-1">{stat.label}</p>
-                                    <p className="text-2xl font-semibold tracking-tight text-foreground mb-2">{stat.value}</p>
-                                    <p className={`text-xs font-medium ${stat.changeColor} flex items-center gap-1`}>
-                                        <ArrowUpRight size={12} />
-                                        {stat.change}
+                    {/* Main Stats Summary */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <Card className="hover:shadow-md transition-shadow duration-300">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                                    <TrendingUp size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Sales</p>
+                                    <p className="text-xl font-bold tracking-tight">
+                                        ₹{orders.filter(o => o.status !== 'cancelled').reduce((acc, o) => acc + parseFloat(o.total_amount || '0'), 0).toLocaleString()}
                                     </p>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="hover:shadow-md transition-shadow duration-300">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+                                    <Package size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Products</p>
+                                    <p className="text-xl font-bold tracking-tight">{products.filter(p => p.is_active).length}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="hover:shadow-md transition-shadow duration-300">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
+                                    <ShoppingCart size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Orders</p>
+                                    <p className="text-xl font-bold tracking-tight">{orders.length}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="hover:shadow-md transition-shadow duration-300">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                                    <CheckCircle2 size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Success Rate</p>
+                                    <p className="text-xl font-bold tracking-tight">
+                                        {orders.length > 0 ? Math.round((orders.filter(o => o.status === 'delivered').length / orders.length) * 100) : 0}%
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Order Status Breakdown */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        {[
+                            { label: 'Pending', status: 'pending', icon: Clock, color: 'amber' },
+                            { label: 'Processing', status: 'processing', icon: Settings2, color: 'blue' },
+                            { label: 'Shipped', status: 'shipped', icon: Truck, color: 'indigo' },
+                            { label: 'Delivered', status: 'delivered', icon: CheckCircle2, color: 'emerald' },
+                            { label: 'Cancelled', status: 'cancelled', icon: XCircle, color: 'red' },
+                        ].map((stat) => {
+                            const filteredOrders = orders.filter(o => o.status === stat.status);
+                            const count = filteredOrders.length;
+                            const revenue = filteredOrders.reduce((acc, o) => acc + parseFloat(o.total_amount || '0'), 0);
+
+                            const statusColors: Record<string, string> = {
+                                amber: 'bg-amber-50 text-amber-600 border-amber-100',
+                                blue: 'bg-blue-50 text-blue-600 border-blue-100',
+                                indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+                                emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                red: 'bg-red-50 text-red-600 border-red-100',
+                            };
+                            const colorClasses = statusColors[stat.color] || 'bg-muted text-muted-foreground border-muted';
+                            const colors = colorClasses.split(' ');
+                            
+                            return (
+                                <Card
+                                    key={stat.status}
+                                    className={cn(
+                                        "relative overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 group",
+                                        "bg-background/50 backdrop-blur-sm"
+                                    )}
+                                >
+                                    <CardContent className="p-4">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center justify-between">
+                                                <div className={cn(
+                                                    "p-2 rounded-lg transition-transform group-hover:scale-110 duration-300",
+                                                    colors[0],
+                                                    colors[1]
+                                                )}>
+                                                    <stat.icon size={18} strokeWidth={2.5} />
+                                                </div>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-xl font-bold tracking-tight">{count}</span>
+                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Orders</p>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                                                <p className={cn("text-sm font-bold", colors[1])}>
+                                                    ₹{revenue.toLocaleString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
                     </div>
 
                     {/* Recent Activity */}
@@ -195,28 +274,44 @@ export default function VendorsPage() {
                                     <CardTitle className="text-base">Recent Activity</CardTitle>
                                     <CardDescription>Latest customer interactions</CardDescription>
                                 </div>
-                                <Button variant="ghost" size="sm" className="text-xs">
-                                    View All
+                                <Button variant="ghost" size="sm" className="text-xs" asChild>
+                                    <Link href="/vendordashboard/orders">
+                                        View All
+                                    </Link>
                                 </Button>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-1">
-                            {[
-                                { name: 'Zostel Delhi', items: '24 Furniture items', time: '2 hours ago' },
-                                { name: 'Backpacker Hostel', items: '12 Bedding sets', time: '5 hours ago' },
-                                { name: 'The Hosteller', items: '8 Electronics items', time: '1 day ago' },
-                            ].map((activity, i) => (
-                                <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                    <div className="w-9 h-9 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-                                        <UserCircle size={18} />
+                            {orders.length > 0 ? (
+                                orders.slice(0, 5).map((order) => (
+                                    <div key={order.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                                        <div className="w-9 h-9 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+                                            <UserCircle size={18} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium text-foreground">Order #{order.id} from {order.hostel_name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {order.items.length} items · ₹{parseFloat(order.total_amount).toLocaleString()} · {new Date(order.created_at).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <Badge
+                                            variant="secondary"
+                                            className={cn(
+                                                "text-[10px] capitalize",
+                                                order.status === 'pending' && "bg-amber-100 text-amber-700",
+                                                order.status === 'delivered' && "bg-emerald-100 text-emerald-700",
+                                                order.status === 'cancelled' && "bg-red-100 text-red-700"
+                                            )}
+                                        >
+                                            {order.status}
+                                        </Badge>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-foreground">New order from {activity.name}</p>
-                                        <p className="text-xs text-muted-foreground">{activity.items} · {activity.time}</p>
-                                    </div>
-                                    <Badge variant="secondary" className="text-[10px]">New</Badge>
+                                ))
+                            ) : (
+                                <div className="py-8 text-center">
+                                    <p className="text-sm text-muted-foreground">No recent activity found.</p>
                                 </div>
-                            ))}
+                            )}
                         </CardContent>
                     </Card>
                 </div>
