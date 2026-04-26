@@ -35,6 +35,7 @@ export default function UserOrders() {
     // Contact Us state
     const [isContactOpen, setIsContactOpen] = useState(false);
     const [contactForm, setContactForm] = useState({ name: '', mobile: '', issue: '' });
+    const [selectedOrderForDetail, setSelectedOrderForDetail] = useState<number | null>(null);
 
     const isAuthenticated = !!user && tokenManager.getAuthFlag() === 'authenticated';
 
@@ -127,7 +128,11 @@ export default function UserOrders() {
                         </TableHeader>
                         <TableBody>
                             {filteredOrders.map((order) => (
-                                <TableRow key={order.id} className="group hover:bg-muted/20 cursor-pointer transition-colors duration-200">
+                                <TableRow 
+                                    key={order.id} 
+                                    className="group hover:bg-muted/20 cursor-pointer transition-colors duration-200"
+                                    onClick={() => setSelectedOrderForDetail(order.id)}
+                                >
                                     <TableCell>
                                         <div className="flex flex-col gap-1">
                                             <span className="font-mono text-xs font-semibold text-foreground">
@@ -177,7 +182,15 @@ export default function UserOrders() {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <Button size="sm" variant="outline" className="gap-1 text-xs group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
+                                        <Button 
+                                            size="sm" 
+                                            variant="outline" 
+                                            className="gap-1 text-xs group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedOrderForDetail(order.id);
+                                            }}
+                                        >
                                             Details
                                             <ChevronRight size={14} />
                                         </Button>
@@ -325,6 +338,15 @@ export default function UserOrders() {
                 {renderOrdersList()}
             </div>
             
+            {/* Order Detail Modal */}
+            {selectedOrderForDetail && (
+                <OrderDetailModal 
+                    isOpen={!!selectedOrderForDetail}
+                    onClose={() => setSelectedOrderForDetail(null)}
+                    orderId={selectedOrderForDetail}
+                />
+            )}
+
             {/* Contact Us Modal */}
             {isContactOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -384,6 +406,113 @@ export default function UserOrders() {
                     </div>
                 </div>
             )}
+        </div>
+    );
+}
+
+function OrderDetailModal({ isOpen, onClose, orderId }: { isOpen: boolean, onClose: () => void, orderId: number }) {
+    const { data: order, isLoading } = useQuery({
+        queryKey: ["orderDetail", orderId],
+        queryFn: () => orderService.getOrderDetail(orderId),
+        enabled: isOpen,
+    });
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+                <div className="p-6 border-b border-border/40 flex items-center justify-between bg-muted/20">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <Package size={20} />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-foreground">Order Details</h2>
+                            <p className="text-xs text-muted-foreground font-mono">#ORD-{orderId.toString().padStart(5, "0")}</p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={onClose} 
+                        className="p-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                        <XCircle size={20}/>
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6">
+                    {isLoading ? (
+                        <div className="space-y-4">
+                            <Skeleton className="h-20 w-full rounded-xl" />
+                            <Skeleton className="h-40 w-full rounded-xl" />
+                        </div>
+                    ) : order ? (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-xl border border-border/40 bg-muted/5 space-y-3">
+                                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Vendor Info</h4>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                            <ShoppingBag size={14} />
+                                        </div>
+                                        <span className="text-sm font-semibold">{order.vendor_name}</span>
+                                    </div>
+                                </div>
+                                <div className="p-4 rounded-xl border border-border/40 bg-muted/5 space-y-3">
+                                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Order Status</h4>
+                                    <div className="flex items-center justify-between">
+                                        <Badge variant="outline" className="capitalize gap-1.5">
+                                            <span className={`w-1.5 h-1.5 rounded-full bg-primary`} />
+                                            {order.status}
+                                        </Badge>
+                                        <span className="text-xs text-muted-foreground">
+                                            {new Date(order.created_at).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-bold text-foreground">Order Items</h4>
+                                <div className="border border-border/40 rounded-xl overflow-hidden bg-background">
+                                    <Table>
+                                        <TableHeader className="bg-muted/30">
+                                            <TableRow>
+                                                <TableHead className="text-xs">Item</TableHead>
+                                                <TableHead className="text-xs text-center">Qty</TableHead>
+                                                <TableHead className="text-xs text-right">Price</TableHead>
+                                                <TableHead className="text-xs text-right">Total</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {order.items?.map((item, idx) => (
+                                                <TableRow key={idx}>
+                                                    <TableCell className="text-sm font-medium">{item.product_name}</TableCell>
+                                                    <TableCell className="text-sm text-center tabular-nums">{item.quantity}</TableCell>
+                                                    <TableCell className="text-sm text-right tabular-nums">₹{parseFloat(item.unit_price).toLocaleString()}</TableCell>
+                                                    <TableCell className="text-sm text-right font-bold tabular-nums">₹{parseFloat(item.total_price).toLocaleString()}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                            <TableRow className="bg-muted/10">
+                                                <TableCell colSpan={3} className="text-right font-bold">Grand Total</TableCell>
+                                                <TableCell className="text-right font-bold text-primary text-base tabular-nums">
+                                                    ₹{parseFloat(order.total_amount).toLocaleString()}
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-10">
+                            <p className="text-muted-foreground">Failed to load order details.</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="p-6 border-t border-border/40 flex justify-end bg-muted/10">
+                    <Button onClick={onClose}>Close Details</Button>
+                </div>
+            </div>
         </div>
     );
 }

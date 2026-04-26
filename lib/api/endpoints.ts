@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
     ORDERS: {
         LIST: '/api/orders/',
         CREATE_STRUCTURED: '/api/orders/create-structured/',
+        CREATE_WHOLESALE: '/api/orders/create-wholesale/',
         CREATE_IMAGE_SCAN: '/api/orders/create-image-scan/',
         UPDATE_STATUS: (id: string | number) => `/api/orders/${id}/update-status/`,
     },

@@ -29,6 +29,16 @@ export const orderService = {
     },
 
     /**
+     * Create a wholesale order (bulk items + manual).
+     */
+    createWholesaleOrder: async (data: any) => {
+        return authApiClient.post<{ success: boolean; data: Order }>(
+            API_ENDPOINTS.ORDERS.CREATE_WHOLESALE, 
+            data
+        );
+    },
+
+    /**
      * Create an image scan order (handwritten list).
      */
     createImageScanOrder: async (data: FormData) => {

@@ -46,6 +46,7 @@ export interface VendorDetail extends Vendor {
 export interface OrderItem {
     id: number;
     product: number;
+    product_name: string;
     product_name_at_order: string;
     quantity: number;
     unit_price: string;
