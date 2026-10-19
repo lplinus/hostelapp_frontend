@@ -34,17 +34,17 @@ export default function RatingsSummary({
         <div className="mb-8 mt-4">
             {/* Location & Rating Row */}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-6">
-                <div className="flex items-center gap-1.5 text-gray-500 text-sm font-medium">
-                    <MapPin size={14} className="text-gray-400" />
+                <div className="flex items-center gap-1.5 text-black text-sm font-semibold">
+                    <MapPin size={14} className="text-black" />
                     <span>
                         {areaName ? `${areaName}, ` : ""}{cityName || "Location"}
                     </span>
                 </div>
-                <span className="text-gray-300 hidden sm:inline">·</span>
+                <span className="text-gray-400 hidden sm:inline">·</span>
                 <div className="flex items-center gap-1.5">
                     <Star size={14} className="fill-amber-400 text-amber-400" />
-                    <span className="text-sm font-semibold text-gray-900">{ratingAvg.toFixed(1)}</span>
-                    <span className="text-sm text-gray-400">({ratingCount} reviews)</span>
+                    <span className="text-sm font-bold text-black">{ratingAvg.toFixed(1)}</span>
+                    <span className="text-sm text-gray-800 font-medium">({ratingCount} reviews)</span>
                 </div>
             </div>
 
@@ -56,11 +56,11 @@ export default function RatingsSummary({
                         className="flex flex-col items-center text-center gap-2 py-3 group cursor-default"
                     >
                         <div className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-colors duration-300">
-                            <item.icon size={20} className="text-gray-600 group-hover:text-[#312E81] transition-colors duration-300" strokeWidth={1.5} />
+                            <item.icon size={20} className="text-gray-900 group-hover:text-[#312E81] transition-colors duration-300" strokeWidth={1.8} />
                         </div>
                         <div>
-                            <p className="text-[13px] font-semibold text-gray-800 leading-tight">{item.label}</p>
-                            <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{item.sub}</p>
+                            <p className="text-[13px] font-bold text-black leading-tight">{item.label}</p>
+                            <p className="text-[11px] text-gray-700 mt-0.5 font-semibold">{item.sub}</p>
                         </div>
                     </div>
                 ))}

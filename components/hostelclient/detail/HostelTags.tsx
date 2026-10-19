@@ -28,9 +28,9 @@ export default function HostelTags({ isVerified, isFeatured, sharingOptions }: H
             {sharingOptions.map((sharing, idx) => (
                 <span
                     key={`sharing-${idx}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-gray-50 text-gray-600 border border-gray-200 transition-all hover:bg-gray-100"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full bg-gray-50 text-black border border-gray-300 transition-all hover:bg-gray-100"
                 >
-                    <Users size={13} className="text-gray-400" />
+                    <Users size={13} className="text-gray-900" />
                     {sharing} Sharing
                 </span>
             ))}

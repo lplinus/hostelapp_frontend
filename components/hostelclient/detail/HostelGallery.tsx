@@ -64,7 +64,7 @@ export default function HostelGallery({
     return (
         <div className="gallery-section">
             {/* ─── Desktop Hero Grid ─── */}
-            <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-[6px] h-[480px] lg:h-[520px] rounded-2xl overflow-hidden relative">
+            <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-2 h-[360px] md:h-[390px] lg:h-[415px] rounded-2xl overflow-hidden relative">
 
                 {/* Main Full-Height Left Image */}
                 <div
@@ -75,12 +75,12 @@ export default function HostelGallery({
                         src={images[0]?.src || "/images/hero1.webp"}
                         alt={images[0]?.alt || hostelName}
                         fill
-                        className="object-cover group-hover/main:scale-[1.03] transition-transform duration-700 ease-out"
+                        className="object-cover group-hover/main:scale-[1.02] transition-transform duration-500 ease-out"
                         priority
                         sizes="(max-width: 1200px) 50vw, 600px"
                         unoptimized={isExternalImage(images[0]?.src)}
                     />
-                    <div className="absolute inset-0 bg-black/[0.03] group-hover/main:bg-black/[0.08] transition-colors duration-300" />
+                    <div className="absolute inset-0 bg-black/[0.02] group-hover/main:bg-black/[0.08] transition-colors duration-300" />
                 </div>
 
                 {/* Right Side 4 smaller images */}
@@ -94,23 +94,24 @@ export default function HostelGallery({
                             src={images[i]?.src || images[0]?.src || "/images/hero1.webp"}
                             alt={images[i]?.alt || hostelName}
                             fill
-                            className="object-cover group-hover/thumb:scale-110 transition-transform duration-500 ease-out"
+                            className="object-cover group-hover/thumb:scale-[1.04] transition-transform duration-500 ease-out"
                             sizes="(max-width: 1200px) 25vw, 300px"
                             unoptimized={isExternalImage(images[i]?.src || images[0]?.src)}
                         />
-                        <div className="absolute inset-0 bg-black/[0.03] group-hover/thumb:bg-black/[0.08] transition-colors duration-300" />
-
-                        {/* "View all photos" overlay on last image */}
-                        {i === 4 && images.length > 5 && (
-                            <div className="absolute inset-0 bg-black/40 flex items-end justify-end p-4 pointer-events-none">
-                                <span className="flex items-center gap-2 bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-semibold px-4 py-2 rounded-lg shadow-md">
-                                    <LayoutGrid size={14} />
-                                    View all photos
-                                </span>
-                            </div>
-                        )}
+                        <div className="absolute inset-0 bg-black/[0.02] group-hover/thumb:bg-black/[0.08] transition-colors duration-300" />
                     </div>
                 ))}
+
+                {/* "Show all photos" floating button in bottom-right like Airbnb */}
+                {images.length > 5 && (
+                    <button
+                        onClick={() => setShowGallery(true)}
+                        className="absolute bottom-4 right-4 z-20 flex items-center gap-2 bg-white border border-gray-900 text-gray-900 text-[13px] font-semibold px-3.5 py-1.5 rounded-lg shadow-sm hover:bg-neutral-50 transition-all active:scale-95 cursor-pointer"
+                    >
+                        <LayoutGrid size={14} />
+                        Show all photos
+                    </button>
+                )}
 
                 {/* Top Right Actions */}
                 <div className="absolute top-4 right-4 flex items-center gap-2 z-20">

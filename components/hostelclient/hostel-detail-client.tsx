@@ -97,7 +97,7 @@ export default function HostelDetailClient({ hostel }: Props) {
 
                 {/* Hostel Name */}
                 <h1
-                    className="text-2xl sm:text-3xl lg:text-[2.2rem] font-bold text-gray-900 tracking-tight mt-3 mb-1 leading-tight"
+                    className="text-2xl sm:text-3xl lg:text-[2.2rem] font-extrabold text-black tracking-tight mt-3 mb-1 leading-tight"
                     style={{ fontFamily: "'Inter', 'system-ui', sans-serif" }}
                 >
                     {hostel.name}

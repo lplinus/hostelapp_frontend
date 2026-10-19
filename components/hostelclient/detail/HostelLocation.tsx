@@ -49,7 +49,7 @@ export default function HostelLocation({
 
     return (
         <section className="mb-10 pt-8 border-t border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-5">Where you'll be</h2>
+            <h2 className="text-lg font-extrabold text-black mb-5">Where you'll be</h2>
 
             {/* Map Container */}
             <div className="relative rounded-2xl overflow-hidden border border-gray-100 h-[240px] sm:h-[280px] w-full mb-5 group">
@@ -86,21 +86,21 @@ export default function HostelLocation({
             {/* Address Block */}
             {address && (
                 <div 
-                    className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100 mb-5 cursor-pointer group/address hover:border-indigo-100 transition-colors"
+                    className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 mb-5 cursor-pointer group/address hover:border-indigo-200 transition-colors"
                     onClick={handleCopy}
                 >
                     <div className="mt-0.5 flex-shrink-0">
                         <MapPin size={16} className="text-[#312E81]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-800 leading-relaxed">
+                        <p className="text-sm font-semibold text-black leading-relaxed">
                             {address}
                         </p>
                         {cityName && (
-                            <p className="text-xs text-gray-400 mt-0.5">{cityName}</p>
+                            <p className="text-xs text-gray-800 font-medium mt-0.5">{cityName}</p>
                         )}
                     </div>
-                    <div className="flex-shrink-0 self-center text-gray-400 group-hover/address:text-[#312E81] transition-colors">
+                    <div className="flex-shrink-0 self-center text-gray-600 group-hover/address:text-[#312E81] transition-colors">
                         {copied ? <Check size={16} className="text-[#10B981]" /> : <Copy size={16} />}
                     </div>
                 </div>
@@ -109,24 +109,24 @@ export default function HostelLocation({
             {/* Nearby Landmarks */}
             {landmarks && landmarks.length > 0 && (
                 <div>
-                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                    <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">
                         Nearby
                     </h3>
                     <div className="flex flex-wrap gap-2">
                         {landmarks.map((landmark) => (
                             <div
                                 key={landmark.id}
-                                className="flex items-center gap-2 py-2 px-3 rounded-full bg-white border border-gray-200 text-sm hover:border-indigo-200 transition-colors cursor-default group"
+                                className="flex items-center gap-2 py-2 px-3 rounded-full bg-white border border-gray-300 text-sm hover:border-indigo-300 transition-colors cursor-default group"
                             >
                                 {landmark.is_popular ? (
                                     <Star size={13} className="fill-amber-400 text-amber-400" />
                                 ) : (
-                                    <Building2 size={13} className="text-gray-400 group-hover:text-[#312E81] transition-colors" />
+                                    <Building2 size={13} className="text-gray-700 group-hover:text-[#312E81] transition-colors" />
                                 )}
-                                <span className="font-medium text-gray-700 text-[13px]">
+                                <span className="font-semibold text-black text-[13px]">
                                     {landmark.name}
                                 </span>
-                                <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded font-medium">
+                                <span className="text-[10px] text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded font-bold">
                                     {landmark.distance}
                                 </span>
                             </div>

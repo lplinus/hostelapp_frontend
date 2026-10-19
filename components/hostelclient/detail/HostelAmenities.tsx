@@ -56,7 +56,7 @@ export default function HostelAmenities({ amenities }: HostelAmenitiesProps) {
 
     return (
         <section className="mb-10 pt-8 border-t border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-5">Amenities</h2>
+            <h2 className="text-lg font-extrabold text-black mb-5">Amenities</h2>
 
             {/* Horizontal scrollable chip layout */}
             <div className="flex flex-wrap gap-2.5">
@@ -65,9 +65,9 @@ export default function HostelAmenities({ amenities }: HostelAmenitiesProps) {
                     return (
                         <div
                             key={amenity.id}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all duration-200 cursor-default group"
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-gray-300 bg-white text-sm font-bold text-black hover:border-indigo-300 hover:bg-indigo-50/50 transition-all duration-200 cursor-default group"
                         >
-                            <IconComp size={16} className="text-gray-400 group-hover:text-[#312E81] transition-colors" strokeWidth={1.5} />
+                            <IconComp size={16} className="text-gray-900 group-hover:text-[#312E81] transition-colors" strokeWidth={1.8} />
                             <span>{amenity.name}</span>
                         </div>
                     );

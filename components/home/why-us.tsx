@@ -58,23 +58,23 @@ export default function WhyUs({ title, items }: WhyUsProps) {
     : "Why Choose";
 
   return (
-    <section className="py-24 bg-[#F8FAFC] font-inter overflow-hidden relative">
+    <section className="py-12 sm:py-16 bg-[#F8FAFC] font-inter overflow-hidden relative">
       {/* Background visual elements */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#312E81]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10 text-center">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto mb-20 lg:mb-24">
-          <div className="flex items-center justify-center gap-3 text-[#312E81] mb-6">
-            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">The Advantage</span>
+        <div className="max-w-3xl mx-auto mb-10 lg:mb-12">
+          <div className="flex items-center justify-center gap-3 text-black mb-4">
+            <span className="text-[11px] tracking-[0.25em] font-medium uppercase text-black">The Advantage</span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] tracking-tight mb-8">
+          <h2 className="text-4xl sm:text-5xl font-normal text-black tracking-tight mb-8">
             {cleanTitle}{" "}
-            <span className="italic text-[#64748B] font-medium">Hostel In</span>
+            <span className="italic text-black font-normal">Hostel In</span>
           </h2>
 
-          <p className="text-lg text-[#64748B] leading-relaxed max-w-2xl mx-auto font-medium">
+          <p className="text-lg text-black leading-relaxed max-w-2xl mx-auto font-normal">
             We've re-imagined the hostel experience from the ground up, focusing only on what truly matters to students.
           </p>
         </div>
@@ -93,20 +93,20 @@ export default function WhyUs({ title, items }: WhyUsProps) {
             return (
               <div
                 key={feature.id || index}
-                className="group relative p-10 bg-white rounded-3xl border border-slate-100 hover:border-[#312E81]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
+                className="group relative p-10 bg-white rounded-3xl border border-slate-100 hover:border-black/20 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Icon Container */}
-                <div className="mb-10 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-[#0F172A] group-hover:bg-[#312E81] group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-sm">
+                <div className="mb-10 w-16 h-16 rounded-2xl bg-[#F8FAFC] flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-sm">
                   <IconComponent size={28} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#312E81] mb-4 tracking-tight transition-colors">
+                <h3 className="text-xl font-medium text-black group-hover:text-black mb-4 tracking-tight transition-colors">
                   {feature.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-base leading-relaxed text-[#64748B] group-hover:text-[#0F172A]/80 font-medium transition-colors">
+                <p className="text-base leading-relaxed text-black group-hover:text-black font-normal transition-colors">
                   {feature.description}
                 </p>
 

@@ -39,8 +39,9 @@ export function BookingSummary({
     const isConfirmed = bookingStatus === "confirmed";
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            {/* Hostel Image Header */}
+        <div className="bg-white rounded-2xl border border-gray-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.04)] overflow-hidden">
+            {/* Hostel Image Header (Commented out as per request) */}
+            {/*
             <div className="relative h-44 bg-gray-100 overflow-hidden">
                 {hostel.images?.[0]?.image ? (
                     <img
@@ -53,7 +54,6 @@ export function BookingSummary({
                         No Image
                     </div>
                 )}
-                {/* Badge overlay */}
                 <div className="absolute top-3 right-3">
                     <Badge className="bg-[#10B981] text-white border-none text-[10px] font-bold px-2.5 py-1 shadow-md">
                         <Zap size={10} className="mr-1" />
@@ -61,32 +61,60 @@ export function BookingSummary({
                     </Badge>
                 </div>
             </div>
+            */}
 
-            {/* Hostel Info */}
-            <div className="p-5 border-b border-gray-100">
-                <h4 className="font-bold text-gray-900 text-lg leading-tight mb-1">{hostel.name}</h4>
-                {selectedRoom && (
-                    <p className="text-sm text-gray-500 font-medium">{selectedRoom.category_display} • {selectedRoom.sharing_display}</p>
-                )}
-                {/* <div className="flex items-center gap-1.5 mt-2">
-                    <CheckCircle2 size={14} className="text-[#10B981]" />
-                    <span className="text-xs font-semibold text-[#10B981] uppercase tracking-wider">
-                        Free cancellation before check-in
+            {/* Hostel Info Header */}
+            <div className="p-5 sm:p-6 border-b border-gray-100 bg-gradient-to-b from-slate-50/60 to-white">
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                        Reservation Summary
                     </span>
-                </div> */}
+                    <Badge className="bg-[#10B981]/10 hover:bg-[#10B981]/15 text-[#059669] border border-[#10B981]/20 text-[10px] font-bold px-2.5 py-0.5 shadow-none">
+                        <Zap size={10} className="mr-1 text-[#10B981]" />
+                        Instant confirmation
+                    </Badge>
+                </div>
+                <h4 className="font-bold text-gray-900 text-lg sm:text-xl leading-snug tracking-tight mb-1">{hostel.name}</h4>
+                <p className="text-xs sm:text-sm text-gray-500 font-medium">
+                    {hostel.city?.name ? `${hostel.city.name}` : ""}
+                    {selectedRoom && ` • ${selectedRoom.category_display} (${selectedRoom.sharing_display})`}
+                </p>
             </div>
 
             {/* Room Selector */}
             <div className="px-5 pt-4 pb-2">
-                <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Selected Room Type</Label>
+                <Label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Selected Room Type</Label>
                 <Select value={selectedRoomId || ""} onValueChange={setSelectedRoomId} disabled={isConfirmed}>
                     <SelectTrigger className={cn(
-                        "w-full h-auto py-2.5 px-3 rounded-xl border-gray-200 bg-gray-50 hover:bg-white transition-all focus:ring-2 focus:ring-[#312E81]/20 text-sm",
+                        "w-full h-12 px-3.5 rounded-xl border border-gray-200 bg-gray-50/80 hover:bg-white hover:border-[#312E81]/30 transition-all focus:ring-2 focus:ring-[#312E81]/15 focus:border-[#312E81] text-sm",
                         isConfirmed && "opacity-80 bg-gray-100 cursor-not-allowed"
                     )}>
-                        <SelectValue placeholder="Select a room" />
+                        <div className="flex items-center justify-between w-full pr-1 text-left">
+                            {(() => {
+                                const currentRoom = selectedRoom || hostel.room_types?.find(r => r.id.toString() === selectedRoomId);
+                                if (!currentRoom) return <span className="text-gray-400 font-normal">Choose room sharing & type</span>;
+                                return (
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <span className={cn(
+                                            "px-2 py-0.5 text-[10px] font-bold rounded-md uppercase tracking-wider shrink-0",
+                                            currentRoom.room_category === "AC"
+                                                ? "bg-indigo-50 text-[#312E81] border border-indigo-100"
+                                                : "bg-slate-100 text-slate-700 border border-slate-200"
+                                        )}>
+                                            {currentRoom.room_category || "Standard"}
+                                        </span>
+                                        <span className="font-semibold text-gray-900 text-sm truncate">
+                                            {currentRoom.sharing_display}
+                                        </span>
+                                        <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                                            • ₹{Number(currentRoom.base_price).toLocaleString()}/mo
+                                        </span>
+                                    </div>
+                                );
+                            })()}
+                        </div>
                     </SelectTrigger>
-                    <SelectContent position="popper" className="max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-xl border-gray-100 shadow-xl bg-white p-1">
+                    <SelectContent position="popper" className="max-h-[300px] w-[var(--radix-select-trigger-width)] overflow-y-auto rounded-2xl border border-gray-100 shadow-2xl bg-white p-1.5 z-[9999]">
                         {(() => {
                             const getSharingLevel = (s: string) => {
                                 const num = Number.parseInt(s);
@@ -110,12 +138,23 @@ export function BookingSummary({
                                 <SelectItem
                                     key={room.id}
                                     value={room.id.toString()}
-                                    className="rounded-lg focus:bg-[#312E81] focus:text-white group px-3 py-2.5 mb-0.5 last:mb-0 transition-colors cursor-pointer"
+                                    className="rounded-xl px-3 py-2.5 mb-1 last:mb-0 transition-all cursor-pointer focus:bg-[#312E81]/5 focus:text-gray-900 data-[state=checked]:bg-[#312E81]/10 data-[state=checked]:text-[#312E81]"
                                 >
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="font-bold text-sm">{room.category_display}</span>
-                                        <span className="text-[11px] font-medium opacity-80 group-focus:text-indigo-50 text-gray-500">
-                                            ₹{room.base_price}/month • {room.sharing_display}
+                                    <div className="flex items-center justify-between w-full py-0.5">
+                                        <div className="flex items-center gap-2.5">
+                                            <span className={cn(
+                                                "px-2 py-0.5 text-[10px] font-bold rounded-md uppercase tracking-wider shrink-0",
+                                                room.room_category === "AC"
+                                                    ? "bg-indigo-50 text-[#312E81] border border-indigo-100"
+                                                    : "bg-slate-100 text-slate-700 border border-slate-200"
+                                            )}>
+                                                {room.room_category}
+                                            </span>
+                                            <span className="font-semibold text-sm text-gray-900">{room.sharing_display}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-[#312E81] whitespace-nowrap ml-3">
+                                            ₹{Number(room.base_price).toLocaleString()}
+                                            <span className="text-[10px] font-normal text-gray-400">/mo</span>
                                         </span>
                                     </div>
                                 </SelectItem>

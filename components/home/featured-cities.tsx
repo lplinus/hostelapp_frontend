@@ -40,15 +40,15 @@ export default async function FeaturedCities() {
   if (!cities?.length) return null;
 
   return (
-    <section className="pt-10 pb-6 bg-[#F8FAFC] font-inter">
+    <section className="py-4 sm:py-6 bg-[#F8FAFC] font-inter">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 sm:mb-5">
           <div>
-            <div className="flex items-center gap-3 text-[#10B981] mb-3">
-              <span className="text-[11px] tracking-[0.25em] font-semibold uppercase font-sans">Locations</span>
+            <div className="flex items-center gap-3 text-black mb-2">
+              <span className="text-[11px] tracking-[0.25em] font-medium uppercase font-sans">Locations</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-[#1E1B4B] tracking-tight font-sans">
-              Popular <span className="text-slate-500 font-medium">Cities</span>
+            <h2 className="text-2xl sm:text-3xl font-medium text-black tracking-tight font-sans">
+              Popular <span className="text-gray-700 font-normal">Cities</span>
             </h2>
           </div>
         </div>

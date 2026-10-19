@@ -128,13 +128,13 @@ export default function HostelReviews({
                                             {review.user_name?.charAt(0)?.toUpperCase() || "U"}
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+                                            <p className="font-bold text-black text-sm flex items-center gap-1.5">
                                                 {review.user_name || "Anonymous User"}
                                                 {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
                                             </p>
                                             <div className="flex items-center gap-2 mt-0.5">
                                                 <StarRating rating={review.rating} size={10} />
-                                                <span className="text-[11px] text-gray-400">
+                                                <span className="text-[11px] text-gray-700 font-medium">
                                                     · {new Date(review.created_at).toLocaleDateString("en-IN", {
                                                         month: "short",
                                                         year: "numeric",
@@ -143,7 +143,7 @@ export default function HostelReviews({
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                    <p className="text-gray-950 text-sm font-medium leading-relaxed">
                                         {review.comment}
                                     </p>
                                 </div>
@@ -162,7 +162,7 @@ export default function HostelReviews({
                 {reviewsToShow.map((review) => (
                     <div
                         key={review.id}
-                        className="flex flex-col gap-4 bg-white border border-gray-100 rounded-2xl p-6 snap-start min-w-[280px] sm:min-w-[340px] md:min-w-[380px] flex-shrink-0 hover:shadow-md transition-shadow duration-300"
+                        className="flex flex-col gap-4 bg-white border border-gray-200 rounded-2xl p-6 snap-start min-w-[280px] sm:min-w-[340px] md:min-w-[380px] flex-shrink-0 hover:shadow-md transition-shadow duration-300"
                     >
                         {/* Reviewer */}
                         <div className="flex items-center gap-3">
@@ -170,13 +170,13 @@ export default function HostelReviews({
                                 {review.user_name?.charAt(0)?.toUpperCase() || "U"}
                             </div>
                             <div>
-                                <p className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+                                <p className="font-bold text-black text-sm flex items-center gap-1.5">
                                     {review.user_name || "Anonymous User"}
                                     {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
                                 </p>
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <StarRating rating={review.rating} size={11} />
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-gray-700 font-medium">
                                         · {new Date(review.created_at).toLocaleDateString("en-IN", {
                                             month: "short",
                                             year: "numeric",
@@ -186,7 +186,7 @@ export default function HostelReviews({
                             </div>
                         </div>
                         {/* Comment */}
-                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                        <p className="text-gray-950 text-sm font-medium leading-relaxed line-clamp-4">
                             {review.comment}
                         </p>
                     </div>
@@ -196,7 +196,7 @@ export default function HostelReviews({
             {/* Write Review Button */}
             <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
                 <DialogTrigger asChild>
-                    <button className="mt-4 flex items-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-xl px-5 py-2.5 hover:bg-gray-50 transition-all active:scale-[0.98]">
+                    <button className="mt-4 flex items-center gap-2 text-sm font-bold text-black border border-gray-300 rounded-xl px-5 py-2.5 hover:bg-gray-50 transition-all active:scale-[0.98]">
                         <MessageSquarePlus size={16} />
                         Write a Review
                     </button>

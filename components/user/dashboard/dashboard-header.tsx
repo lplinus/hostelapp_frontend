@@ -39,7 +39,7 @@ export default function DashboardHeader() {
                     <p className="text-sm text-gray-500 hidden sm:block mb-1">
                         Welcome back{isMounted && user?.first_name ? `, ${user.first_name}` : ""}, manage your hostels easily.
                     </p>
-                    {subscription && subscription.end_date && (
+                    {isMounted && subscription && subscription.end_date && (
                         <div className="relative inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white text-[10px] sm:text-xs font-medium shadow-[0_0_20px_rgba(79,70,229,0.25)] overflow-hidden group animate-in fade-in slide-in-from-top-1">
                             {/* Glossy top highlight */}
                             <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/15 to-transparent pointer-events-none"></div>

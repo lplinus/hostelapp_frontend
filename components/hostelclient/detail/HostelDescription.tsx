@@ -22,12 +22,12 @@ export default function HostelDescription({ description }: HostelDescriptionProp
 
     return (
         <section className="mb-10 pt-8 border-t border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">
+            <h2 className="text-lg font-extrabold text-black mb-4">
                 About this Curator Space
             </h2>
             
             <div className="relative">
-                <div className={`text-[15px] text-gray-600 leading-[1.8] font-normal transition-all duration-300 ${!isExpanded && isLongDescription ? "max-h-[200px] overflow-hidden" : ""}`}>
+                <div className={`text-[15px] text-gray-950 leading-[1.8] font-medium transition-all duration-300 ${!isExpanded && isLongDescription ? "max-h-[200px] overflow-hidden" : ""}`}>
                     {displayedText.split('\n').filter(p => p.trim() !== '').map((paragraph, idx) => (
                         <p key={idx} className={idx > 0 ? "mt-3" : ""}>
                             {paragraph}

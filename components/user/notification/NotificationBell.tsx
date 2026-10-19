@@ -58,7 +58,12 @@ export default function NotificationBell() {
   const queryClient = useQueryClient();
 
   const [showAll, setShowAll] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const isVendor = user?.role === 'vendor';
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -172,7 +177,7 @@ export default function NotificationBell() {
       }
   };
 
-  if (!user) return null;
+  if (!isMounted || !user) return null;
   
   const visibleNotifications = showAll ? notifications : notifications.slice(0, 4);
 

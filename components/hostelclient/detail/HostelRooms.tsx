@@ -94,16 +94,16 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
     return (
         <section className="mb-10 pt-8 border-t border-gray-100">
             {/* Section Header */}
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Select your Room</h2>
+            <h2 className="text-lg font-extrabold text-black mb-6">Select your Room</h2>
 
             {/* Tab Navigation */}
-            <div className="flex items-center gap-1 mb-6 bg-gray-50 rounded-xl p-1 w-fit">
+            <div className="flex items-center gap-1 mb-6 bg-gray-100 rounded-xl p-1 w-fit">
                 <button
                     onClick={() => setActiveTab("sharing")}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
                         ${activeTab === "sharing"
-                            ? "bg-white text-gray-900 shadow-sm"
-                            : "text-gray-500 hover:text-gray-700"
+                            ? "bg-white text-black shadow-sm"
+                            : "text-gray-700 hover:text-black"
                         }`}
                 >
                     Rooms
@@ -111,10 +111,10 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                 {hasExtraCharges && (
                     <button
                         onClick={() => setActiveTab("extra")}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
                             ${activeTab === "extra"
-                                ? "bg-white text-gray-900 shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white text-black shadow-sm"
+                                : "text-gray-700 hover:text-black"
                             }`}
                     >
                         Extra Charges
@@ -123,10 +123,10 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                 {suitableFor && suitableFor.length > 0 && (
                     <button
                         onClick={() => setActiveTab("suitable")}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200
                             ${activeTab === "suitable"
-                                ? "bg-white text-gray-900 shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white text-black shadow-sm"
+                                : "text-gray-700 hover:text-black"
                             }`}
                     >
                         Suitable For
@@ -152,14 +152,14 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                                         {/* Room Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div>
-                                                <h3 className="text-base font-bold text-gray-900 mb-1">{room.sharing_display}</h3>
-                                                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                                                <h3 className="text-base font-extrabold text-black mb-1">{room.sharing_display}</h3>
+                                                <div className="flex items-center gap-1.5 text-xs text-gray-800 font-semibold">
                                                     {room.room_category === "AC" ? (
                                                         <Snowflake size={13} className="text-blue-500" />
                                                     ) : (
-                                                        <Fan size={13} className="text-gray-400" />
+                                                        <Fan size={13} className="text-gray-600" />
                                                     )}
-                                                    <span className="font-medium">{room.category_display}</span>
+                                                    <span>{room.category_display}</span>
                                                     {!room.is_available && (
                                                         <span className="ml-1 bg-red-50 text-red-500 text-[10px] font-bold px-1.5 py-0.5 rounded">Sold Out</span>
                                                     )}
@@ -176,10 +176,10 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                                                 return (
                                                     <div className="text-right">
                                                         <div className="flex items-baseline gap-0.5">
-                                                            <span className="text-xl font-bold text-gray-900">
+                                                            <span className="text-xl font-extrabold text-black">
                                                                 ₹{Number(displayPrice).toLocaleString()}
                                                             </span>
-                                                            <span className="text-[10px] text-gray-400 font-medium">
+                                                            <span className="text-xs text-gray-700 font-bold">
                                                                 {priceMode === "monthly" ? "/mo" : "/day"}
                                                             </span>
                                                         </div>
@@ -191,8 +191,8 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                                         {/* Room Features */}
                                         <ul className="space-y-2 mb-5">
                                             {features.map((feature, idx) => (
-                                                <li key={idx} className="flex items-center gap-2 text-sm text-gray-600">
-                                                    <Check size={14} className="text-indigo-500 flex-shrink-0" />
+                                                <li key={idx} className="flex items-center gap-2 text-sm text-gray-950 font-medium">
+                                                    <Check size={14} className="text-indigo-600 flex-shrink-0" />
                                                     <span>{feature}</span>
                                                 </li>
                                             ))}
@@ -221,7 +221,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                     {rooms.length > LIMIT && (
                         <button
                             onClick={() => setShowAll(!showAll)}
-                            className="mt-5 px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]"
+                            className="mt-5 px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-bold text-black hover:bg-gray-100 transition-all duration-200 active:scale-[0.98]"
                         >
                             {showAll ? "Show Less" : `View all ${rooms.length} room types`}
                         </button>
@@ -231,7 +231,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
             {/* Extra Charges Tab Content */}
             {activeTab === "extra" && hasExtraCharges && (
-                <div className="space-y-0 bg-gray-50 rounded-2xl p-5">
+                <div className="space-y-0 bg-gray-50 rounded-2xl p-5 border border-gray-200">
                     {extraCharges!.map((charge, i) => (
                         <div
                             key={i}
@@ -240,16 +240,16 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                             }`}
                         >
                             <div>
-                                <h4 className="text-sm font-semibold text-gray-800 capitalize">
+                                <h4 className="text-sm font-bold text-black capitalize">
                                     {charge.charge_type.replace('_', ' ')}
                                 </h4>
                                 {charge.description && (
-                                    <p className="text-xs text-gray-400 mt-0.5">{charge.description}</p>
+                                    <p className="text-xs text-gray-700 font-medium mt-0.5">{charge.description}</p>
                                 )}
                             </div>
-                            <span className="text-sm font-bold text-gray-900 tabular-nums">
+                            <span className="text-sm font-extrabold text-black tabular-nums">
                                 ₹{Number(charge.amount).toLocaleString()}
-                                <span className="text-xs font-medium text-gray-400 ml-0.5">/mo</span>
+                                <span className="text-xs font-semibold text-gray-700 ml-0.5">/mo</span>
                             </span>
                         </div>
                     ))}
@@ -262,7 +262,7 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                     {suitableFor.map((item) => (
                         <span
                             key={item}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-full"
+                            className="px-4 py-2 text-sm font-bold text-black bg-gray-50 border border-gray-300 rounded-full"
                         >
                             {item.replace(/_/g, " ")}
                         </span>

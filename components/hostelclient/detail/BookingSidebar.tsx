@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Phone, Users, CheckCircle2, ShieldCheck, TrendingDown, Clock, Truck } from "lucide-react";
+import { Phone, Users, CheckCircle2, ShieldCheck, TrendingDown, Clock, Truck, AlertCircle, X } from "lucide-react";
 import { toast } from "sonner";
 import { sendContactMessage } from "@/services/public.service";
 import { createHostelInquiry } from "@/services/booking.service";
@@ -53,6 +53,7 @@ export default function BookingSidebar({
 
     // Contact Owner Modal State
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
     const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
     const [isContactSending, setIsContactSending] = useState(false);
 
@@ -120,17 +121,17 @@ export default function BookingSidebar({
                 {/* Price Display */}
                 <div className="p-6 pb-5">
                     <div className="flex items-baseline gap-2 mb-1">
-                        <span className="text-3xl font-bold text-gray-900 tracking-tight">
+                        <span className="text-3xl font-extrabold text-black tracking-tight">
                             ₹{currentPrice.toLocaleString()}
                         </span>
-                        <span className="text-sm text-gray-400 font-medium">
+                        <span className="text-sm text-gray-800 font-bold">
                             /{priceMode === "monthly" ? "month" : "day"}
                         </span>
                     </div>
 
                     {showDiscount && (
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm text-gray-400 line-through">₹{originalPrice.toLocaleString()}</span>
+                            <span className="text-sm text-gray-500 line-through font-medium">₹{originalPrice.toLocaleString()}</span>
                             <span className="text-[11px] font-bold bg-red-50 text-red-500 px-2 py-0.5 rounded flex items-center gap-1">
                                 <TrendingDown size={10} />
                                 {Math.round(Number(hostel.discount_percentage))}% OFF
@@ -144,9 +145,9 @@ export default function BookingSidebar({
                             <button
                                 key={mode}
                                 onClick={() => setPriceMode(mode)}
-                                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${priceMode === mode
-                                        ? "bg-white text-gray-900 shadow-sm"
-                                        : "text-gray-500 hover:text-gray-700"
+                                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${priceMode === mode
+                                        ? "bg-white text-black shadow-sm"
+                                        : "text-gray-700 hover:text-black"
                                     }`}
                             >
                                 {mode === "monthly" ? "MONTHLY" : "DAILY"}
@@ -159,44 +160,44 @@ export default function BookingSidebar({
                 <div className="border-t border-gray-200">
                     <div className="grid grid-cols-2 border-b border-gray-200">
                         <div className="p-3.5 border-r border-gray-200 hover:bg-gray-50/50 transition-colors">
-                            <span className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Check-in</span>
+                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">Check-in</span>
                             <input
                                 type="date"
                                 value={checkIn}
                                 onChange={(e) => setCheckIn(e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
-                                className="text-sm font-medium text-gray-900 bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
+                                className="text-sm font-bold text-black bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
                             />
                         </div>
                         <div className="p-3.5 hover:bg-gray-50/50 transition-colors">
-                            <span className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">End date</span>
+                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">End date</span>
                             <input
                                 type="date"
                                 value={checkOut}
                                 onChange={(e) => setCheckOut(e.target.value)}
                                 min={checkIn}
-                                className="text-sm font-medium text-gray-900 bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
+                                className="text-sm font-bold text-black bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
                             />
                         </div>
                     </div>
                     <div className="p-3.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
                         <div>
-                            <span className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Guests</span>
-                            <span className="text-sm font-medium text-gray-900">{guests} Guest{guests > 1 ? "s" : ""}</span>
+                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">Guests</span>
+                            <span className="text-sm font-bold text-black">{guests} Guest{guests > 1 ? "s" : ""}</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); setGuests(Math.max(1, guests - 1)); }}
-                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-900 transition-colors text-gray-600 hover:text-gray-900 text-sm"
+                                className="w-7 h-7 rounded-full border border-gray-400 flex items-center justify-center hover:border-black transition-colors text-black font-bold text-sm"
                             >
                                 −
                             </button>
-                            <span className="text-sm font-medium text-gray-900 min-w-[1rem] text-center">{guests}</span>
+                            <span className="text-sm font-bold text-black min-w-[1rem] text-center">{guests}</span>
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); setGuests(Math.min(10, guests + 1)); }}
-                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-900 transition-colors text-gray-600 hover:text-gray-900 text-sm"
+                                className="w-7 h-7 rounded-full border border-gray-400 flex items-center justify-center hover:border-black transition-colors text-black font-bold text-sm"
                             >
                                 +
                             </button>
@@ -206,6 +207,22 @@ export default function BookingSidebar({
 
                 {/* CTA */}
                 <div className="p-5 pt-4">
+                    {/* Total Fare Above */}
+                    <div className="mb-4 pb-3 border-b border-gray-100 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-bold text-black">Total after taxes</span>
+                            <button
+                                type="button"
+                                onClick={() => setIsPolicyModalOpen(true)}
+                                className="text-gray-500 hover:text-[#312E81] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                                title="View policies and protection"
+                            >
+                                <AlertCircle size={15} />
+                            </button>
+                        </div>
+                        <span className="text-base font-extrabold text-black">₹{(currentPrice * guests).toLocaleString()}</span>
+                    </div>
+
                     <Button
                         asChild
                         size="lg"
@@ -230,8 +247,18 @@ export default function BookingSidebar({
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl p-0 overflow-hidden bg-white">
                             <div className="bg-[#312E81] p-6 text-white relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
-                                <DialogHeader className="relative z-10">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl pointer-events-none" />
+                                
+                                <button
+                                    type="button"
+                                    onClick={() => setIsContactModalOpen(false)}
+                                    className="absolute top-4 right-4 z-[100] w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-all focus:outline-none cursor-pointer active:scale-95"
+                                    aria-label="Close"
+                                >
+                                    <X className="w-4 h-4 text-white" />
+                                </button>
+
+                                <DialogHeader className="relative z-10 pr-8">
                                     <DialogTitle className="text-2xl font-bold tracking-tight text-white">Contact Owner</DialogTitle>
                                     <DialogDescription className="text-blue-100/80 font-medium">
                                         Send your details and the owner will get back to you shortly.
@@ -305,30 +332,56 @@ export default function BookingSidebar({
                         </DialogContent>
                     </Dialog>
 
-                    {/* Trust Signals */}
-                    <div className="mt-4 space-y-2.5">
-                        <div className="flex items-center gap-2 text-[13px] text-gray-500">
-                            <CheckCircle2 size={15} className="text-[#312E81] flex-shrink-0" />
-                            <span>Free cancellation for 48 hours</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-[13px] text-gray-500">
-                            <Truck size={15} className="text-[#312E81] flex-shrink-0" />
-                            <span>Flexible move-in dates available</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-[13px] text-gray-500">
-                            <ShieldCheck size={15} className="text-[#312E81] flex-shrink-0" />
-                            <span>Verified host protection included</span>
-                        </div>
-                    </div>
-
-                    {/* Total */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-500">Total after taxes</span>
-                        <span className="text-base font-bold text-gray-900">₹{(currentPrice * guests).toLocaleString()}</span>
-                    </div>
+                    {/* Policies Popup with Exclamatory Symbol */}
+                    <Dialog open={isPolicyModalOpen} onOpenChange={setIsPolicyModalOpen}>
+                        <DialogTrigger asChild>
+                            <button
+                                type="button"
+                                className="w-full mt-3.5 flex items-center justify-center gap-1.5 text-xs text-gray-500 hover:text-[#312E81] transition-colors py-1 cursor-pointer group"
+                            >
+                                <AlertCircle size={14} className="text-[#312E81] group-hover:scale-110 transition-transform" />
+                                <span className="underline underline-offset-2">Free cancellation & booking policies</span>
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[420px] rounded-2xl bg-white p-6 shadow-2xl border border-gray-100">
+                            <DialogHeader>
+                                <DialogTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <AlertCircle size={20} className="text-[#312E81]" />
+                                    Booking & Policy Details
+                                </DialogTitle>
+                                <DialogDescription className="text-sm text-gray-500 pt-1">
+                                    Protection and benefits included with your stay.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="mt-5 space-y-3">
+                                <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
+                                    <CheckCircle2 size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-900">Free cancellation for 48 hours</p>
+                                        <p className="text-xs text-gray-500 mt-0.5">Cancel for free within 48 hours of booking.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
+                                    <Truck size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-900">Flexible move-in dates available</p>
+                                        <p className="text-xs text-gray-500 mt-0.5">Coordinate with the hostel owner if your arrival schedule shifts.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
+                                    <ShieldCheck size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-900">Verified host protection included</p>
+                                        <p className="text-xs text-gray-500 mt-0.5">Every hostel is physically verified for safety and quality assurance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
-                {/* Callback Section */}
+                {/* Callback Section (Commented out as per request) */}
+                {/*
                 <div className="p-5 pt-0">
                     <div className="relative mb-4">
                         <div className="absolute inset-0 flex items-center">
@@ -366,6 +419,7 @@ export default function BookingSidebar({
                         </Button>
                     </form>
                 </div>
+                */}
             </div>
         </div>
     );

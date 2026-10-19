@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createBooking, BookingRequest, sendBookingOtp, verifyBookingOtp, createRazorpayOrder, verifyRazorpayPayment, confirmPayAtProperty } from "@/services/booking.service";
 import { getUserProfile } from "@/services/user.service";
@@ -66,6 +66,24 @@ export default function BookingContainer({
     const [isPaymentVerified, setIsPaymentVerified] = useState(false);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
     const isPhoneVerified = profile?.is_phone_verified || isPhoneVerifiedManually;
+
+    const isFirstMount = useRef(true);
+    const bookingContainerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll to top of booking container whenever the active step changes
+    useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
+        if (typeof window !== "undefined") {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    }, [step]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -279,7 +297,31 @@ export default function BookingContainer({
         setTermsError(!termsAccepted);
         setErrors(newErrors);
 
-        return Object.keys(newErrors).length === 0 && termsAccepted;
+        const isValid = Object.keys(newErrors).length === 0 && termsAccepted;
+        if (!isValid && typeof window !== "undefined") {
+            setTimeout(() => {
+                const fieldIdMap: Record<string, string> = {
+                    guest_name: "name",
+                    guest_email: "email",
+                    mobile_number: "mobile",
+                    guest_age: "age",
+                    confirm_booking: "confirm_booking",
+                    dates: "check_in"
+                };
+                const firstErrorKey = Object.keys(newErrors)[0];
+                const targetId = firstErrorKey ? (fieldIdMap[firstErrorKey] || firstErrorKey) : (!termsAccepted ? "terms" : null);
+                if (targetId) {
+                    const el = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
+                    if (el) {
+                        const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+                        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+                        el.focus?.();
+                    }
+                }
+            }, 60);
+        }
+
+        return isValid;
     };
 
     const handleNext = async () => {
@@ -358,6 +400,9 @@ export default function BookingContainer({
                handleConfirmBooking();
            } else {
                setStep("payment");
+               if (typeof window !== "undefined") {
+                   window.scrollTo({ top: 0, behavior: "smooth" });
+               }
            }
 
         }
@@ -561,7 +606,7 @@ export default function BookingContainer({
 
 
     return (
-        <div className="max-w-[1100px] mx-auto py-8 px-4 sm:px-6 font-sans antialiased min-h-screen">
+        <div ref={bookingContainerRef} id="booking-container-top" className="max-w-[1100px] mx-auto py-8 px-4 sm:px-6 font-sans antialiased min-h-screen">
             {/* Back Button */}
             <button
                 onClick={() => router.back()}

@@ -51,55 +51,55 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
     if (dynamicCities.length === 0) return null;
 
     return (
-        <section className="pt-12 pb-6 sm:pt-16 sm:pb-8 bg-white font-inter">
+        <section className="py-4 sm:py-6 bg-white font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-                <Carousel opts={{ align: "start", loop: false }} className="w-full">
+                <Carousel opts={{ align: "start", loop: false, dragFree: true, containScroll: "trimSnaps", duration: 28 }} className="w-full">
                     {/* Header */}
-                    <div className="mb-10">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1B4B] tracking-tight mb-8">
+                    <div className="mb-4 sm:mb-5">
+                        <h2 className="text-2xl sm:text-3xl font-medium text-black tracking-tight mb-3">
                             Featured Hostels for you
                         </h2>
 
                         {/* Tabs + Link Row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 pb-2 border-b border-slate-100">
-                            <div className="flex overflow-x-auto gap-6 sm:gap-10 whitespace-nowrap w-full sm:w-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 border-b border-slate-100">
+                            <div className="flex items-center overflow-x-auto gap-6 sm:gap-10 whitespace-nowrap w-full sm:w-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth touch-pan-x select-none">
                                 {dynamicCities.map((city) => (
                                     <button
                                         key={city.id}
                                         onClick={() => setActiveCityId(city.id)}
                                         className={cn(
-                                            "pb-4 text-base font-semibold transition-all relative",
+                                            "relative inline-flex items-center h-11 text-base font-medium transition-all",
                                             activeCityId === city.id
-                                                ? "text-[#312E81]"
-                                                : "text-slate-400 hover:text-slate-600"
+                                                ? "text-black"
+                                                : "text-gray-600 hover:text-black"
                                         )}
                                     >
                                         {city.name}
                                         {activeCityId === city.id && (
-                                            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#312E81] rounded-full" />
+                                            <div className="absolute -bottom-[1px] left-0 w-full h-[2.5px] bg-black rounded-full" />
                                         )}
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto mt-2 sm:mt-0">
+                            <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto h-11 shrink-0 mt-2 sm:mt-0">
                                 <Link
                                     href={activeCitySlug ? `/hostels-in-${activeCitySlug}/` : "/hostels"}
-                                    className="flex items-center gap-2 text-[14px] sm:text-[15px] font-bold text-[#312E81] hover:text-[#10B981] transition-all group shrink-0"
+                                    className="inline-flex items-center gap-1.5 text-[14px] font-medium text-black hover:text-[#10B981] transition-all group shrink-0"
                                 >
                                     See more
                                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </Link>
-                                <div className="flex items-center gap-2">
-                                    <CarouselPrevious className="static translate-y-0 size-8 sm:size-10 rounded-full border-slate-200 hover:bg-[#312E81] hover:text-white transition-all" />
-                                    <CarouselNext className="static translate-y-0 size-8 sm:size-10 rounded-full border-slate-200 hover:bg-[#312E81] hover:text-white transition-all" />
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
+                                    <CarouselNext className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 {/* Content Sections */}
-                <div className="space-y-16">
+                <div className="space-y-6">
                     {/* Featured Section */}
                     {featuredInCity.length > 0 && (
                         <div className="relative">
@@ -107,9 +107,9 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
                                 <h3 className="text-xl font-bold text-[#1E1B4B]">Featured in {activeCityName}</h3>
                             </div> */}
 
-                                <CarouselContent className="-ml-6">
+                                <CarouselContent className="-ml-2.5 sm:-ml-3">
                                     {featuredInCity.map((hostel) => (
-                                        <CarouselItem key={hostel.id} className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                                        <CarouselItem key={hostel.id} className="pl-2.5 sm:pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
                                             <div className="h-full py-2">
                                                 <HostelCard
                                                     {...{

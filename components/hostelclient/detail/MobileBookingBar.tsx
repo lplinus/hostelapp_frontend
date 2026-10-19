@@ -195,10 +195,10 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                         </div>
                     )}
                     <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-bold text-gray-900 tracking-tight">
+                        <span className="text-xl font-extrabold text-black tracking-tight">
                             ₹{Math.round(totalPrice).toLocaleString()}
                         </span>
-                        <span className="text-gray-400 text-[10px] font-medium uppercase tracking-wider">
+                        <span className="text-gray-700 text-[10px] font-bold uppercase tracking-wider">
                             total
                         </span>
                     </div>
