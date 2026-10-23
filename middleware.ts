@@ -52,6 +52,7 @@ export function middleware(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/dashboard') ||
         request.nextUrl.pathname.startsWith('/profile') ||
         (request.nextUrl.pathname.startsWith('/hostel') && !request.nextUrl.pathname.startsWith('/hostels')) ||
+        request.nextUrl.pathname.startsWith('/hotel') ||
         request.nextUrl.pathname.startsWith('/rooms') ||
         request.nextUrl.pathname.startsWith('/bookings') ||
         request.nextUrl.pathname.startsWith('/settings') ||
@@ -91,5 +92,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/home', '/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/rooms/:path*', '/bookings/:path*', '/settings/:path*', '/help:path*', '/usermarketplace/:path*', '/subscription/:path*', '/notification/:path*', '/vendordashboard/:path*', '/login', '/register', '/help&support'],
+    matcher: ['/', '/home', '/admin/:path*', '/owner/:path*', '/dashboard/:path*', '/profile/:path*', '/hostel/:path*', '/hotel/:path*', '/hotel', '/rooms/:path*', '/bookings/:path*', '/settings/:path*', '/help:path*', '/usermarketplace/:path*', '/subscription/:path*', '/notification/:path*', '/vendordashboard/:path*', '/login', '/register', '/help&support'],
 };

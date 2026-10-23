@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, UserCircle, Menu } from "lucide-react";
+import Link from "next/link";
+import { UserCircle, Menu, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,7 +10,7 @@ import { toLocalMediaPath } from "@/lib/utils";
 import NotificationBell from "@/components/user/notification/NotificationBell";
 
 export default function DashboardHeader() {
-    const { user, logout, isLoggingOut } = useAuth();
+    const { user } = useAuth();
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -20,75 +21,101 @@ export default function DashboardHeader() {
         queryKey: ["currentOwnerSubscription"],
         queryFn: () => authApiClient.get('/api/payments/subscriptions/current/'),
         enabled: !!user && user.role !== 'vendor',
-        refetchInterval: 5000, // Instantly catches updates behind the scenes
+        refetchInterval: 5000,
         retry: false
     });
 
-    return (
-        <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm">
+    const displayName = isMounted ? (user?.first_name || user?.username || "Owner") : "Owner";
 
-            <div className="flex items-center gap-3">
+    return (
+        <header className="flex items-center justify-between bg-white/95 backdrop-blur-md px-4 sm:px-5 py-2.5 rounded-md border border-slate-200/90 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all">
+            {/* Left: Greeting + Compact Subscription Pill */}
+            <div className="flex items-center gap-3 min-w-0">
                 <button
                     onClick={() => window.dispatchEvent(new Event("toggle-sidebar"))}
-                    className="md:hidden p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100"
+                    className="md:hidden p-1.5 -ml-1 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
+                    aria-label="Toggle Navigation"
                 >
-                    <Menu size={24} />
+                    <Menu size={20} />
                 </button>
-                <div>
-                    <h1 className="text-xl md:text-2xl font-bold">Dashboard</h1>
-                    <p className="text-sm text-gray-500 hidden sm:block mb-1">
-                        Welcome back{isMounted && user?.first_name ? `, ${user.first_name}` : ""}, manage your hostels easily.
-                    </p>
-                    {isMounted && subscription && subscription.end_date && (
-                        <div className="relative inline-flex items-center gap-2 px-4 py-1.5 mt-2 rounded-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white text-[10px] sm:text-xs font-medium shadow-[0_0_20px_rgba(79,70,229,0.25)] overflow-hidden group animate-in fade-in slide-in-from-top-1">
-                            {/* Glossy top highlight */}
-                            <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/15 to-transparent pointer-events-none"></div>
-                            {/* Shimmer sweeping effect */}
-                            <div className="absolute inset-0 translate-x-[-100%] animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none"></div>
 
-                            <span className="relative flex h-2 w-2 z-10 shrink-0">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span className="relative z-10 drop-shadow-sm flex items-center">
-                                <strong className="font-black tracking-widest uppercase mr-1.5 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-400 drop-shadow-lg">{subscription.plan_name}</strong>
-                                <span className="opacity-80 text-[10px] tracking-wide">Valid until {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-xs sm:text-sm font-medium text-slate-500">Welcome,</span>
+                            <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                                {displayName}
                             </span>
                         </div>
-                    )}
+
+                        {/* Glossy Subscription Badge with Brighter Dark Blue Text */}
+                        {isMounted && subscription && subscription.end_date && (
+                            <div className="relative inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-gradient-to-b from-white/90 via-blue-50/40 to-white/70 backdrop-blur-md border border-blue-900/25 shadow-[0_1px_4px_rgba(29,78,216,0.08),inset_0_1px_1px_rgba(255,255,255,1)] overflow-hidden group shrink-0">
+                                {/* Top Gloss Highlight Bar */}
+                                <div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-white/90 via-white/40 to-transparent pointer-events-none rounded-t-md" />
+
+                                {/* Ambient Shimmer Sweep */}
+                                <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-12 pointer-events-none" />
+
+                                <span className="relative flex h-1.5 w-1.5 shrink-0 z-10">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-700" />
+                                </span>
+
+                                <span className="relative z-10 flex items-center gap-1">
+                                    <strong className="font-extrabold tracking-wider uppercase text-blue-800 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+                                        {subscription.plan_name}
+                                    </strong>
+                                    <span className="text-blue-700/90 text-[9px] font-semibold hidden sm:inline">
+                                        • Till {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </span>
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 font-medium hidden sm:block truncate mt-0.5">
+                        Manage properties, room configurations, and guest bookings
+                    </p>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4">
-
+            {/* Right: Notifications + Profile */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 <NotificationBell />
 
-                <button className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-all">
+                <div className="h-5 w-px bg-slate-200/80 hidden sm:block" />
+
+                <Link
+                    href="/profile"
+                    className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-md hover:bg-slate-100/80 border border-transparent hover:border-slate-200/60 transition-all group"
+                    title="View Profile"
+                >
                     {isMounted && user?.profile_picture ? (
-                        <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-100 shadow-sm">
-                            <img src={toLocalMediaPath(user.profile_picture) || ""} alt="Profile" className="w-full h-full object-cover" />
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md overflow-hidden border border-slate-200/80 ring-1 ring-primary/15 group-hover:ring-primary/30 transition-all shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={toLocalMediaPath(user.profile_picture) || ""}
+                                alt={displayName}
+                                className="w-full h-full object-cover"
+                            />
                         </div>
                     ) : (
-                        <UserCircle size={24} className="text-gray-600" />
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <UserCircle size={20} />
+                        </div>
                     )}
-                    <span className="hidden md:block text-sm font-medium text-gray-700">{isMounted ? (user?.first_name || user?.username || "Profile") : "Profile"}</span>
-                </button>
 
-                {/* 
-                <button
-                    onClick={logout}
-                    disabled={isLoggingOut}
-                    className="flex items-center gap-2 p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Logout"
-                >
-                    {isLoggingOut ? <Loader2 size={20} className="animate-spin" /> : <LogOut size={20} />}
-                    <span className="hidden md:block text-sm font-medium">
-                        {isLoggingOut ? "Logging out..." : "Logout"}
-                    </span>
-                </button>
-                */}
-
+                    <div className="hidden md:flex flex-col text-left">
+                        <span className="text-xs font-semibold text-slate-800 leading-tight group-hover:text-primary transition-colors truncate max-w-[100px]">
+                            {displayName}
+                        </span>
+                        <span className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">
+                            {user?.role || "Owner"}
+                        </span>
+                    </div>
+                </Link>
             </div>
-        </div>
+        </header>
     );
 }

@@ -186,6 +186,8 @@ export interface CityHostel {
     readonly is_verified: boolean | null;
     readonly is_approved: boolean | null;
     readonly room_types?: readonly RoomType[];
+    readonly latitude?: number | string | null;
+    readonly longitude?: number | string | null;
 }
 
 export interface CityHostelResponse {

@@ -47,61 +47,57 @@ export default function HelpSupportContent() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-6 pb-12 animate-in fade-in duration-500">
             {/* Header Section */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                <div className="relative z-10 font-sans">
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight">How can we help you?</h2>
-                    <p className="text-gray-500 mt-2 max-w-xl text-sm leading-relaxed">
-                        Find answers to common questions below, or reach out to our support team directly. We are here to ensure you have a comfortable stay.
-                    </p>
-                </div>
+            <div>
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">Help & Support</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                    Find answers to common questions below, or reach out to our support team directly.
+                </p>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 gap-6">
                 {/* Left Column: Contact Cards & Form */}
-                <div className="lg:col-span-1 space-y-6">
+                <div className="lg:col-span-1 space-y-4">
                     {/* Contact Info Cards */}
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <div className="grid grid-cols-1 gap-3">
+                        <div className="bg-primary rounded-xl p-5 text-white shadow-xs relative overflow-hidden">
                             <div className="relative z-10 flex items-start gap-4">
-                                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-md">
-                                    <Phone size={20} className="text-white" />
+                                <div className="p-2.5 bg-white/15 rounded-xl backdrop-blur-md">
+                                    <Phone size={18} className="text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">Call Support</p>
-                                    <p className="font-semibold text-lg">+91 98765 43210</p>
-                                    <p className="text-blue-100/70 text-xs mt-1 flex items-center gap-1">
+                                    <p className="text-white/80 text-[11px] font-bold uppercase tracking-wider mb-0.5">Call Support</p>
+                                    <p className="font-semibold text-base">+91 98765 43210</p>
+                                    <p className="text-white/60 text-xs mt-0.5 flex items-center gap-1">
                                         <Clock size={12} /> Mon-Sat, 9AM-8PM
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-start gap-4 hover:border-blue-100 transition-colors">
-                            <div className="p-3 bg-gray-50 text-gray-600 rounded-xl">
-                                <Mail size={20} />
+                        <div className="bg-card rounded-xl p-5 border border-border/40 shadow-xs flex items-start gap-4">
+                            <div className="p-2.5 bg-muted text-muted-foreground rounded-xl">
+                                <Mail size={18} />
                             </div>
                             <div>
-                                <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Email Us</p>
-                                <p className="font-semibold text-gray-900">support@hostelin.com</p>
-                                <p className="text-gray-500 text-xs mt-1">Average response: 2 hours</p>
+                                <p className="text-muted-foreground text-[11px] font-bold uppercase tracking-wider mb-0.5">Email Us</p>
+                                <p className="font-semibold text-sm text-foreground">support@hostelin.com</p>
+                                <p className="text-muted-foreground text-xs mt-0.5">Average response: 2 hours</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Support Form */}
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                        <div className="flex items-center gap-2 mb-6 text-gray-900 font-bold">
-                            <MessageSquare size={18} className="text-blue-600" />
+                    <div className="bg-card rounded-xl p-5 border border-border/40 shadow-xs">
+                        <div className="flex items-center gap-2 mb-4 text-foreground font-semibold text-sm">
+                            <MessageSquare size={16} className="text-primary" />
                             <h3>Send a Message</h3>
                         </div>
-                        <form onSubmit={handleSupportSubmit} className="space-y-4">
+                        <form onSubmit={handleSupportSubmit} className="space-y-3.5">
                             <div>
-                                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Subject</label>
-                                <select className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 block p-3 transition-colors outline-none" required>
+                                <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Subject</label>
+                                <select className="w-full bg-slate-50 border border-slate-200 text-foreground text-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary block p-2.5 transition-colors outline-none" required>
                                     <option value="">Select a topic</option>
                                     <option value="booking">Booking Issue</option>
                                     <option value="payment">Payment/Refund</option>
@@ -110,10 +106,10 @@ export default function HelpSupportContent() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Message</label>
+                                <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">Message</label>
                                 <textarea
-                                    rows={4}
-                                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 block p-3 transition-colors outline-none resize-none"
+                                    rows={3}
+                                    className="w-full bg-slate-50 border border-slate-200 text-foreground text-xs rounded-lg focus:border-primary focus:ring-1 focus:ring-primary block p-2.5 transition-colors outline-none resize-none"
                                     placeholder="Explain your issue in detail..."
                                     required
                                 ></textarea>
@@ -121,13 +117,13 @@ export default function HelpSupportContent() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full bg-blue-600 text-white rounded-xl py-3 px-4 font-semibold text-sm hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-2.5 px-4 font-semibold text-xs transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-xs"
                             >
                                 {isSubmitting ? (
-                                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                                 ) : (
                                     <>
-                                        <Send size={16} /> Send Message
+                                        <Send size={14} /> Send Message
                                     </>
                                 )}
                             </button>
@@ -137,10 +133,10 @@ export default function HelpSupportContent() {
 
                 {/* Right Column: FAQs */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white rounded-2xl p-2 sm:p-4 border border-gray-100 shadow-sm h-full">
-                        <div className="px-4 pt-4 pb-6 flex items-center gap-2 text-gray-900">
-                            <AlertCircle size={20} className="text-blue-600" />
-                            <h3 className="text-xl font-bold">Frequently Asked Questions</h3>
+                    <div className="bg-card rounded-xl p-4 sm:p-5 border border-border/40 shadow-xs h-full">
+                        <div className="px-2 pt-2 pb-4 flex items-center gap-2 text-foreground">
+                            <AlertCircle size={18} className="text-primary" />
+                            <h3 className="text-base font-bold">Frequently Asked Questions</h3>
                         </div>
                         <div className="space-y-2">
                             {faqs.map((faq, index) => {
@@ -149,21 +145,21 @@ export default function HelpSupportContent() {
                                     <div
                                         key={index}
                                         className={
-                                            `border border-gray-100 rounded-xl overflow-hidden transition-all duration-200 ` +
-                                            (isOpen ? "bg-blue-50/30 border-blue-100 shadow-sm" : "bg-white hover:border-gray-200")
+                                            `border border-border/40 rounded-lg overflow-hidden transition-all duration-200 ` +
+                                            (isOpen ? "bg-primary/5 border-primary/20 shadow-xs" : "bg-card hover:border-border/60")
                                         }
                                     >
                                         <button
                                             type="button"
-                                            className="w-full flex items-center justify-between p-5 text-left transition-colors"
+                                            className="w-full flex items-center justify-between p-3.5 text-left transition-colors"
                                             onClick={() => toggleFaq(index)}
                                         >
-                                            <span className={`font-semibold text-sm sm:text-base pr-4 ${isOpen ? "text-blue-700" : "text-gray-800"}`}>
+                                            <span className={`font-semibold text-xs sm:text-sm pr-3 ${isOpen ? "text-primary" : "text-foreground"}`}>
                                                 {faq.question}
                                             </span>
-                                            <div className={`p-1 rounded-full transition-colors ${isOpen ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-400"}`}>
+                                            <div className={`p-1 rounded-md transition-colors ${isOpen ? "bg-primary/10 text-primary" : "text-muted-foreground"}`}>
                                                 <ChevronDown
-                                                    size={16}
+                                                    size={14}
                                                     className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                                                 />
                                             </div>
@@ -171,7 +167,7 @@ export default function HelpSupportContent() {
                                         <div
                                             className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"}`}
                                         >
-                                            <div className="p-5 pt-0 text-sm text-gray-600 leading-relaxed border-t border-transparent">
+                                            <div className="p-3.5 pt-0 text-xs text-muted-foreground leading-relaxed border-t border-transparent">
                                                 {faq.answer}
                                             </div>
                                         </div>

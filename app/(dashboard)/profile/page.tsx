@@ -170,7 +170,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             {authInitializing ? (
                 <div className="w-72 bg-white border-r border-slate-200 hidden md:block" />
             ) : (
@@ -178,33 +178,34 @@ export default function ProfilePage() {
             )}
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
-                <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                                {activeTab === 'personal' ? 'Personal Profile' : 'Business Identity'}
-                            </h2>
-                            <p className="text-slate-400 text-xs font-medium uppercase tracking-widest mt-1">
-                                {activeTab === 'personal' ? 'Manage your account details' : 'Professional business presence'}
-                            </p>
-                        </div>
-                        {profile?.role === 'vendor' && (
-                            <div className="flex p-1 bg-slate-100 rounded-xl">
-                                <button
-                                    onClick={() => setActiveTab('personal')}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'personal' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                                >
-                                    Personal
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('business')}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'business' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                                >
-                                    Business
-                                </button>
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    <div className="max-w-3xl mx-auto bg-card p-6 md:p-8 rounded-xl shadow-xs border border-border/40">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                                    {activeTab === 'personal' ? 'Personal Profile' : 'Business Identity'}
+                                </h2>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    {activeTab === 'personal' ? 'Manage your account details and profile' : 'Professional business presence'}
+                                </p>
                             </div>
-                        )}
-                    </div>
+                            {profile?.role === 'vendor' && (
+                                <div className="flex p-1 bg-muted/50 rounded-lg">
+                                    <button
+                                        onClick={() => setActiveTab('personal')}
+                                        className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'personal' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                                    >
+                                        Personal
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('business')}
+                                        className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'business' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                                    >
+                                        Business
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     {isLoading ? (
                         <p>Loading...</p>
                     ) : (
@@ -248,6 +249,7 @@ export default function ProfilePage() {
                             )}
                         </form>
                     )}
+                </div>
                 </div>
             </main>
             <OtpVerificationModal

@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 
 export default function SubscriptionPage() {
     return (
-        <div className="flex min-h-screen bg-gray-50/50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
 
-            <main className="flex-1 p-4 md:p-8 space-y-8">
+            <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
 
-                <div className="max-w-[1200px] mx-auto">
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
                     <SubscriptionClient />
                 </div>
             </main>

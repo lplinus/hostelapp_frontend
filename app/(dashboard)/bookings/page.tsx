@@ -127,122 +127,141 @@ export default function BookingsPage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Manage Bookings</h2>
 
-                    <button
-                        onClick={() => setIsScanning(true)}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm font-semibold transition-colors"
-                    >
-                        <QrCode size={18} />
-                        Scan QR specifically
-                    </button>
-                </div>
-
-                {/* View Toggle Tabs */}
-                <div className="flex p-1 bg-gray-100 rounded-xl w-fit mb-4">
-                    <button
-                        onClick={() => setView("bookings")}
-                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${view === "bookings"
-                                ? "bg-white text-[#312E81] shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
-                            }`}
-                    >
-                        Bookings
-                    </button>
-                    <button
-                        onClick={() => setView("inquiries")}
-                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${view === "inquiries"
-                                ? "bg-white text-[#312E81] shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
-                            }`}
-                    >
-                        Inquiries (Contact Owner)
-                    </button>
-                </div>
-
-                {/* Filters Section */}
-                <div className="bg-white p-4 rounded-lg shadow sm:flex gap-4 items-end">
-                    <div className="flex-1 space-y-1">
-                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                            <Search size={12} /> Search Bookings
-                        </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Name, email, mobile or ID..."
-                                className="w-full pl-3 pr-10 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            />
-                            {search && (
-                                <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                    <X size={14} />
-                                </button>
-                            )}
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Manage Bookings</h1>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Review guest reservations, track check-ins, and manage inquiries.
+                            </p>
                         </div>
+
+                        <button
+                            onClick={() => setIsScanning(true)}
+                            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-xl text-xs font-semibold transition-all shadow-xs"
+                        >
+                            <QrCode size={16} />
+                            Scan QR Check-In
+                        </button>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                            <Calendar size={12} /> Date Range (From)
-                        </label>
-                        <input
-                            type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                        />
-                    </div>
-
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                            <Calendar size={12} /> Date Range (To)
-                        </label>
-                        <input
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                        />
-                    </div>
-
-                    <button
-                        onClick={() => { setSearch(""); setStartDate(""); setEndDate(""); }}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                        Reset
-                    </button>
-                </div>
-
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200 flex-1">
-                        <thead className="bg-gray-50">
-                            {view === "bookings" ? (
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hostel</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Room Type</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dates</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status & Actions</th>
-                                </tr>
-                            ) : (
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Guest Details</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hostel</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                                </tr>
+                    {/* View Toggle Tabs matching Vendor tabs */}
+                    <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg w-fit overflow-x-auto">
+                        <button
+                            onClick={() => setView("bookings")}
+                            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                                view === "bookings"
+                                    ? "bg-primary text-primary-foreground shadow-xs"
+                                    : "text-muted-foreground hover:text-foreground"
+                            }`}
+                        >
+                            Bookings
+                            {bookings && bookings.length > 0 && (
+                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                                    view === "bookings"
+                                        ? "bg-primary-foreground/20 text-primary-foreground"
+                                        : "bg-muted-foreground/15 text-muted-foreground"
+                                }`}>
+                                    {bookings.length}
+                                </span>
                             )}
-                        </thead>
+                        </button>
+                        <button
+                            onClick={() => setView("inquiries")}
+                            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                                view === "inquiries"
+                                    ? "bg-primary text-primary-foreground shadow-xs"
+                                    : "text-muted-foreground hover:text-foreground"
+                            }`}
+                        >
+                            Inquiries (Contact Owner)
+                        </button>
+                    </div>
+
+                    {/* Filters Section */}
+                    <div className="bg-white p-4 rounded-xl border border-border/40 shadow-xs flex flex-wrap md:flex-nowrap gap-3 items-end">
+                        <div className="flex-1 min-w-[200px] space-y-1">
+                            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                <Search size={12} /> Search Bookings
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Name, email, mobile or ID..."
+                                    className="w-full pl-3 pr-8 py-1.5 border border-slate-200 rounded-lg text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                />
+                                {search && (
+                                    <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <X size={13} />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                <Calendar size={12} /> Date (From)
+                            </label>
+                            <input
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                <Calendar size={12} /> Date (To)
+                            </label>
+                            <input
+                                type="date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                            />
+                        </div>
+
+                        <button
+                            onClick={() => { setSearch(""); setStartDate(""); setEndDate(""); }}
+                            className="px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                            Reset
+                        </button>
+                    </div>
+
+                    <div className="border border-border/40 rounded-xl bg-card overflow-x-auto shadow-xs">
+                        <table className="min-w-full divide-y divide-border/40">
+                            <thead className="bg-muted/30">
+                                {view === "bookings" ? (
+                                    <tr>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Booking ID</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Guest</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Hostel</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Room Type</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Dates</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Payment</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Status & Actions</th>
+                                    </tr>
+                                ) : (
+                                    <tr>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Date</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Guest Details</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Hostel</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Message</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Status</th>
+                                        <th className="px-5 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Action</th>
+                                    </tr>
+                                )}
+                            </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {view === "bookings" ? (
                                 <>
@@ -412,6 +431,7 @@ export default function BookingsPage() {
                         onClose={() => setIsScanning(false)}
                     />
                 )}
+                </div>
             </main>
         </div>
     );

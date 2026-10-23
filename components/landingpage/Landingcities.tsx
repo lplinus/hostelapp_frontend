@@ -1,126 +1,141 @@
 import Link from "next/link";
-import Image from "next/image";
 import SectionReveal from "@/components/ui/section-reveal";
-import { ArrowUpRight, Navigation } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import { LandingPageResponse } from "@/lib/api/types";
-import { toLocalMediaPath, isExternalImage, getCitySEOLink } from "@/lib/utils";
 
 interface LandingCitiesProps {
   data: LandingPageResponse | null;
 }
 
-const defaultCities = [
+interface CityCardItem {
+  city_name: string;
+  count_text: string;
+  price_text: string;
+  areas: string;
+}
+
+const defaultCities: CityCardItem[] = [
   {
     city_name: "Hyderabad",
-    count_text: "120+ Verified",
-    image: "/images/hero1.webp",
-    span_large: true,
-    gradient: "from-orange-600/70 to-slate-900/70",
+    count_text: "120+ Hostels",
+    price_text: "From ₹3,443/mo",
+    areas: "Madhapur, Gachibowli, Ameerpet",
   },
   {
     city_name: "Bangalore",
     count_text: "95+ Hostels",
-    image: "/images/hero2.jpg",
-    span_large: false,
-    gradient: "from-orange-500/70 to-amber-700/70",
+    price_text: "From ₹4,200/mo",
+    areas: "Koramangala, HSR, Indiranagar",
   },
   {
     city_name: "Pune",
     count_text: "74+ Hostels",
-    image: "/images/heroimage.jpg",
-    span_large: false,
-    gradient: "from-teal-500/70 to-slate-900/70",
+    price_text: "From ₹3,800/mo",
+    areas: "Viman Nagar, Kothrud, Hinjewadi",
+  },
+  {
+    city_name: "Mumbai",
+    count_text: "88+ Hostels",
+    price_text: "From ₹5,500/mo",
+    areas: "Andheri, Powai, Navi Mumbai",
+  },
+  {
+    city_name: "Chennai",
+    count_text: "60+ Hostels",
+    price_text: "From ₹3,200/mo",
+    areas: "OMR, Velachery, Guindy",
   },
 ];
 
 export default function LandingCities({ data }: LandingCitiesProps) {
-  const displayCities = data?.cities && data.cities.length > 0 ? data.cities : defaultCities;
+  const displayCities: CityCardItem[] =
+    data?.cities && data.cities.length > 0
+      ? data.cities.map((c, i) => {
+        const fallback = defaultCities[i % defaultCities.length];
+        return {
+          city_name: c.city_name,
+          count_text: c.count_text || fallback.count_text,
+          price_text: fallback.price_text,
+          areas: fallback.areas,
+        };
+      })
+      : defaultCities;
+
+  // Duplicate for seamless infinite loop
+  const carouselCities = [...displayCities, ...displayCities];
 
   return (
-    <section id="cities" className="py-24 lg:py-32 font-inter bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-
+    <section id="cities" className="py-12 sm:py-16 font-inter bg-white border-y border-slate-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
         {/* Header */}
         <SectionReveal>
-          <div className="flex flex-col items-center text-center mb-16 lg:mb-24">
-
-            <div className="flex items-center gap-3 text-[#8B5CF6] mb-5">
-              <Navigation size={18} className="animate-pulse" />
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase">
-                {data?.cities_eyebrow || "Discover Your Hub"}
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                <MapPin size={13} className="text-slate-700" />
+                <span>Prime Hubs</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
+                {data?.cities_title_main || "Popular"}{" "}
+                <span className="text-slate-600 font-normal">
+                  {data?.cities_title_italic || "Destinations"}
+                </span>
+              </h2>
             </div>
-
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#0F172A] leading-[1.1] mb-8">
-              {data?.cities_title_main || "Most Popular"}<br className="hidden sm:block" />
-              <span className="italic font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#C084FC]">
-                {data?.cities_title_italic || "Destinations"}
-              </span>
-            </h2>
 
             <Link
               href="/home"
-              className="group relative inline-flex items-center justify-center gap-3 bg-[#0F172A] text-white px-10 py-4 rounded-full font-bold text-sm shadow-xl shadow-[#0F172A]/20 hover:bg-[#1E293B] transition-all duration-300 active:scale-95"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0F172A] hover:text-slate-600 transition-colors group shrink-0"
             >
-              See All Cities
-              <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <span>See all cities</span>
+              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
-
           </div>
         </SectionReveal>
+      </div>
 
-        {/* Grid */}
-        <SectionReveal delay={0.2}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {/* Continuous Moving Carousel (Stops on Hover) */}
+      <div className="relative w-full overflow-hidden py-2">
+        {/* Soft edge gradient masks */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-white to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-white to-transparent z-10" />
 
-            {displayCities.map((c, idx) => (
-              <Link
-                key={idx}
-                href={getCitySEOLink(c.city_name.toLowerCase())}
-                className={`group relative block rounded-3xl overflow-hidden h-[400px] w-full shadow-md hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] ${c.span_large ? "lg:col-span-2" : ""
-                  }`}
-              >
-
-                {/* IMAGE */}
-                <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-                  <Image
-                    src={toLocalMediaPath(c.image) || "/images/hero1.webp"}
-                    alt={`${c.city_name} hostels`}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
-                    priority={idx === 0}
-                    unoptimized={isExternalImage(c.image)}
-                  />
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/40 to-transparent group-hover:opacity-90 transition-opacity" />
+        {/* Infinite Moving Track */}
+        <div className="animate-marquee-continuous gap-4 sm:gap-5 px-4">
+          {carouselCities.map((c, idx) => (
+            <div
+              key={idx}
+              className="w-[240px] sm:w-[270px] shrink-0 flex flex-col justify-between p-5 bg-white rounded-2xl border border-slate-200/90 hover:border-black hover:shadow-md transition-all duration-200 select-none cursor-pointer min-h-[175px] sm:min-h-[190px]"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md">
+                    {c.count_text}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded">
+                    Verified
+                  </span>
                 </div>
 
-                {/* CONTENT */}
-                <div className="absolute inset-x-0 bottom-0 z-20 p-8 flex flex-col justify-end h-full">
-                  <div className="flex flex-col gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="font-bold text-[11px] uppercase tracking-[0.15em] text-[#8B5CF6] mb-1">
-                      {c.count_text}
-                    </p>
+                <h3 className="text-lg font-bold text-[#0F172A] tracking-tight mb-1">
+                  {c.city_name}
+                </h3>
+                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                  {c.areas}
+                </p>
+              </div>
 
-                    <div className="flex justify-between items-end">
-                      <p className="text-3xl font-bold text-white tracking-tight">
-                        {c.city_name}
-                      </p>
-
-                      <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl group-hover:rotate-45">
-                        <ArrowUpRight size={22} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </Link>
-            ))}
-
-          </div>
-        </SectionReveal>
-
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#0F172A]">
+                  {c.price_text}
+                </span>
+                <span className="text-[10px] text-slate-400">
+                  Hostel Stays
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic"
 
-import PricingHero from "@/components/pricing/pricing-hero";
-import PricingCards from "@/components/pricing/pricing-cards";
-import PricingComparison from "@/components/pricing/pricing-comparison";
-import PricingFAQ from "@/components/pricing/pricing-faq";
-import PricingCTA from "@/components/pricing/pricing-cta";
+import PricingHero from "@/components/home/pricing/pricing-hero";
+import PricingCards from "@/components/home/pricing/pricing-cards";
+import PricingComparison from "@/components/home/pricing/pricing-comparison";
+import PricingFAQ from "@/components/home/pricing/pricing-faq";
+import PricingCTA from "@/components/home/pricing/pricing-cta";
 import SectionReveal from "@/components/ui/section-reveal";
 import { getPricingPage } from "@/services/public.service";
 import type { PricingPageResponse } from "@/types/public.types";

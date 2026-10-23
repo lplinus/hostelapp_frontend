@@ -15,38 +15,38 @@ export const metadata: Metadata = {
 
 export default function SettingsPage() {
     return (
-        <div className="flex min-h-screen bg-gray-50/50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
 
-            <main className="flex-1 p-4 md:p-8 space-y-8">
+            <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
 
-                <div className="max-w-4xl mx-auto space-y-8">
-                    <div className="flex flex-col gap-1">
-                        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Settings</h1>
-                        <p className="text-muted-foreground">Manage your account preferences and system settings.</p>
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    <div>
+                        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Settings</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Manage your account preferences and system settings.</p>
                     </div>
 
-                    <div className="grid gap-6">
+                    <div className="grid gap-6 max-w-4xl">
                         {/* Account Section */}
-                        <Card className="border-muted shadow-sm hover:shadow-md transition-shadow">
+                        <Card className="border border-border/40 rounded-xl bg-card shadow-xs">
                             <CardHeader className="flex flex-row items-center gap-4 pb-4">
-                                <div className="p-3 bg-blue-100/50 text-blue-600 rounded-xl">
+                                <div className="p-3 bg-primary/10 text-primary rounded-xl">
                                     <SettingsIcon size={20} />
                                 </div>
                                 <div className="space-y-1">
-                                    <CardTitle className="text-xl">Account Preferences</CardTitle>
-                                    <CardDescription>Update your personal information and language settings.</CardDescription>
+                                    <CardTitle className="text-lg font-bold text-foreground">Account Preferences</CardTitle>
+                                    <CardDescription className="text-xs">Update your personal information and language settings.</CardDescription>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <Separator />
                                 <div className="flex justify-between items-center pt-2">
                                     <div>
-                                        <p className="font-medium text-gray-900">Email Notifications</p>
-                                        <p className="text-sm text-muted-foreground">Receive updates about your hostel bookings.</p>
+                                        <p className="text-sm font-semibold text-foreground">Email Notifications</p>
+                                        <p className="text-xs text-muted-foreground">Receive updates about your hostel bookings.</p>
                                     </div>
-                                    <Button variant="outline" size="sm">Configure</Button>
+                                    <Button variant="outline" size="sm" className="rounded-lg text-xs">Configure</Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -55,24 +55,24 @@ export default function SettingsPage() {
                         <ChangePasswordForm />
 
                         {/* App Settings */}
-                        <Card className="border-muted shadow-sm hover:shadow-md transition-shadow">
+                        <Card className="border border-border/40 rounded-xl bg-card shadow-xs">
                             <CardHeader className="flex flex-row items-center gap-4 pb-4">
-                                <div className="p-3 bg-green-100/50 text-green-600 rounded-xl">
+                                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
                                     <Smartphone size={20} />
                                 </div>
                                 <div className="space-y-1">
-                                    <CardTitle className="text-xl">System Settings</CardTitle>
-                                    <CardDescription>Configure application-wide settings and theme.</CardDescription>
+                                    <CardTitle className="text-lg font-bold text-foreground">System Settings</CardTitle>
+                                    <CardDescription className="text-xs">Configure application-wide settings and theme.</CardDescription>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <Separator />
                                 <div className="flex justify-between items-center pt-2">
                                     <div>
-                                        <p className="font-medium text-gray-900">System Theme</p>
-                                        <p className="text-sm text-muted-foreground">Switch between light and dark mode.</p>
+                                        <p className="text-sm font-semibold text-foreground">System Theme</p>
+                                        <p className="text-xs text-muted-foreground">Switch between light and dark mode.</p>
                                     </div>
-                                    <Button variant="outline" size="sm">Light Mode</Button>
+                                    <Button variant="outline" size="sm" className="rounded-lg text-xs">Light Mode</Button>
                                 </div>
                             </CardContent>
                         </Card>

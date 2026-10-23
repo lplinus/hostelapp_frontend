@@ -51,14 +51,14 @@ export default function ChangePasswordForm() {
     };
 
     return (
-        <Card className="border-muted shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+        <Card className="border border-border/40 rounded-xl bg-card shadow-xs">
             <CardHeader className="flex flex-row items-center gap-4 pb-4">
-                <div className="p-3 bg-indigo-100/50 text-indigo-600 rounded-xl">
+                <div className="p-3 bg-primary/10 text-primary rounded-xl">
                     <Lock size={20} />
                 </div>
                 <div className="space-y-1">
-                    <CardTitle className="text-xl">Change Password</CardTitle>
-                    <CardDescription>Update your account password to stay secure.</CardDescription>
+                    <CardTitle className="text-lg font-bold text-foreground">Change Password</CardTitle>
+                    <CardDescription className="text-xs">Update your account password to stay secure.</CardDescription>
                 </div>
             </CardHeader>
             <CardContent>
@@ -135,7 +135,7 @@ export default function ChangePasswordForm() {
                         <Button 
                             type="submit" 
                             disabled={isLoading}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 px-8 h-12 rounded-xl transition-all active:scale-95 shadow-lg shadow-indigo-200"
+                            className="bg-blue-900 hover:bg-blue-950 text-white gap-2 px-8 h-12 rounded-xl transition-all active:scale-95 shadow-md shadow-blue-950/20"
                         >
                             {isLoading ? (
                                 <>

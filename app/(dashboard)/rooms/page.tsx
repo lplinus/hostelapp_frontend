@@ -14,14 +14,16 @@ export default async function RoomsPage() {
     const initialGroupedRooms = await getGroupedRoomsServer();
 
     return (
-        <div className="flex min-h-screen bg-gray-50/50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
 
-            <main className="flex-1 p-4 md:p-8 lg:p-10 space-y-8 overflow-y-auto">
+            <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
 
-                {/* Rooms Container handles the logic and grouped display */}
-                <RoomsContainer initialGroupedRooms={initialGroupedRooms} />
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    {/* Rooms Container handles the logic and grouped display */}
+                    <RoomsContainer initialGroupedRooms={initialGroupedRooms} />
+                </div>
             </main>
         </div>
     );

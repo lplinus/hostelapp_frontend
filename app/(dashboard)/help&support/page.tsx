@@ -11,12 +11,14 @@ export const metadata: Metadata = {
 
 export default function HelpSupportPage() {
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
 
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
-                <HelpSupportContent />
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    <HelpSupportContent />
+                </div>
             </main>
         </div>
     );

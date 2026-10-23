@@ -10,7 +10,7 @@ export default function MyOrdersPage() {
     const { user, initializing: authInitializing } = useAuth();
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             {authInitializing ? (
                 <div className="w-72 bg-white border-r border-slate-200 hidden md:block" />
             ) : (
@@ -18,7 +18,9 @@ export default function MyOrdersPage() {
             )}
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
-                <UserOrders />
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    <UserOrders />
+                </div>
             </main>
         </div>
     );

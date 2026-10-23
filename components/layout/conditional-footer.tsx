@@ -15,6 +15,8 @@ export default function ConditionalFooter() {
         pathname.startsWith("/profile/") ||
         pathname === "/hostel" ||
         pathname.startsWith("/hostel/") ||
+        pathname === "/hotel" ||
+        pathname.startsWith("/hotel/") ||
         pathname === "/rooms" ||
         pathname.startsWith("/rooms/") ||
         pathname === "/bookings" ||

@@ -1,42 +1,60 @@
 import Link from "next/link";
-import { Building2, BedDouble, CalendarCheck } from "lucide-react";
+import { Building2, BedDouble, CalendarCheck, ChevronRight } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export default function QuickActions() {
+  const actions = [
+    {
+      href: "/hostel",
+      label: "Manage Hostels",
+      description: "Update details, photos & amenities",
+      icon: Building2,
+      color: "bg-blue-50 text-blue-600"
+    },
+    {
+      href: "/rooms",
+      label: "Manage Rooms",
+      description: "Configure pricing, types & availability",
+      icon: BedDouble,
+      color: "bg-amber-50 text-amber-600"
+    },
+    {
+      href: "/bookings",
+      label: "View Bookings",
+      description: "Review reservations & guest check-ins",
+      icon: CalendarCheck,
+      color: "bg-primary/10 text-primary"
+    }
+  ];
+
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-
-      <h3 className="font-semibold text-lg mb-4 text-gray-800">
-        Quick Actions
-      </h3>
-
-      <div className="space-y-3">
-
-        <Link
-          href="/hostel"
-          className="flex items-center justify-center gap-2 p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-        >
-          <Building2 size={18} />
-          Manage Hostels
-        </Link>
-
-        <Link
-          href="/rooms"
-          className="flex items-center justify-center gap-2 p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
-        >
-          <BedDouble size={18} />
-          Manage Rooms
-        </Link>
-
-        <Link
-          href="/bookings"
-          className="flex items-center justify-center gap-2 p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
-        >
-          <CalendarCheck size={18} />
-          View Bookings
-        </Link>
-
-      </div>
-
-    </div>
+    <Card className="shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base font-bold">Quick Actions</CardTitle>
+        <CardDescription>Common administrative tasks</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {actions.map((act) => (
+          <Link
+            key={act.href}
+            href={act.href}
+            className="flex items-center gap-3 p-3 rounded-lg border border-border/60 hover:bg-muted/50 hover:border-border transition-all duration-200 group"
+          >
+            <div className={`p-2.5 rounded-lg shrink-0 transition-transform group-hover:scale-105 ${act.color}`}>
+              <act.icon size={18} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                {act.label}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {act.description}
+              </p>
+            </div>
+            <ChevronRight size={16} className="text-muted-foreground/60 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+          </Link>
+        ))}
+      </CardContent>
+    </Card>
   );
 }

@@ -67,9 +67,9 @@ export default function DashboardStats() {
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* Selector Card for Booking Stats */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between group hover:border-blue-200 transition-all relative">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex flex-col justify-between group hover:border-primary/30 transition-all duration-200 relative">
                 <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                         {currentMetric.label}
                     </p>
 
@@ -80,7 +80,7 @@ export default function DashboardStats() {
                                 e.stopPropagation();
                                 setIsDropdownOpen(!isDropdownOpen);
                             }}
-                            className="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors cursor-pointer whitespace-nowrap"
+                            className="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md hover:bg-primary/15 transition-colors cursor-pointer whitespace-nowrap"
                         >
                             SWITCH <ChevronDown size={10} className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
@@ -94,25 +94,25 @@ export default function DashboardStats() {
                                         setIsDropdownOpen(false);
                                     }}
                                 />
-                                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-lg shadow-xl py-1 z-[50] min-w-[120px] animate-in fade-in slide-in-from-top-1">
+                                <div className="absolute right-0 top-full mt-1 bg-white border border-border rounded-lg shadow-xl py-1 z-[50] min-w-[130px] animate-in fade-in slide-in-from-top-1">
                                     <button
                                         type="button"
                                         onClick={(e) => handleSelect("total", e)}
-                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'total' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'total' ? 'text-primary bg-primary/10' : 'text-foreground hover:bg-muted/50'}`}
                                     >
                                         Total Bookings
                                     </button>
                                     <button
                                         type="button"
                                         onClick={(e) => handleSelect("active", e)}
-                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'active' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'active' ? 'text-primary bg-primary/10' : 'text-foreground hover:bg-muted/50'}`}
                                     >
                                         Active Bookings
                                     </button>
                                     <button
                                         type="button"
                                         onClick={(e) => handleSelect("cancelled", e)}
-                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'cancelled' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                                        className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${selectedMetric === 'cancelled' ? 'text-primary bg-primary/10' : 'text-foreground hover:bg-muted/50'}`}
                                     >
                                         Cancelled
                                     </button>
@@ -124,14 +124,14 @@ export default function DashboardStats() {
 
                 <div className="flex items-center justify-between">
                     <div className="flex flex-col">
-                        <h2 className="text-3xl font-black text-gray-900">
+                        <h2 className="text-3xl font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors">
                             {isLoading ? "..." : currentMetric.value}
                         </h2>
-                        <p className="text-[9px] font-medium text-gray-500 mt-1 italic">
+                        <p className="text-[10px] font-medium text-muted-foreground mt-1 italic leading-tight">
                             {currentMetric.notation}
                         </p>
                     </div>
-                    <div className="text-4xl bg-gray-50 group-hover:bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300">
+                    <div className="text-3xl bg-muted/40 group-hover:bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 border border-transparent group-hover:border-primary/20">
                         {currentMetric.icon}
                     </div>
                 </div>

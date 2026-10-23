@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
-import SearchBar from "@/components/home/search-bar";
 
 // ✅ PREMIUM FONT
 import { Inter } from "next/font/google";
@@ -57,6 +56,8 @@ export default function Header() {
     (pathname.startsWith("/hostel") &&
       !pathname.startsWith("/hostels") &&
       !pathname.startsWith("/hostel-type")) ||
+    (pathname.startsWith("/hotel") &&
+      !pathname.startsWith("/hotels")) ||
     pathname === "/rooms" ||
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
@@ -74,7 +75,7 @@ export default function Header() {
   return (
     <header
       className={clsx(
-        `w-full border-b border-white/20 bg-white/70 backdrop-blur-lg sticky top-0 z-50 transition-all duration-700 ease-in-out ${inter.variable} font-sans`,
+        `w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 ${inter.variable} font-sans shadow-[0_1px_2px_rgba(0,0,0,0.03)]`,
         // Header stays visible when it contains the search bar
         // isHomePage && isScrolled && "-translate-y-full opacity-0 pointer-events-none"
       )}
@@ -84,7 +85,7 @@ export default function Header() {
         {/* LOGO */}
         <div className="flex lg:flex-1 justify-start items-center shrink-0 min-w-0">
           <Link href="/" className="flex items-center gap-2 md:gap-3 group">
-            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition">
+            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition border border-slate-100">
               <Image
                 src="/images/icon.webp"
                 alt="Logo"
@@ -92,7 +93,7 @@ export default function Header() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="hidden md:block text-[18px] font-semibold tracking-tight text-[#1E1B4B] whitespace-nowrap">
+            <span className="hidden md:block text-[18px] font-bold tracking-tight text-[#1E1B4B] group-hover:text-[#312E81] transition-colors whitespace-nowrap">
               Hostel In
             </span>
           </Link>
@@ -111,8 +112,8 @@ export default function Header() {
                 className={clsx(
                   "px-4 py-2 rounded-lg text-[14px] font-medium tracking-tight transition-all duration-200",
                   isActive
-                    ? "text-[#1E1B4B] bg-indigo-50"
-                    : "text-slate-600 hover:text-[#1E1B4B] hover:bg-indigo-50 hover:shadow-md hover:shadow-indigo-200/50"
+                    ? "text-[#1E1B4B] bg-indigo-50 font-semibold"
+                    : "text-slate-600 hover:text-[#1E1B4B] hover:bg-indigo-50/80"
                 )}
               >
                 {link.name}
@@ -126,8 +127,8 @@ export default function Header() {
 
           {/* ICONS */}
           <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
-            <Moon className="w-5 h-5 cursor-pointer hover:text-[#312E81] transition" strokeWidth={1.5} />
+            <Heart className="w-5 h-5 cursor-pointer hover:text-[#1E1B4B] transition-colors" strokeWidth={1.5} />
+            <Moon className="w-5 h-5 cursor-pointer hover:text-[#1E1B4B] transition-colors" strokeWidth={1.5} />
           </div>
 
           {/* BUTTONS */}
@@ -136,16 +137,16 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-bold tracking-tight text-[#1E1B4B] hover:bg-indigo-50 hover:shadow-md hover:shadow-indigo-200/50 transition-all duration-200"
+                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] hover:bg-slate-100 transition-all duration-200"
                 >
                   Login
                 </Link>
 
                 <Link
                   href="/register"
-                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] bg-white border border-slate-200 hover:bg-indigo-50 transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-indigo-200/50"
+                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] bg-white border border-slate-300 hover:border-[#1E1B4B] hover:bg-[#1E1B4B] hover:!text-white transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 inline-flex items-center justify-center"
                 >
-                  Register
+                  <span className="transition-colors group-hover:text-white">Register</span>
                 </Link>
               </>
             )}

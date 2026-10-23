@@ -99,10 +99,10 @@ export default function HostelManagement() {
     };
 
     const clearPreviewsAndForm = () => {
-        setImagePreviews({ 
-            image: null, image2: null, image3: null, image4: null, 
-            image5: null, image6: null, image7: null, image8: null, 
-            image9: null, image10: null 
+        setImagePreviews({
+            image: null, image2: null, image3: null, image4: null,
+            image5: null, image6: null, image7: null, image8: null,
+            image9: null, image10: null
         });
         if (uploadFormRef.current) uploadFormRef.current.reset();
     };
@@ -215,10 +215,10 @@ export default function HostelManagement() {
 
         const amenityIds = fd.getAll("amenities").map(Number);
         payload.amenities = amenityIds;
-        
+
         const suitableFor = fd.getAll("suitable_for").filter(Boolean);
         payload.suitable_for = suitableFor;
-        
+
         fd.forEach((value, key) => {
             if (key === "amenities" || key === "extra_charges_json" || key === "suitable_for") return; // already handled
             if (value !== "") payload[key] = value;
@@ -309,26 +309,30 @@ export default function HostelManagement() {
     const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
     const totalPages = Math.ceil((hostels?.length || 0) / pageSize);
-    const currentHostels = hostels?.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const currentHostels = hostels?.slice((currentPage - 1) * pageSize, currentPage * pageSize) || [];
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">My Hostels</h2>
-                    <button
-                        onClick={() => {
-                            setIsCreating(!isCreating);
-                            setEditingHostel(null);
-                            setUploadingFor(null);
-                        }}
-                        className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 shadow-md transition-all font-semibold"
-                    >
-                        {isCreating ? "Cancel" : "Add Hostel"}
-                    </button>
-                </div>
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground">My Hostels</h2>
+                            <p className="text-sm text-muted-foreground">Manage your hostel listings, details, and media</p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                setIsCreating(!isCreating);
+                                setEditingHostel(null);
+                                setUploadingFor(null);
+                            }}
+                            className="bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all font-semibold"
+                        >
+                            {isCreating ? "Cancel" : "Add Hostel"}
+                        </button>
+                    </div>
 
                 {/* ── Forms ──────────────────────────────────── */}
                 {isCreating && (
@@ -392,7 +396,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 1</p>
                                                         {img.image ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image) || ""} alt={img.alt_text || "Image 1"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image) || ""} alt={img.alt_text || "Image 1"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -402,7 +406,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 2</p>
                                                         {img.image2 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image2) || ""} alt={img.alt_text || "Image 2"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image2) || ""} alt={img.alt_text || "Image 2"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -412,7 +416,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 3</p>
                                                         {img.image3 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image3) || ""} alt={img.alt_text || "Image 3"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image3) || ""} alt={img.alt_text || "Image 3"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -422,7 +426,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 4</p>
                                                         {img.image4 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image4) || ""} alt={img.alt_text || "Image 4"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image4) || ""} alt={img.alt_text || "Image 4"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -432,7 +436,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 5</p>
                                                         {img.image5 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image5) || ""} alt={img.alt_text || "Image 5"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image5) || ""} alt={img.alt_text || "Image 5"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -442,7 +446,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 6</p>
                                                         {img.image6 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image6) || ""} alt={img.alt_text || "Image 6"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image6) || ""} alt={img.alt_text || "Image 6"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -452,7 +456,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 7</p>
                                                         {img.image7 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image7) || ""} alt={img.alt_text || "Image 7"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image7) || ""} alt={img.alt_text || "Image 7"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -462,7 +466,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 8</p>
                                                         {img.image8 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image8) || ""} alt={img.alt_text || "Image 8"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image8) || ""} alt={img.alt_text || "Image 8"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -472,7 +476,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 9</p>
                                                         {img.image9 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image9) || ""} alt={img.alt_text || "Image 9"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image9) || ""} alt={img.alt_text || "Image 9"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -482,7 +486,7 @@ export default function HostelManagement() {
                                                         <p className="text-[11px] text-gray-500 mb-1 font-medium">Image 10</p>
                                                         {img.image10 ? (
                                                             // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={toLocalMediaPath(img.image10) || ""} alt={img.alt_text || "Image 10"} className="w-full h-28 object-cover rounded" />
+                                                            <img src={toLocalMediaPath(img.image10) || ""} alt={img.alt_text || "Image 10"} className="w-full h-28 object-cover rounded" />
                                                         ) : (
                                                             <div className="w-full h-28 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No image</div>
                                                         )}
@@ -524,8 +528,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-1" className="block text-sm font-medium text-gray-700">Image 2</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-1" type="file" name="image2" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-1" type="file" name="image2" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image2 || existingSet?.image2) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -538,8 +542,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-2" className="block text-sm font-medium text-gray-700">Image 3</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-2" type="file" name="image3" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-2" type="file" name="image3" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image3 || existingSet?.image3) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -552,8 +556,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-3" className="block text-sm font-medium text-gray-700">Image 4</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-3" type="file" name="image4" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-3" type="file" name="image4" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image4 || existingSet?.image4) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -566,8 +570,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-4" className="block text-sm font-medium text-gray-700">Image 5</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-4" type="file" name="image5" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-4" type="file" name="image5" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image5 || existingSet?.image5) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -580,8 +584,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-5" className="block text-sm font-medium text-gray-700">Image 6</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-5" type="file" name="image6" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-5" type="file" name="image6" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image6 || existingSet?.image6) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -594,8 +598,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-6" className="block text-sm font-medium text-gray-700">Image 7</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-6" type="file" name="image7" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-6" type="file" name="image7" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image7 || existingSet?.image7) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -608,8 +612,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-7" className="block text-sm font-medium text-gray-700">Image 8</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-7" type="file" name="image8" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-7" type="file" name="image8" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image8 || existingSet?.image8) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -622,8 +626,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-8" className="block text-sm font-medium text-gray-700">Image 9</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-8" type="file" name="image9" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-8" type="file" name="image9" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image9 || existingSet?.image9) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -636,8 +640,8 @@ export default function HostelManagement() {
                                         </div>
                                         <div className="space-y-1">
                                             <label htmlFor="img-inner-9" className="block text-sm font-medium text-gray-700">Image 10</label>
-                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-green-300 transition-colors">
-                                                <input id="img-inner-9" type="file" name="image10" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer" onChange={handleImageChange} />
+                                            <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-lg border border-dashed hover:border-primary/30 transition-colors">
+                                                <input id="img-inner-9" type="file" name="image10" accept="image/*" className="flex-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" onChange={handleImageChange} />
                                                 {(imagePreviews.image10 || existingSet?.image10) && (
                                                     <div className="flex flex-col items-end flex-shrink-0">
                                                         <span className="text-[10px] text-gray-500 truncate max-w-[80px] mb-1">
@@ -659,7 +663,7 @@ export default function HostelManagement() {
                                     </div>
                                 );
                             })()}
-                            <button type="submit" disabled={imageUploadMutation.isPending || imageUpdateMutation.isPending} className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 transition">
+                            <button type="submit" disabled={imageUploadMutation.isPending || imageUpdateMutation.isPending} className="w-full bg-primary text-primary-foreground p-2.5 rounded-lg font-semibold hover:bg-primary/90 transition shadow-md shadow-primary/20">
                                 {(imageUploadMutation.isPending || imageUpdateMutation.isPending) ? "Saving..." : "Save Images"}
                             </button>
                         </form>
@@ -667,18 +671,18 @@ export default function HostelManagement() {
                 )}
 
                 {/* ── Hostels Table ──────────────────────────────── */}
-                <div className="bg-white rounded-lg shadow overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                <div className="bg-white rounded-xl shadow-sm border border-border overflow-x-auto">
+                    <table className="min-w-full divide-y divide-border">
+                        <thead className="bg-muted/40">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">#</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Location</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">
                                     <div className="flex items-center gap-2">
                                         Price (₹)
                                         <select
-                                            className="ml-1 bg-transparent border-none text-[10px] font-bold text-blue-600 focus:ring-0 cursor-pointer outline-none uppercase bg-white px-1 py-0.5 rounded shadow-sm"
+                                            className="ml-1 bg-white border border-border text-[10px] font-bold text-primary focus:ring-0 cursor-pointer outline-none uppercase px-1.5 py-0.5 rounded shadow-sm"
                                             value={priceView}
                                             onChange={(e) => setPriceView(e.target.value as "monthly" | "daily")}
                                         >
@@ -687,55 +691,55 @@ export default function HostelManagement() {
                                         </select>
                                     </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Images</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Rating</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Images</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3.5 text-left text-xs font-bold text-foreground uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white divide-y divide-border">
                             {isLoading ? (
                                 [1, 2, 3].map((id) => (
                                     <tr key={`skel-${id}`} className="animate-pulse">
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-3/4"></div></td>
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-1/2"></div></td>
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-1/4"></div></td>
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-1/4"></div></td>
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-1/4"></div></td>
-                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-1/4"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-3/4"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-1/2"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-1/4"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-1/4"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-1/4"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-muted rounded w-1/4"></div></td>
                                     </tr>
                                 ))
                             ) : (
                                 <>
                                     {hostels?.length === 0 ? (
-                                        <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">No hostels found. Click &quot;Add Hostel&quot; to get started.</td></tr>
+                                        <tr><td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">No hostels found. Click &quot;Add Hostel&quot; to get started.</td></tr>
                                     ) : (
                                         currentHostels?.map((h, idx) => {
                                             const discountText = h.is_discounted ? (
-                                                <span className="text-[10px] text-green-600 font-medium whitespace-nowrap">
+                                                <span className="text-[10px] text-primary font-bold whitespace-nowrap">
                                                     {priceView === "monthly" ? `(₹${h.final_price})` : (h.final_price_per_day ? `(₹${h.final_price_per_day})` : "")}
                                                 </span>
                                             ) : null;
 
                                             return (
-                                                <tr key={h.id} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-6 py-4 text-sm text-gray-500 font-medium">
+                                                <tr key={h.id} className="hover:bg-muted/30 transition-colors">
+                                                    <td className="px-6 py-4 text-sm text-muted-foreground font-medium">
                                                         {(currentPage - 1) * pageSize + idx + 1}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">{h.name}</td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{h.city?.name ?? "N/A"}, {h.area?.name ?? "N/A"}</td>
-                                                    <td className="px-6 py-4 text-sm font-semibold text-gray-700">
+                                                    <td className="px-6 py-4 text-sm text-foreground font-semibold">{h.name}</td>
+                                                    <td className="px-6 py-4 text-sm text-muted-foreground">{h.city?.name ?? "N/A"}, {h.area?.name ?? "N/A"}</td>
+                                                    <td className="px-6 py-4 text-sm font-semibold text-foreground">
                                                         <div className="flex flex-col">
-                                                            <span>₹{priceView === "monthly" ? h.price : (h.price_per_day || "N/A")}</span>
+                                                            <span className="text-primary font-bold">₹{priceView === "monthly" ? h.price : (h.price_per_day || "N/A")}</span>
                                                             {discountText}
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">{h.rating_avg > 0 ? h.rating_avg.toFixed(1) : "Unrated"}</td>
-                                                    <td className="px-6 py-4 text-sm text-gray-500">
-                                                        <span className="text-gray-700 font-medium">{h.images?.length ?? 0}</span>
+                                                    <td className="px-6 py-4 text-sm text-muted-foreground">{h.rating_avg > 0 ? h.rating_avg.toFixed(1) : "Unrated"}</td>
+                                                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                                                        <span className="text-foreground font-medium">{h.images?.length ?? 0}</span>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm">
-                                                        <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${h.is_approved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${h.is_approved ? 'bg-primary/10 text-primary border-primary/20' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
                                                             {h.is_approved ? 'Verified' : 'Pending Verification'}
                                                         </span>
                                                     </td>
@@ -748,7 +752,7 @@ export default function HostelManagement() {
                                                                     setUploadingFor(null);
                                                                     globalThis.scrollTo({ top: 0, behavior: "smooth" });
                                                                 }}
-                                                                className="text-blue-600 hover:text-blue-900 bg-blue-50 p-2 rounded-md transition"
+                                                                className="text-primary hover:text-primary/80 bg-primary/10 p-2 rounded-md transition border border-primary/20"
                                                                 title="Edit"
                                                             >
                                                                 <Pencil size={18} />
@@ -760,7 +764,7 @@ export default function HostelManagement() {
                                                                     setIsCreating(false);
                                                                     globalThis.scrollTo({ top: 0, behavior: "smooth" });
                                                                 }}
-                                                                className="text-green-600 hover:text-green-900 bg-green-50 p-2 rounded-md transition"
+                                                                className="text-primary hover:text-primary/80 bg-primary/10 p-2 rounded-md transition border border-primary/20"
                                                                 title="Images"
                                                             >
                                                                 <ImageIcon size={18} />
@@ -800,7 +804,7 @@ export default function HostelManagement() {
                                 <button
                                     key={`page-${pageNum}`}
                                     onClick={() => setCurrentPage(pageNum)}
-                                    className={`px-4 py-2 border rounded ${currentPage === pageNum ? "bg-blue-600 text-white" : "bg-white hover:bg-gray-50"}`}
+                                    className={`px-4 py-2 border rounded-lg text-sm transition-colors ${currentPage === pageNum ? "bg-primary text-primary-foreground font-semibold border-primary" : "bg-white text-foreground hover:bg-muted/50 border-border"}`}
                                 >
                                     {pageNum}
                                 </button>
@@ -815,6 +819,7 @@ export default function HostelManagement() {
                         </button>
                     </div>
                 )}
+                </div>
             </main>
         </div>
     );

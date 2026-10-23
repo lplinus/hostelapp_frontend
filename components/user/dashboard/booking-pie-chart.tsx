@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 interface Props {
     readonly total: number;
@@ -23,20 +24,20 @@ export default function BookingPieChart({ total, cancelled, isLoading }: Props) 
     const cancelledStrokeDashoffset = circumference - (cancelled / (sum || 1)) * circumference;
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-            <div className="mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Booking Distribution</h3>
-                <p className="text-sm text-gray-500">Comparison of successful vs cancelled</p>
-            </div>
+        <Card className="h-full flex flex-col shadow-sm">
+            <CardHeader className="pb-3">
+                <CardTitle className="text-base font-bold">Booking Distribution</CardTitle>
+                <CardDescription>Comparison of confirmed vs cancelled reservations</CardDescription>
+            </CardHeader>
 
-            <div className="flex-1 flex flex-col md:flex-row items-center justify-around gap-8">
-                <div className="relative w-48 h-48 flex items-center justify-center">
+            <CardContent className="flex-1 flex flex-col md:flex-row items-center justify-around gap-6 pt-2">
+                <div className="relative w-44 h-44 flex items-center justify-center shrink-0">
                     {isLoading && (
-                        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     )}
 
                     {!isLoading && sum === 0 && (
-                        <div className="text-center text-gray-400 text-sm italic">No data</div>
+                        <div className="text-center text-muted-foreground text-sm italic">No data yet</div>
                     )}
 
                     {!isLoading && sum > 0 && (
@@ -72,7 +73,7 @@ export default function BookingPieChart({ total, cancelled, isLoading }: Props) 
                                     cx={centerX}
                                     cy={centerY}
                                     r={normalizedRadius}
-                                    stroke="#2563eb"
+                                    stroke="#3b82f6"
                                     strokeWidth={strokeWidth}
                                     fill="transparent"
                                     strokeDasharray={circumference}
@@ -88,44 +89,44 @@ export default function BookingPieChart({ total, cancelled, isLoading }: Props) 
                             </svg>
 
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-2xl font-black text-gray-900">{sum}</span>
-                                <span className="text-[10px] uppercase font-bold text-gray-400">Total</span>
+                                <span className="text-2xl font-bold text-foreground">{sum}</span>
+                                <span className="text-[10px] uppercase font-semibold text-muted-foreground">Total</span>
                             </div>
                         </>
                     )}
                 </div>
 
-                <div className="flex flex-col gap-4 w-full md:w-auto">
-                    <div className="flex items-center justify-between gap-6 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full bg-blue-600" />
+                <div className="flex flex-col gap-3 w-full md:w-auto">
+                    <div className="flex items-center justify-between gap-6 p-2.5 rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" />
                             <div>
-                                <p className="text-xs font-bold text-gray-900">Total Bookings</p>
-                                <p className="text-[10px] text-gray-500 font-medium">Successful/Pending</p>
+                                <p className="text-xs font-semibold text-foreground">Confirmed / Active</p>
+                                <p className="text-[10px] text-muted-foreground">Valid bookings</p>
                             </div>
                         </div>
-                        <span className="text-sm font-black text-gray-900">{total}</span>
+                        <span className="text-sm font-bold text-foreground">{total}</span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-6 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="flex items-center justify-between gap-6 p-2.5 rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
                             <div>
-                                <p className="text-xs font-bold text-gray-900">Cancellations</p>
-                                <p className="text-[10px] text-gray-500 font-medium">Revoked bookings</p>
+                                <p className="text-xs font-semibold text-foreground">Cancelled</p>
+                                <p className="text-[10px] text-muted-foreground">Revoked stays</p>
                             </div>
                         </div>
-                        <span className="text-sm font-black text-gray-900">{cancelled}</span>
+                        <span className="text-sm font-bold text-foreground">{cancelled}</span>
                     </div>
 
-                    <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center px-3">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">Success Rate</span>
-                        <span className="text-xs font-black text-green-600">
+                    <div className="pt-2 border-t border-border flex justify-between items-center px-2.5">
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Success Rate</span>
+                        <span className="text-xs font-bold text-primary">
                             {sum > 0 ? Math.round((total / sum) * 100) : 0}%
                         </span>
                     </div>
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

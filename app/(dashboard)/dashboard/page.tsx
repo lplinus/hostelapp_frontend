@@ -3,7 +3,7 @@ import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
 import DashboardStats from "@/components/user/dashboard/dashboard-stats";
 import RecentBookings from "@/components/user/dashboard/recent-bookings";
 import QuickActions from "@/components/user/dashboard/quick-actions";
-import BookingChartWrapper from "../../../components/user/dashboard/booking-chart-wrapper";
+import BookingChartWrapper from "@/components/user/dashboard/booking-chart-wrapper";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,27 +14,37 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
 
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
 
-                {/* Stats */}
-                <DashboardStats />
-
-                {/* Analytical Chart */}
-                <div className="grid gap-6">
-                    <BookingChartWrapper />
-                </div>
-
-                {/* Main Grid */}
-                <div className="grid lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                        <RecentBookings />
+                <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
+                    {/* Title Section matching the sample template */}
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h2>
+                        <p className="text-sm text-muted-foreground">
+                            Overview of your hostel activity and performance.
+                        </p>
                     </div>
 
-                    <QuickActions />
+                    {/* Stats */}
+                    <DashboardStats />
+
+                    {/* Analytical Chart */}
+                    <div className="grid gap-6">
+                        <BookingChartWrapper />
+                    </div>
+
+                    {/* Main Grid */}
+                    <div className="grid lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2">
+                            <RecentBookings />
+                        </div>
+
+                        <QuickActions />
+                    </div>
                 </div>
             </main>
         </div>

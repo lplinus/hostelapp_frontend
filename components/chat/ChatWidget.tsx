@@ -8,7 +8,12 @@ import { X, Send, Phone as WhatsApp, User, Bot, Sparkles, BrainCircuit, Sparkle 
 
 import ChatWindow from "./ChatWindow";
 
+// Set to true to re-enable Chat AI widget
+const ENABLE_CHAT_WIDGET = false;
+
 const ChatWidget = () => {
+  if (!ENABLE_CHAT_WIDGET) return null;
+
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);

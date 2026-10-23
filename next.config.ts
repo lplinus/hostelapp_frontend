@@ -10,6 +10,38 @@ const nextConfig: NextConfig = {
   async rewrites() {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
     return [
+      // ── Internal route rewrites ──
+      // Files live under app/home/ but URLs stay clean without /home/ prefix
+      {
+        source: "/hostels/",
+        destination: "/home/hostels/",
+      },
+      {
+        source: "/hostels/:path*/",
+        destination: "/home/hostels/:path*/",
+      },
+      {
+        source: "/hostels/:path*",
+        destination: "/home/hostels/:path*",
+      },
+      {
+        source: "/hostel-type/:path*/",
+        destination: "/home/hostel-type/:path*/",
+      },
+      {
+        source: "/hostel-type/:path*",
+        destination: "/home/hostel-type/:path*",
+      },
+      {
+        source: "/search/",
+        destination: "/home/search/",
+      },
+      {
+        source: "/search",
+        destination: "/home/search",
+      },
+
+      // ── API & media proxy rules ──
       // Trailing-slash rules MUST come first — :path* strips trailing slashes,
       // which causes Django APPEND_SLASH to issue 301 loops via the proxy.
       {

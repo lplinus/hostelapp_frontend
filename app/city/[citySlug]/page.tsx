@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import CityClient from "../../../components/cityclients/city-client";
+import CityClient from "../../../components/home/cityclients/city-client";
 import { CityHostelResponse } from "@/types/hostel.types";
 import { generateCityListingSchema, generateBreadcrumbSchema } from "@/lib/seo/schema";
 import JsonLd from "@/components/seo/JsonLd";
@@ -51,9 +51,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
+async function getAllHostels(): Promise<CityHostelResponse | null> {
+    if (!BASE_URL) return null;
+    try {
+        const res = await fetch(`${BASE_URL}/api/locations/cities/all/hostels/`, {
+            next: { revalidate: 60 },
+        });
+        if (res.ok) return res.json();
+    } catch (err) {
+        console.error("Failed to fetch all hostels:", err);
+    }
+    return null;
+}
+
 export default async function CityPage({ params }: Props) {
     const { citySlug } = await params;
-    const data = await getCityHostels(citySlug);
+    const [data, allData] = await Promise.all([
+        getCityHostels(citySlug),
+        getAllHostels(),
+    ]);
 
     // If no data from API, create an empty response so the page renders with a "no hostels" state
     const cityName = citySlug === "all" ? "All Cities" : formatCityName(citySlug);
@@ -74,8 +90,8 @@ export default async function CityPage({ params }: Props) {
             {safeData.results && safeData.results.length > 0 && (
                 <JsonLd data={generateCityListingSchema(citySlug, cityName, safeData.results)} />
             )}
-            <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-12">
-                <CityClient data={safeData} />
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                <CityClient data={safeData} initialAllHostels={allData?.results} />
             </div>
         </div>
     );

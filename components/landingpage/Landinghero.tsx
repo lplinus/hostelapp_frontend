@@ -1,123 +1,83 @@
-
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Star, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { LandingPageResponse } from "@/lib/api/types";
 
 interface LandingHeroProps {
-    data: LandingPageResponse | null;
+  data: LandingPageResponse | null;
 }
 
 export default function LandingHero({ data }: LandingHeroProps) {
-    return (
-        <section className="relative w-full min-h-[100vh] flex flex-col pt-12 lg:pt-16 pb-12 lg:pb-20 font-inter bg-[#F8FAFC] overflow-hidden">
-            {/* Background Layer: Subtle Gradients & Dot Pattern */}
-            <div className="absolute inset-0 -z-10">
-                <div
-                    className="absolute inset-0 opacity-[0.2]"
-                    style={{
-                        backgroundImage: `radial-gradient(#64748B 0.5px, transparent 0.5px)`,
-                        backgroundSize: '32px 32px'
-                    }}
-                />
-                <div className="absolute top-[-15%] left-[-10%] w-[600px] h-[600px] bg-[#8B5CF6]/10 rounded-full blur-[140px]" />
-                <div className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] bg-[#0F172A]/5 rounded-full blur-[140px]" />
+  return (
+    <section className="relative w-full pt-6 sm:pt-8 pb-6 sm:pb-8 font-inter bg-[#F8FAFC]">
+      {/* Main Rounded Container - Refined Dark Navy Theme */}
+      <div className="mx-4 sm:mx-6 lg:mx-8 rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-lg bg-[#0F172A] border border-slate-800 relative">
+        {/* Subtle Ambient Tone without colorful rainbow blurs */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0F172A] via-[#111827] to-[#0F172A]" />
+
+        {/* Content - Spacious, balanced & elevated */}
+        <div className="relative z-10 flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-16 py-16 sm:py-20 lg:py-24">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/10 rounded-full mb-6 backdrop-blur-sm">
+            <Sparkles className="w-4 h-4 text-slate-300" />
+            <span className="text-xs font-semibold tracking-wider uppercase text-slate-200">
+              {data?.hero_badge || "India's Most Trusted Student Hub"}
+            </span>
+          </div>
+
+          {/* Heading - Bigger presence & strong typography */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12] max-w-4xl mb-5">
+            {data?.hero_title_main || "Find Your Perfect"}{" "}
+            <span className="text-slate-100 font-extrabold underline decoration-slate-600 underline-offset-4">
+              {data?.hero_title_italic || "Student Hostel"}
+            </span>{" "}
+            <span className="text-white/90">
+              {data?.hero_title_footer || "Near Your Campus"}
+            </span>
+          </h1>
+
+          {/* Description */}
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mb-8 font-normal leading-relaxed mx-auto">
+            {data?.hero_description ||
+              "Verified student hostels with verified pricing, zero brokerage, and instant confirmation across 25+ prime cities."}
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
+            <Link
+              href={data?.hero_primary_cta_url || "/home"}
+              className="inline-flex justify-center items-center gap-2.5 bg-white text-[#0F172A] hover:bg-slate-100 font-semibold px-8 py-3.5 rounded-xl transition-all shadow-sm active:scale-95 text-base w-full sm:w-auto"
+            >
+              {data?.hero_primary_cta_text || "Explore Hostels"}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <Link
+              href={data?.hero_secondary_cta_url || "#cities"}
+              className="inline-flex justify-center items-center gap-2.5 bg-white/10 hover:bg-white/15 border border-white/15 text-white font-medium px-8 py-3.5 rounded-xl transition-all active:scale-95 text-base w-full sm:w-auto"
+            >
+              {data?.hero_secondary_cta_text || "View Destinations"}
+            </Link>
+          </div>
+
+          {/* Trust Row */}
+          <div className="flex flex-wrap gap-x-10 gap-y-4 items-center justify-center text-slate-400 text-sm font-medium tracking-wide w-full mt-12 sm:mt-14 border-t border-white/10 pt-6">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={18} className="text-emerald-400" />
+              <span className="text-slate-200">100% Pre-Verified</span>
             </div>
 
-            {/* Main Rounded Container - Premium Dark Theme */}
-            <div className="flex-1 mx-4 sm:mx-6 lg:mx-8 rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-2xl shadow-[#0F172A]/20 relative bg-[#0F172A] border border-white/10 group">
-                {/* Optimized Background Image using next/image with priority */}
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/images/landing.webp"
-                        alt="Modern student living space"
-                        fill
-                        priority
-                        sizes="(max-width: 768px) 100vw, 95vw"
-                        quality={85}
-                        className="object-cover opacity-30 transform scale-105 group-hover:scale-100 transition-transform duration-1000"
-                    />
-                    {/* Decorative Overlays */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B]/90 to-[#0F172A] opacity-90" />
-                    <div 
-                        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                        style={{
-                            backgroundImage: `url('https://www.transparenttextures.com/patterns/carbon-fibre.png')`,
-                        }}
-                     />
-                </div>
-                
-                {/* Content - Directly rendered for LCP (No SectionReveal delay) */}
-                <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-24 py-20 lg:py-32">
-                    <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-forwards">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-10 backdrop-blur-md">
-                            <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
-                            <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-white/80">
-                                {data?.hero_badge || "India's Most Trusted Student Hub"}
-                            </span>
-                        </div>
-
-                        {/* Heading - Critical LCP Element */}
-                        <h1 className="text-5xl sm:text-7xl lg:text-[92px] font-bold text-white leading-[1.1] lg:leading-[1.05] tracking-tight mb-8 max-w-5xl drop-shadow-sm">
-                            {data?.hero_title_main || "Find Your Perfect"}<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#C084FC] font-extrabold italic">
-                                {data?.hero_title_italic || "Student Hostel"}
-                            </span>{" "}
-                            <br />
-                            <span className="text-white/90">
-                                {data?.hero_title_footer || "Near Your Campus"}
-                            </span>
-                        </h1>
-
-                        {/* Description */}
-                        <p className="text-lg sm:text-xl md:text-2xl text-[#94A3B8] max-w-3xl mb-14 font-medium leading-relaxed mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 fill-mode-forwards">
-                            {data?.hero_description || "Premium, pre-verified hostels designed for the modern student. Join 10,000+ residents across 25+ major cities."}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full max-w-2xl mx-auto px-4 mt-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-200 fill-mode-forwards">
-                            <Link
-                                href={data?.hero_primary_cta_url || "/home"}
-                                className="group/btn relative flex justify-center items-center gap-3 bg-[#8B5CF6] text-white font-bold px-10 py-5 rounded-2xl transition-all shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] hover:bg-[#7C3AED] active:scale-95 text-base w-full sm:w-auto"
-                            >
-                                {data?.hero_primary_cta_text || "Explore Hostels"}
-                                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                            </Link>
-
-                            <Link
-                                href={data?.hero_secondary_cta_url || "#how"}
-                                className="group/btn flex justify-center items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold px-10 py-5 rounded-2xl transition-all backdrop-blur-sm active:scale-95 text-base w-full sm:w-auto"
-                            >
-                                {data?.hero_secondary_cta_text || "Our Standards"}
-                            </Link>
-                        </div>
-
-                        {/* Trust Row */}
-                        <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center text-white/60 text-sm font-semibold tracking-wide w-full mt-20 lg:mt-32 animate-in fade-in duration-1000 delay-300 fill-mode-forwards">
-                            <div className="flex items-center gap-3 group/item cursor-default">
-                                <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-[#8B5CF6]/20 transition-colors">
-                                    <ShieldCheck size={20} className="text-[#8B5CF6]" />
-                                </div>
-                                <span>100% Pre-Verified</span>
-                            </div>
-
-                            <div className="flex items-center gap-3 group/item cursor-default">
-                                <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-[#8B5CF6]/20 transition-colors">
-                                    <MapPin size={20} className="text-[#8B5CF6]" />
-                                </div>
-                                <span>25+ Major Cities</span>
-                            </div>
-
-                            <div className="flex items-center gap-3 group/item cursor-default">
-                                <div className="p-2 rounded-lg bg-white/5 group-hover/item:bg-[#8B5CF6]/20 transition-colors">
-                                    <Star size={20} fill="currentColor" className="text-[#8B5CF6]" />
-                                </div>
-                                <span>4.9 Avg Rating</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="flex items-center gap-2">
+              <MapPin size={18} className="text-slate-200" />
+              <span className="text-slate-200">25+ Major Cities</span>
             </div>
-        </section>
-    );
+
+            <div className="flex items-center gap-2">
+              <Star size={18} className="text-amber-400 fill-amber-400" />
+              <span className="text-slate-200">4.9 Avg Student Rating</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

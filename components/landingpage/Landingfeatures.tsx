@@ -2,111 +2,111 @@ import SectionReveal from "@/components/ui/section-reveal";
 import { ShieldCheck, Zap, Heart, Globe, Wifi, Wallet, LucideIcon } from "lucide-react";
 import { LandingPageResponse } from "@/lib/api/types";
 
-/**
- * LANDING FEATURES SECTION
- * Premium grid showcasing USP with high-contrast icons and elegant cards.
- */
-
 interface LandingFeaturesProps {
-    data: LandingPageResponse | null;
+  data: LandingPageResponse | null;
 }
 
 const ICON_MAP: Record<string, LucideIcon> = {
-    ShieldCheck,
-    Zap,
-    Heart,
-    Globe,
-    Wifi,
-    Wallet,
+  ShieldCheck,
+  Zap,
+  Heart,
+  Globe,
+  Wifi,
+  Wallet,
 };
 
 const defaultFeatures = [
-    {
-        icon_name: "ShieldCheck",
-        title: "Verified Listings",
-        text: "Every property is physically inspected for safety, quality, and accuracy by our regional teams."
-    },
-    {
-        icon_name: "Zap",
-        title: "Instant Booking",
-        text: "Reserve your ideal stay in minutes. No paperwork, no hidden calls, no stress."
-    },
-    {
-        icon_name: "Heart",
-        title: "Student-Centric",
-        text: "Designed specifically for student needs—community vibes, study spaces, and high connectivity."
-    },
+  {
+    icon_name: "ShieldCheck",
+    title: "100% Verified Listings",
+    text: "Every property is physically inspected for security, hygiene, and room specs.",
+  },
+  {
+    icon_name: "Zap",
+    title: "Instant Digital Booking",
+    text: "Reserve your ideal student room online with zero paperwork or broker calls.",
+  },
+  {
+    icon_name: "Heart",
+    title: "Student-First Pricing",
+    text: "Affordable monthly and daily stays designed specifically for student budgets.",
+  },
+  {
+    icon_name: "Wifi",
+    title: "High-Speed Connectivity",
+    text: "Dependable WiFi and dedicated study desks in all top-tier student rooms.",
+  },
+  {
+    icon_name: "Wallet",
+    title: "Zero Brokerage",
+    text: "Transparent rental pricing with no hidden charges, surprise fees, or middleman cuts.",
+  },
+  {
+    icon_name: "Globe",
+    title: "25+ Major Education Hubs",
+    text: "Explore curated student accommodations close to colleges and tech hubs nationwide.",
+  },
 ];
 
 export default function LandingFeatures({ data }: LandingFeaturesProps) {
-    const displayFeatures = data?.features && data.features.length > 0 ? data.features : defaultFeatures;
+  const displayFeatures = data?.features && data.features.length > 0 ? data.features : defaultFeatures;
 
-    return (
-        <section id="features" className="py-24 lg:py-32 bg-white font-inter relative overflow-hidden">
-            {/* background glow */}
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#8B5CF6]/5 blur-[180px] rounded-full pointer-events-none" />
+  return (
+    <section id="features" className="py-8 sm:py-10 bg-white font-inter">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+        {/* Compact Section Header */}
+        <SectionReveal>
+          <div className="max-w-2xl mx-auto text-center mb-6 sm:mb-8">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+              {data?.features_eyebrow || "Why Choose Hostel In"}
+            </span>
 
-                {/* Section Header */}
-                <SectionReveal>
-                    <div className="max-w-3xl mx-auto text-center mb-20 lg:mb-28">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight mb-2">
+              {data?.features_title_main || "Everything You Need,"}{" "}
+              <span className="text-slate-600 font-normal">
+                {data?.features_title_italic || "Nothing You Don't"}
+              </span>
+            </h2>
 
-                        <div className="flex items-center justify-center gap-3 text-[#8B5CF6] mb-6">
-                            <span className="text-[11px] tracking-[0.25em] font-bold uppercase">
-                                {data?.features_eyebrow || "The Hostel In Advantage"}
-                            </span>
-                        </div>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
+              {data?.features_subtitle ||
+                "Re-imagining the student hostel experience with verified safety, honest rates, and instant reservations."}
+            </p>
+          </div>
+        </SectionReveal>
 
-                        <h2 className="text-4xl sm:text-6xl font-bold text-[#0F172A] leading-[1.1] tracking-tight mb-8">
-                            {data?.features_title_main || "Everything You Need,"}
-                            <br />
-                            <span className="italic text-[#64748B] font-medium">
-                                {data?.features_title_italic || "Nothing You Don't."}
-                            </span>
-                        </h2>
+        {/* Compact Feature Grid */}
+        <SectionReveal delay={0.1}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {displayFeatures.map((f, idx) => {
+              const Icon = ICON_MAP[f.icon_name] || ShieldCheck;
+              return (
+                <div
+                  key={idx}
+                  className="flex items-start gap-3.5 p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 hover:border-black hover:shadow-md transition-all duration-200 cursor-pointer"
+                >
+                  {/* Compact Icon */}
+                  <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-[#0F172A] shadow-xs shrink-0 mt-0.5">
+                    <Icon size={18} className="text-slate-700" />
+                  </div>
 
-                        <p className="text-lg text-[#64748B] leading-relaxed max-w-2xl mx-auto font-medium">
-                            {data?.features_subtitle || "We've re-imagined the hostel experience from the ground up, focusing only on what truly matters to students."}
-                        </p>
+                  {/* Content */}
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold text-[#0F172A] tracking-tight mb-1">
+                      {f.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                      {f.text}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </SectionReveal>
 
-                    </div>
-                </SectionReveal>
-
-                {/* Feature Grid */}
-                <SectionReveal delay={0.2}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-                        {displayFeatures.map((f, idx) => {
-                            const Icon = ICON_MAP[f.icon_name] || ShieldCheck;
-                            return (
-                                <div
-                                    key={idx}
-                                    className="group relative p-10 lg:p-12 bg-[#F8FAFC] rounded-3xl border border-slate-100 hover:border-[#8B5CF6]/30 hover:shadow-2xl hover:shadow-[#0F172A]/5 transition-all duration-500 hover:-translate-y-2"
-                                >
-                                    {/* Icon Container */}
-                                    <div className="mb-10 w-20 h-20 rounded-2xl bg-white flex items-center justify-center text-[#0F172A] shadow-sm group-hover:bg-[#8B5CF6] group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg shadow-[#8B5CF6]/20">
-                                        <Icon size={32} />
-                                    </div>
-
-                                    {/* Content */}
-                                    <h3 className="text-2xl font-bold text-[#0F172A] group-hover:text-[#8B5CF6] mb-5 tracking-tight transition-colors">
-                                        {f.title}
-                                    </h3>
-                                    <p className="text-base leading-relaxed text-[#64748B] group-hover:text-[#0F172A]/80 font-medium transition-colors">
-                                        {f.text}
-                                    </p>
-
-                                    {/* Decorative Visual Flair */}
-                                    <div className="absolute bottom-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-bounce" />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </SectionReveal>
-
-            </div>
-        </section>
-    );
+      </div>
+    </section>
+  );
 }

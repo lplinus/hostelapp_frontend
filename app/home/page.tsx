@@ -1,16 +1,15 @@
 export const dynamic = "force-dynamic"
 
 import type { Metadata } from "next";
-import Hero from "@/components/home/hero";
-import SearchBar from "@/components/home/search-bar";
-import FeaturedCities from "@/components/home/featured-cities";
+import Hero from "@/components/home/herosection/hero";
+import FeaturedCities from "@/components/home/featurescities/featured-cities";
 // import FeaturedHostelTypes from "@/components/home/featured-hostel-types";
-import HostelTypes from "@/components/home/hosteltypes";
+import HostelTypes from "@/components/home/hostels/hostelspages/hosteltypes";
 
-import RecommendedHostels from "@/components/home/recommended-hostels";
-import TopRatedHostelsDynamic from "@/components/home/top-rated-hostels-dynamic";
+import RecommendedHostels from "@/components/home/hostels/hostelspages/recommended-hostels";
+import TopRatedHostelsDynamic from "@/components/home/hostels/hostelspages/top-rated-hostels-dynamic";
 import WhyUs from "@/components/home/why-us";
-import CTA from "@/components/home/cta";
+// import CTA from "@/components/home/cta";
 import SectionReveal from "@/components/ui/section-reveal";
 import { getHomePage } from "@/services/public.service";
 import { getHostels, getFeaturedHostels, getTopRatedHostels } from "@/services/hostel.service";
