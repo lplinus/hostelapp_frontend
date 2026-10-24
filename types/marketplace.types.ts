@@ -51,6 +51,8 @@ export interface OrderItem {
     quantity: number;
     unit_price: string;
     total_price: string;
+    product_image?: string | null;
+    quantity_unit?: string | null;
 }
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';

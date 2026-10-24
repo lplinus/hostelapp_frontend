@@ -93,24 +93,24 @@ export default function UserVendors() {
     const renderVendors = () => {
         if (isLoading) {
             return (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,300px))] gap-4 sm:gap-5">
                     {[1, 2, 3].map((i) => (
-                        <Card key={i} className="border-border/40">
-                            <CardContent className="p-5 space-y-4">
+                        <Card key={i} className="rounded-lg border-border/50 aspect-square min-h-[290px] p-4 sm:p-5 flex flex-col justify-between">
+                            <div className="space-y-3">
                                 <div className="flex items-center gap-3">
-                                    <Skeleton className="w-12 h-12 rounded-xl" />
-                                    <div className="space-y-2 flex-1">
-                                        <Skeleton className="h-4 w-3/4" />
-                                        <Skeleton className="h-3 w-1/2" />
+                                    <Skeleton className="w-11 h-11 rounded-md" />
+                                    <div className="space-y-1.5 flex-1">
+                                        <Skeleton className="h-3 w-14 rounded" />
+                                        <Skeleton className="h-4 w-4/5 rounded" />
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Skeleton className="h-6 w-16 rounded-full" />
-                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                    <Skeleton className="h-5 w-16 rounded" />
+                                    <Skeleton className="h-5 w-20 rounded" />
                                 </div>
-                                <Separator />
-                                <Skeleton className="h-10 w-full rounded-md" />
-                            </CardContent>
+                                <Skeleton className="h-16 w-full rounded-md" />
+                            </div>
+                            <Skeleton className="h-8.5 w-full rounded-md" />
                         </Card>
                     ))}
                 </div>
@@ -119,15 +119,15 @@ export default function UserVendors() {
 
         if (filteredVendors.length > 0) {
             return (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,300px))] gap-4 sm:gap-5">
                     {filteredVendors.map((vendor) => (
-                        <VendorCard 
-                            key={vendor.id} 
-                            vendor={vendor} 
+                        <VendorCard
+                            key={vendor.id}
+                            vendor={vendor}
                             onOrder={(v) => {
                                 setSelectedVendor(v);
                                 setIsOrderModalOpen(true);
-                            }} 
+                            }}
                         />
                     ))}
                 </div>

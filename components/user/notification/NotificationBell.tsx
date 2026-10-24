@@ -87,18 +87,22 @@ export default function NotificationBell() {
   }, [user]);
 
   const fetchCount = async (isPolling = false) => {
+    if (!user) return;
     try {
       const data = isVendor ? await getVendorUnreadCount() : await getUnreadCount();
-      if (isPolling && data.unread_count > unreadCount && unreadCount !== 0) {
-        toast("🔔 You have new notifications!");
+      if (data && typeof data.unread_count === "number") {
+        if (isPolling && data.unread_count > unreadCount && unreadCount !== 0) {
+          toast("🔔 You have new notifications!");
+        }
+        setUnreadCount(data.unread_count);
       }
-      setUnreadCount(data.unread_count);
-    } catch (error) {
-      console.error("Failed to fetch notification count");
+    } catch {
+      // Gracefully ignore fetch errors (e.g. unauthenticated or offline)
     }
   };
 
   const loadNotifications = async () => {
+    if (!user) return;
     setLoading(true);
     try {
       const data = isVendor ? await getVendorNotifications() : await getNotifications();
@@ -107,8 +111,8 @@ export default function NotificationBell() {
       } else {
         setNotifications([]);
       }
-    } catch (error) {
-      console.error("Failed to load notifications");
+    } catch {
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

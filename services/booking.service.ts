@@ -99,6 +99,14 @@ export const verifyBookingOtp = async (phone: string, code: string): Promise<{ m
     return apiClient.post<{ message: string }>("/api/bookings/verify_otp/", { phone, code });
 };
 
+export const sendBookingEmailOtp = async (email: string, guestName?: string): Promise<{ message: string, verified?: boolean }> => {
+    return apiClient.post<{ message: string, verified?: boolean }>("/api/bookings/send_email_otp/", { email, guest_name: guestName });
+};
+
+export const verifyBookingEmailOtp = async (email: string, code: string): Promise<{ message: string, verified?: boolean }> => {
+    return apiClient.post<{ message: string, verified?: boolean }>("/api/bookings/verify_email_otp/", { email, code });
+};
+
 export const createRazorpayOrder = async (bookingId: string): Promise<any> => {
     const token = tokenManager.getAccessToken();
     const options: any = {};

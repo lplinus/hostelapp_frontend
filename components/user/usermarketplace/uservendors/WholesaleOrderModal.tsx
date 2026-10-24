@@ -2,22 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { 
-    Plus, 
-    Trash2, 
-    Loader2, 
-    Minus, 
-    ShoppingCart, 
-    Info, 
-    Search as SearchIcon, 
+import {
+    Plus,
+    Trash2,
+    Loader2,
+    Minus,
+    ShoppingCart,
+    Info,
+    Search as SearchIcon,
     Store,
     XCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { 
-    Dialog, 
-    DialogContent, 
-    DialogHeader, 
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
     DialogTitle,
     DialogDescription
 } from "@/components/ui/dialog";
@@ -95,7 +95,7 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
         setManualItems(updated);
     };
 
-    const filteredProducts = products.filter(p => 
+    const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(productSearch.toLowerCase())
     );
 
@@ -150,10 +150,10 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white">
+            <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white rounded-md sm:rounded-md">
                 <DialogHeader className="p-6 pb-0">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
                             <ShoppingCart size={20} />
                         </div>
                         <div>
@@ -177,8 +177,8 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                             </h4>
                             <div className="relative w-48">
                                 <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
-                                <Input 
-                                    placeholder="Search products..." 
+                                <Input
+                                    placeholder="Search products..."
                                     className="pl-8 h-8 text-xs bg-muted/30"
                                     value={productSearch}
                                     onChange={(e) => setProductSearch(e.target.value)}
@@ -188,66 +188,66 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
 
                         {isLoading ? (
                             <div className="space-y-2">
-                                {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-lg" />)}
+                                {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full rounded-md" />)}
                             </div>
                         ) : filteredProducts.length > 0 ? (
                             <div className="grid grid-cols-1 gap-2">
                                 {filteredProducts.map((product) => (
-                                    <div 
-                                        key={product.id} 
-                                        className="flex items-center justify-between p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+                                    <div
+                                        key={product.id}
+                                        className="relative overflow-hidden rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-card p-3 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center justify-between group shadow-xs"
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground overflow-hidden">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-12 h-12 rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-1 flex items-center justify-center text-muted-foreground overflow-hidden group-hover:scale-105 transition-transform duration-300 shrink-0">
                                                 {product.image ? (
-                                                    <Image 
-                                                        src={toLocalMediaPath(product.image) ?? '/images/icon.webp'} 
-                                                        alt={product.name} 
-                                                        width={40} 
-                                                        height={40} 
-                                                        className="object-cover h-full w-full"
+                                                    <Image
+                                                        src={toLocalMediaPath(product.image) ?? '/images/icon.webp'}
+                                                        alt={product.name}
+                                                        width={44}
+                                                        height={44}
+                                                        className="object-contain h-full w-full"
                                                     />
                                                 ) : (
                                                     <Store size={18} />
                                                 )}
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-foreground">{product.name}</p>
-                                                <p className="text-xs text-primary font-semibold">₹{product.price}</p>
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-medium text-foreground tracking-tight truncate group-hover:text-primary transition-colors">{product.name}</p>
+                                                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium tabular-nums">₹{product.price}</p>
                                             </div>
                                         </div>
-                                        
-                                        <div className="flex items-center gap-3">
+
+                                        <div className="flex items-center gap-2.5 shrink-0">
                                             {selectedItems[product.id] ? (
-                                                <div className="flex items-center gap-2.5 bg-background border border-border/60 rounded-lg p-1 shadow-sm">
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="icon" 
-                                                        className="h-7 w-7 rounded-md hover:bg-muted"
+                                                <div className="flex items-center gap-1.5 bg-muted/40 border border-border/50 rounded-md p-0.5 shadow-xs">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-7 w-7 rounded hover:bg-background"
                                                         onClick={() => handleQuantityChange(product.id, -1)}
                                                     >
-                                                        <Minus size={14} />
+                                                        <Minus size={12} strokeWidth={2} />
                                                     </Button>
-                                                    <span className="text-sm font-bold min-w-[20px] text-center">
+                                                    <span className="text-xs font-medium min-w-[20px] text-center tabular-nums">
                                                         {selectedItems[product.id]}
                                                     </span>
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="icon" 
-                                                        className="h-7 w-7 rounded-md hover:bg-muted"
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-7 w-7 rounded hover:bg-background"
                                                         onClick={() => handleQuantityChange(product.id, 1)}
                                                     >
-                                                        <Plus size={14} />
+                                                        <Plus size={12} strokeWidth={2} />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm" 
-                                                    className="h-8 text-xs gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 text-xs font-medium gap-1 rounded-md border-primary/30 text-primary hover:bg-primary/10 transition-colors"
                                                     onClick={() => handleQuantityChange(product.id, 1)}
                                                 >
-                                                    <Plus size={14} />
+                                                    <Plus size={12} />
                                                     Add
                                                 </Button>
                                             )}
@@ -256,7 +256,7 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-8 rounded-xl border border-dashed border-border/60 bg-muted/10">
+                            <div className="text-center py-8 rounded-md border border-dashed border-border/60 bg-muted/10">
                                 <p className="text-sm text-muted-foreground">No products found in catalog.</p>
                             </div>
                         )}
@@ -273,9 +273,9 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                                     {manualItems.length} Added
                                 </Badge>
                             </h4>
-                            <Button 
-                                variant="outline" 
-                                size="sm" 
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 className="h-8 text-xs gap-1.5 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                                 onClick={addManualItem}
                             >
@@ -287,34 +287,34 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                         <div className="space-y-2">
                             {manualItems.map((item, index) => (
                                 <div key={index} className="flex gap-2 items-center animate-in slide-in-from-left-2 duration-300">
-                                    <Input 
-                                        placeholder="Item Name (e.g. Fresh Milk)" 
+                                    <Input
+                                        placeholder="Item Name (e.g. Fresh Milk)"
                                         className="text-sm h-10 flex-1"
                                         value={item.name}
                                         onChange={(e) => updateManualItem(index, 'name', e.target.value)}
                                     />
-                                    <div className="flex items-center gap-2 bg-muted/30 border border-border/50 rounded-lg p-1 shrink-0">
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
+                                    <div className="flex items-center gap-2 bg-muted/30 border border-border/50 rounded-md p-1 shrink-0">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
                                             className="h-8 w-8 hover:bg-background"
                                             onClick={() => updateManualItem(index, 'quantity', Math.max(1, item.quantity - 1))}
                                         >
                                             <Minus size={14} />
                                         </Button>
                                         <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
                                             className="h-8 w-8 hover:bg-background"
                                             onClick={() => updateManualItem(index, 'quantity', item.quantity + 1)}
                                         >
                                             <Plus size={14} />
                                         </Button>
                                     </div>
-                                    <Button 
-                                        variant="ghost" 
-                                        size="icon" 
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         className="h-10 w-10 text-red-500 hover:text-red-600 hover:bg-red-50 shrink-0"
                                         onClick={() => removeManualItem(index)}
                                     >
@@ -335,8 +335,8 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                     {/* Notes */}
                     <div className="space-y-2">
                         <label className="text-sm font-semibold">Special Instructions</label>
-                        <Input 
-                            placeholder="Add notes for the vendor..." 
+                        <Input
+                            placeholder="Add notes for the vendor..."
                             className="text-sm"
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
@@ -359,9 +359,9 @@ export function WholesaleOrderModal({ isOpen, onClose, vendor, hostelId }: Whole
                             </div>
                         )}
                     </div>
-                    
-                    <Button 
-                        className="w-full h-12 text-base font-semibold gap-2" 
+
+                    <Button
+                        className="w-full h-12 text-base font-semibold gap-2"
                         disabled={totalUniqueItems < 5 || isSubmitting}
                         onClick={handleSubmit}
                     >

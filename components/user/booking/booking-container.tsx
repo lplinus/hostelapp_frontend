@@ -20,6 +20,7 @@ import { BookingSummary } from "./steps/BookingSummary";
 import { GuestOtpModal } from "./steps/GuestOtpModal";
 import { LegalDocumentModal } from "./steps/LegalDocumentModal";
 import { BookingProgressBar } from "./steps/BookingProgressBar";
+import { EmailOtpModal } from "./steps/EmailOtpModal";
 
 interface Props {
     hostel: HostelDetail;
@@ -66,6 +67,8 @@ export default function BookingContainer({
     const [isPaymentVerified, setIsPaymentVerified] = useState(false);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
     const isPhoneVerified = profile?.is_phone_verified || isPhoneVerifiedManually;
+    const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+    const [isEmailVerifiedManually, setIsEmailVerifiedManually] = useState(false);
 
     const isFirstMount = useRef(true);
     const bookingContainerRef = useRef<HTMLDivElement>(null);
@@ -112,6 +115,11 @@ export default function BookingContainer({
         stay_duration: initialPriceMode === "monthly" ? "1_month" : "none",
         confirm_booking: false,
     });
+
+    const isEmailVerified = Boolean(
+        (profile?.is_email_verified && profile?.email?.toLowerCase() === form?.guest_email?.trim().toLowerCase()) ||
+        isEmailVerifiedManually
+    );
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [cooldownRemaining, setCooldownRemaining] = useState<number | null>(null);
@@ -394,9 +402,13 @@ export default function BookingContainer({
             }
             */
 
-           // Bypassed OTP flow
+           // Bypassed phone OTP flow
            setIsPhoneVerifiedManually(true);
            if (form.booking_type === "visit") {
+               if (!isEmailVerified) {
+                   setShowEmailOtpModal(true);
+                   return;
+               }
                handleConfirmBooking();
            } else {
                setStep("payment");
@@ -579,6 +591,62 @@ export default function BookingContainer({
         }
     };
 
+    const executePayment = () => {
+        if (paymentMethod === "on_arrival") {
+            if (confirmedBookingId) {
+                confirmPropertyPaymentMutation.mutate(confirmedBookingId);
+            } else {
+                bookingMutation.mutate({
+                    hostel: hostel.id,
+                    room_type: selectedRoom!.id,
+                    guest_name: form.guest_name,
+                    guest_email: form.guest_email,
+                    mobile_number: form.mobile_number,
+                    guest_age: Number.parseInt(form.guest_age),
+                    adults: Number.parseInt(form.adults),
+                    children: Number.parseInt(form.children),
+                    check_in: form.check_in.toISOString().split('T')[0],
+                    check_out: form.check_out.toISOString().split('T')[0],
+                    guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                    total_price: finalTotalPrice,
+                    booking_type: "stay",
+                    stay_duration: form.stay_duration as any,
+                    payment_method: "on_arrival",
+                }, {
+                    onSuccess: (data: any) => {
+                        confirmPropertyPaymentMutation.mutate(data.id);
+                    }
+                });
+            }
+        } else {
+            if (confirmedBookingId) {
+                handleRazorpayPayment(confirmedBookingId);
+            } else {
+                bookingMutation.mutate({
+                    hostel: hostel.id,
+                    room_type: selectedRoom!.id,
+                    guest_name: form.guest_name,
+                    guest_email: form.guest_email,
+                    mobile_number: form.mobile_number,
+                    guest_age: Number.parseInt(form.guest_age),
+                    adults: Number.parseInt(form.adults),
+                    children: Number.parseInt(form.children),
+                    check_in: form.check_in.toISOString().split('T')[0],
+                    check_out: form.check_out.toISOString().split('T')[0],
+                    guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
+                    total_price: finalTotalPrice,
+                    booking_type: "stay",
+                    stay_duration: form.stay_duration as any,
+                    payment_method: "online",
+                }, {
+                    onSuccess: (data: any) => {
+                        handleRazorpayPayment(data.id);
+                    }
+                });
+            }
+        }
+    };
+
     const resetBooking = () => {
         setForm({
             guest_name: "",
@@ -600,6 +668,7 @@ export default function BookingContainer({
         setTermsAccepted(false);
         setErrors({});
         setIsPhoneVerifiedManually(false);
+        setIsEmailVerifiedManually(false);
         setIsPaymentVerified(false);
         setPaymentId(null);
     };
@@ -610,7 +679,7 @@ export default function BookingContainer({
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-500 hover:text-[#312E81] transition-colors mb-8 group"
+                className="flex items-center gap-2 text-gray-500 hover:text-[#003580] transition-colors mb-8 group"
             >
                 <div className="p-1.5 rounded-full border border-gray-200 group-hover:bg-gray-50 transition-all text-gray-600">
                     <ArrowLeft size={16} />
@@ -632,7 +701,7 @@ export default function BookingContainer({
                 }}
             />
 
-            <div className="grid lg:grid-cols-[1fr_380px] gap-8">
+            <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
                 {/* Left Column: Form */}
                 <div className="min-w-0">
                     <BookingDetailsStep
@@ -666,6 +735,7 @@ export default function BookingContainer({
                             hostel={hostel}
                             selectedRoom={selectedRoom}
                             form={form}
+                            setForm={setForm}
                             bookingMutation={bookingMutation}
                             handleRazorpayPayment={handleRazorpayPayment}
                             isPhoneVerified={isPhoneVerified}
@@ -677,6 +747,8 @@ export default function BookingContainer({
                             confirmPropertyPaymentMutation={confirmPropertyPaymentMutation}
                             isProcessingPayment={isProcessingPayment}
                             bookingStatus={bookingStatus}
+                            isEmailVerified={isEmailVerified}
+                            onRequireEmailOtp={() => setShowEmailOtpModal(true)}
                         />
                     )}
 
@@ -705,7 +777,10 @@ export default function BookingContainer({
                 </div>
 
                 {/* Right Column: Summary Sticky Card */}
-                <div className="lg:sticky lg:top-6 self-start space-y-4">
+                <div
+                    className="lg:sticky lg:top-24 self-start h-fit space-y-2.5"
+                    style={{ top: "max(96px, calc(50vh - 235px))" }}
+                >
                     <BookingSummary
                         hostel={hostel}
                         selectedRoom={selectedRoom}
@@ -720,9 +795,9 @@ export default function BookingContainer({
                         bookingStatus={bookingStatus}
                     />
 
-                    <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 flex gap-3">
-                        <Activity className="shrink-0 text-orange-500" size={18} />
-                        <p className="text-[11px] text-orange-700 leading-relaxed font-medium">
+                    <div className="p-2.5 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center gap-2 text-[#003580]">
+                        <Activity className="shrink-0 text-[#003580]" size={15} />
+                        <p className="text-[11px] text-[#003580] leading-snug font-semibold">
                             Free cancellation available 24 hours before check-in. Book with confidence.
                         </p>
                     </div>
@@ -763,6 +838,21 @@ export default function BookingContainer({
                 onClose={() => setIsLegalModalOpen(false)}
                 legalLoading={legalLoading}
                 legalModalContent={legalModalContent}
+            />
+
+            <EmailOtpModal
+                isOpen={showEmailOtpModal}
+                onClose={() => setShowEmailOtpModal(false)}
+                email={form.guest_email}
+                guestName={form.guest_name}
+                onVerified={() => {
+                    setIsEmailVerifiedManually(true);
+                    if (form.booking_type === "visit") {
+                        handleConfirmBooking();
+                    } else {
+                        executePayment();
+                    }
+                }}
             />
         </div>
     );

@@ -206,12 +206,12 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                     {/* Toggle */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-1 text-[10px] font-medium text-[#312E81] uppercase tracking-wider mt-1 group"
+                        className="flex items-center gap-1 text-[10px] font-medium text-[#003580] uppercase tracking-wider mt-1 group"
                     >
                         <span>
                             {new Date(checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – {new Date(checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
-                        <span className="w-0.5 h-0.5 rounded-full bg-indigo-400" />
+                        <span className="w-0.5 h-0.5 rounded-full bg-blue-400" />
                         <span>{guests} Guest{guests > 1 ? 's' : ''}</span>
                         {isExpanded ? (
                             <ChevronDown size={12} className="ml-0.5" />
@@ -224,7 +224,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                 <Button
                     asChild
                     size="lg"
-                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold px-8 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 text-sm flex-shrink-0 border-none"
+                    className="bg-[#003580] hover:bg-[#002244] text-white font-semibold px-8 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 text-sm flex-shrink-0 border-none"
                 >
                     <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
                         Reserve

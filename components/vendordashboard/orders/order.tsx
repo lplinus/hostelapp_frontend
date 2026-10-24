@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, Fragment } from 'react';
+import Image from 'next/image';
 import { vendorService } from '@/services/marketplaceservices/vendor.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Order, OrderStatus } from '@/types/marketplace.types';
+import { toLocalMediaPath } from '@/lib/utils';
 import {
     Clock,
     CheckCircle2,
@@ -141,6 +143,9 @@ export default function OrdersPage() {
         return matchesStatus && matchesSearch;
     });
 
+
+    
+
     const filterTabs = [
         { value: 'all', label: 'All', count: safeOrders.length },
         { value: 'pending', label: 'Pending', count: safeOrders.filter(o => o.status === 'pending').length },
@@ -205,6 +210,28 @@ export default function OrdersPage() {
                     </Button>
                 </div>
             )}
+            
+             {/* Summary Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    { label: 'Pending Orders', value: safeOrders.filter(o => o.status === 'pending').length, icon: Clock, iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+                    { label: 'Total Revenue', value: `₹${safeOrders.filter(o => o.status !== 'cancelled').reduce((acc, o) => acc + parseFloat(o.total_amount || '0'), 0).toLocaleString()}`, icon: TrendingUp, iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+                    { label: 'Hostels Served', value: new Set(safeOrders.map(o => o.hostel)).size, icon: Building2, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+                    { label: 'In Transit', value: safeOrders.filter(o => o.status === 'shipped').length, icon: Truck, iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+                ].map((stat, i) => (
+                    <Card key={i} className="py-5 hover:shadow-md transition-shadow duration-300">
+                        <CardContent className="px-5 py-0 flex items-center gap-4">
+                            <div className={`p-2.5 rounded-lg ${stat.iconBg}`}>
+                                <stat.icon size={18} className={stat.iconColor} />
+                            </div>
+                            <div>
+                                <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
+                                <p className="text-lg font-semibold tracking-tight text-foreground">{stat.value}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
 
             {/* Filter Tabs */}
             <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg w-fit overflow-x-auto">
@@ -247,7 +274,7 @@ export default function OrdersPage() {
                     ))}
                 </div>
             ) : filteredOrders.length > 0 ? (
-                <div className="border border-border/40 rounded-xl bg-card overflow-hidden shadow-sm">
+                <div className="border border-border/40 rounded-lg bg-card overflow-hidden shadow-sm">
                     <Table>
                         <TableHeader className="bg-muted/30">
                             <TableRow>
@@ -279,7 +306,7 @@ export default function OrdersPage() {
                                                     </div>
                                                     <div className="flex flex-col gap-0.5">
                                                         <span className="font-mono text-xs font-semibold text-foreground">
-                                                            #{order.id.toString().padStart(5, '0')}
+                                                             #{order.id.toString().padStart(5, '0')}
                                                         </span>
                                                         <span className="text-[10px] text-muted-foreground capitalize">
                                                             {order.order_type.replace('_', ' ')}
@@ -325,7 +352,7 @@ export default function OrdersPage() {
                                             </TableCell>
 
                                             <TableCell>
-                                                <span className="text-sm font-bold text-foreground tabular-nums">
+                                                <span className="text-sm font-semibold text-foreground tabular-nums">
                                                     ₹{parseFloat(order.total_amount).toLocaleString()}
                                                 </span>
                                             </TableCell>
@@ -350,34 +377,91 @@ export default function OrdersPage() {
                                                     <div className="px-6 py-5 animate-in slide-in-from-top-2 fade-in duration-200">
                                                         {/* Order Items */}
                                                         {order.items && order.items.length > 0 && (
-                                                            <div className="mb-6">
-                                                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                                                                    <Package size={12} />
-                                                                    Ordered Items
-                                                                </p>
-                                                                <div className="space-y-2 max-w-2xl">
+                                                            <div className="mb-6 max-w-2xl">
+                                                                <div className="flex items-center justify-between mb-3">
+                                                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                                                        <Package size={12} className="text-primary" />
+                                                                        Ordered Items ({order.items.length})
+                                                                    </p>
+                                                                    <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-200 bg-emerald-50/50">
+                                                                        Quick Commerce Packaging
+                                                                    </Badge>
+                                                                </div>
+                                                                <div className="space-y-2.5">
                                                                     {order.items.map((item) => (
-                                                                        <div key={item.id} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border/40 shadow-sm">
-                                                                            <div className="flex items-center gap-3">
-                                                                                <div className="w-8 h-8 rounded-md bg-indigo-50 flex items-center justify-center">
-                                                                                    <Package size={14} className="text-indigo-500" />
+                                                                        <div 
+                                                                            key={item.id} 
+                                                                            className="relative overflow-hidden rounded-md border border-border/50 bg-background/50 dark:bg-card/30 backdrop-blur-md p-3 sm:p-3.5 hover:border-primary/40 hover:bg-background/80 hover:shadow-md transition-all duration-300 shadow-xs flex items-center justify-between gap-3 group"
+                                                                        >
+                                                                            <div className="flex items-center gap-3.5 min-w-0">
+                                                                                {/* Quick Commerce Product Thumbnail Container */}
+                                                                                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-md bg-white dark:bg-slate-900 border border-border/40 p-1.5 shrink-0 flex items-center justify-center overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-300">
+                                                                                    {item.product_image ? (
+                                                                                        <Image
+                                                                                            src={toLocalMediaPath(item.product_image) || '/images/icon.webp'}
+                                                                                            alt={item.product_name_at_order}
+                                                                                            fill
+                                                                                            className="object-contain p-1"
+                                                                                        />
+                                                                                    ) : (
+                                                                                        <div className="w-full h-full rounded-md bg-gradient-to-br from-indigo-50 to-emerald-50 dark:from-indigo-950/40 dark:to-emerald-950/40 flex items-center justify-center text-primary">
+                                                                                            <Package size={20} className="stroke-[1.8]" />
+                                                                                        </div>
+                                                                                    )}
+                                                                                    {/* Quick Commerce Floating Quantity Badge */}
+                                                                                    <span className="absolute bottom-1 right-1 bg-emerald-600 text-white font-semibold text-[9px] px-1.5 py-0.5 rounded-xs shadow-xs leading-none">
+                                                                                        {item.quantity}x
+                                                                                    </span>
                                                                                 </div>
-                                                                                <div>
-                                                                                    <p className="text-sm font-medium text-foreground">{item.product_name_at_order}</p>
-                                                                                    <p className="text-xs text-muted-foreground">
-                                                                                        {item.quantity} × ₹{parseFloat(item.unit_price).toFixed(2)}
+
+                                                                                <div className="min-w-0 space-y-1">
+                                                                                    <p className="text-sm font-semibold text-foreground tracking-tight truncate group-hover:text-primary transition-colors">
+                                                                                        {item.product_name_at_order}
                                                                                     </p>
+                                                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            ₹{parseFloat(item.unit_price).toFixed(2)}
+                                                                                        </span>
+                                                                                        <span>× {item.quantity}</span>
+                                                                                        {item.quantity_unit && (
+                                                                                            <Badge variant="outline" className="text-[9px] py-0 px-1 border-border/50 uppercase rounded-sm">
+                                                                                                {item.quantity_unit}
+                                                                                            </Badge>
+                                                                                        )}
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <span className="text-sm font-bold text-foreground tabular-nums">
-                                                                                ₹{parseFloat(item.total_price).toFixed(2)}
-                                                                            </span>
+                                                                            <div className="text-right shrink-0">
+                                                                                <span className="text-sm font-semibold text-foreground tabular-nums">
+                                                                                    ₹{parseFloat(item.total_price).toFixed(2)}
+                                                                                </span>
+                                                                                <p className="text-[10px] text-muted-foreground">
+                                                                                    ₹{parseFloat(item.unit_price).toFixed(2)} / unit
+                                                                                </p>
+                                                                            </div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                                <div className="flex items-center justify-between max-w-2xl mt-3 pt-3 border-t border-border/40">
-                                                                    <span className="text-xs font-semibold text-muted-foreground uppercase">Order Total</span>
-                                                                    <span className="text-base font-bold text-foreground tabular-nums">₹{parseFloat(order.total_amount).toLocaleString()}</span>
+
+                                                                {/* Quick Commerce Bill Summary Box (Transparent Outer) */}
+                                                                <div className="mt-3.5 rounded-md border border-border/50 bg-muted/20 dark:bg-card/30 backdrop-blur-md p-4 space-y-2.5">
+                                                                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                                                        <span>Items Total ({order.items.length} items)</span>
+                                                                        <span className="font-medium text-foreground tabular-nums">
+                                                                            ₹{parseFloat(order.total_amount).toLocaleString()}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                                                        <span>Delivery & Packaging</span>
+                                                                        <span className="text-emerald-600 font-medium">FREE</span>
+                                                                    </div>
+                                                                    <Separator className="bg-border/40" />
+                                                                    <div className="flex items-center justify-between pt-0.5">
+                                                                        <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Order Total</span>
+                                                                        <span className="text-base font-semibold text-primary tabular-nums">
+                                                                            ₹{parseFloat(order.total_amount).toLocaleString()}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         )}
@@ -385,7 +469,7 @@ export default function OrdersPage() {
                                                         {/* Note */}
                                                         {order.note && (
                                                             <div className="mb-6 max-w-2xl">
-                                                                <div className="flex items-start gap-2 text-sm text-muted-foreground bg-background rounded-lg p-3 border border-border/40 shadow-sm">
+                                                                <div className="flex items-start gap-2 text-sm text-muted-foreground bg-background rounded-md p-3 border border-border/40 shadow-sm">
                                                                     <FileText size={14} className="mt-0.5 shrink-0" />
                                                                     <p className="italic leading-relaxed">&ldquo;{order.note}&rdquo;</p>
                                                                 </div>
@@ -471,32 +555,11 @@ export default function OrdersPage() {
                 </Card>
             )}
 
-            {/* Summary Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                    { label: 'Pending Orders', value: safeOrders.filter(o => o.status === 'pending').length, icon: Clock, iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
-                    { label: 'Total Revenue', value: `₹${safeOrders.filter(o => o.status !== 'cancelled').reduce((acc, o) => acc + parseFloat(o.total_amount || '0'), 0).toLocaleString()}`, icon: TrendingUp, iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
-                    { label: 'Hostels Served', value: new Set(safeOrders.map(o => o.hostel)).size, icon: Building2, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
-                    { label: 'In Transit', value: safeOrders.filter(o => o.status === 'shipped').length, icon: Truck, iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
-                ].map((stat, i) => (
-                    <Card key={i} className="py-5 hover:shadow-md transition-shadow duration-300">
-                        <CardContent className="px-5 py-0 flex items-center gap-4">
-                            <div className={`p-2.5 rounded-lg ${stat.iconBg}`}>
-                                <stat.icon size={18} className={stat.iconColor} />
-                            </div>
-                            <div>
-                                <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
-                                <p className="text-lg font-semibold tracking-tight text-foreground">{stat.value}</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
 
             {/* Contact Us Modal */}
             {isContactOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95 duration-200">
+                    <div className="bg-white dark:bg-card rounded-md shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95 duration-200 border border-border/40">
                         <div className="flex items-center justify-between mb-5">
                             <h2 className="text-xl font-bold text-foreground">Contact Support</h2>
                             <button 

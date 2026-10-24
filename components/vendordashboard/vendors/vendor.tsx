@@ -155,7 +155,7 @@ export default function VendorsPage() {
             {role === 'vendor' ? (
                 /* ─── Vendor Dashboard ─── */
                 <div className="space-y-6">
-                    {/* Main Stats Summary */}
+                    {/* Main Stats Summary (Revenue & High-Level Overview) */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <Card className="hover:shadow-md transition-shadow duration-300">
                             <CardContent className="p-4 flex items-center gap-4">
@@ -207,61 +207,102 @@ export default function VendorsPage() {
                         </Card>
                     </div>
 
-                    {/* Order Status Breakdown */}
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    {/* Order Status Breakdown - Rectangular, sleek, single line on desktop */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
-                            { label: 'Pending', status: 'pending', icon: Clock, color: 'amber' },
-                            { label: 'Processing', status: 'processing', icon: Settings2, color: 'blue' },
-                            { label: 'Shipped', status: 'shipped', icon: Truck, color: 'indigo' },
-                            { label: 'Delivered', status: 'delivered', icon: CheckCircle2, color: 'emerald' },
-                            { label: 'Cancelled', status: 'cancelled', icon: XCircle, color: 'red' },
+                            {
+                                label: 'Pending',
+                                status: 'pending',
+                                icon: Clock,
+                                border: 'border-amber-200/80 hover:border-amber-400',
+                                badgeBg: 'bg-amber-50 text-amber-700',
+                                iconBg: 'bg-amber-100 text-amber-600',
+                                dot: 'bg-amber-500',
+                                shadow: 'hover:shadow-[0_4px_12px_rgba(245,158,11,0.1)]'
+                            },
+                            {
+                                label: 'Processing',
+                                status: 'processing',
+                                icon: Settings2,
+                                border: 'border-blue-200/80 hover:border-blue-400',
+                                badgeBg: 'bg-blue-50 text-blue-700',
+                                iconBg: 'bg-blue-100 text-blue-600',
+                                dot: 'bg-blue-500',
+                                shadow: 'hover:shadow-[0_4px_12px_rgba(59,130,246,0.1)]'
+                            },
+                            {
+                                label: 'Shipped',
+                                status: 'shipped',
+                                icon: Truck,
+                                border: 'border-indigo-200/80 hover:border-indigo-400',
+                                badgeBg: 'bg-indigo-50 text-indigo-700',
+                                iconBg: 'bg-indigo-100 text-indigo-600',
+                                dot: 'bg-indigo-500',
+                                shadow: 'hover:shadow-[0_4px_12px_rgba(99,102,241,0.1)]'
+                            },
+                            {
+                                label: 'Delivered',
+                                status: 'delivered',
+                                icon: CheckCircle2,
+                                border: 'border-emerald-200/80 hover:border-emerald-400',
+                                badgeBg: 'bg-emerald-50 text-emerald-700',
+                                iconBg: 'bg-emerald-100 text-emerald-600',
+                                dot: 'bg-emerald-500',
+                                shadow: 'hover:shadow-[0_4px_12px_rgba(16,185,129,0.1)]'
+                            },
+                            {
+                                label: 'Cancelled',
+                                status: 'cancelled',
+                                icon: XCircle,
+                                border: 'border-rose-200/80 hover:border-rose-400',
+                                badgeBg: 'bg-rose-50 text-rose-700',
+                                iconBg: 'bg-rose-100 text-rose-600',
+                                dot: 'bg-rose-500',
+                                shadow: 'hover:shadow-[0_4px_12px_rgba(244,63,94,0.1)]'
+                            },
                         ].map((stat) => {
                             const filteredOrders = orders.filter(o => o.status === stat.status);
                             const count = filteredOrders.length;
                             const revenue = filteredOrders.reduce((acc, o) => acc + parseFloat(o.total_amount || '0'), 0);
 
-                            const statusColors: Record<string, string> = {
-                                amber: 'bg-amber-50 text-amber-600 border-amber-100',
-                                blue: 'bg-blue-50 text-blue-600 border-blue-100',
-                                indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100',
-                                emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                red: 'bg-red-50 text-red-600 border-red-100',
-                            };
-                            const colorClasses = statusColors[stat.color] || 'bg-muted text-muted-foreground border-muted';
-                            const colors = colorClasses.split(' ');
-                            
                             return (
-                                <Card
+                                <div
                                     key={stat.status}
                                     className={cn(
-                                        "relative overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 group",
-                                        "bg-background/50 backdrop-blur-sm"
+                                        "relative rounded-md border bg-white p-3.5 transition-all duration-200 group flex flex-col justify-between overflow-hidden",
+                                        "shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-0.5",
+                                        stat.border,
+                                        stat.shadow
                                     )}
                                 >
-                                    <CardContent className="p-4">
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex items-center justify-between">
-                                                <div className={cn(
-                                                    "p-2 rounded-lg transition-transform group-hover:scale-110 duration-300",
-                                                    colors[0],
-                                                    colors[1]
-                                                )}>
-                                                    <stat.icon size={18} strokeWidth={2.5} />
-                                                </div>
-                                                <div className="flex flex-col items-end">
-                                                    <span className="text-xl font-bold tracking-tight">{count}</span>
-                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Orders</p>
-                                                </div>
-                                            </div>
-                                            <div className="space-y-0.5">
-                                                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-                                                <p className={cn("text-sm font-bold", colors[1])}>
-                                                    ₹{revenue.toLocaleString()}
-                                                </p>
-                                            </div>
+                                    {/* Header Row */}
+                                    <div className="flex items-center justify-between gap-2 mb-1">
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", stat.dot)} />
+                                            <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider truncate">
+                                                {stat.label}
+                                            </span>
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                        <div className={cn("p-1.5 rounded-sm shrink-0", stat.iconBg)}>
+                                            <stat.icon size={13} strokeWidth={2.5} />
+                                        </div>
+                                    </div>
+
+                                    {/* Upward: Revenue */}
+                                    <div className="mt-1">
+                                        <p className="text-xl font-bold tracking-tight text-slate-900 leading-none">
+                                            ₹{revenue.toLocaleString()}
+                                        </p>
+                                    </div>
+
+                                    {/* Downwards: Order Related Info */}
+                                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-100 mt-2.5">
+                                        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Orders</span>
+                                        <span className="text-xs font-semibold text-slate-700">
+                                            {count} {count === 1 ? 'order' : 'orders'}
+                                        </span>
+                                    </div>
+                                </div>
                             );
                         })}
                     </div>

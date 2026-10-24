@@ -69,7 +69,7 @@ export function BookingDetailsStep({
                     {/* Name & Email */}
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name" className="text-xs font-bold text-gray-700 uppercase tracking-wider">Full Name</Label>
+                            <Label htmlFor="name" className="text-xs font-bold text-gray-900 uppercase tracking-wider">Full Name</Label>
                             <Input
                                 id="name"
                                 placeholder="e.g. Julianne Moore"
@@ -81,14 +81,14 @@ export function BookingDetailsStep({
                                     if (errors.guest_name) setErrors(prev => ({ ...prev, guest_name: "" }));
                                 }}
                                 className={cn(
-                                    "h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
-                                    errors.guest_name && "border-red-400 bg-red-50/30"
+                                    "h-12 rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
+                                    errors.guest_name && "border-red-500 bg-red-50/30 focus:border-red-500 focus:ring-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
                                 )}
                             />
                             {errors.guest_name && <p className="text-[11px] text-red-500 font-medium">{errors.guest_name}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-xs font-bold text-gray-700 uppercase tracking-wider">Email Address</Label>
+                            <Label htmlFor="email" className="text-xs font-bold text-gray-900 uppercase tracking-wider">Email Address</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -101,8 +101,8 @@ export function BookingDetailsStep({
                                     if (errors.guest_email) setErrors(prev => ({ ...prev, guest_email: "" }));
                                 }}
                                 className={cn(
-                                    "h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
-                                    errors.guest_email && "border-red-400 bg-red-50/30"
+                                    "h-12 rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
+                                    errors.guest_email && "border-red-500 bg-red-50/30 focus:border-red-500 focus:ring-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
                                 )}
                             />
                             {errors.guest_email && <p className="text-[11px] text-red-500 font-medium">{errors.guest_email}</p>}
@@ -112,7 +112,7 @@ export function BookingDetailsStep({
                     {/* Mobile & Age */}
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="mobile" className="text-xs font-bold text-gray-700 uppercase tracking-wider">Mobile Number</Label>
+                            <Label htmlFor="mobile" className="text-xs font-bold text-gray-900 uppercase tracking-wider">Mobile Number</Label>
                             <Input
                                 id="mobile"
                                 type="tel"
@@ -129,14 +129,14 @@ export function BookingDetailsStep({
                                     if (errors.mobile_number) setErrors(prev => ({ ...prev, mobile_number: "" }));
                                 }}
                                 className={cn(
-                                    "h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
-                                    errors.mobile_number && "border-red-400 bg-red-50/30"
+                                    "h-12 rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 transition-all placeholder:text-gray-400 text-gray-900 font-medium",
+                                    errors.mobile_number && "border-red-500 bg-red-50/30 focus:border-red-500 focus:ring-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
                                 )}
                             />
                             {errors.mobile_number && <p className="text-[11px] text-red-500 font-medium">{errors.mobile_number}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="age" className="text-xs font-bold text-gray-700 uppercase tracking-wider">Age</Label>
+                            <Label htmlFor="age" className="text-xs font-bold text-gray-900 uppercase tracking-wider">Age</Label>
                             <Input
                                 id="age"
                                 type="number"
@@ -149,8 +149,8 @@ export function BookingDetailsStep({
                                     if (errors.guest_age) setErrors(prev => ({ ...prev, guest_age: "" }));
                                 }}
                                 className={cn(
-                                    "h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all text-gray-900 font-medium",
-                                    errors.guest_age && "border-red-400 bg-red-50/30"
+                                    "h-12 rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 transition-all text-gray-900 font-medium",
+                                    errors.guest_age && "border-red-500 bg-red-50/30 focus:border-red-500 focus:ring-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
                                 )}
                             />
                             {errors.guest_age && <p className="text-[11px] text-red-500 font-medium">{errors.guest_age}</p>}
@@ -167,11 +167,11 @@ export function BookingDetailsStep({
                 </div>
 
                 {/* Check-in / Check-out / Duration Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 rounded-xl border border-gray-300 hover:border-black focus-within:border-emerald-800 focus-within:ring-[3px] focus-within:ring-emerald-800/40 transition-all bg-white overflow-hidden mb-4">
                     <div className="p-4 sm:border-r border-b sm:border-b-0 border-gray-200">
-                        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Check-in</p>
+                        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Check-in</p>
                         <div className="flex items-center gap-2">
-                            <CalendarIcon size={16} className="text-gray-400 flex-shrink-0" />
+                            <CalendarIcon size={16} className="text-gray-500 flex-shrink-0" />
                             <Input
                                 type="date"
                                 disabled={isConfirmed}
@@ -184,9 +184,9 @@ export function BookingDetailsStep({
                         </div>
                     </div>
                     <div className="p-4 sm:border-r border-b sm:border-b-0 border-gray-200">
-                        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Check-out</p>
+                        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Check-out</p>
                         <div className="flex items-center gap-2">
-                            <CalendarIcon size={16} className="text-gray-400 flex-shrink-0" />
+                            <CalendarIcon size={16} className="text-gray-500 flex-shrink-0" />
                             <Input
                                 type="date"
                                 disabled={isConfirmed}
@@ -205,9 +205,9 @@ export function BookingDetailsStep({
                         </div>
                     </div>
                     <div className="p-4">
-                        <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Duration</p>
+                        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-2">Duration</p>
                         <div className="flex items-center gap-2">
-                            <Clock size={16} className="text-gray-400 flex-shrink-0" />
+                            <Clock size={16} className="text-gray-500 flex-shrink-0" />
                             <span className="font-semibold text-sm text-gray-900">{nights} {nights === 1 ? 'Night' : 'Nights'}</span>
                         </div>
                     </div>
@@ -217,7 +217,7 @@ export function BookingDetailsStep({
                 {/* Duration Selector */}
                 {form.booking_type === "stay" && (
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold text-gray-700 uppercase tracking-wider">Preferred Duration (Optional)</Label>
+                        <Label className="text-xs font-bold text-gray-900 uppercase tracking-wider">Preferred Duration (Optional)</Label>
                         <Select
                             value={form.stay_duration}
                             disabled={isConfirmed}
@@ -236,17 +236,17 @@ export function BookingDetailsStep({
                                 if (errors.dates) setErrors(prev => ({ ...prev, dates: "" }));
                             }}
                         >
-                            <SelectTrigger className="h-12 rounded-xl border-gray-200 bg-gray-50">
+                            <SelectTrigger className="h-12 rounded-xl border border-gray-300 hover:border-black bg-white focus:ring-[3px] focus:ring-emerald-800/40 focus:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 focus-visible:border-emerald-800 transition-all">
                                 <SelectValue placeholder="Select duration" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="none">Custom Dates</SelectItem>
-                                <SelectItem value="1_month">1 Month</SelectItem>
-                                <SelectItem value="2_months">2 Months</SelectItem>
-                                <SelectItem value="3_months">3 Months</SelectItem>
-                                <SelectItem value="4_months">4 Months</SelectItem>
-                                <SelectItem value="5_months">5 Months</SelectItem>
-                                <SelectItem value="gt_5_months">More than 5 Months</SelectItem>
+                                <SelectItem value="none" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">Custom Dates</SelectItem>
+                                <SelectItem value="1_month" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">1 Month</SelectItem>
+                                <SelectItem value="2_months" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">2 Months</SelectItem>
+                                <SelectItem value="3_months" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">3 Months</SelectItem>
+                                <SelectItem value="4_months" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">4 Months</SelectItem>
+                                <SelectItem value="5_months" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">5 Months</SelectItem>
+                                <SelectItem value="gt_5_months" className="focus:bg-[#003580] focus:text-white data-[state=checked]:bg-[#003580] data-[state=checked]:text-white cursor-pointer transition-colors">More than 5 Months</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -262,17 +262,17 @@ export function BookingDetailsStep({
 
                 <div className="grid sm:grid-cols-2 gap-4">
                     {/* Adults */}
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-300 hover:border-black transition-all bg-white">
                         <div>
                             <p className="font-bold text-gray-900 text-sm">Adults</p>
-                            <p className="text-xs text-gray-400">Ages 13 or above</p>
+                            <p className="text-xs text-gray-500">Ages 13 or above</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <button
                                 type="button"
                                 disabled={isConfirmed}
                                 onClick={() => setForm({ ...form, adults: (Math.max(1, Number(form.adults) - 1)).toString() })}
-                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#312E81] hover:text-[#312E81] transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-700 hover:border-[#003580] hover:text-[#003580] hover:bg-[#003580]/5 transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 −
                             </button>
@@ -281,7 +281,7 @@ export function BookingDetailsStep({
                                 type="button"
                                 disabled={isConfirmed}
                                 onClick={() => setForm({ ...form, adults: (Math.min(20, Number(form.adults) + 1)).toString() })}
-                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#312E81] hover:text-[#312E81] transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-700 hover:border-[#003580] hover:text-[#003580] hover:bg-[#003580]/5 transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 +
                             </button>
@@ -289,17 +289,17 @@ export function BookingDetailsStep({
                     </div>
 
                     {/* Children */}
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-300 hover:border-black transition-all bg-white">
                         <div>
                             <p className="font-bold text-gray-900 text-sm">Children</p>
-                            <p className="text-xs text-gray-400">Ages 2 to 12</p>
+                            <p className="text-xs text-gray-500">Ages 2 to 12</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <button
                                 type="button"
                                 disabled={isConfirmed}
                                 onClick={() => setForm({ ...form, children: (Math.max(0, Number(form.children) - 1)).toString() })}
-                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#312E81] hover:text-[#312E81] transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-700 hover:border-[#003580] hover:text-[#003580] hover:bg-[#003580]/5 transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 −
                             </button>
@@ -308,7 +308,7 @@ export function BookingDetailsStep({
                                 type="button"
                                 disabled={isConfirmed}
                                 onClick={() => setForm({ ...form, children: (Math.min(20, Number(form.children) + 1)).toString() })}
-                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#312E81] hover:text-[#312E81] transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-gray-700 hover:border-[#003580] hover:text-[#003580] hover:bg-[#003580]/5 transition-all active:scale-90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 +
                             </button>
@@ -331,7 +331,7 @@ export function BookingDetailsStep({
                             if (errors.confirm_booking) setErrors(prev => ({ ...prev, confirm_booking: "" }));
                         }}
                         className={cn(
-                            "mt-0.5 w-[18px] h-[18px] rounded border-gray-300 text-[#312E81] focus:ring-[#312E81] accent-[#312E81] cursor-pointer",
+                            "mt-0.5 w-[18px] h-[18px] rounded border-gray-400 text-[#003580] focus:ring-[#003580] accent-[#003580] cursor-pointer",
                             errors.confirm_booking && "border-red-500 ring-2 ring-red-100"
                         )}
                     />
@@ -356,14 +356,14 @@ export function BookingDetailsStep({
                             setTermsAccepted(e.target.checked);
                             if (e.target.checked) setTermsError(false);
                         }}
-                        className="mt-0.5 w-[18px] h-[18px] rounded border-gray-300 text-[#312E81] focus:ring-[#312E81] accent-[#312E81] cursor-pointer"
+                        className="mt-0.5 w-[18px] h-[18px] rounded border-gray-400 text-[#003580] focus:ring-[#003580] accent-[#003580] cursor-pointer"
                     />
                     <div>
                         <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
                             I have read and agree to the{" "}
-                            <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('terms', e)} className="text-[#312E81] hover:underline font-semibold">Terms of Service</button>
+                            <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('terms', e)} className="text-[#003580] hover:underline font-semibold">Terms of Service</button>
                             {" "}and{" "}
-                            <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('privacy', e)} className="text-[#312E81] hover:underline font-semibold">Cancellation Policy</button>.
+                            <button type="button" disabled={isConfirmed} onClick={(e) => openLegalDocument('privacy', e)} className="text-[#003580] hover:underline font-semibold">Cancellation Policy</button>.
                         </label>
                         {termsError && (
                             <p className="text-[11px] text-red-500 font-semibold mt-1">Please accept terms and conditions to proceed</p>
@@ -381,7 +381,7 @@ export function BookingDetailsStep({
                         "w-full h-14 rounded-2xl text-base font-bold transition-all duration-300 shadow-lg hover:shadow-xl active:scale-[0.98] mt-6",
                         cooldownRemaining !== null && cooldownRemaining > 0
                             ? "bg-gray-400 cursor-not-allowed text-white"
-                            : "bg-[#312E81] hover:bg-[#252361] text-white"
+                            : "bg-[#003580] hover:bg-[#002244] text-white"
                     )}
                 >
                     {cooldownRemaining !== null && cooldownRemaining > 0 ? (

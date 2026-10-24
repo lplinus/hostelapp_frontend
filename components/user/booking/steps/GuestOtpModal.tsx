@@ -40,7 +40,7 @@ export function GuestOtpModal({
                         variant="outline"
                         onClick={handleGuestOtpSend}
                         disabled={isGuestOtpVerifying || guestOtpTimer > 0}
-                        className="w-full h-11 rounded-xl border-indigo-100 hover:bg-indigo-50 hover:text-[#312E81] transition-all font-semibold"
+                        className="w-full h-11 rounded-xl border-blue-100 hover:bg-blue-50/60 hover:text-[#003580] transition-all font-semibold"
                     >
                         {isGuestOtpSent && guestOtpTimer > 0 ? (
                             `Resend OTP in ${guestOtpTimer}s`
@@ -58,7 +58,7 @@ export function GuestOtpModal({
                             maxLength={6}
                             value={guestOtp}
                             onChange={(e) => setGuestOtp(e.target.value.replace(/\D/g, ""))}
-                            className="h-12 text-center text-xl tracking-[0.3em] font-bold rounded-xl bg-gray-50 border-gray-100"
+                            className="h-12 text-center text-xl tracking-[0.3em] font-bold rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 text-gray-900 transition-all"
                         />
                     </div>
 
@@ -73,7 +73,7 @@ export function GuestOtpModal({
                         <Button
                             onClick={handleGuestOtpVerify}
                             disabled={isGuestOtpVerifying || guestOtp.length < 6}
-                            className="flex-1 h-11 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white shadow-md transition-all font-semibold"
+                            className="flex-1 h-11 rounded-xl bg-[#003580] hover:bg-[#002244] text-white shadow-md transition-all font-semibold"
                         >
                             {isGuestOtpVerifying ? "Verifying..." : "Verify & Proceed"}
                         </Button>

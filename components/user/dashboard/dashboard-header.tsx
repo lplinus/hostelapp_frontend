@@ -8,8 +8,10 @@ import { authApiClient } from "@/lib/api/auth-client";
 import { useAuth } from "@/hooks/useAuth";
 import { toLocalMediaPath } from "@/lib/utils";
 import NotificationBell from "@/components/user/notification/NotificationBell";
+import { usePathname } from "next/navigation";
 
 export default function DashboardHeader() {
+    const pathname = usePathname();
     const { user } = useAuth();
     const [isMounted, setIsMounted] = useState(false);
 
@@ -17,15 +19,34 @@ export default function DashboardHeader() {
         setIsMounted(true);
     }, []);
 
+    const normalizedPath = pathname?.replace(/\/$/, "") || "";
+    const isUserDashboardTab = normalizedPath === "/dashboard";
+    const isVendorDashboardTab = normalizedPath === "/vendordashboard/vendors" || normalizedPath === "/vendordashboard";
+
     const { data: subscription } = useQuery<any>({
         queryKey: ["currentOwnerSubscription"],
         queryFn: () => authApiClient.get('/api/payments/subscriptions/current/'),
-        enabled: !!user && user.role !== 'vendor',
+        enabled: !!user && user.role !== 'vendor' && isUserDashboardTab,
         refetchInterval: 5000,
         retry: false
     });
 
     const displayName = isMounted ? (user?.first_name || user?.username || "Owner") : "Owner";
+
+    // Only visible in the dashboard tab
+    if (!isUserDashboardTab && !isVendorDashboardTab) {
+        return (
+            <div className="md:hidden flex items-center mb-1">
+                <button
+                    onClick={() => window.dispatchEvent(new Event("toggle-sidebar"))}
+                    className="p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                    aria-label="Toggle Navigation"
+                >
+                    <Menu size={20} />
+                </button>
+            </div>
+        );
+    }
 
     return (
         <header className="flex items-center justify-between bg-white/95 backdrop-blur-md px-4 sm:px-5 py-2.5 rounded-md border border-slate-200/90 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all">

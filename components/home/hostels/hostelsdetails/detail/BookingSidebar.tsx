@@ -214,7 +214,7 @@ export default function BookingSidebar({
                             <button
                                 type="button"
                                 onClick={() => setIsPolicyModalOpen(true)}
-                                className="text-gray-500 hover:text-[#312E81] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                                className="text-gray-500 hover:text-[#003580] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                                 title="View policies and protection"
                             >
                                 <AlertCircle size={15} />
@@ -226,7 +226,7 @@ export default function BookingSidebar({
                     <Button
                         asChild
                         size="lg"
-                        className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] border-none text-[15px]"
+                        className="w-full bg-[#003580] hover:bg-[#002244] text-white font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] border-none text-[15px]"
                     >
                         <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
                             Reserve Now
@@ -239,14 +239,14 @@ export default function BookingSidebar({
                             <Button
                                 variant="default"
                                 size="lg"
-                                className="w-full mt-3 bg-[#312E81] hover:bg-[#1E1B4B] text-white border-none font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] text-[15px] shadow-sm"
+                                className="w-full mt-3 bg-[#003580] hover:bg-[#002244] text-white border-none font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] text-[15px] shadow-sm"
                             >
                                 <MessageSquare size={18} className="text-white" />
                                 Contact Owner
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px] rounded-2xl border-none shadow-2xl p-0 overflow-hidden bg-white">
-                            <div className="bg-[#312E81] p-6 text-white relative overflow-hidden">
+                            <div className="bg-[#003580] p-6 text-white relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl pointer-events-none" />
                                 
                                 <button
@@ -277,7 +277,7 @@ export default function BookingSidebar({
                                                 required
                                                 value={contactForm.name}
                                                 onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                                                className="h-11 pl-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                                className="h-11 pl-4 rounded-xl border border-gray-900 focus:border-black focus:ring-1 focus:ring-black transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -292,7 +292,7 @@ export default function BookingSidebar({
                                                 required
                                                 value={contactForm.email}
                                                 onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                                                className="h-11 px-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                                className="h-11 px-4 rounded-xl border border-gray-900 focus:border-black focus:ring-1 focus:ring-black transition-all font-medium"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -304,7 +304,7 @@ export default function BookingSidebar({
                                                 required
                                                 value={contactForm.phone}
                                                 onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                                                className="h-11 px-4 rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all font-medium"
+                                                className="h-11 px-4 rounded-xl border border-gray-900 focus:border-black focus:ring-1 focus:ring-black transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -316,7 +316,7 @@ export default function BookingSidebar({
                                             placeholder="Tell the owner what you're looking for..."
                                             value={contactForm.message}
                                             onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                                            className="min-h-[100px] rounded-xl border-gray-200 focus:border-[#312E81] focus:ring-[#312E81]/20 transition-all resize-none font-medium p-4"
+                                            className="min-h-[100px] rounded-xl border border-gray-900 focus:border-black focus:ring-1 focus:ring-black transition-all resize-none font-medium p-4"
                                         />
                                     </div>
                                 </div>
@@ -324,7 +324,7 @@ export default function BookingSidebar({
                                 <Button
                                     type="submit"
                                     disabled={isContactSending}
-                                    className="w-full h-12 bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98]"
+                                    className="w-full h-12 bg-[#003580] hover:bg-[#002244] text-white font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
                                 >
                                     {isContactSending ? "Sending Inquiry..." : "Submit Inquiry"}
                                 </Button>
@@ -337,39 +337,40 @@ export default function BookingSidebar({
                         <DialogTrigger asChild>
                             <button
                                 type="button"
-                                className="w-full mt-3.5 flex items-center justify-center gap-1.5 text-xs text-gray-500 hover:text-[#312E81] transition-colors py-1 cursor-pointer group"
+                                className="w-full mt-3.5 flex items-center justify-center gap-1.5 text-xs text-gray-500 hover:text-[#003580] transition-colors py-1 cursor-pointer group"
                             >
-                                <AlertCircle size={14} className="text-[#312E81] group-hover:scale-110 transition-transform" />
+                                <AlertCircle size={14} className="text-[#003580] group-hover:scale-110 transition-transform" />
                                 <span className="underline underline-offset-2">Free cancellation & booking policies</span>
                             </button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[420px] rounded-2xl bg-white p-6 shadow-2xl border border-gray-100">
                             <DialogHeader>
                                 <DialogTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                    <AlertCircle size={20} className="text-[#312E81]" />
+                                    <AlertCircle size={20} className="text-[#003580]" />
                                     Booking & Policy Details
                                 </DialogTitle>
                                 <DialogDescription className="text-sm text-gray-500 pt-1">
                                     Protection and benefits included with your stay.
                                 </DialogDescription>
                             </DialogHeader>
+
                             <div className="mt-5 space-y-3">
                                 <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
-                                    <CheckCircle2 size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <CheckCircle2 size={18} className="text-[#003580] flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="text-sm font-semibold text-gray-900">Free cancellation for 48 hours</p>
                                         <p className="text-xs text-gray-500 mt-0.5">Cancel for free within 48 hours of booking.</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
-                                    <Truck size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <Truck size={18} className="text-[#003580] flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="text-sm font-semibold text-gray-900">Flexible move-in dates available</p>
                                         <p className="text-xs text-gray-500 mt-0.5">Coordinate with the hostel owner if your arrival schedule shifts.</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100">
-                                    <ShieldCheck size={18} className="text-[#312E81] flex-shrink-0 mt-0.5" />
+                                    <ShieldCheck size={18} className="text-[#003580] flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="text-sm font-semibold text-gray-900">Verified host protection included</p>
                                         <p className="text-xs text-gray-500 mt-0.5">Every hostel is physically verified for safety and quality assurance.</p>

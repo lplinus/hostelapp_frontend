@@ -90,9 +90,9 @@ export function BookingProgressBar({
                                     className={cn(
                                         "w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ease-out text-sm font-bold",
                                         status === "active" &&
-                                            "bg-[#312E81] text-white shadow-lg shadow-indigo-200/60 ring-4 ring-[#312E81]/10",
+                                            "bg-[#003580] text-white shadow-lg shadow-blue-200/60 ring-4 ring-[#003580]/10",
                                         status === "completed" &&
-                                            "bg-[#10B981] text-white shadow-md shadow-emerald-100",
+                                            "bg-[#003580] text-white shadow-md shadow-blue-200/50",
                                         status === "inactive" &&
                                             "bg-white border-2 border-gray-200 text-gray-400",
                                         isClickable && status === "completed" && "group-hover:scale-110 group-hover:shadow-lg"
@@ -109,10 +109,10 @@ export function BookingProgressBar({
                                 <span
                                     className={cn(
                                         "text-xs font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap",
-                                        status === "active" && "text-[#312E81]",
-                                        status === "completed" && "text-[#10B981]",
+                                        status === "active" && "text-[#003580]",
+                                        status === "completed" && "text-[#003580]",
                                         status === "inactive" && "text-gray-400",
-                                        isClickable && status === "completed" && "group-hover:text-[#312E81]"
+                                        isClickable && status === "completed" && "group-hover:text-[#002244]"
                                     )}
                                 >
                                     {step.label}
@@ -129,8 +129,8 @@ export function BookingProgressBar({
                                                 (() => {
                                                     const nextStep = steps[idx + 1];
                                                     const nextStatus = getStepStatus(nextStep.id);
-                                                    if (nextStatus === "completed" || nextStatus === "active") return "w-full bg-[#312E81]";
-                                                    if (status === "completed" || status === "active") return "w-1/2 bg-[#312E81]";
+                                                    if (nextStatus === "completed" || nextStatus === "active") return "w-full bg-[#003580]";
+                                                    if (status === "completed" || status === "active") return "w-1/2 bg-[#003580]";
                                                     return "w-0";
                                                 })()
                                             )}

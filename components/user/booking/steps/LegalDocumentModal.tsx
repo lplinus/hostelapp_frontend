@@ -38,7 +38,7 @@ export function LegalDocumentModal({
                     </div>
                 ) : null}
                 <div className="mt-4 pt-4 border-t flex justify-end">
-                    <Button onClick={onClose} className="h-10 rounded-xl px-6 bg-[#312E81] hover:bg-[#1E1B4B] text-white shadow-md font-semibold font-sans">Done</Button>
+                    <Button onClick={onClose} className="h-10 rounded-xl px-6 bg-[#003580] hover:bg-[#002244] text-white shadow-md font-semibold font-sans">Done</Button>
                 </div>
             </div>
         </div>
