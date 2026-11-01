@@ -1,9 +1,9 @@
 "use client";
 
-import OnlineKirana from "@/components/user/usermarketplace/kirana/online-kirana";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import OnlineKirana from "@/components/hostelowner/marketplace/kirana/online-kirana";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import VendorSidebar from "@/components/vendordashboard/vendor-sidebar";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Page() {

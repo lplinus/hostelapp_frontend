@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import VendorSidebar from '@/components/vendordashboard/vendor-sidebar';
-import DashboardHeader from '@/components/user/dashboard/dashboard-header';
+import DashboardHeader from '@/components/hostelowner/dashboard/dashboard-header';
 import { Loader2 } from 'lucide-react';
 
 function getRoleCookie(): string | null {

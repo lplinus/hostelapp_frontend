@@ -233,7 +233,7 @@ export default function HostelListingMapInner({
                 center={defaultCenter}
                 zoom={12}
                 scrollWheelZoom={true}
-                className="w-full h-full rounded-[22px] z-10"
+                className="w-full h-full rounded-2xl z-10"
                 style={{ height: "100%", width: "100%", minHeight: "480px" }}
             >
                 <TileLayer

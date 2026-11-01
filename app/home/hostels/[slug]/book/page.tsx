@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getHostelBySlug } from "@/services/hostel.service";
-import BookingContainer from "@/components/user/booking/booking-container";
+import { getHostelBySlug } from "@/services/hostelservices/hostel.service";
+import BookingContainer from "@/components/hostelowner/booking/booking-container";
 import RecaptchaWrapper from "@/components/providers/RecaptchaWrapper";
 
 interface Props {
@@ -42,9 +42,9 @@ export default async function BookingPage({ params, searchParams }: Props) {
     return (
         <div className="bg-white min-h-screen">
             <RecaptchaWrapper>
-                <BookingContainer 
-                    hostel={hostel} 
-                    initialRoomId={roomId} 
+                <BookingContainer
+                    hostel={hostel}
+                    initialRoomId={roomId}
                     initialPriceMode={priceMode}
                     initialCheckIn={checkIn}
                     initialCheckOut={checkOut}

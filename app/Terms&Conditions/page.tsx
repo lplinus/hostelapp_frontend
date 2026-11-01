@@ -41,7 +41,7 @@ export default async function TermsAndConditionsPage() {
             <h1 className="text-3xl font-bold mb-4 text-slate-900">Terms and Conditions</h1>
             <p className="text-slate-500 mb-8 text-lg">The terms and conditions are currently unavailable. Please try again later.</p>
             <Link 
-              href="/"
+              href="/home"
               className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -58,7 +58,7 @@ export default async function TermsAndConditionsPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         <SectionReveal>
           <Link 
-            href="/"
+            href="/home"
             className="group inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-12 transition-colors font-medium text-lg"
           >
             <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-all group-hover:-translate-x-1">

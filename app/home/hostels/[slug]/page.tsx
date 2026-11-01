@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getHostelBySlug, getHostels } from "@/services/hostel.service";
+import { getHostelBySlug, getHostels } from "@/services/hostelservices/hostel.service";
 import HostelDetailClient from "@/components/home/hostels/hostelsdetails/hostel-detail-client";
 import { generateHostelMetadata } from "@/lib/seo/hostelSeo";
 import { generateHostelSchema, generateBreadcrumbSchema, generateReviewSchema } from "@/lib/seo/schema";

@@ -541,7 +541,7 @@ export default function SearchClient({
             <div className="grid grid-cols-12 gap-6 lg:gap-8 w-full">
                 <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 flex flex-col items-center lg:items-end">
                     {!data || filteredAndSortedResults.results.length === 0 ? (
-                        <div className="bg-white p-20 rounded-[22px] text-center border border-slate-200/60 shadow-sm">
+                        <div className="bg-white p-20 rounded-2xl text-center border border-slate-200/60 shadow-sm">
                             <SearchX className="w-16 h-16 text-slate-200 mx-auto mb-6" />
                             <h3 className="text-2xl font-bold text-slate-900">No hostels match your filters</h3>
                             <p className="text-slate-500 mt-3 max-w-md mx-auto">
@@ -638,7 +638,7 @@ export default function SearchClient({
 
                 <div className="col-span-12 lg:col-span-4 order-1 lg:order-2">
                     <div className={cn("hidden lg:block sticky top-[100px]")}>
-                        <Card className="rounded-[22px] border border-slate-200/60 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
+                        <Card className="rounded-2xl border border-slate-200/60 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
                             <CardHeader className="bg-slate-50/50 px-6 py-5 border-b border-slate-200/60">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">

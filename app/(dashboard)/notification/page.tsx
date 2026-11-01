@@ -1,6 +1,6 @@
-import NotificationList from "@/components/user/notification/NotificationList";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import NotificationList from "@/components/hostelowner/notification/NotificationList";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 
 export const metadata = {
   title: "Notifications | Dashboard",

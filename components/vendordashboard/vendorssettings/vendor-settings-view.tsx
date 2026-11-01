@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import ChangePasswordForm from '@/components/user/settings/change-password-form';
+import ChangePasswordForm from '@/components/hostelowner/settings/change-password-form';
 
 export default function VendorSettingsView() {
     const [isLoading, setIsLoading] = useState(false);

@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import VendorSidebar from "@/components/vendordashboard/vendor-sidebar";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
 import { getUserProfile, updateUserProfile, UserProfile } from "@/services/user.service";
 import { vendorService } from "@/services/marketplaceservices/vendor.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { OtpVerificationModal } from "@/components/user/OtpVerificationModal";
+import { OtpVerificationModal } from "@/components/hostelowner/OtpVerificationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { getStorageSettings, StorageSettings } from "@/services/cms.service";
-import PersonalInfoTab from "@/components/user/profile/personal-info-tab";
-import BusinessInfoTab from "@/components/user/profile/business-info-tab";
+import PersonalInfoTab from "@/components/hostelowner/profile/personal-info-tab";
+import BusinessInfoTab from "@/components/hostelowner/profile/business-info-tab";
 
 export default function ProfilePage() {
     const { user, initializing: authInitializing } = useAuth();
@@ -206,50 +206,50 @@ export default function ProfilePage() {
                                 </div>
                             )}
                         </div>
-                    {isLoading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {activeTab === 'personal' ? (
-                                <PersonalInfoTab
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                    profile={profile}
-                                    preview={preview}
-                                    storageSettings={storageSettings}
-                                    isEmailEditable={isEmailEditable}
-                                    setIsEmailEditable={setIsEmailEditable}
-                                    isPhoneEditable={isPhoneEditable}
-                                    setIsPhoneEditable={setIsPhoneEditable}
-                                    // isPasswordEditable={isPasswordEditable}
-                                    // setIsPasswordEditable={setIsPasswordEditable}
-                                    // showPassword={showPassword}
-                                    // setShowPassword={setShowPassword}
-                                    isVerified={!!isVerified}
-                                    handleChange={handleChange}
-                                    handleFileChange={handleFileChange}
-                                    setShowOtpModal={setShowOtpModal}
-                                    setActiveTab={setActiveTab}
-                                    mutation={mutation}
-                                />
-                            ) : (
-                                <BusinessInfoTab
-                                    vendorFormData={vendorFormData}
-                                    setVendorFormData={setVendorFormData}
-                                    vendorLogoPreview={vendorLogoPreview}
-                                    setVendorLogo={setVendorLogo}
-                                    setVendorLogoPreview={setVendorLogoPreview}
-                                    selectedVendorTypes={selectedVendorTypes}
-                                    setSelectedVendorTypes={setSelectedVendorTypes}
-                                    isVendorTypeDropdownOpen={isVendorTypeDropdownOpen}
-                                    setIsVendorTypeDropdownOpen={setIsVendorTypeDropdownOpen}
-                                    setActiveTab={setActiveTab}
-                                    mutation={mutation}
-                                />
-                            )}
-                        </form>
-                    )}
-                </div>
+                        {isLoading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                {activeTab === 'personal' ? (
+                                    <PersonalInfoTab
+                                        formData={formData}
+                                        setFormData={setFormData}
+                                        profile={profile}
+                                        preview={preview}
+                                        storageSettings={storageSettings}
+                                        isEmailEditable={isEmailEditable}
+                                        setIsEmailEditable={setIsEmailEditable}
+                                        isPhoneEditable={isPhoneEditable}
+                                        setIsPhoneEditable={setIsPhoneEditable}
+                                        // isPasswordEditable={isPasswordEditable}
+                                        // setIsPasswordEditable={setIsPasswordEditable}
+                                        // showPassword={showPassword}
+                                        // setShowPassword={setShowPassword}
+                                        isVerified={!!isVerified}
+                                        handleChange={handleChange}
+                                        handleFileChange={handleFileChange}
+                                        setShowOtpModal={setShowOtpModal}
+                                        setActiveTab={setActiveTab}
+                                        mutation={mutation}
+                                    />
+                                ) : (
+                                    <BusinessInfoTab
+                                        vendorFormData={vendorFormData}
+                                        setVendorFormData={setVendorFormData}
+                                        vendorLogoPreview={vendorLogoPreview}
+                                        setVendorLogo={setVendorLogo}
+                                        setVendorLogoPreview={setVendorLogoPreview}
+                                        selectedVendorTypes={selectedVendorTypes}
+                                        setSelectedVendorTypes={setSelectedVendorTypes}
+                                        isVendorTypeDropdownOpen={isVendorTypeDropdownOpen}
+                                        setIsVendorTypeDropdownOpen={setIsVendorTypeDropdownOpen}
+                                        setActiveTab={setActiveTab}
+                                        mutation={mutation}
+                                    />
+                                )}
+                            </form>
+                        )}
+                    </div>
                 </div>
             </main>
             <OtpVerificationModal

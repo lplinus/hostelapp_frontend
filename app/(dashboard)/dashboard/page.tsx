@@ -1,9 +1,9 @@
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
-import DashboardStats from "@/components/user/dashboard/dashboard-stats";
-import RecentBookings from "@/components/user/dashboard/recent-bookings";
-import QuickActions from "@/components/user/dashboard/quick-actions";
-import BookingChartWrapper from "@/components/user/dashboard/booking-chart-wrapper";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
+import DashboardStats from "@/components/hostelowner/dashboard/dashboard-stats";
+import RecentBookings from "@/components/hostelowner/dashboard/recent-bookings";
+import QuickActions from "@/components/hostelowner/dashboard/quick-actions";
+import BookingChartWrapper from "@/components/hostelowner/dashboard/booking-chart-wrapper";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

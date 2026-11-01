@@ -1,4 +1,4 @@
-import VerificationForm from "@/components/user/VerificationForm";
+import VerificationForm from "@/components/hostelowner/VerificationForm";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 

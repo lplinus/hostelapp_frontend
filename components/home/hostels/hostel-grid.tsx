@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 
 interface HostelGridProps {
   readonly hostels: readonly HostelListItem[];
+  readonly isFiltering?: boolean;
 }
 
 function getPrimaryImage(hostel: HostelListItem): string | null {
@@ -28,7 +29,7 @@ function getPrimaryImage(hostel: HostelListItem): string | null {
   return null;
 }
 
-export default function HostelGrid({ hostels }: HostelGridProps) {
+export default function HostelGrid({ hostels, isFiltering = false }: HostelGridProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 6;
 
@@ -64,30 +65,42 @@ export default function HostelGrid({ hostels }: HostelGridProps) {
   return (
     <div className="flex flex-col gap-10 w-full mb-10">
       <div className="grid grid-cols-1 gap-6 w-full min-h-[600px]">
-        {paginatedHostels.map((hostel) => (
-          <HostelCard
-            key={hostel.id}
-            id={String(hostel.id)}
-            slug={hostel.slug}
-            name={hostel.name}
-            location={`${hostel.area?.name || ""}, ${hostel.city.name}`}
-            price={hostel.final_price ?? (Number(hostel.price) || 0)}
-            originalPrice={hostel.is_discounted ? Number(hostel.price) || 0 : undefined}
-            isDiscounted={!!hostel.is_discounted}
-            discountPercentage={hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined}
-            rating={hostel.rating_avg}
-            reviewsCount={hostel.rating_count}
-            image={getPrimaryImage(hostel)}
-            gender={hostel.hostel_type || "coed"}
-            features={hostel.amenities.slice(0, 3).map((a) => a.name)}
-            distance=""
-            isFeatured={hostel.is_featured}
-            isVerified={!!hostel.is_verified}
-            availableRooms={hostel.available_rooms}
-          />
-        ))}
-
-        {paginatedHostels.length === 0 && (
+        {isFiltering ? (
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.03)] min-h-[380px] gap-3">
+            <div className="w-9 h-9 rounded-full border-2 border-slate-200 border-t-[#312E81] animate-spin" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-slate-800">
+                Updating hostels...
+              </p>
+              <p className="text-[11px] text-slate-400">
+                Filtering accommodations to match your criteria
+              </p>
+            </div>
+          </div>
+        ) : paginatedHostels.length > 0 ? (
+          paginatedHostels.map((hostel) => (
+            <HostelCard
+              key={hostel.id}
+              id={String(hostel.id)}
+              slug={hostel.slug}
+              name={hostel.name}
+              location={`${hostel.area?.name || ""}, ${hostel.city.name}`}
+              price={hostel.final_price ?? (Number(hostel.price) || 0)}
+              originalPrice={hostel.is_discounted ? Number(hostel.price) || 0 : undefined}
+              isDiscounted={!!hostel.is_discounted}
+              discountPercentage={hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined}
+              rating={hostel.rating_avg}
+              reviewsCount={hostel.rating_count}
+              image={getPrimaryImage(hostel)}
+              gender={hostel.hostel_type || "coed"}
+              features={hostel.amenities.slice(0, 3).map((a) => a.name)}
+              distance=""
+              isFeatured={hostel.is_featured}
+              isVerified={!!hostel.is_verified}
+              availableRooms={hostel.available_rooms}
+            />
+          ))
+        ) : (
           <div className="flex flex-col items-center justify-center py-20 text-slate-500 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
             <p className="text-lg font-medium">No hostels found matching your criteria.</p>
           </div>

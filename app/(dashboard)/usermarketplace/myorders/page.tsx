@@ -1,9 +1,9 @@
 "use client";
 
-import UserOrders from "@/components/user/usermarketplace/userorders/userorder";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import UserOrders from "@/components/hostelowner/marketplace/userorders/userorder";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import VendorSidebar from "@/components/vendordashboard/vendor-sidebar";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function MyOrdersPage() {

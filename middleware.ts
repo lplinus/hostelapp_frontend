@@ -52,7 +52,7 @@ export function middleware(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/dashboard') ||
         request.nextUrl.pathname.startsWith('/profile') ||
         (request.nextUrl.pathname.startsWith('/hostel') && !request.nextUrl.pathname.startsWith('/hostels')) ||
-        request.nextUrl.pathname.startsWith('/hotel') ||
+        (request.nextUrl.pathname.startsWith('/hotel') && !request.nextUrl.pathname.startsWith('/hotels')) ||
         request.nextUrl.pathname.startsWith('/rooms') ||
         request.nextUrl.pathname.startsWith('/bookings') ||
         request.nextUrl.pathname.startsWith('/settings') ||

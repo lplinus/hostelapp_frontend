@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import {
@@ -32,6 +32,22 @@ export default function TopRatedHostelsDynamic({ hostels, cities }: TopRatedHost
     const [activeCityId, setActiveCityId] = useState<number | string>(
         dynamicCities[0]?.id || ""
     );
+    const [isLoading, setIsLoading] = useState(false);
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 280);
+
+        return () => clearTimeout(timer);
+    }, [activeCityId]);
 
     const activeCity = useMemo(() => {
         return dynamicCities.find(c => c.id === activeCityId);
@@ -99,36 +115,49 @@ export default function TopRatedHostelsDynamic({ hostels, cities }: TopRatedHost
                     </div>
 
                     {/* Content Sections */}
-                    <div className="relative">
-                        <CarouselContent className="-ml-2.5 sm:-ml-3">
-                            {topRatedInCity.map((hostel) => (
-                                <CarouselItem key={hostel.id} className="pl-2.5 sm:pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
-                                    <div className="h-full py-2">
-                                        <HostelCard
-                                            {...{
-                                                id: String(hostel.id),
-                                                slug: hostel.slug,
-                                                name: hostel.name,
-                                                location: `${hostel.area?.name || ""}, ${hostel.city.name}`,
-                                                price: hostel.final_price ?? (Number(hostel.price) || 0),
-                                                pricePerDay: hostel.final_price_per_day ?? (hostel.price_per_day ? Number(hostel.price_per_day) : undefined),
-                                                originalPrice: hostel.is_discounted ? Number(hostel.price) || 0 : undefined,
-                                                isDiscounted: !!hostel.is_discounted,
-                                                discountPercentage: hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined,
-                                                rating: hostel.rating_avg,
-                                                reviewsCount: hostel.rating_count,
-                                                image: getPrimaryImage(hostel),
-                                                gender: hostel.hostel_type || "coed",
-                                                features: hostel.amenities.slice(0, 2).map((a) => a.name),
-                                                isTopRated: true,
-                                                isVerified: !!hostel.is_verified,
-                                                layout: "grid"
-                                            }}
-                                        />
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
+                    <div className="relative min-h-[260px]">
+                        {isLoading ? (
+                            <div className="h-[260px] w-full flex flex-col items-center justify-center gap-2.5 bg-white rounded-2xl border border-slate-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                                <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-[#312E81] animate-spin" />
+                                <p className="text-xs font-semibold text-slate-700">
+                                    Updating top rated hostels...
+                                </p>
+                            </div>
+                        ) : topRatedInCity.length === 0 ? (
+                            <div className="h-[200px] w-full flex flex-col items-center justify-center text-slate-400 text-sm">
+                                No top rated hostels found in {activeCityName}.
+                            </div>
+                        ) : (
+                            <CarouselContent className="-ml-2.5 sm:-ml-3">
+                                {topRatedInCity.map((hostel) => (
+                                    <CarouselItem key={hostel.id} className="pl-2.5 sm:pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
+                                        <div className="h-full py-2">
+                                            <HostelCard
+                                                {...{
+                                                    id: String(hostel.id),
+                                                    slug: hostel.slug,
+                                                    name: hostel.name,
+                                                    location: `${hostel.area?.name || ""}, ${hostel.city.name}`,
+                                                    price: hostel.final_price ?? (Number(hostel.price) || 0),
+                                                    pricePerDay: hostel.final_price_per_day ?? (hostel.price_per_day ? Number(hostel.price_per_day) : undefined),
+                                                    originalPrice: hostel.is_discounted ? Number(hostel.price) || 0 : undefined,
+                                                    isDiscounted: !!hostel.is_discounted,
+                                                    discountPercentage: hostel.discount_percentage ? Number(hostel.discount_percentage) : undefined,
+                                                    rating: hostel.rating_avg,
+                                                    reviewsCount: hostel.rating_count,
+                                                    image: getPrimaryImage(hostel),
+                                                    gender: hostel.hostel_type || "coed",
+                                                    features: hostel.amenities.slice(0, 2).map((a) => a.name),
+                                                    isTopRated: true,
+                                                    isVerified: !!hostel.is_verified,
+                                                    layout: "grid"
+                                                }}
+                                            />
+                                        </div>
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                        )}
                     </div>
                 </Carousel>
             </div>

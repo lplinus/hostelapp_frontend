@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
-import ChangePasswordForm from "@/components/user/settings/change-password-form";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
+import ChangePasswordForm from "@/components/hostelowner/settings/change-password-form";
 
 export const metadata: Metadata = {
     title: "Settings | Hostel In",

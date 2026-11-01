@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import FiltersSidebar from "./filters-sidebar";
 import HostelGrid from "./hostel-grid";
 import { HostelListItem } from "@/types/hostel.types";
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, Search, X, Loader2 } from "lucide-react";
 
 interface HostelsLayoutProps {
   readonly hostels: readonly HostelListItem[];
@@ -82,14 +82,23 @@ export default function HostelsLayout({ hostels }: HostelsLayoutProps) {
             <div className="flex items-center justify-between mb-2">
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">Available Hostels</h1>
-                <p className="text-slate-500 text-sm mt-1">{displayedHostels.length} accommodations available</p>
+                <div className="mt-1">
+                  {isSearching ? (
+                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                      <Loader2 size={13} className="animate-spin text-[#312E81]" />
+                      Updating accommodations...
+                    </span>
+                  ) : (
+                    <p className="text-slate-500 text-sm">{displayedHostels.length} accommodations available</p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
                 <span>Sort by: Recommended</span>
                 <ChevronDown className="w-4 h-4" />
               </div>
             </div>
-            <HostelGrid hostels={displayedHostels} />
+            <HostelGrid hostels={displayedHostels} isFiltering={isSearching} />
           </div>
         </div>
 

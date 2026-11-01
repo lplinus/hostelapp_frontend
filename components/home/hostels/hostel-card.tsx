@@ -93,8 +93,8 @@ export default function HostelCard({
           )}
 
           {/* Top-right: Heart wishlist button */}
-          <div className="absolute top-2.5 right-2.5 p-1 text-white/90 hover:text-white transition-colors">
-            <Heart className="w-5 h-5 fill-black/25 stroke-white stroke-[2]" />
+          <div className="absolute top-2.5 right-2.5 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-700 hover:text-red-500 shadow-sm transition-colors z-10">
+            <Heart className="w-4 h-4" />
           </div>
         </div>
 

@@ -12,7 +12,7 @@ import WhyUs from "@/components/home/why-us";
 // import CTA from "@/components/home/cta";
 import SectionReveal from "@/components/ui/section-reveal";
 import { getHomePage } from "@/services/public.service";
-import { getHostels, getFeaturedHostels, getTopRatedHostels } from "@/services/hostel.service";
+import { getHostels, getFeaturedHostels, getTopRatedHostels } from "@/services/hostelservices/hostel.service";
 import type { HomePageResponse } from "@/types/public.types";
 
 import { getSEO } from "@/lib/seo";

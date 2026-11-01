@@ -1,0 +1,247 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+import { marketplaceService } from '@/services/marketplaceservices/marketplace.service';
+import { Vendor } from '@/types/marketplace.types';
+import {
+    Store,
+    Filter,
+    RefreshCw,
+    Search as SearchIcon,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { getMyHostels } from '@/services/hostelservices/hostel.service';
+import { marketplaceSearchService } from '@/services/marketplaceservices/marketplace-search.service';
+
+import { VendorCard } from './VendorCard';
+import { WholesaleOrderModal } from './WholesaleOrderModal';
+
+export default function UserVendors() {
+    const [vendors, setVendors] = useState<Vendor[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+    const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+    const [myHostelId, setMyHostelId] = useState<number | null>(null);
+
+    useEffect(() => {
+        fetchVendors();
+        fetchMyHostel();
+    }, []);
+
+    const fetchMyHostel = async () => {
+        try {
+            const hostels = await getMyHostels();
+            if (hostels && hostels.length > 0) {
+                setMyHostelId(hostels[0].id);
+            }
+        } catch (error) {
+            console.error('Error fetching hostel:', error);
+        }
+    };
+
+    const handleSearch = async (query: string) => {
+        setIsLoading(true);
+        try {
+            console.log('Searching vendors with query:', query);
+            const response = await marketplaceSearchService.search(query, 'vendors');
+
+            if (response?.success && response.data?.vendors) {
+                setVendors(response.data.vendors);
+            } else if (Array.isArray(response)) {
+                setVendors(response);
+            }
+        } catch (error) {
+            console.error('Error searching vendors:', error);
+            toast.error('Search failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchVendors = async () => {
+        setIsLoading(true);
+        try {
+            const response = await marketplaceService.getPublicVendors();
+            if (response && typeof response === 'object') {
+                const res = response as any;
+                if (res.success && Array.isArray(res.data)) {
+                    setVendors(res.data);
+                } else if (Array.isArray(res.results)) {
+                    setVendors(res.results);
+                } else if (Array.isArray(res)) {
+                    setVendors(res);
+                }
+            } else if (Array.isArray(response)) {
+                setVendors(response);
+            }
+        } catch (error) {
+            console.error('Error fetching vendors:', error);
+            toast.error('Failed to load marketplace vendors.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const filteredVendors = vendors;
+
+    const renderVendors = () => {
+        if (isLoading) {
+            return (
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,300px))] gap-4 sm:gap-5">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="rounded-lg border-border/50 aspect-square min-h-[290px] p-4 sm:p-5 flex flex-col justify-between">
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <Skeleton className="w-11 h-11 rounded-md" />
+                                    <div className="space-y-1.5 flex-1">
+                                        <Skeleton className="h-3 w-14 rounded" />
+                                        <Skeleton className="h-4 w-4/5 rounded" />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-5 w-16 rounded" />
+                                    <Skeleton className="h-5 w-20 rounded" />
+                                </div>
+                                <Skeleton className="h-16 w-full rounded-md" />
+                            </div>
+                            <Skeleton className="h-8.5 w-full rounded-md" />
+                        </Card>
+                    ))}
+                </div>
+            );
+        }
+
+        if (filteredVendors.length > 0) {
+            return (
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,300px))] gap-4 sm:gap-5">
+                    {filteredVendors.map((vendor) => (
+                        <VendorCard
+                            key={vendor.id}
+                            vendor={vendor}
+                            onOrder={(v) => {
+                                setSelectedVendor(v);
+                                setIsOrderModalOpen(true);
+                            }}
+                        />
+                    ))}
+                </div>
+            );
+        }
+
+        return (
+            <Card className="border-dashed border-border/60">
+                <CardContent className="py-20 flex flex-col items-center text-center">
+                    <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-5">
+                        <Store className="text-muted-foreground/50" size={28} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1.5">No vendors found</h3>
+                    <p className="text-sm text-muted-foreground max-w-xs mb-6">
+                        We couldn't find any vendors matching your search criteria.
+                    </p>
+                    <Button variant="outline" onClick={() => setSearchQuery('')}>
+                        Clear Search
+                    </Button>
+                </CardContent>
+            </Card>
+        );
+    };
+
+    return (
+        <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Header */}
+            <Card className="border-border/40 overflow-hidden">
+                <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-5">
+                        <div className="space-y-1.5">
+                            <Badge variant="outline" className="text-xs text-muted-foreground mb-1">
+                                Premium Partners
+                            </Badge>
+                            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+                                Partner Suppliers
+                            </h1>
+                            <p className="text-sm text-muted-foreground max-w-md">
+                                Connect with verified vendors for bulk supplies and hostel essentials.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Search */}
+                    <div className="flex flex-col sm:flex-row items-stretch gap-2 p-1.5 bg-muted/30 rounded-lg border border-border/40 focus-within:border-primary/30 transition-colors">
+                        <div className="flex-1 flex items-center gap-2 px-3">
+                            <SearchIcon size={16} className="text-muted-foreground shrink-0" />
+                            <input
+                                type="text"
+                                placeholder="Search by vendor name or location..."
+                                className="bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground w-full text-sm py-2.5"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1.5 text-xs"
+                                onClick={() => fetchVendors()}
+                            >
+                                <Filter size={14} />
+                                Filters
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="text-xs"
+                                onClick={() => handleSearch(searchQuery)}
+                            >
+                                Search
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-xs"
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    fetchVendors();
+                                }}
+                            >
+                                <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Vendors Grid */}
+            <div>
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
+                            <Store size={16} />
+                        </div>
+                        <h2 className="text-base font-semibold text-foreground">Marketplace Catalog</h2>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                        Sorted by <span className="text-primary font-medium">Relevance</span>
+                    </span>
+                </div>
+
+                {renderVendors()}
+            </div>
+
+            {/* Wholesale Order Modal */}
+            {selectedVendor && (
+                <WholesaleOrderModal
+                    isOpen={isOrderModalOpen}
+                    onClose={() => setIsOrderModalOpen(false)}
+                    vendor={selectedVendor}
+                    hostelId={myHostelId}
+                />
+            )}
+        </div>
+    );
+}

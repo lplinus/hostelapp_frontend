@@ -25,6 +25,43 @@ const nextConfig: NextConfig = {
         destination: "/home/hostels/:path*",
       },
       {
+        source: "/hotels/",
+        destination: "/home/hotels/",
+      },
+      {
+        source: "/hotels/:path*/",
+        destination: "/home/hotels/:path*/",
+      },
+      {
+        source: "/hotels/:path*",
+        destination: "/home/hotels/:path*",
+      },
+      {
+        source: "/vacanationalrental/",
+        destination: "/home/vacanationalrental/",
+      },
+      {
+        source: "/vacanationalrental/:path*/",
+        destination: "/home/vacanationalrental/:path*/",
+      },
+      {
+        source: "/vacanationalrental/:path*",
+        destination: "/home/vacanationalrental/:path*",
+      },
+      {
+        source: "/vacation-rentals/",
+        destination: "/home/vacanationalrental/",
+      },
+      {
+        source: "/vacation-rentals/:path*/",
+        destination: "/home/vacanationalrental/:path*/",
+      },
+      {
+        source: "/vacation-rentals/:path*",
+        destination: "/home/vacanationalrental/:path*",
+      },
+
+      {
         source: "/hostel-type/:path*/",
         destination: "/home/hostel-type/:path*/",
       },

@@ -1,12 +1,23 @@
-import HotelManagement from "@/components/home/Hotels/hotelsmaping/hotelmaping";
 import type { Metadata } from "next";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import HotelOwnerManagement from "@/components/hostelowner/hotel/hotel-management";
 
 export const metadata: Metadata = {
-    title: "Hotel Management | Hostel In Dashboard",
-    description: "Manage your hotels, luxury suites, and daily reservations.",
+    title: "Hotels & Suites Management | Owner Panel",
+    description: "Register and manage your hotels, room categories, tariffs, and inventory.",
 };
 
-export default function HotelPage() {
-    return <HotelManagement />;
+export default function HotelOwnerPage() {
+    return (
+        <div className="flex min-h-screen bg-muted/30">
+            <DashboardSidebar />
+            <main className="flex-1 p-6 space-y-6">
+                <DashboardHeader />
+                <div className="flex-1 max-w-[1400px] w-full mx-auto">
+                    <HotelOwnerManagement />
+                </div>
+            </main>
+        </div>
+    );
 }
-

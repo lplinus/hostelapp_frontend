@@ -1,6 +1,6 @@
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
-import SubscriptionClient from "@/components/user/subscription/subscription-client";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
+import SubscriptionClient from "@/components/hostelowner/subscription/subscription-client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
 import HostelsLayout from "@/components/home/hostels/hostels-layout";
-import { getHostels } from "@/services/hostel.service";
+import { getHostels } from "@/services/hostelservices/hostel.service";
 export const dynamic = "force-dynamic";
 
 export default async function HostelsPage() {

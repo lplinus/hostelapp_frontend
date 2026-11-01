@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, Building2, MapPin, Search, X } from "lucide-react";
+import { SlidersHorizontal, Building2, MapPin, Search, X, Loader2 } from "lucide-react";
 import HostelCard from "@/components/home/hostels/hostel-card";
 import { TypeHostelResponse } from "@/types/hostel.types";
 import { Button } from "@/components/ui/button";
@@ -139,6 +139,24 @@ export default function TypeClient({ data }: Props) {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([...data.results]);
     const [isSearching, setIsSearching] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        setIsFiltering(true);
+        const timer = setTimeout(() => {
+            setIsFiltering(false);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [appliedFilters]);
+
+    const showLoader = isSearching || isFiltering;
 
     useEffect(() => {
         if (!searchQuery.trim() && appliedFilters.roomType === "All Room Types" && appliedFilters.sharingType === "All Sharing Types") {
@@ -298,21 +316,28 @@ export default function TypeClient({ data }: Props) {
                         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E1B4B] tracking-tight">
                             Best {data.type}
                         </h1>
-                        <p className="text-slate-500 font-medium mt-1">
-                            Showing {filteredAndSortedResults.results.length} {filteredAndSortedResults.results.length === 1 ? 'hostel' : 'hostels'}
-                            {appliedFilters.roomType !== "All Room Types" || appliedFilters.sharingType !== "All Sharing Types" ? (
-                                <span className="text-[#10B981] ml-1 font-semibold">
-                                    ({filteredAndSortedResults.pureCount} only {
-                                        appliedFilters.roomType !== "All Room Types" && appliedFilters.sharingType !== "All Sharing Types"
-                                            ? `${appliedFilters.roomType} ${appliedFilters.sharingType}-Sharing`
-                                            : appliedFilters.roomType !== "All Room Types"
-                                                ? appliedFilters.roomType
-                                                : `${appliedFilters.sharingType}-Sharing`
-                                    }, {filteredAndSortedResults.mixedCount} Mixed)
-                                </span>
-                            ) : null}
-                            {appliedFilters.selectedCity !== "All Cities" && ` in ${appliedFilters.selectedCity}`}
-                        </p>
+                        {showLoader ? (
+                            <div className="inline-flex items-center gap-1.5 text-xs text-slate-700 font-semibold mt-1">
+                                <Loader2 size={13} className="animate-spin text-[#312E81]" />
+                                <span>Updating hostels...</span>
+                            </div>
+                        ) : (
+                            <p className="text-slate-500 font-medium mt-1">
+                                Showing {filteredAndSortedResults.results.length} {filteredAndSortedResults.results.length === 1 ? 'hostel' : 'hostels'}
+                                {appliedFilters.roomType !== "All Room Types" || appliedFilters.sharingType !== "All Sharing Types" ? (
+                                    <span className="text-[#10B981] ml-1 font-semibold">
+                                        ({filteredAndSortedResults.pureCount} only {
+                                            appliedFilters.roomType !== "All Room Types" && appliedFilters.sharingType !== "All Sharing Types"
+                                                ? `${appliedFilters.roomType} ${appliedFilters.sharingType}-Sharing`
+                                                : appliedFilters.roomType !== "All Room Types"
+                                                    ? appliedFilters.roomType
+                                                    : `${appliedFilters.sharingType}-Sharing`
+                                        }, {filteredAndSortedResults.mixedCount} Mixed)
+                                    </span>
+                                ) : null}
+                                {appliedFilters.selectedCity !== "All Cities" && ` in ${appliedFilters.selectedCity}`}
+                            </p>
+                        )}
                     </div>
 
                     <div className="flex-1 max-w-xl w-full">
@@ -514,8 +539,20 @@ export default function TypeClient({ data }: Props) {
             <div className="grid grid-cols-12 gap-6 lg:gap-8 w-full">
                 {/* Listings Section (Left - 8 Cols) */}
                 <div className="col-span-12 lg:col-span-8 order-2 lg:order-1 flex flex-col items-center lg:items-end">
-                    {filteredAndSortedResults.results.length === 0 ? (
-                        <div className="bg-white p-20 rounded-[22px] text-center border border-slate-100 shadow-sm w-full">
+                    {showLoader ? (
+                        <div className="bg-white p-20 rounded-2xl text-center border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.03)] w-full flex flex-col items-center justify-center min-h-[380px] gap-3">
+                            <div className="w-9 h-9 rounded-full border-2 border-slate-200 border-t-[#312E81] animate-spin" />
+                            <div className="space-y-1">
+                                <p className="text-xs font-semibold text-slate-800">
+                                    Updating hostels...
+                                </p>
+                                <p className="text-[11px] text-slate-400">
+                                    Filtering accommodations to match your criteria
+                                </p>
+                            </div>
+                        </div>
+                    ) : filteredAndSortedResults.results.length === 0 ? (
+                        <div className="bg-white p-20 rounded-2xl text-center border border-slate-100 shadow-sm w-full">
                             <h3 className="text-2xl font-bold text-slate-900">No hostels found</h3>
                             <p className="text-slate-500 mt-3">
                                 We couldn&apos;t find any active hostels matching your filters.
@@ -607,7 +644,7 @@ export default function TypeClient({ data }: Props) {
                 {/* Filters Sidebar (Right - 4 Cols) */}
                 <div className="col-span-12 lg:col-span-4 order-1 lg:order-2">
                     <div className="hidden lg:block sticky top-[100px]">
-                        <Card className="rounded-[22px] border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
+                        <Card className="rounded-2xl border border-slate-100 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden">
                             <CardHeader className="bg-slate-50/50 px-6 py-5 border-b border-slate-100">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">

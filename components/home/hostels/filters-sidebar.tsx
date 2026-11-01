@@ -82,7 +82,7 @@ function FiltersContent({ isMobile = false }: FiltersContentProps) {
 
    const containerClasses = cn(
       "w-full bg-white transition-all duration-300",
-      !isMobile && "sticky top-[100px] rounded-[22px] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
+      !isMobile && "sticky top-[100px] rounded-2xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
    );
 
    const FilterField = ({ label, value, onValueChange, options }: any) => (

@@ -1,7 +1,7 @@
 
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
-import HelpSupportContent from "@/components/user/help&support/help-support-content";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
+import HelpSupportContent from "@/components/hostelowner/help&support/help-support-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,9 +1,9 @@
 "use client";
 
-import UserVendors from "@/components/user/usermarketplace/uservendors/uservendor";
-import DashboardSidebar from "@/components/user/dashboard/dashboard-sidebar";
+import UserVendors from "@/components/hostelowner/marketplace/uservendors/uservendor";
+import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import VendorSidebar from "@/components/vendordashboard/vendor-sidebar";
-import DashboardHeader from "@/components/user/dashboard/dashboard-header";
+import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Page() {

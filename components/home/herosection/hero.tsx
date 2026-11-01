@@ -425,13 +425,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
               setHoverDate(normalizedDay);
             }
           }}
-          className={`h-7 w-full flex items-center justify-center relative transition-colors ${
-            isInRange || isHoverRange ? "bg-indigo-50/90 text-indigo-950 font-medium" : ""
-          } ${
-            isStart && (checkOutDate || hoverDate) ? "bg-gradient-to-r from-transparent to-indigo-50/90 rounded-l-full" : ""
-          } ${
-            isEnd ? "bg-gradient-to-l from-transparent to-indigo-50/90 rounded-r-full" : ""
-          }`}
+          className={`h-7 w-full flex items-center justify-center relative transition-colors ${isInRange || isHoverRange ? "bg-indigo-50/90 text-indigo-950 font-medium" : ""
+            } ${isStart && (checkOutDate || hoverDate) ? "bg-gradient-to-r from-transparent to-indigo-50/90 rounded-l-full" : ""
+            } ${isEnd ? "bg-gradient-to-l from-transparent to-indigo-50/90 rounded-r-full" : ""
+            }`}
         >
           <button
             type="button"
@@ -440,15 +437,14 @@ export default function Hero({ title, subtitle }: HeroProps) {
               e.stopPropagation();
               handleDayClick(dayDate);
             }}
-            className={`h-6 w-6 rounded-full flex items-center justify-center text-xs transition-all ${
-              isStart || isEnd
-                ? "bg-[#312E81] text-white shadow-sm scale-105 z-10 font-bold"
-                : isPast
-                  ? "text-gray-300 cursor-not-allowed pointer-events-none"
-                  : isToday
-                    ? "border border-[#312E81] text-[#312E81] font-bold hover:bg-indigo-50"
-                    : "text-gray-800 hover:bg-gray-100 font-medium"
-            }`}
+            className={`h-6 w-6 rounded-full flex items-center justify-center text-xs transition-all ${isStart || isEnd
+              ? "bg-[#312E81] text-white shadow-sm scale-105 z-10 font-bold"
+              : isPast
+                ? "text-gray-300 cursor-not-allowed pointer-events-none"
+                : isToday
+                  ? "border border-[#312E81] text-[#312E81] font-bold hover:bg-indigo-50"
+                  : "text-gray-800 hover:bg-gray-100 font-medium"
+              }`}
           >
             {dayNum}
           </button>
@@ -474,20 +470,22 @@ export default function Hero({ title, subtitle }: HeroProps) {
 
   return (
     // [SEARCH BAR POSITIONING] - Tightened parent section padding to sit higher
-    <section className="relative min-h-[460px] md:min-h-[500px] pt-8 pb-10 md:pt-10 md:pb-12 flex items-center justify-center bg-[#0F172A] z-[5]">
+    <section className="relative min-h-[460px] md:min-h-[520px] pt-8 pb-10 md:pt-10 md:pb-12 flex items-center justify-center bg-[#0F172A] z-20 overflow-visible">
 
-      {/* 1. BACKGROUND - Clean modern dark gradient without building image */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-b from-[#0F172A] via-[#111827] to-[#0F172A]">
-        {/* Subtle Ambient Radial Glows */}
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-[#6366F1]/15 rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute -bottom-10 right-10 w-[420px] h-[260px] bg-[#8B5CF6]/10 rounded-full blur-[110px] pointer-events-none" />
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(#94A3B8 1px, transparent 1px)`,
-            backgroundSize: '24px 24px'
-          }}
+      {/* 1. BACKGROUND - High Clarity Nature & House Visual with Crisp Scrim */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <Image
+          src="/images/hero-home-nature.webp"
+          alt="Nature House & Scenic Stay Hero Background"
+          fill
+          priority
+          quality={85}
+          sizes="100vw"
+          className="object-cover object-center scale-[1.01] transform transition-transform duration-1000 filter contrast-[1.04] saturate-[1.05]"
         />
+        {/* High-Clarity Scrim - Preserves vivid natural lighting & sharp details while anchoring text & search bar */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B1120]/65 via-[#0B1120]/30 to-[#0B1120]/80" />
+        <div className="absolute inset-0 bg-radial-[at_center] from-transparent via-transparent to-[#0B1120]/35 pointer-events-none" />
       </div>
 
       {/* 2. CONTENT CONTAINER (Elevated vertical spacing) */}
@@ -496,23 +494,23 @@ export default function Hero({ title, subtitle }: HeroProps) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-4xl mx-auto flex flex-col items-center text-center"
+          className="w-full max-w-4xl mx-auto flex flex-col items-center text-center overflow-visible"
         >
           {/* TOP TAG */}
-          <div className="inline-flex items-center px-3.5 py-1 bg-white/10 backdrop-blur-md rounded-md mb-2 md:mb-2.5 border border-white/10">
-            <span className="text-[10px] md:text-[11px] font-medium tracking-wider uppercase text-white/90">
+          <div className="inline-flex items-center px-3.5 py-1 bg-black/40 backdrop-blur-md rounded-md mb-2 md:mb-2.5 border border-white/20">
+            <span className="text-[10px] md:text-[11px] font-medium tracking-wider uppercase text-white drop-shadow-sm">
               Elevated Group Stay
             </span>
           </div>
 
           {/* HEADLINE */}
-          <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-medium text-white leading-[1.15] mb-2 md:mb-2.5 tracking-tight text-center">
+          <h1 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-medium text-white leading-[1.15] mb-2 md:mb-2.5 tracking-tight text-center drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
             {title ? (
               title
             ) : (
               <>
                 Find Your Perfect <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-emerald-100 to-indigo-200">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-emerald-100 to-indigo-200">
                   Hostel Stay
                 </span>
               </>
@@ -520,13 +518,13 @@ export default function Hero({ title, subtitle }: HeroProps) {
           </h1>
 
           {/* SUBTEXT (Tightened margin-bottom to elevate the search bar) */}
-          <p className="font-sans text-sm sm:text-base md:text-lg text-gray-300 max-w-xl font-normal leading-relaxed mb-3.5 md:mb-4 text-center mx-auto">
+          <p className="font-sans text-sm sm:text-base md:text-lg text-slate-100 max-w-xl font-normal leading-relaxed mb-3.5 md:mb-4 text-center mx-auto drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">
             {subtitle || "Affordable. Comfortable. Verified. Book premium hostels across India in seconds."}
           </p>
 
           {/* [SEARCH BAR POSITIONING] - Positioned slightly higher via negative margin & tighter flow */}
-          <div className="w-full max-w-4xl mx-auto relative z-30 -mt-1 md:-mt-1.5">
-            <div className={`relative z-30 bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-black rounded-lg transition-all duration-200 ${isExpanded ? "p-3 md:p-2.5" : "p-1.5 md:p-2"}`}>
+          <div className="w-full max-w-4xl mx-auto relative z-30 -mt-1 md:-mt-1.5 overflow-visible">
+            <div className={`relative z-30 bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-black rounded-lg transition-all duration-200 overflow-visible ${isExpanded ? "p-3 md:p-2.5" : "p-1.5 md:p-2"}`}>
 
               {/* COMPACT TRIGGER (Mobile) */}
               {!isExpanded && (
@@ -535,14 +533,12 @@ export default function Hero({ title, subtitle }: HeroProps) {
                     setIsExpanded(true);
                     if (locationError) setLocationError(null);
                   }}
-                  className={`flex md:hidden items-center justify-between w-full px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${
-                    locationError ? "border border-rose-500 bg-rose-50/20" : ""
-                  }`}
+                  className={`flex md:hidden items-center justify-between w-full px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${locationError ? "border border-rose-500 bg-rose-50/20" : ""
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                      locationError ? "bg-rose-100 text-rose-600" : "bg-indigo-50 text-[#312E81]"
-                    }`}>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${locationError ? "bg-rose-100 text-rose-600" : "bg-indigo-50 text-[#312E81]"
+                      }`}>
                       {locationError ? <AlertCircle size={16} strokeWidth={2.5} /> : <Search size={16} strokeWidth={2.5} />}
                     </div>
                     <div className="flex flex-col text-left">
@@ -566,13 +562,12 @@ export default function Hero({ title, subtitle }: HeroProps) {
                   onClick={() => {
                     setActiveField("location");
                   }}
-                  className={`w-full md:flex-[1.4] relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all text-left ${
-                    locationError
-                      ? "border-rose-500 ring-2 ring-rose-500/20 bg-rose-50/10"
-                      : activeField === "location" || openDropdown === "location"
-                        ? "border-black ring-1 ring-black bg-white"
-                        : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
+                  className={`w-full md:flex-[1.4] relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all text-left ${locationError
+                    ? "border-rose-500 ring-2 ring-rose-500/20 bg-rose-50/10"
+                    : activeField === "location" || openDropdown === "location"
+                      ? "border-black ring-1 ring-black bg-white"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
                 >
                   <MapPin
                     className={
@@ -611,9 +606,8 @@ export default function Hero({ title, subtitle }: HeroProps) {
                         setOpenDropdown("location");
                         setActiveField("location");
                       }}
-                      className={`w-full py-0.5 text-black text-[14px] md:text-[15px] font-medium focus:outline-none bg-transparent ${
-                        locationError ? "placeholder:text-rose-400 font-semibold" : "placeholder:text-gray-400"
-                      }`}
+                      className={`w-full py-0.5 text-black text-[14px] md:text-[15px] font-medium focus:outline-none bg-transparent ${locationError ? "placeholder:text-rose-400 font-semibold" : "placeholder:text-gray-400"
+                        }`}
                     />
                     {/* Inline error feedback on mobile */}
                     {locationError && (
@@ -646,11 +640,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                               setOpenDropdown(null);
                               setActiveField("location");
                             }}
-                            className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                              location.toLowerCase() === item.toLowerCase()
-                                ? "bg-indigo-50 text-indigo-950 font-semibold"
-                                : "text-gray-800 hover:bg-gray-50"
-                            }`}
+                            className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${location.toLowerCase() === item.toLowerCase()
+                              ? "bg-indigo-50 text-indigo-950 font-semibold"
+                              : "text-gray-800 hover:bg-gray-50"
+                              }`}
                           >
                             <MapPin size={14} className="text-gray-400 shrink-0" />
                             <span>{item}</span>
@@ -671,11 +664,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                       setOpenDropdown("dates");
                       setDateSelectingMode("checkIn");
                     }}
-                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${
-                      activeField === "checkIn" || (openDropdown === "dates" && dateSelectingMode === "checkIn")
-                        ? "border-black ring-1 ring-black bg-white"
-                        : "border-gray-200 hover:border-gray-300 bg-white"
-                    }`}
+                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${activeField === "checkIn" || (openDropdown === "dates" && dateSelectingMode === "checkIn")
+                      ? "border-black ring-1 ring-black bg-white"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
                   >
                     <Calendar
                       className={
@@ -690,9 +682,8 @@ export default function Hero({ title, subtitle }: HeroProps) {
                         Check in
                       </span>
                       <span
-                        className={`text-[13px] md:text-[14px] font-medium truncate ${
-                          checkInDate ? "text-black font-semibold" : "text-gray-400"
-                        }`}
+                        className={`text-[13px] md:text-[14px] font-medium truncate ${checkInDate ? "text-black font-semibold" : "text-gray-400"
+                          }`}
                       >
                         {checkInDate ? format(checkInDate, "dd MMM") : "Add date"}
                       </span>
@@ -706,11 +697,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                       setOpenDropdown("dates");
                       setDateSelectingMode("checkOut");
                     }}
-                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${
-                      activeField === "checkOut" || (openDropdown === "dates" && dateSelectingMode === "checkOut")
-                        ? "border-black ring-1 ring-black bg-white"
-                        : "border-gray-200 hover:border-gray-300 bg-white"
-                    }`}
+                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${activeField === "checkOut" || (openDropdown === "dates" && dateSelectingMode === "checkOut")
+                      ? "border-black ring-1 ring-black bg-white"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
                   >
                     <Calendar
                       className={
@@ -725,9 +715,8 @@ export default function Hero({ title, subtitle }: HeroProps) {
                         Check out
                       </span>
                       <span
-                        className={`text-[13px] md:text-[14px] font-medium truncate ${
-                          checkOutDate ? "text-black font-semibold" : "text-gray-400"
-                        }`}
+                        className={`text-[13px] md:text-[14px] font-medium truncate ${checkOutDate ? "text-black font-semibold" : "text-gray-400"
+                          }`}
                       >
                         {checkOutDate ? format(checkOutDate, "dd MMM") : "Add date"}
                       </span>
@@ -869,11 +858,10 @@ export default function Hero({ title, subtitle }: HeroProps) {
                     setActiveField("guests");
                     setOpenDropdown(openDropdown === "guests" ? null : "guests");
                   }}
-                  className={`w-full md:flex-1 relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all cursor-pointer text-left ${
-                    activeField === "guests" || openDropdown === "guests"
-                      ? "border-black ring-1 ring-black bg-white"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
+                  className={`w-full md:flex-1 relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all cursor-pointer text-left ${activeField === "guests" || openDropdown === "guests"
+                    ? "border-black ring-1 ring-black bg-white"
+                    : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
                 >
                   <Users
                     className={
@@ -892,9 +880,8 @@ export default function Hero({ title, subtitle }: HeroProps) {
                     </span>
                   </div>
                   <ChevronDown
-                    className={`ml-auto text-gray-400 transition-transform duration-300 ${
-                      openDropdown === "guests" ? "rotate-180" : ""
-                    }`}
+                    className={`ml-auto text-gray-400 transition-transform duration-300 ${openDropdown === "guests" ? "rotate-180" : ""
+                      }`}
                     size={14}
                   />
 
@@ -1067,24 +1054,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
         </motion.div>
       </div>
 
-      {/* 5. NAVBAR INTEGRATION */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        header {
-          background-color: white !important;
-          border-bottom: 1px solid #F1F5F9 !important;
-          box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-        }
-        header nav a {
-          color: #1E293B !important;
-          font-weight: 600 !important;
-        }
-        /* Active Link Underline */
-        header nav a.active, header nav a:hover {
-          border-bottom: 2px solid #312E81 !important;
-          border-radius: 0 !important;
-        }
-      ` }} />
+
 
     </section>
   );

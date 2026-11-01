@@ -93,7 +93,7 @@ export default function Footer() {
       {/* Main Footer Content Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
-          
+
           {/* Column 1: Brand & Mission */}
           <div className="lg:col-span-2 flex flex-col items-start pr-0 lg:pr-6">
             <Link href={homeHref} className="flex items-center gap-3 mb-4 group">
@@ -211,14 +211,15 @@ export default function Footer() {
               Explore
             </h3>
             <ul className="space-y-2.5 text-sm">
-              <li><Link href="/" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Home</Link></li>
+              <li><Link href="/home" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Home</Link></li>
+              <li><Link href="/blog" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Blog</Link></li>
+              <li><Link href="/contact-us" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Contact</Link></li>
               <li><Link href="/about-us" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">About Us</Link></li>
-              <li><Link href="/contact-us" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Contact Support</Link></li>
-              <li><Link href="/blog" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Student Blog</Link></li>
+              {/* <li><Link href="/hotels" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Hotels</Link></li> */}
+              <li><Link href="/faqs" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Help &amp; FAQs</Link></li>
+              <li><Link href="/refunds" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Refund Policy</Link></li>
               <li><Link href="/PrivacyPolicy" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Privacy Policy</Link></li>
               <li><Link href="/Terms&Conditions" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Terms of Service</Link></li>
-              <li><Link href="/faqs" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Help & FAQs</Link></li>
-              <li><Link href="/refunds" className="text-slate-700 hover:text-[#1E1B4B] hover:font-semibold hover:translate-x-1 transition-all inline-block font-medium">Refund Policy</Link></li>
             </ul>
           </div>
 

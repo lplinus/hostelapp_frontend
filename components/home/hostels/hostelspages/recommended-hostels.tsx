@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import {
@@ -32,6 +32,22 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
     const [activeCityId, setActiveCityId] = useState<number | string>(
         dynamicCities[0]?.id || ""
     );
+    const [isLoading, setIsLoading] = useState(false);
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 280);
+
+        return () => clearTimeout(timer);
+    }, [activeCityId]);
 
     const activeCity = useMemo(() => {
         return dynamicCities.find(c => c.id === activeCityId);
@@ -99,14 +115,17 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
                     </div>
 
                     {/* Content Sections */}
-                    <div className="space-y-6">
+                    <div className="space-y-6 min-h-[260px]">
                         {/* Featured Section */}
-                        {featuredInCity.length > 0 && (
+                        {isLoading ? (
+                            <div className="h-[260px] w-full flex flex-col items-center justify-center gap-2.5 bg-white rounded-2xl border border-slate-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                                <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-[#312E81] animate-spin" />
+                                <p className="text-xs font-semibold text-slate-700">
+                                    Updating featured hostels...
+                                </p>
+                            </div>
+                        ) : featuredInCity.length > 0 ? (
                             <div className="relative">
-                                {/* <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-bold text-[#1E1B4B]">Featured in {activeCityName}</h3>
-                            </div> */}
-
                                 <CarouselContent className="-ml-2.5 sm:-ml-3">
                                     {featuredInCity.map((hostel) => (
                                         <CarouselItem key={hostel.id} className="pl-2.5 sm:pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
@@ -136,10 +155,12 @@ export default function RecommendedHostels({ hostels, cities }: RecommendedHoste
                                         </CarouselItem>
                                     ))}
                                 </CarouselContent>
-
+                            </div>
+                        ) : (
+                            <div className="h-[200px] w-full flex flex-col items-center justify-center text-slate-400 text-sm">
+                                No featured hostels found in {activeCityName}.
                             </div>
                         )}
-
                     </div>
                 </Carousel>
             </div>

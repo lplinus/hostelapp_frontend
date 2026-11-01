@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getHostelBySlug } from "@/services/hostel.service";
+import { getHostelBySlug } from "@/services/hostelservices/hostel.service";
 import { useHostelImages } from "@/hooks/useHostelImages";
 
 import type { HostelDetail } from "@/types/hostel.types";

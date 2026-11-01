@@ -2,16 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, Moon, Menu } from "lucide-react";
+import { Heart, Menu, User, ChevronDown, HelpCircle, Building2, Zap, Wrench, Home, Hotel, Palmtree, X } from "lucide-react";
 import clsx from "clsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 
@@ -25,10 +33,21 @@ const inter = Inter({
 
 const navLinks = [
   { name: "Home", href: "/home" },
-  { name: "Blog", href: "/blog" },
-  { name: "Faqs", href: "/faqs" },
-  { name: "About", href: "/about-us" },
-  { name: "Contact", href: "/contact-us" },
+  { name: "Hotels", href: "/hotels" },
+  { name: "Vacation Rentals", href: "/vacanationalrental" },
+];
+
+const mobileNavLinks = [
+  { name: "Home", href: "/home", icon: Home },
+  { name: "Hotels", href: "/hotels", icon: Hotel },
+  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree },
+  { name: "Trip Boards", href: "/saved", icon: Heart },
+];
+
+const mobileFloatingNav = [
+  { name: "Hostels", href: "/home", icon: Building2 },
+  { name: "Hotels", href: "/hotels", icon: Hotel },
+  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree },
 ];
 
 export default function Header() {
@@ -37,12 +56,53 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const { isAuthenticated, isLoggingOut } = useAuth();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const loginTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const helpTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const cancelLoginClose = () => {
+    if (loginTimeoutRef.current) {
+      clearTimeout(loginTimeoutRef.current);
+      loginTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleLoginClose = () => {
+    cancelLoginClose();
+    loginTimeoutRef.current = setTimeout(() => {
+      setIsLoginOpen(false);
+    }, 300);
+  };
+
+  const cancelHelpClose = () => {
+    if (helpTimeoutRef.current) {
+      clearTimeout(helpTimeoutRef.current);
+      helpTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleHelpClose = () => {
+    cancelHelpClose();
+    helpTimeoutRef.current = setTimeout(() => {
+      setIsHelpOpen(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+      if (helpTimeoutRef.current) clearTimeout(helpTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      const scrolled = window.scrollY > 25;
+      setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -62,6 +122,10 @@ export default function Header() {
     pathname.startsWith("/rooms/") ||
     pathname === "/bookings" ||
     pathname.startsWith("/bookings/") ||
+    pathname === "/hotelbooking" ||
+    pathname.startsWith("/hotelbooking/") ||
+    pathname === "/vacanrentalbooking" ||
+    pathname.startsWith("/vacanrentalbooking/") ||
     pathname.startsWith("/vendordashboard") ||
     pathname.startsWith("/usermarketplace") ||
     pathname === "/login" ||
@@ -70,22 +134,35 @@ export default function Header() {
   if (isDashboardRoute) return null;
   if (isMounted && (isAuthenticated || isLoggingOut)) return null;
 
-  const isHomePage = pathname === "/home";
+  const hasHero =
+    pathname === "/home" ||
+    pathname.startsWith("/hotels") ||
+    pathname.startsWith("/vacanationalrental");
+
+  const isTransparent = hasHero && !isScrolled;
 
   return (
-    <header
+    <>
+      <header
       className={clsx(
-        `w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 ${inter.variable} font-sans shadow-[0_1px_2px_rgba(0,0,0,0.03)]`,
-        // Header stays visible when it contains the search bar
-        // isHomePage && isScrolled && "-translate-y-full opacity-0 pointer-events-none"
+        `w-full sticky top-0 z-50 transition-all duration-500 ease-in-out ${inter.variable} font-sans`,
+        hasHero && "-mb-16",
+        isTransparent
+          ? "bg-white/0 border-b border-transparent shadow-none"
+          : "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
       )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between gap-4 relative">
 
-        {/* LOGO */}
-        <div className="flex lg:flex-1 justify-start items-center shrink-0 min-w-0">
-          <Link href="/" className="flex items-center gap-2 md:gap-3 group">
-            <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition border border-slate-100">
+        {/* LEFT: BRAND LOGO */}
+        <div className="flex items-center shrink-0 z-10">
+          <Link href="/" className="flex items-center gap-2 md:gap-2.5 group shrink-0">
+            <div
+              className={clsx(
+                "relative w-8 h-8 rounded-lg overflow-hidden border group-hover:scale-105 transition-all duration-500 ease-in-out shrink-0 bg-white",
+                isTransparent ? "border-white/40 shadow-xs" : "border-slate-200/80"
+              )}
+            >
               <Image
                 src="/images/icon.webp"
                 alt="Logo"
@@ -93,27 +170,36 @@ export default function Header() {
                 className="object-contain p-0.5"
               />
             </div>
-            <span className="hidden md:block text-[18px] font-bold tracking-tight text-[#1E1B4B] group-hover:text-[#312E81] transition-colors whitespace-nowrap">
+            <span
+              className={clsx(
+                "hidden md:block text-[16px] font-semibold tracking-tight transition-colors duration-500 ease-in-out whitespace-nowrap",
+                isTransparent
+                  ? "text-white hover:text-white drop-shadow-sm"
+                  : "text-slate-900 group-hover:text-black"
+              )}
+            >
               Hostel In
             </span>
           </Link>
         </div>
 
-
-
-        {/* NAVIGATION */}
-        <nav className="hidden lg:flex items-center justify-center gap-1">
+        {/* MIDDLE: NAVIGATION (Shifted slightly left of center for optical balance and zero overlap) */}
+        <nav className="hidden lg:flex items-center gap-3 xl:gap-4 whitespace-nowrap absolute left-[calc(50%-130px)] xl:left-[calc(50%-115px)] -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.href || (link.href !== "/home" && pathname.startsWith(link.href));
             return (
               <Link
                 key={link.name}
                 href={link.href}
                 className={clsx(
-                  "px-4 py-2 rounded-lg text-[14px] font-medium tracking-tight transition-all duration-200",
-                  isActive
-                    ? "text-[#1E1B4B] bg-indigo-50 font-semibold"
-                    : "text-slate-600 hover:text-[#1E1B4B] hover:bg-indigo-50/80"
+                  "px-3 xl:px-3.5 py-1 xl:py-1.5 text-[13px] xl:text-[14px] tracking-normal rounded-full transition-all duration-200 ease-out whitespace-nowrap active:scale-95 select-none",
+                  isTransparent
+                    ? isActive
+                      ? "text-white font-bold bg-white/20 border border-white/35 backdrop-blur-md shadow-[0_2px_12px_rgba(255,255,255,0.2),inset_0_1px_1px_rgba(255,255,255,0.65)] hover:bg-white/35 hover:border-white/50 hover:shadow-[0_4px_20px_rgba(255,255,255,0.35),inset_0_1px_1px_rgba(255,255,255,0.9)]"
+                      : "text-white/90 font-medium border border-transparent hover:border-white/40 hover:bg-white/25 hover:text-white hover:backdrop-blur-md hover:shadow-[0_3px_15px_rgba(255,255,255,0.25),inset_0_1px_1px_rgba(255,255,255,0.7)] drop-shadow-sm"
+                    : isActive
+                      ? "text-slate-950 font-bold bg-slate-100 border border-slate-200/80 shadow-xs hover:bg-slate-200/80"
+                      : "text-slate-700 font-medium border border-transparent hover:border-slate-200/80 hover:bg-slate-100 hover:text-black hover:shadow-xs"
                 )}
               >
                 {link.name}
@@ -122,84 +208,312 @@ export default function Header() {
           })}
         </nav>
 
-        {/* RIGHT */}
-        <div className="flex flex-none lg:flex-1 items-center justify-end gap-2 md:gap-3 shrink-0 min-w-0">
+        {/* RIGHT - Vrbo Refined Aesthetic (Strictly one line, whitespace-nowrap, never wrapping/cut) */}
+        <div className="flex items-center justify-end gap-1.5 sm:gap-2.5 shrink-0 whitespace-nowrap z-10 ml-auto">
 
-          {/* ICONS */}
-          <div className="hidden sm:flex items-center gap-4 text-slate-500 mr-2">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-[#1E1B4B] transition-colors" strokeWidth={1.5} />
-            <Moon className="w-5 h-5 cursor-pointer hover:text-[#1E1B4B] transition-colors" strokeWidth={1.5} />
-          </div>
-
-          {/* BUTTONS */}
-          <div className="hidden md:flex items-center gap-3">
-            {isMounted && !isAuthenticated && !isLoggingOut && (
-              <>
-                <Link
-                  href="/login"
-                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] hover:bg-slate-100 transition-all duration-200"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  href="/register"
-                  className="px-5 py-2 rounded-xl text-sm font-semibold tracking-tight text-[#1E1B4B] bg-white border border-slate-300 hover:border-[#1E1B4B] hover:bg-[#1E1B4B] hover:!text-white transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 inline-flex items-center justify-center"
-                >
-                  <span className="transition-colors group-hover:text-white">Register</span>
-                </Link>
-              </>
+          {/* TRIP BOARDS */}
+          <Link
+            href="/saved"
+            className={clsx(
+              "hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-[13px] font-medium transition-colors duration-500 ease-in-out whitespace-nowrap shrink-0",
+              isTransparent
+                ? "text-white/90 hover:text-white drop-shadow-sm"
+                : "text-slate-800 hover:text-black"
             )}
+          >
+            <Heart
+              className={clsx(
+                "w-[17px] h-[17px] shrink-0 transition-colors duration-500 ease-in-out",
+                isTransparent ? "text-white" : "text-slate-700"
+              )}
+              strokeWidth={1.5}
+            />
+            <span className="hidden xl:inline whitespace-nowrap">Trip Boards</span>
+          </Link>
+
+          {/* LOG IN DROPDOWN */}
+          {isMounted && !isAuthenticated && !isLoggingOut && (
+            <div
+              className="relative shrink-0 whitespace-nowrap"
+              onMouseEnter={cancelLoginClose}
+              onMouseLeave={() => {
+                if (isLoginOpen) scheduleLoginClose();
+              }}
+            >
+              <DropdownMenu modal={false} open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+                <DropdownMenuTrigger
+                  className={clsx(
+                    "flex items-center gap-1 px-2.5 sm:px-3 py-1.5 text-[13px] font-medium transition-colors duration-500 ease-in-out focus:outline-none cursor-pointer whitespace-nowrap shrink-0",
+                    isTransparent
+                      ? "text-white/90 hover:text-white drop-shadow-sm"
+                      : "text-slate-800 hover:text-black"
+                  )}
+                >
+                  <User
+                    className={clsx(
+                      "w-[17px] h-[17px] shrink-0 transition-colors duration-500 ease-in-out",
+                      isTransparent ? "text-white" : "text-slate-700"
+                    )}
+                    strokeWidth={1.5}
+                  />
+                  <span className="whitespace-nowrap">Log in</span>
+                  <ChevronDown
+                    className={clsx(
+                      "w-3.5 h-3.5 transition-transform duration-300 shrink-0",
+                      isTransparent ? "text-white/80" : "text-slate-600",
+                      isLoginOpen && "rotate-180"
+                    )}
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 p-1 bg-white rounded-sm shadow-xl border border-slate-200"
+
+                  onMouseEnter={cancelLoginClose}
+                  onMouseLeave={scheduleLoginClose}
+                >
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white data-[highlighted]:[&_svg]:!text-white focus:[&_svg]:!text-white hover:[&_svg]:!text-white transition-colors"
+                  >
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white transition-colors"
+                    >
+                      <User className="w-4 h-4 text-slate-500 transition-colors" />
+                      <span>Guest Login</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white data-[highlighted]:[&_svg]:!text-white focus:[&_svg]:!text-white hover:[&_svg]:!text-white transition-colors"
+                  >
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white transition-colors"
+                    >
+                      <Building2 className="w-4 h-4 text-slate-500 transition-colors" />
+                      <span>Owner Login</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white data-[highlighted]:[&_svg]:!text-white focus:[&_svg]:!text-white hover:[&_svg]:!text-white transition-colors"
+                  >
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white transition-colors"
+                    >
+                      <Zap className="w-4 h-4 text-slate-500 transition-colors" />
+                      <span>Vendor Login</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white data-[highlighted]:[&_svg]:!text-white focus:[&_svg]:!text-white hover:[&_svg]:!text-white transition-colors"
+                  >
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white transition-colors"
+                    >
+                      <Wrench className="w-4 h-4 text-slate-500 transition-colors" />
+                      <span>Service Login</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1 border-slate-100" />
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white transition-colors"
+                  >
+                    <Link
+                      href="/register"
+                      className="flex items-center px-3 py-2 text-sm font-semibold text-slate-950 hover:text-white focus:text-white data-[highlighted]:text-white transition-colors"
+                    >
+                      Create an account
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+
+          {/* HELP DROPDOWN */}
+          <div
+            className="relative hidden md:block shrink-0 whitespace-nowrap"
+            onMouseEnter={cancelHelpClose}
+            onMouseLeave={() => {
+              if (isHelpOpen) scheduleHelpClose();
+            }}
+          >
+            <DropdownMenu modal={false} open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+              <DropdownMenuTrigger
+                className={clsx(
+                  "flex items-center gap-1 px-2.5 sm:px-3 py-1.5 text-[13px] font-medium transition-colors duration-500 ease-in-out focus:outline-none cursor-pointer whitespace-nowrap shrink-0",
+                  isTransparent
+                    ? "text-white/90 hover:text-white drop-shadow-sm"
+                    : "text-slate-800 hover:text-black"
+                )}
+              >
+                <HelpCircle
+                  className={clsx(
+                    "w-[17px] h-[17px] shrink-0 transition-colors duration-500 ease-in-out",
+                    isTransparent ? "text-white" : "text-slate-700"
+                  )}
+                  strokeWidth={1.5}
+                />
+                <span className="whitespace-nowrap">Help</span>
+                <ChevronDown
+                  className={clsx(
+                    "w-3.5 h-3.5 transition-transform duration-300 shrink-0",
+                    isTransparent ? "text-white/80" : "text-slate-600",
+                    isHelpOpen && "rotate-180"
+                  )}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-52 p-1 bg-white rounded-sm shadow-xl border border-slate-200"
+                onMouseEnter={cancelHelpClose}
+                onMouseLeave={scheduleHelpClose}
+              >
+                <DropdownMenuItem
+                  asChild
+                  className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white transition-colors"
+                >
+                  <Link href="/faqs" className="flex items-center px-3 py-2 text-sm text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white font-medium transition-colors">
+                    Help &amp; FAQs
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  asChild
+                  className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white transition-colors"
+                >
+                  <Link href="/contact-us" className="flex items-center px-3 py-2 text-sm text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white font-medium transition-colors">
+                    Contact Support
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  asChild
+                  className="rounded-sm cursor-pointer focus:bg-[#1E1B4B] focus:text-white data-[highlighted]:bg-[#1E1B4B] data-[highlighted]:text-white hover:bg-[#1E1B4B] hover:text-white transition-colors"
+                >
+                  <Link href="/Terms&Conditions" className="flex items-center px-3 py-2 text-sm text-slate-800 hover:text-white focus:text-white data-[highlighted]:text-white font-medium transition-colors">
+                    Terms &amp; Policies
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
+          {/* LIST YOUR PROPERTY BUTTON - Translucent on Hero, Solid White on Scroll */}
+          {isMounted && !isAuthenticated && !isLoggingOut && (
+            <Link
+              href="/register"
+              className={clsx(
+                "px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-medium tracking-normal transition-all duration-500 ease-in-out active:scale-95 inline-flex items-center justify-center whitespace-nowrap shrink-0 ml-0.5 sm:ml-1",
+                isTransparent
+                  ? "text-white bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur-md shadow-xs"
+                  : "text-slate-900 bg-white border border-slate-700 hover:bg-[#1E1B4B] hover:text-white hover:border-[#1E1B4B] shadow-none hover:shadow-md"
+              )}
+            >
+              <span className="whitespace-nowrap">List your property</span>
+            </Link>
+          )}
 
           {/* MOBILE MENU */}
-          <div className="lg:hidden">
+          <div className="lg:hidden shrink-0">
             {!isMounted ? (
               <div className="w-10 h-10" />
             ) : (
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
-                  <button className="p-2 text-slate-500">
+                  <button
+                    className={clsx(
+                      "p-2 transition-colors duration-500 ease-in-out",
+                      isTransparent ? "text-white hover:text-white/80" : "text-slate-800 hover:text-black"
+                    )}
+                    aria-label="Open mobile navigation"
+                  >
                     <Menu className="w-6 h-6" />
                   </button>
                 </SheetTrigger>
 
-                <SheetContent side="right" className="bg-white/90 backdrop-blur-xl">
-                  <SheetHeader>
-                    <SheetTitle className="font-semibold tracking-tight">
-                      Menu
-                    </SheetTitle>
-                  </SheetHeader>
+                <SheetContent
+                  side="right"
+                  showCloseButton={false}
+                  className="w-full sm:max-w-sm h-full h-dvh p-0 bg-white border-l border-slate-200/80 shadow-2xl flex flex-col justify-between overflow-y-auto no-scrollbar"
+                >
+                  <div className="flex flex-col">
+                    {/* Branded Header: Logo + Title + Styled Close Button */}
+                    <SheetHeader className="px-5 py-4 border-b border-slate-100 flex flex-row items-center justify-between space-y-0">
+                      <div className="flex items-center gap-2.5">
+                        <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-slate-200/80 shadow-xs shrink-0">
+                          <Image
+                            src="/images/icon.webp"
+                            alt="Hostel In"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <SheetTitle className="font-bold text-lg text-slate-900 tracking-tight flex items-center">
+                          Hostel <span className="text-[#312E81] ml-1">In</span>
+                        </SheetTitle>
+                      </div>
 
-                  <div className="flex flex-col gap-4 mt-8 px-4 pb-4">
-                    {navLinks.map((link) => (
+                      <SheetClose className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors cursor-pointer outline-none focus:outline-none focus:ring-0">
+                        <X className="w-4 h-4" />
+                        <span className="sr-only">Close</span>
+                      </SheetClose>
+                    </SheetHeader>
+
+                    {/* Navigation Links */}
+                    <div className="flex flex-col p-4 gap-1.5">
+                      <p className="px-3 mb-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                        Explore
+                      </p>
+                      {mobileNavLinks.map((link) => {
+                        const Icon = link.icon;
+                        const isActive = pathname === link.href || (link.href !== "/home" && pathname.startsWith(link.href));
+                        return (
+                          <Link
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={clsx(
+                              "flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all",
+                              isActive
+                                ? "bg-[#312E81]/10 text-[#312E81] font-bold"
+                                : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                            )}
+                          >
+                            <Icon className={clsx("w-4 h-4 shrink-0", isActive ? "text-[#312E81]" : "text-slate-500")} />
+                            <span>{link.name}</span>
+                          </Link>
+                        );
+                      })}
+
+                      <div className="h-px bg-slate-100 my-2" />
+
+                      {/* Support */}
+                      <p className="px-3 mb-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                        Support
+                      </p>
+
                       <Link
-                        key={link.name}
-                        href={link.href}
+                        href="/faqs"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={clsx(
-                          "text-[15px] font-medium tracking-tight",
-                          pathname === link.href
-                            ? "text-black"
-                            : "text-slate-600"
-                        )}
+                        className="flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors"
                       >
-                        {link.name}
+                        <HelpCircle className="w-4 h-4 text-slate-500 shrink-0" />
+                        <span>Help &amp; FAQs</span>
                       </Link>
-                    ))}
+                    </div>
+                  </div>
 
-                    <hr className="my-2" />
-
-                    {isMounted && !isAuthenticated && !isLoggingOut && (
-                      <>
-                        <Link href="/login" className="text-[15px] font-medium text-slate-700">
-                          Owner Login
-                        </Link>
-                        <Link href="/register" className="text-[15px] font-medium text-slate-700">
-                          Owner Register
-                        </Link>
-                      </>
-                    )}
+                  {/* Bottom Footer Note */}
+                  <div className="p-4 border-t border-slate-100 bg-slate-50/60 flex items-center justify-center">
+                    <p className="text-[11px] text-center text-slate-400 font-medium">
+                      Hostel In • Verified Stay Network
+                    </p>
                   </div>
                 </SheetContent>
               </Sheet>
@@ -208,5 +522,44 @@ export default function Header() {
         </div>
       </div>
     </header>
+
+    {/* MOBILE FLOATING BOTTOM BAR (Native app-style floating category switcher) */}
+    {hasHero && (
+      <nav
+        aria-label="Mobile category switcher"
+        className={clsx(
+          "fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 lg:hidden flex items-center p-1 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.2)] rounded-full transition-all duration-300",
+          isMobileMenuOpen && "opacity-0 pointer-events-none translate-y-4"
+        )}
+      >
+        {mobileFloatingNav.map((item) => {
+          const Icon = item.icon;
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/home" && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={clsx(
+                "flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-all duration-200 active:scale-95 select-none",
+                isActive
+                  ? "bg-[#1E1B4B] text-white font-semibold shadow-xs"
+                  : "text-slate-600 hover:text-slate-950 hover:bg-slate-100/80"
+              )}
+            >
+              <Icon
+                className={clsx(
+                  "w-3.5 h-3.5 shrink-0 transition-colors",
+                  isActive ? "text-white" : "text-slate-500"
+                )}
+              />
+              <span>{item.name}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    )}
+  </>
   );
 }

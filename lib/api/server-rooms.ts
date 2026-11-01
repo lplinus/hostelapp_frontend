@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { GroupedHostelRooms } from "@/services/room.service";
+import { GroupedHostelRooms } from "@/services/hostelservices/room.service";
 
 export async function getGroupedRoomsServer(): Promise<GroupedHostelRooms[]> {
     const cookieStore = await cookies();

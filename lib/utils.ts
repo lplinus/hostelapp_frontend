@@ -14,8 +14,15 @@ export function isExternalImage(url: string | null | undefined): boolean {
 export function toLocalMediaPath(url: string | null | undefined): string | null {
   if (!url) return null;
   const s = String(url);
-  // If it's an ImageKit URL, return it as is
-  if (s.includes("ik.imagekit.io")) return s;
+  // If it's an ImageKit URL, ensure it has a safe transformation query to prevent 400 Bad Request
+  // (ImageKit rejects un-transformed images > 25 Megapixels with ELIMIT error)
+  if (s.includes("ik.imagekit.io")) {
+    if (s.includes("?tr=") || s.includes("/tr:")) {
+      return s;
+    }
+    const sep = s.includes("?") ? "&" : "?";
+    return `${s}${sep}tr=w-1600,f-auto`;
+  }
 
   try {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
