@@ -94,6 +94,12 @@ export const getHotelBookingById = async (
     return authApiClient.get<HotelBooking>(`/api/hotels/bookings/${id}/`);
 };
 
+export const createHotelBooking = async (
+    data: any
+): Promise<HotelBooking> => {
+    return apiClient.post<HotelBooking>("/api/hotels/bookings/", data);
+};
+
 export const cancelHotelBooking = async (
     id: string,
     reason: string = "Cancelled by guest"

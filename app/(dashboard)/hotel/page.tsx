@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
 import HotelOwnerManagement from "@/components/hostelowner/hotel/hotel-management";
@@ -15,7 +16,9 @@ export default function HotelOwnerPage() {
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
                 <div className="flex-1 max-w-[1400px] w-full mx-auto">
-                    <HotelOwnerManagement />
+                    <Suspense fallback={null}>
+                        <HotelOwnerManagement />
+                    </Suspense>
                 </div>
             </main>
         </div>

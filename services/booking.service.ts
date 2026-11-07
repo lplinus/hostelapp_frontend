@@ -6,6 +6,9 @@ export interface Booking {
     id: string;
     user: number | null;
     user_name?: string;
+    owner?: number | null;
+    owner_name?: string;
+    owner_email?: string;
     hostel: number;
     hostel_name?: string;
     room_type: number;

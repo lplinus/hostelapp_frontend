@@ -3,13 +3,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
 import { Booking } from "@/services/booking.service";
+import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export default function RecentBookings() {
+    const { user } = useAuth();
     const { data: bookings, isLoading } = useQuery<Booking[]>({
-        queryKey: ["recentBookings"],
+        queryKey: ["recentBookings", user?.id],
         queryFn: () => authApiClient.get("/api/bookings/"),
+        enabled: !!user?.id,
         refetchInterval: 5000,
     });
 

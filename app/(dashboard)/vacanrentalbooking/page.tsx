@@ -6,7 +6,7 @@ import VacationRentalDashboard from "@/components/hostelowner/vacatrentalbooking
 
 export const metadata: Metadata = {
     title: "Vacation Rental Bookings | Owner Panel",
-    description: "Manage vacation rental reservations, guest folios, and host approvals.",
+    description: "Manage vacation rental reservations, guest bookings, and host approvals.",
 };
 
 export default function VacationRentalBookingPage() {

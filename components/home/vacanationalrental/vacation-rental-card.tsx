@@ -65,7 +65,7 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
     const categoryLabel = rental.category_display || rental.category || "Vacation Villa";
 
     return (
-        <div className="group bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden flex flex-col h-full">
+        <div className="group bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden flex flex-col h-full">
             {/* 1. MEDIA CAROUSEL CONTAINER */}
             <div className="relative w-full aspect-[16/10] bg-slate-100 overflow-hidden shrink-0">
                 <Link href={`/vacanationalrental/${rental.slug}/`} className="block w-full h-full">

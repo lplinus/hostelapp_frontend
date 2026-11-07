@@ -59,6 +59,9 @@ export interface HotelBooking {
     id: string;
     booking_reference: string;
     user: number | null;
+    owner?: number | null;
+    owner_name?: string;
+    owner_email?: string;
     hotel: string;
     hotel_name: string;
     room_type: number;
@@ -112,6 +115,7 @@ export interface HotelRoomType {
 
 export interface Hotel {
     id: string;
+    owner?: number;
     name: string;
     slug: string;
     tagline?: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -24,9 +24,14 @@ import {
     Car,
     Waves
 } from "lucide-react";
-import { Hotel, HotelRoomType } from "@/types/hotel.types";
+import { Hotel, HotelRoomType, HotelBooking } from "@/types/hotel.types";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
+import { createHotelBooking } from "@/services/hotelservices/hotel.service";
+import { HotelBookingModal } from "./HotelBookingModal";
+import { HotelMobileBookingBar } from "./HotelMobileBookingBar";
+import { loadRazorpayScript } from "@/lib/razorpay";
+import { validateIndianMobile } from "@/lib/validation";
 
 interface HotelDetailClientProps {
     readonly hotel: Hotel;
@@ -36,9 +41,40 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     const [selectedRoom, setSelectedRoom] = useState<HotelRoomType | null>(
         hotel.room_types && hotel.room_types.length > 0 ? hotel.room_types[0] : null
     );
-    const [nights, setNights] = useState<number>(1);
     const [isSaved, setIsSaved] = useState(false);
     const [highlightBooking, setHighlightBooking] = useState(false);
+
+    // Reservation Checkout Modal States
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [checkInDate, setCheckInDate] = useState<string>(() => new Date().toISOString().split("T")[0]);
+    const [checkOutDate, setCheckOutDate] = useState<string>(() => {
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+        return d.toISOString().split("T")[0];
+    });
+
+    const nights = useMemo(() => {
+        if (!checkInDate || !checkOutDate) return 1;
+        const d1 = new Date(checkInDate);
+        const d2 = new Date(checkOutDate);
+        const diffTime = d2.getTime() - d1.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return Math.max(1, diffDays);
+    }, [checkInDate, checkOutDate]);
+
+    const handleAdjustNights = (delta: number) => {
+        const nextNights = Math.max(1, nights + delta);
+        const d = new Date(checkInDate);
+        d.setDate(d.getDate() + nextNights);
+        setCheckOutDate(d.toISOString().split("T")[0]);
+    };
+    const [guestName, setGuestName] = useState("");
+    const [guestEmail, setGuestEmail] = useState("");
+    const [guestMobile, setGuestMobile] = useState("");
+    const [specialRequests, setSpecialRequests] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "on_arrival">("online");
+    const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
+    const [confirmedBooking, setConfirmedBooking] = useState<HotelBooking | null>(null);
 
     const handleSelectAndBookRoom = (room: HotelRoomType) => {
         setSelectedRoom(room);
@@ -75,16 +111,125 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     };
 
     const handleBookNow = () => {
-        toast.info("Hotel suite reservation initiated!", {
-            description: `Selected: ${selectedRoom?.name || hotel.name} for ${nights} night(s). Contacting hotel concierge.`,
-        });
+        setConfirmedBooking(null);
+        setIsBookingModalOpen(true);
+    };
+
+    const handleConfirmBooking = async () => {
+        if (!guestName.trim() || guestName.trim().length < 3) {
+            toast.error("Please enter a valid guest full name (at least 3 characters).");
+            return;
+        }
+        if (!guestEmail.trim() || !guestEmail.includes("@")) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+
+        const phoneValidation = validateIndianMobile(guestMobile);
+        if (!phoneValidation.isValid) {
+            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number.");
+            return;
+        }
+
+        const roomTypeId = selectedRoom?.id || hotel.room_types?.[0]?.id;
+        if (!roomTypeId) {
+            toast.error("Please select a valid suite / room type.");
+            return;
+        }
+
+        const proceedBookingSubmission = async (razorpayPaymentId?: string) => {
+            setIsSubmittingBooking(true);
+            try {
+                const booking = await createHotelBooking({
+                    hotel_id: hotel.id,
+                    room_type_id: roomTypeId,
+                    check_in_date: checkInDate,
+                    check_out_date: checkOutDate,
+                    number_of_rooms: 1,
+                    guest_name: guestName.trim(),
+                    guest_email: guestEmail.trim(),
+                    mobile_number: phoneValidation.cleanNumber || guestMobile.trim(),
+                    adults_count: 2,
+                    children_count: 0,
+                    special_requests: specialRequests.trim() + (razorpayPaymentId ? ` [Razorpay Payment ID: ${razorpayPaymentId}]` : ""),
+                    payment_method: paymentMethod,
+                });
+
+                setConfirmedBooking(booking);
+                toast.success("Hotel reservation confirmed successfully!", {
+                    description: `Confirmation #${booking.booking_reference}`,
+                });
+            } catch (err: any) {
+                const errorData = err?.response?.data;
+                const errorMsg =
+                    errorData?.detail ||
+                    errorData?.non_field_errors?.[0] ||
+                    errorData?.error ||
+                    (typeof errorData === "string" ? errorData : null) ||
+                    "Failed to complete reservation. Please review dates and room availability.";
+                toast.error(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
+            } finally {
+                setIsSubmittingBooking(false);
+            }
+        };
+
+        if (paymentMethod === "online") {
+            setIsSubmittingBooking(true);
+            try {
+                const isLoaded = await loadRazorpayScript();
+                if (!isLoaded || typeof (window as any).Razorpay === "undefined") {
+                    toast.error("Unable to load Razorpay payment gateway. Please check your internet connection.");
+                    setIsSubmittingBooking(false);
+                    return;
+                }
+
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SRVXPRrskTPpW6",
+                    amount: Math.round(totalAmount * 100), // paise
+                    currency: "INR",
+                    name: "Hostel In - Hotels",
+                    description: `Reservation for ${hotel.name}`,
+                    handler: async function (response: any) {
+                        toast.success("Online payment successful!");
+                        await proceedBookingSubmission(response.razorpay_payment_id);
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setIsSubmittingBooking(false);
+                            toast.info("Payment window closed.");
+                        }
+                    },
+                    prefill: {
+                        name: guestName.trim(),
+                        email: guestEmail.trim(),
+                        contact: phoneValidation.cleanNumber || guestMobile.trim()
+                    },
+                    theme: {
+                        color: "#003580"
+                    }
+                };
+
+                const rzp = new (window as any).Razorpay(options);
+                rzp.on("payment.failed", function (response: any) {
+                    toast.error(response.error?.description || "Payment failed.");
+                    setIsSubmittingBooking(false);
+                });
+                rzp.open();
+            } catch (e: any) {
+                toast.error(e.message || "Failed to initiate Razorpay checkout.");
+                setIsSubmittingBooking(false);
+            }
+        } else {
+            // Pay on arrival
+            await proceedBookingSubmission();
+        }
     };
 
     return (
         <div className="min-h-screen bg-slate-50/70 pb-24 font-sans text-slate-800">
             {/* 1. TOP BREADCRUMB & BACK ROW */}
-            <div className="bg-white border-b border-slate-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between text-xs font-medium text-slate-500">
+            <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between text-xs font-medium text-slate-500">
                     <div className="flex items-center gap-1.5 overflow-hidden">
                         <Link href="/home" className="hover:text-slate-900 shrink-0">Home</Link>
                         <ChevronRight size={13} className="text-slate-400 shrink-0" />
@@ -442,7 +587,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     </div>
 
                     {/* RIGHT COLUMN: Sticky Reservation Card */}
-                    <div className="col-span-12 lg:col-span-4 lg:self-start lg:sticky lg:top-24 z-20">
+                    <div className="col-span-12 lg:col-span-4 lg:self-start lg:sticky lg:top-[124px] z-20 w-full max-w-[380px] ml-auto">
                         <div
                             id="hotel-booking-card"
                             className={`bg-white rounded-2xl border transition-all duration-300 p-6 shadow-sm space-y-5 ${
@@ -474,13 +619,59 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                     </div>
                                 </div>
 
+                                {/* Stay Dates Selection */}
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-900 block mb-1">
+                                        Stay Dates
+                                    </label>
+                                    <div className="border border-slate-200 rounded-xl overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-slate-200 text-xs grid grid-cols-2 bg-slate-50/50">
+                                        <div className="p-2.5">
+                                            <label className="text-[10px] uppercase font-bold text-slate-700 block mb-0.5">
+                                                Check-In
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={checkInDate}
+                                                min={new Date().toISOString().split("T")[0]}
+                                                onChange={(e) => {
+                                                    const newIn = e.target.value;
+                                                    if (!newIn) return;
+                                                    setCheckInDate(newIn);
+                                                    if (newIn && checkOutDate && newIn >= checkOutDate) {
+                                                        const next = new Date(newIn);
+                                                        next.setDate(next.getDate() + 1);
+                                                        setCheckOutDate(next.toISOString().split("T")[0]);
+                                                    }
+                                                }}
+                                                className="w-full font-bold text-slate-950 bg-transparent focus:outline-none cursor-pointer text-xs"
+                                            />
+                                        </div>
+                                        <div className="p-2.5">
+                                            <label className="text-[10px] uppercase font-bold text-slate-700 block mb-0.5">
+                                                Check-Out
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={checkOutDate}
+                                                min={checkInDate}
+                                                onChange={(e) => {
+                                                    const newOut = e.target.value;
+                                                    if (!newOut) return;
+                                                    setCheckOutDate(newOut);
+                                                }}
+                                                className="w-full font-bold text-slate-950 bg-transparent focus:outline-none cursor-pointer text-xs"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <label className="text-xs font-semibold text-slate-900 block mb-1">
                                         Duration of Stay
                                     </label>
                                     <div className="flex items-center gap-2">
                                         <button
-                                            onClick={() => setNights(Math.max(1, nights - 1))}
+                                            onClick={() => handleAdjustNights(-1)}
                                             className="w-9 h-9 rounded-lg border border-slate-300 text-[#312E81] font-bold bg-white hover:bg-indigo-50 hover:border-[#312E81] flex items-center justify-center text-sm transition-colors"
                                         >
                                             -
@@ -489,7 +680,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                             {nights} {nights === 1 ? "Night" : "Nights"}
                                         </div>
                                         <button
-                                            onClick={() => setNights(nights + 1)}
+                                            onClick={() => handleAdjustNights(1)}
                                             className="w-9 h-9 rounded-lg border border-slate-300 text-[#312E81] font-bold bg-white hover:bg-indigo-50 hover:border-[#312E81] flex items-center justify-center text-sm transition-colors"
                                         >
                                             +
@@ -529,6 +720,51 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     </div>
                 </div>
             </div>
+
+            {/* 6. RESERVATION CONFIRMATION MODAL */}
+            <HotelBookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => {
+                    setIsBookingModalOpen(false);
+                    setConfirmedBooking(null);
+                }}
+                hotel={hotel}
+                selectedRoom={selectedRoom}
+                confirmedBooking={confirmedBooking}
+                setConfirmedBooking={setConfirmedBooking}
+                checkInDate={checkInDate}
+                setCheckInDate={setCheckInDate}
+                checkOutDate={checkOutDate}
+                setCheckOutDate={setCheckOutDate}
+                numberOfNights={nights}
+                totalAmount={totalAmount}
+                guestName={guestName}
+                setGuestName={setGuestName}
+                guestEmail={guestEmail}
+                setGuestEmail={setGuestEmail}
+                guestMobile={guestMobile}
+                setGuestMobile={setGuestMobile}
+                specialRequests={specialRequests}
+                setSpecialRequests={setSpecialRequests}
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+                isSubmittingBooking={isSubmittingBooking}
+                handleConfirmBooking={handleConfirmBooking}
+            />
+
+            {/* 7. MOBILE STICKY BOTTOM BAR (STATIC DOWN BUTTON) */}
+            <HotelMobileBookingBar
+                hotel={hotel}
+                selectedRoom={selectedRoom}
+                setSelectedRoom={setSelectedRoom}
+                checkInDate={checkInDate}
+                setCheckInDate={setCheckInDate}
+                checkOutDate={checkOutDate}
+                setCheckOutDate={setCheckOutDate}
+                numberOfNights={nights}
+                totalAmount={totalAmount}
+                onOpenBookingModal={() => setIsBookingModalOpen(true)}
+            />
         </div>
     );
 }

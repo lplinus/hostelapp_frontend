@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
+import { useAuth } from "@/hooks/useAuth";
 import BookingPieChart from "./booking-pie-chart";
 
 interface DashboardStats {
@@ -10,9 +11,11 @@ interface DashboardStats {
 }
 
 export default function BookingChartWrapper() {
+    const { user } = useAuth();
     const { data, isLoading } = useQuery<DashboardStats>({
-        queryKey: ["dashboardStats"],
+        queryKey: ["dashboardStats", user?.id],
         queryFn: () => authApiClient.get("/api/dashboard/stats/"),
+        enabled: !!user?.id,
         refetchInterval: 5000,
     });
 

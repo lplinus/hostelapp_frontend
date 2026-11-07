@@ -9,6 +9,7 @@ import { getCities, getAreas, getStates } from "@/services/location.service";
 import { getAmenities } from "@/services/hostelservices/amenity.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { HostelListItem } from "@/types/hostel.types";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Pencil, Image as ImageIcon, Trash2, UploadCloud, X, AlertCircle } from "lucide-react";
 import HostelForm from "./hostel-form";
@@ -29,14 +30,16 @@ const IMAGE_SLOTS = [
 ] as const;
 
 export default function HostelManagement() {
+    const { user } = useAuth();
     const queryClient = useQueryClient();
     const [currentPage, setCurrentPage] = useState(1);
     const [priceView, setPriceView] = useState<"monthly" | "daily">("monthly");
     const pageSize = 8;
 
     const { data: hostels, isLoading } = useQuery({
-        queryKey: ["myHostels"],
+        queryKey: ["myHostels", user?.id],
         queryFn: getMyHostels,
+        enabled: !!user?.id,
         refetchInterval: 5000,
     });
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getHostelBySlug } from "@/services/hostelservices/hostel.service";
-import BookingContainer from "@/components/hostelowner/booking/booking-container";
+import BookingContainer from "@/components/home/booking/booking-container";
 import RecaptchaWrapper from "@/components/providers/RecaptchaWrapper";
 
 interface Props {

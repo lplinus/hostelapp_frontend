@@ -21,6 +21,9 @@ import { GuestOtpModal } from "./steps/GuestOtpModal";
 import { LegalDocumentModal } from "./steps/LegalDocumentModal";
 import { BookingProgressBar } from "./steps/BookingProgressBar";
 import { EmailOtpModal } from "./steps/EmailOtpModal";
+import { BookingMobileBottomBar } from "./steps/BookingMobileBottomBar";
+import { loadRazorpayScript } from "@/lib/razorpay";
+import { validateIndianMobile } from "@/lib/validation";
 
 interface Props {
     hostel: HostelDetail;
@@ -249,8 +252,7 @@ export default function BookingContainer({
         const hasName = form.guest_name.trim().length >= 3;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const hasEmail = emailRegex.test(form.guest_email);
-        const phoneRegex = /^\+?[\d\s-]{10,}$/;
-        const hasPhone = phoneRegex.test(form.mobile_number);
+        const hasPhone = validateIndianMobile(form.mobile_number).isValid;
         const age = Number.parseInt(form.guest_age);
         const hasAge = !Number.isNaN(age) && age >= 10 && age <= 100;
         const hasRoom = !!selectedRoomId;
@@ -275,11 +277,9 @@ export default function BookingContainer({
             newErrors.guest_email = "Please enter a valid email address.";
         }
 
-        const phoneRegex = /^\+?[\d\s-]{10,}$/;
-        if (!form.mobile_number) {
-            newErrors.mobile_number = "Mobile number is required.";
-        } else if (!phoneRegex.test(form.mobile_number)) {
-            newErrors.mobile_number = "Please enter a valid mobile number (at least 10 digits).";
+        const phoneValidation = validateIndianMobile(form.mobile_number);
+        if (!phoneValidation.isValid) {
+            newErrors.mobile_number = phoneValidation.error || "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.";
         }
 
         const age = Number.parseInt(form.guest_age);
@@ -306,27 +306,31 @@ export default function BookingContainer({
         setErrors(newErrors);
 
         const isValid = Object.keys(newErrors).length === 0 && termsAccepted;
-        if (!isValid && typeof window !== "undefined") {
-            setTimeout(() => {
-                const fieldIdMap: Record<string, string> = {
-                    guest_name: "name",
-                    guest_email: "email",
-                    mobile_number: "mobile",
-                    guest_age: "age",
-                    confirm_booking: "confirm_booking",
-                    dates: "check_in"
-                };
-                const firstErrorKey = Object.keys(newErrors)[0];
-                const targetId = firstErrorKey ? (fieldIdMap[firstErrorKey] || firstErrorKey) : (!termsAccepted ? "terms" : null);
-                if (targetId) {
-                    const el = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
-                    if (el) {
-                        const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
-                        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-                        el.focus?.();
+        if (!isValid) {
+            const firstErr = Object.values(newErrors)[0] || (!termsAccepted ? "Please accept the terms & conditions to proceed." : "Please fill out all required fields.");
+            toast.error(firstErr);
+            if (typeof window !== "undefined") {
+                setTimeout(() => {
+                    const fieldIdMap: Record<string, string> = {
+                        guest_name: "name",
+                        guest_email: "email",
+                        mobile_number: "mobile",
+                        guest_age: "age",
+                        confirm_booking: "confirm_booking",
+                        dates: "check_in"
+                    };
+                    const firstErrorKey = Object.keys(newErrors)[0];
+                    const targetId = firstErrorKey ? (fieldIdMap[firstErrorKey] || firstErrorKey) : (!termsAccepted ? "terms" : null);
+                    if (targetId) {
+                        const el = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
+                        if (el) {
+                            const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+                            window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+                            el.focus?.();
+                        }
                     }
-                }
-            }, 60);
+                }, 60);
+            }
         }
 
         return isValid;
@@ -540,6 +544,13 @@ export default function BookingContainer({
     const handleRazorpayPayment = async (bookingId: string) => {
         setIsProcessingPayment(true);
         try {
+            const isLoaded = await loadRazorpayScript();
+            if (!isLoaded || typeof (window as any).Razorpay === "undefined") {
+                toast.error("Unable to load Razorpay payment gateway. Please check your internet connection.");
+                setIsProcessingPayment(false);
+                return;
+            }
+
             const order = await createRazorpayOrder(bookingId);
 
             const options = {
@@ -567,17 +578,27 @@ export default function BookingContainer({
                         toast.error("Payment verification failed.");
                     }
                 },
+                modal: {
+                    ondismiss: function () {
+                        setIsProcessingPayment(false);
+                        toast.info("Payment window closed.");
+                    }
+                },
                 prefill: {
                     name: form.guest_name,
                     email: form.guest_email,
                     contact: form.mobile_number
                 },
                 theme: {
-                    color: "#2563eb"
+                    color: "#003580"
                 }
             };
 
             const rzp = new (window as any).Razorpay(options);
+            rzp.on("payment.failed", function (response: any) {
+                toast.error(response.error?.description || "Payment failed.");
+                setIsProcessingPayment(false);
+            });
             rzp.open();
         } catch (error: any) {
             const errorMsg = error.message || "Failed to initiate payment.";
@@ -592,6 +613,9 @@ export default function BookingContainer({
     };
 
     const executePayment = () => {
+        const checkInFormatted = format(form.check_in, "yyyy-MM-dd");
+        const checkOutFormatted = format(form.check_out, "yyyy-MM-dd");
+
         if (paymentMethod === "on_arrival") {
             if (confirmedBookingId) {
                 confirmPropertyPaymentMutation.mutate(confirmedBookingId);
@@ -605,8 +629,8 @@ export default function BookingContainer({
                     guest_age: Number.parseInt(form.guest_age),
                     adults: Number.parseInt(form.adults),
                     children: Number.parseInt(form.children),
-                    check_in: form.check_in.toISOString().split('T')[0],
-                    check_out: form.check_out.toISOString().split('T')[0],
+                    check_in: checkInFormatted,
+                    check_out: checkOutFormatted,
                     guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
                     total_price: finalTotalPrice,
                     booking_type: "stay",
@@ -631,8 +655,8 @@ export default function BookingContainer({
                     guest_age: Number.parseInt(form.guest_age),
                     adults: Number.parseInt(form.adults),
                     children: Number.parseInt(form.children),
-                    check_in: form.check_in.toISOString().split('T')[0],
-                    check_out: form.check_out.toISOString().split('T')[0],
+                    check_in: checkInFormatted,
+                    check_out: checkOutFormatted,
                     guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
                     total_price: finalTotalPrice,
                     booking_type: "stay",
@@ -673,9 +697,12 @@ export default function BookingContainer({
         setPaymentId(null);
     };
 
+    const handlePaymentSubmit = () => {
+        executePayment();
+    };
 
     return (
-        <div ref={bookingContainerRef} id="booking-container-top" className="max-w-[1100px] mx-auto py-8 px-4 sm:px-6 font-sans antialiased min-h-screen">
+        <div ref={bookingContainerRef} id="booking-container-top" className="max-w-[1100px] mx-auto py-8 pb-32 lg:pb-8 px-4 sm:px-6 font-sans antialiased min-h-screen">
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
@@ -687,22 +714,51 @@ export default function BookingContainer({
                 <span className="text-sm font-semibold">Back to Hostel</span>
             </button>
 
-            {/* Progress Bar */}
-            <BookingProgressBar
-                currentStep={step}
-                isPhoneVerified={isPhoneVerified}
-                isPaymentVerified={isPaymentVerified}
-                bookingStatus={bookingStatus}
-                bookingType={form.booking_type}
-                onStepClick={(clickedStep) => {
-                    if (bookingStatus === "confirmed") {
-                        setStep(clickedStep);
-                    }
-                }}
-            />
+            {/* Sticky Progress Bar (1, 2, 3 Steps) */}
+            <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md -mx-4 sm:-mx-6 px-4 sm:px-6 py-3.5 mb-6 sm:mb-8 border-b border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all">
+                <BookingProgressBar
+                    currentStep={step}
+                    isPhoneVerified={isPhoneVerified}
+                    isPaymentVerified={isPaymentVerified}
+                    bookingStatus={bookingStatus}
+                    bookingType={form.booking_type}
+                    onStepClick={(clickedStep) => {
+                        if (bookingStatus === "confirmed") {
+                            setStep(clickedStep);
+                        }
+                    }}
+                />
+            </div>
 
-            <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
-                {/* Left Column: Form */}
+            <div className="grid lg:grid-cols-[380px_1fr] gap-8 items-start">
+                {/* Left Column: Summary Sticky Card (Desktop Only - on mobile it lives in the sticky bottom bar drawer) */}
+                <div
+                    className="hidden lg:block lg:sticky self-start h-fit space-y-2.5"
+                    style={{ top: "max(160px, calc(50vh - 180px))" }}
+                >
+                    <BookingSummary
+                        hostel={hostel}
+                        selectedRoom={selectedRoom}
+                        selectedRoomId={selectedRoomId}
+                        setSelectedRoomId={setSelectedRoomId}
+                        form={form}
+                        nights={nights}
+                        totalPrice={totalPrice}
+                        bookingFee={bookingFee}
+                        finalTotalPrice={finalTotalPrice}
+                        setStep={setStep}
+                        bookingStatus={bookingStatus}
+                    />
+
+                    <div className="p-2.5 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center gap-2 text-[#003580]">
+                        <Activity className="shrink-0 text-[#003580]" size={15} />
+                        <p className="text-[11px] text-[#003580] leading-snug font-semibold">
+                            Free cancellation available 24 hours before check-in. Book with confidence.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right Column: Form Steps */}
                 <div className="min-w-0">
                     <BookingDetailsStep
                         step={step}
@@ -775,34 +831,27 @@ export default function BookingContainer({
                         />
                     )}
                 </div>
-
-                {/* Right Column: Summary Sticky Card */}
-                <div
-                    className="lg:sticky lg:top-24 self-start h-fit space-y-2.5"
-                    style={{ top: "max(96px, calc(50vh - 235px))" }}
-                >
-                    <BookingSummary
-                        hostel={hostel}
-                        selectedRoom={selectedRoom}
-                        selectedRoomId={selectedRoomId}
-                        setSelectedRoomId={setSelectedRoomId}
-                        form={form}
-                        nights={nights}
-                        totalPrice={totalPrice}
-                        bookingFee={bookingFee}
-                        finalTotalPrice={finalTotalPrice}
-                        setStep={setStep}
-                        bookingStatus={bookingStatus}
-                    />
-
-                    <div className="p-2.5 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center gap-2 text-[#003580]">
-                        <Activity className="shrink-0 text-[#003580]" size={15} />
-                        <p className="text-[11px] text-[#003580] leading-snug font-semibold">
-                            Free cancellation available 24 hours before check-in. Book with confidence.
-                        </p>
-                    </div>
-                </div>
             </div>
+
+            {/* Mobile Bottom Bar (Sticky Reserve/Pay Button + Summary Drawer) */}
+            <BookingMobileBottomBar
+                hostel={hostel}
+                selectedRoom={selectedRoom}
+                selectedRoomId={selectedRoomId}
+                setSelectedRoomId={setSelectedRoomId}
+                form={form}
+                nights={nights}
+                totalPrice={totalPrice}
+                bookingFee={bookingFee}
+                finalTotalPrice={finalTotalPrice}
+                step={step}
+                setStep={setStep}
+                bookingStatus={bookingStatus}
+                handleNext={handleNext}
+                handleConfirmPayment={handlePaymentSubmit}
+                isProcessingPayment={isProcessingPayment || bookingMutation.isPending || confirmPropertyPaymentMutation.isPending}
+                paymentMethod={paymentMethod}
+            />
 
 
             <OtpVerificationModal

@@ -67,7 +67,7 @@ export function BookingProgressBar({
     };
 
     return (
-        <div className="w-full mb-10 px-4">
+        <div className="w-full px-2 sm:px-4">
             <div className="relative flex items-start justify-between max-w-lg mx-auto">
                 {steps.map((step, idx) => {
                     const status = getStepStatus(step.id);
@@ -81,14 +81,14 @@ export function BookingProgressBar({
                                 onClick={() => handleClick(step.id)}
                                 disabled={!isClickable}
                                 className={cn(
-                                    "relative z-10 flex flex-col items-center gap-2.5 bg-transparent border-none outline-none",
+                                    "relative z-10 flex flex-col items-center gap-2 bg-transparent border-none outline-none",
                                     isClickable ? "cursor-pointer group" : "cursor-default"
                                 )}
                             >
                                 {/* Step circle */}
                                 <div
                                     className={cn(
-                                        "w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ease-out text-sm font-bold",
+                                        "w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-500 ease-out text-sm font-bold",
                                         status === "active" &&
                                             "bg-[#003580] text-white shadow-lg shadow-blue-200/60 ring-4 ring-[#003580]/10",
                                         status === "completed" &&
@@ -121,7 +121,7 @@ export function BookingProgressBar({
 
                             {/* Connecting line */}
                             {!isLast && (
-                                <div className="flex-1 flex items-center mt-[22px] px-2">
+                                <div className="flex-1 flex items-center mt-[20px] sm:mt-[22px] px-2">
                                     <div className="w-full h-[2px] relative bg-gray-200 rounded-full overflow-hidden">
                                         <div
                                             className={cn(

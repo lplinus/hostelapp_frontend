@@ -159,9 +159,9 @@ export default function HotelOwnerManagement() {
         isRefetching,
         refetch,
     } = useQuery({
-        queryKey: ["myHotelsList"],
+        queryKey: ["myHotelsList", user?.id],
         queryFn: () => getMyHotels(),
-        enabled: isAuthenticated,
+        enabled: isAuthenticated && !!user?.id,
         refetchInterval: isAuthenticated ? 8000 : false,
     });
 
@@ -584,7 +584,7 @@ export default function HotelOwnerManagement() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Hotels Managed</p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {hotels.length}
+                                {isMounted ? hotels.length : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Properties registered</p>
                         </div>
@@ -599,7 +599,7 @@ export default function HotelOwnerManagement() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Room Inventory</p>
                             <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
-                                {totalRoomsCount}
+                                {isMounted ? totalRoomsCount : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Suites & rooms across all hotels</p>
                         </div>
@@ -614,7 +614,7 @@ export default function HotelOwnerManagement() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Active Listings</p>
                             <p className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums">
-                                {hotels.filter((h) => h.is_active).length}
+                                {isMounted ? hotels.filter((h) => h.is_active).length : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Ready for online reservations</p>
                         </div>
@@ -1090,7 +1090,7 @@ export default function HotelOwnerManagement() {
                             <SelectValue placeholder="All Cities" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
-                            <SelectItem value="all">All Cities ({hotels.length})</SelectItem>
+                            <SelectItem value="all">All Cities ({isMounted ? hotels.length : 0})</SelectItem>
                             {cities.map((c) => (
                                 <SelectItem key={c.id} value={String(c.id)}>
                                     {c.name}
@@ -1120,7 +1120,7 @@ export default function HotelOwnerManagement() {
             </div>
 
             {/* Hotel Cards List */}
-            {isLoading ? (
+            {!isMounted || isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[1, 2, 3].map((i) => (
                         <Card key={i} className="border-border/40 p-5 space-y-3">
@@ -1159,7 +1159,7 @@ export default function HotelOwnerManagement() {
                     </div>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {filteredHotels.map((hotel) => {
                         const roomCount = hotel.room_types?.length || 0;
                         const imagesCount = hotel.images?.length || 0;
@@ -1171,15 +1171,15 @@ export default function HotelOwnerManagement() {
                         return (
                             <Card
                                 key={hotel.id}
-                                className="p-0 py-0 gap-0 border border-border/80 bg-card rounded-[4px] shadow-xs flex flex-col justify-between overflow-hidden"
+                                className="p-0 py-0 gap-0 border border-border/80 bg-card rounded-lg sm:rounded-xl shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                             >
-                                {/* Compact Card Image - Flush to top with zero upper gap */}
+                                {/* Spacious Card Image (h-48) matching Vacation Rental scale */}
                                 {coverImg ? (
-                                    <div className="relative h-32 w-full overflow-hidden bg-slate-950">
+                                    <div className="relative h-48 w-full overflow-hidden bg-slate-950">
                                         <img
                                             src={toLocalMediaPath(coverImg) || coverImg}
                                             alt={hotel.name}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             onError={(e) => {
                                                 const target = e.currentTarget;
                                                 if (target.src.includes("ik.imagekit.io") && !target.src.includes("tr=")) {
@@ -1188,35 +1188,35 @@ export default function HotelOwnerManagement() {
                                             }}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
-                                        <div className="absolute top-2 left-2">
+                                        <div className="absolute top-3 left-3">
                                             <span
-                                                className={`text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase rounded-[3px] shadow-xs ${hotel.is_active ? "bg-emerald-600 text-white" : "bg-slate-700 text-white"
+                                                className={`text-[10px] px-2.5 py-1 font-bold tracking-wider uppercase rounded-md shadow-xs ${hotel.is_active ? "bg-emerald-600 text-white" : "bg-slate-700 text-white"
                                                     }`}
                                             >
                                                 {hotel.is_active ? "Active" : "Draft"}
                                             </span>
                                         </div>
-                                        <div className="absolute top-2 right-2">
-                                            <span className="bg-black/75 backdrop-blur-xs text-white text-[9px] font-medium gap-1 px-1.5 py-0.5 rounded-[3px] flex items-center shadow-xs">
-                                                <ImageIcon size={9} />
+                                        <div className="absolute top-3 right-3">
+                                            <span className="bg-black/75 backdrop-blur-xs text-white text-[10px] font-semibold gap-1 px-2.5 py-1 rounded-md flex items-center shadow-xs">
+                                                <ImageIcon size={11} />
                                                 {imagesCount} Photo{imagesCount === 1 ? "" : "s"}
                                             </span>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="h-32 w-full bg-slate-900 dark:bg-slate-950 flex flex-col items-center justify-center p-3 border-b border-border/60 text-slate-400 gap-1.5 relative">
-                                        <HotelIcon size={24} className="text-[#312E81] dark:text-indigo-400" />
-                                        <span className="text-[11px] font-semibold text-slate-300">No Cover Photo</span>
+                                    <div className="h-48 w-full bg-slate-900 dark:bg-slate-950 flex flex-col items-center justify-center p-4 border-b border-border/60 text-slate-400 gap-2 relative">
+                                        <HotelIcon size={28} className="text-[#312E81] dark:text-indigo-400" />
+                                        <span className="text-xs font-semibold text-slate-300">No Cover Photo</span>
                                         <button
                                             type="button"
                                             onClick={() => setPhotoModalHotel(hotel)}
-                                            className="text-[10px] font-semibold text-white bg-[#312E81] flex items-center gap-1 px-2.5 py-0.5 rounded-[3px] shadow-2xs cursor-pointer border border-[#312E81]"
+                                            className="text-xs font-semibold text-white bg-[#312E81] flex items-center gap-1.5 px-3 py-1 rounded-md shadow-2xs cursor-pointer border border-[#312E81] hover:bg-[#1E1B4B] transition-colors"
                                         >
-                                            <Upload size={10} className="text-white" /> Upload Photos
+                                            <Upload size={12} className="text-white" /> Upload Photos
                                         </button>
-                                        <div className="absolute top-2 left-2">
+                                        <div className="absolute top-3 left-3">
                                             <span
-                                                className={`text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase rounded-[3px] shadow-xs ${hotel.is_active ? "bg-emerald-600 text-white" : "bg-slate-700 text-white"
+                                                className={`text-[10px] px-2.5 py-1 font-bold tracking-wider uppercase rounded-md shadow-xs ${hotel.is_active ? "bg-emerald-600 text-white" : "bg-slate-700 text-white"
                                                     }`}
                                             >
                                                 {hotel.is_active ? "Active" : "Draft"}
@@ -1225,11 +1225,11 @@ export default function HotelOwnerManagement() {
                                     </div>
                                 )}
 
-                                <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
-                                    <div className="space-y-1.5">
+                                <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
+                                    <div className="space-y-2">
                                         {/* Top Row: Classification Label & Full 5-Star Rating */}
                                         <div className="flex items-center justify-between gap-1.5">
-                                            <span className="inline-flex items-center text-[9px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-[3px] bg-[#312E81]/10 text-[#312E81] dark:bg-indigo-950/70 dark:text-indigo-300 border border-[#312E81]/25">
+                                            <span className="inline-flex items-center text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md bg-[#312E81]/10 text-[#312E81] dark:bg-indigo-950/70 dark:text-indigo-300 border border-[#312E81]/25">
                                                 {hotel.hotel_type_display || hotel.hotel_type || "Hotel"}
                                             </span>
                                             <div className="flex items-center gap-1" title={`${hotel.star_rating || 5} Star Hotel`}>
@@ -1237,7 +1237,7 @@ export default function HotelOwnerManagement() {
                                                     {Array.from({ length: 5 }).map((_, i) => (
                                                         <Star
                                                             key={i}
-                                                            size={11}
+                                                            size={12}
                                                             className={
                                                                 i < (hotel.star_rating || 5)
                                                                     ? "fill-amber-400 text-amber-400"
@@ -1246,7 +1246,7 @@ export default function HotelOwnerManagement() {
                                                         />
                                                     ))}
                                                 </div>
-                                                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 ml-0.5">
+                                                <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 ml-0.5">
                                                     {hotel.star_rating || 5} Star
                                                 </span>
                                             </div>
@@ -1255,7 +1255,7 @@ export default function HotelOwnerManagement() {
                                         {/* Hotel Name */}
                                         <div>
                                             <h3
-                                                className="text-sm font-bold text-foreground tracking-tight line-clamp-1"
+                                                className="text-base font-bold text-foreground tracking-tight line-clamp-1 group-hover:text-[#312E81] transition-colors"
                                                 title={hotel.name}
                                             >
                                                 {hotel.name}
@@ -1263,8 +1263,8 @@ export default function HotelOwnerManagement() {
                                         </div>
 
                                         {/* Location & Address */}
-                                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground truncate">
-                                            <MapPin size={12} className="shrink-0 text-[#312E81] dark:text-indigo-400" />
+                                        <div className="flex items-center gap-1 text-xs text-muted-foreground truncate">
+                                            <MapPin size={13} className="shrink-0 text-[#312E81] dark:text-indigo-400" />
                                             <span className="truncate font-medium">
                                                 {hotel.area_name ? `${hotel.area_name}, ` : ""}
                                                 {hotel.city_name || "City"}
@@ -1273,15 +1273,15 @@ export default function HotelOwnerManagement() {
                                         </div>
 
                                         {/* Room inventory & Check-in specs bar */}
-                                        <div className="grid grid-cols-2 gap-1.5 py-1 px-2 rounded-[3px] bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-[10px]">
-                                            <div className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
-                                                <BedDouble size={12} className="text-[#312E81] dark:text-indigo-400 shrink-0" />
+                                        <div className="grid grid-cols-2 gap-2 py-1.5 px-2.5 rounded-md bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-[11px]">
+                                            <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                                <BedDouble size={13} className="text-[#312E81] dark:text-indigo-400 shrink-0" />
                                                 <span className="font-semibold truncate">
                                                     {roomCount} {roomCount === 1 ? "Category" : "Categories"}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-1 text-slate-700 dark:text-slate-300">
-                                                <Clock size={12} className="text-[#312E81] dark:text-indigo-400 shrink-0" />
+                                            <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                                <Clock size={13} className="text-[#312E81] dark:text-indigo-400 shrink-0" />
                                                 <span className="text-muted-foreground truncate font-medium">
                                                     In: {hotel.check_in_time ? hotel.check_in_time.slice(0, 5) : "14:00"}
                                                 </span>
@@ -1290,63 +1290,63 @@ export default function HotelOwnerManagement() {
                                     </div>
 
                                     {/* Bottom: Pricing & Actions */}
-                                    <div className="space-y-2 pt-1">
+                                    <div className="space-y-2.5 pt-1">
                                         {/* Enterprise Pricing Block */}
-                                        <div className="pt-1.5 border-t border-border/60 flex items-end justify-between">
+                                        <div className="pt-2 border-t border-border/60 flex items-end justify-between">
                                             <div className="space-y-0.5">
-                                                <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/80 block">
+                                                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80 block">
                                                     Starting Rate
                                                 </span>
                                                 <div className="flex items-baseline gap-1">
-                                                    <span className="text-sm font-bold text-foreground tabular-nums tracking-tight">
+                                                    <span className="text-base font-bold text-foreground tabular-nums tracking-tight">
                                                         {startingPrice}
                                                     </span>
                                                     {hotel.starting_price_per_night && (
-                                                        <span className="text-[10px] text-muted-foreground font-normal">
+                                                        <span className="text-xs text-muted-foreground font-normal">
                                                             / night
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
-                                            <span className="text-[9px] text-muted-foreground/80 font-medium">
+                                            <span className="text-[10px] text-muted-foreground/80 font-medium">
                                                 + taxes & fees
                                             </span>
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="pt-2 border-t border-border/60 flex items-center justify-between gap-1.5">
-                                            <div className="flex items-center gap-1">
+                                        <div className="pt-2 border-t border-border/60 flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-1.5">
                                                 <Button
                                                     size="sm"
-                                                    className="text-[11px] h-7 px-2.5 gap-1 bg-[#312E81] text-white font-semibold rounded-[3px] border border-[#312E81] shadow-2xs cursor-pointer"
+                                                    className="text-xs h-8 px-3 gap-1.5 bg-[#312E81] text-white font-semibold rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] transition-colors"
                                                     onClick={() => setPhotoModalHotel(hotel)}
                                                 >
-                                                    <ImageIcon size={11} className="text-white" />
+                                                    <ImageIcon size={12} className="text-white" />
                                                     Photos ({imagesCount})
                                                 </Button>
 
                                                 <Button
                                                     size="sm"
-                                                    className="text-[11px] h-7 px-2 gap-1 bg-[#312E81] text-white font-semibold rounded-[3px] border border-[#312E81] shadow-2xs cursor-pointer"
+                                                    className="text-xs h-8 px-2.5 gap-1.5 bg-[#312E81] text-white font-semibold rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] transition-colors"
                                                     onClick={() => setRoomTypeModalHotel(hotel)}
                                                 >
-                                                    <Plus size={11} className="text-white" /> Room
+                                                    <Plus size={12} className="text-white" /> Room
                                                 </Button>
                                             </div>
 
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center gap-1.5">
                                                 <Button
                                                     size="icon"
-                                                    className="w-7 h-7 bg-[#312E81] text-white rounded-[3px] border border-[#312E81] shadow-2xs cursor-pointer flex items-center justify-center"
+                                                    className="w-8 h-8 bg-[#312E81] text-white rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] flex items-center justify-center transition-colors"
                                                     onClick={() => startEdit(hotel)}
                                                     title="Edit Hotel"
                                                 >
-                                                    <Pencil size={12} className="text-white" />
+                                                    <Pencil size={13} className="text-white" />
                                                 </Button>
                                                 <Button
                                                     size="icon"
                                                     variant="ghost"
-                                                    className="w-7 h-7 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 rounded-[3px] border border-rose-200 dark:border-rose-900 cursor-pointer flex items-center justify-center"
+                                                    className="w-8 h-8 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 rounded-md border border-rose-200 dark:border-rose-900 cursor-pointer flex items-center justify-center hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors"
                                                     disabled={deleteMutation.isPending}
                                                     onClick={() => {
                                                         if (confirm(`Are you sure you want to delete ${hotel.name}?`)) {
@@ -1355,7 +1355,7 @@ export default function HotelOwnerManagement() {
                                                     }}
                                                     title="Delete Hotel"
                                                 >
-                                                    <Trash2 size={12} />
+                                                    <Trash2 size={13} />
                                                 </Button>
                                             </div>
                                         </div>

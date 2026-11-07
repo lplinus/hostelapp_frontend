@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { CreditCard, ChevronLeft, CheckCircle2, Loader2, Shield, Building2, Lock, Check, MessageSquareQuote } from "lucide-react";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { Step } from "../booking-container";
 import type { HostelDetail } from "@/types/hostel.types";
@@ -228,10 +229,8 @@ export function PaymentStep({
                             className="w-full h-14 rounded-2xl text-base font-bold bg-[#003580] hover:bg-[#002244] text-white transition-all shadow-md hover:shadow-lg active:scale-[0.98] mb-4"
                             disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                             onClick={() => {
-                                if (!isEmailVerified && onRequireEmailOtp) {
-                                    onRequireEmailOtp();
-                                    return;
-                                }
+                                const checkInFormatted = format(form.check_in, "yyyy-MM-dd");
+                                const checkOutFormatted = format(form.check_out, "yyyy-MM-dd");
 
                                 if (paymentMethod === "on_arrival") {
                                     if (confirmedBookingId) {
@@ -246,8 +245,8 @@ export function PaymentStep({
                                             guest_age: Number.parseInt(form.guest_age),
                                             adults: Number.parseInt(form.adults),
                                             children: Number.parseInt(form.children),
-                                            check_in: form.check_in.toISOString().split('T')[0],
-                                            check_out: form.check_out.toISOString().split('T')[0],
+                                            check_in: checkInFormatted,
+                                            check_out: checkOutFormatted,
                                             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
                                             total_price: finalTotalPrice,
                                             booking_type: "stay",
@@ -272,8 +271,8 @@ export function PaymentStep({
                                             guest_age: Number.parseInt(form.guest_age),
                                             adults: Number.parseInt(form.adults),
                                             children: Number.parseInt(form.children),
-                                            check_in: form.check_in.toISOString().split('T')[0],
-                                            check_out: form.check_out.toISOString().split('T')[0],
+                                            check_in: checkInFormatted,
+                                            check_out: checkOutFormatted,
                                             guests_count: Number.parseInt(form.adults) + Number.parseInt(form.children),
                                             total_price: finalTotalPrice,
                                             booking_type: "stay",

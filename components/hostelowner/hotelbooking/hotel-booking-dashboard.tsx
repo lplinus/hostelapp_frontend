@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -64,6 +64,11 @@ export default function HotelBookingDashboard() {
     const { user } = useAuth();
     const queryClient = useQueryClient();
     const isAuthenticated = !!user && tokenManager.getAuthFlag() === "authenticated";
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<HotelBookingStatus | "all">("all");
@@ -77,11 +82,11 @@ export default function HotelBookingDashboard() {
         isRefetching,
         refetch,
     } = useQuery({
-        queryKey: ["hotelBookings", selectedStatus],
+        queryKey: ["hotelBookings", user?.id, selectedStatus],
         queryFn: () => getMyHotelBookings({
             status: selectedStatus === "all" ? undefined : selectedStatus,
         }),
-        enabled: isAuthenticated,
+        enabled: isAuthenticated && !!user?.id,
         refetchInterval: isAuthenticated ? 6000 : false,
     });
 
@@ -221,7 +226,7 @@ export default function HotelBookingDashboard() {
                         Hotel Bookings
                     </h1>
                     <p className="text-sm text-muted-foreground mt-0.5">
-                        Manage your hotel stays, room reservations, folios, and payment receipts.
+                        Manage your hotel stays, room reservations, invoices, and payment receipts.
                     </p>
                 </div>
 
@@ -257,7 +262,7 @@ export default function HotelBookingDashboard() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Total Bookings</p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {totalBookingsCount}
+                                {isMounted ? totalBookingsCount : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">All-time stays reserved</p>
                         </div>
@@ -272,7 +277,7 @@ export default function HotelBookingDashboard() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Active Stays</p>
                             <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
-                                {activeStaysCount}
+                                {isMounted ? activeStaysCount : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Currently checked in</p>
                         </div>
@@ -287,7 +292,7 @@ export default function HotelBookingDashboard() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Upcoming Stays</p>
                             <p className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums">
-                                {upcomingCount}
+                                {isMounted ? upcomingCount : 0}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Confirmed future check-ins</p>
                         </div>
@@ -302,9 +307,9 @@ export default function HotelBookingDashboard() {
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground">Total Spent</p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {formatCurrency(totalSpentAmount)}
+                                {isMounted ? formatCurrency(totalSpentAmount) : "₹0"}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Cumulative folio value</p>
+                            <p className="text-[11px] text-muted-foreground">Total booking revenue</p>
                         </div>
                         <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                             <CreditCard size={18} />
@@ -372,7 +377,7 @@ export default function HotelBookingDashboard() {
             </div>
 
             {/* Bookings Table / Listing */}
-            {isLoading ? (
+            {!isMounted || isLoading ? (
                 <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
                         <Card key={i} className="border-border/40">
@@ -551,7 +556,7 @@ export default function HotelBookingDashboard() {
                                                     setSelectedBooking(b);
                                                 }}
                                             >
-                                                Folio
+                                                Details
                                                 <ChevronRight size={12} />
                                             </Button>
                                         </TableCell>
@@ -563,9 +568,9 @@ export default function HotelBookingDashboard() {
                 </div>
             )}
 
-            {/* Booking Details Folio Dialog */}
+            {/* Booking Details Dialog */}
             <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg sm:rounded-lg border border-border/80 shadow-2xl p-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth overscroll-contain [-webkit-overflow-scrolling:touch]">
                     {selectedBooking && (
                         <>
                             <DialogHeader className="border-b pb-4">
@@ -573,7 +578,7 @@ export default function HotelBookingDashboard() {
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
                                             <DialogTitle className="text-lg font-bold tracking-tight">
-                                                Reservation Folio #{selectedBooking.booking_reference}
+                                                Reservation Details #{selectedBooking.booking_reference}
                                             </DialogTitle>
                                             <span
                                                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${getStatusVariant(selectedBooking.status).textClass
@@ -595,7 +600,7 @@ export default function HotelBookingDashboard() {
 
                             <div className="space-y-5 py-2">
                                 {/* Hotel & Stay Specs */}
-                                <div className="p-4 rounded-xl bg-muted/40 border border-border/50 space-y-3">
+                                <div className="p-4 rounded-lg bg-muted/40 border border-border/50 space-y-3">
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
@@ -606,7 +611,7 @@ export default function HotelBookingDashboard() {
                                                 Room Category: {selectedBooking.room_type_name}
                                             </p>
                                         </div>
-                                        <Badge variant="outline" className="text-xs">
+                                        <Badge variant="outline" className="text-xs rounded-md">
                                             {selectedBooking.number_of_rooms} Room(s)
                                         </Badge>
                                     </div>
@@ -645,7 +650,7 @@ export default function HotelBookingDashboard() {
                                         <User size={13} />
                                         Guest Information
                                     </h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl border border-border/50 bg-card text-xs">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-lg border border-border/50 bg-card text-xs">
                                         <div>
                                             <span className="text-muted-foreground text-[10px] block">Primary Guest</span>
                                             <span className="font-medium text-foreground">
@@ -681,9 +686,9 @@ export default function HotelBookingDashboard() {
                                 <div className="space-y-2">
                                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                         <Receipt size={13} />
-                                        Folio Pricing Breakdown
+                                        Pricing Breakdown
                                     </h4>
-                                    <div className="p-4 rounded-xl border border-border/50 bg-card space-y-2.5 text-xs">
+                                    <div className="p-4 rounded-lg border border-border/50 bg-card space-y-2.5 text-xs">
                                         <div className="flex justify-between text-muted-foreground">
                                             <span>
                                                 Room Rate × {selectedBooking.number_of_nights} Night(s) ×{" "}
@@ -718,7 +723,7 @@ export default function HotelBookingDashboard() {
                                             )}
 
                                         <div className="pt-2.5 border-t border-border/50 flex justify-between items-center text-sm font-bold">
-                                            <span>Total Folio Amount</span>
+                                            <span>Total Amount</span>
                                             <span className="text-base text-foreground tabular-nums">
                                                 {formatCurrency(selectedBooking.total_amount)}
                                             </span>
@@ -735,7 +740,7 @@ export default function HotelBookingDashboard() {
 
                                 {/* Cancellation Record (if cancelled) */}
                                 {selectedBooking.cancellation_details && (
-                                    <div className="p-3.5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 text-xs text-rose-800 dark:text-rose-200">
+                                    <div className="p-3.5 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 text-xs text-rose-800 dark:text-rose-200">
                                         <div className="flex items-center gap-1.5 font-semibold">
                                             <AlertCircle size={14} />
                                             <span>Reservation Cancelled</span>
@@ -773,7 +778,7 @@ export default function HotelBookingDashboard() {
                                     onClick={() => setSelectedBooking(null)}
                                     className="text-xs"
                                 >
-                                    Close Folio
+                                    Close
                                 </Button>
                             </DialogFooter>
                         </>
@@ -783,7 +788,7 @@ export default function HotelBookingDashboard() {
 
             {/* Cancel Confirmation Modal */}
             <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-md rounded-lg sm:rounded-lg border border-border/80 shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold text-destructive flex items-center gap-2">
                             <AlertCircle size={18} />

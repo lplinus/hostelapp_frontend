@@ -86,13 +86,13 @@ export function ConfirmationStep({
                 </div>
             ) : (confirmedBookingId && (form.booking_type === "visit" || paymentMethod === "on_arrival" || isPaymentVerified || isConfirmed)) ? (
                 <div className="space-y-4">
-                    {/* ═══ Success Hero (Compact & High Contrast) ═══ */}
-                    <div className="text-center py-4 bg-white rounded-2xl border border-gray-200/70 shadow-sm px-4">
-                        <div className="w-12 h-12 bg-[#003580] rounded-full flex items-center justify-center text-white mx-auto mb-2.5 shadow-md shadow-blue-200/50">
-                            <CheckCircle2 size={26} strokeWidth={2.8} />
+                    {/* ═══ Success Hero (Refined, Balanced & Elegant) ═══ */}
+                    <div className="text-center py-4 bg-white rounded-2xl border border-gray-200/60 shadow-xs px-4">
+                        <div className="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 border border-emerald-100/80 shadow-xs">
+                            <CheckCircle2 size={22} strokeWidth={2.2} />
                         </div>
-                        <h2 className="text-2xl sm:text-3xl font-black text-gray-950 tracking-tight">Booking Confirmed!</h2>
-                        <p className="text-xs sm:text-sm font-semibold text-gray-700 mt-1">Your reservation has been successfully confirmed and registered.</p>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Booking Confirmed!</h2>
+                        <p className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Your reservation has been successfully confirmed and registered.</p>
                     </div>
 
                     {/* ═══ Booking Details Card (Compact & Clean Border) ═══ */}
@@ -191,31 +191,31 @@ export function ConfirmationStep({
                         </div>
                     )}
 
-                    {/* ═══ Action Buttons (Crystal Clear Hover & Classic Dark Blue) ═══ */}
-                    <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                    {/* ═══ Action Buttons (Refined, Balanced & Elegant) ═══ */}
+                    <div className="grid grid-cols-2 gap-3 pt-1">
                         <button
                             type="button"
-                            className="flex-1 h-12 rounded-xl bg-[#003580] hover:bg-[#002244] text-white font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+                            className="h-11 rounded-xl bg-[#003580] hover:bg-[#002860] text-white font-semibold text-xs sm:text-sm shadow-sm hover:shadow transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
                             onClick={() => router.push("/home")}
                         >
-                            <Search size={16} />
-                            Browse Hostels
+                            <Search size={15} />
+                            <span>Browse Hostels</span>
                         </button>
                         <button
                             type="button"
-                            className="flex-1 h-12 rounded-xl bg-white border-2 border-[#003580] text-[#003580] font-extrabold text-sm hover:bg-[#003580] hover:text-white transition-all duration-200 shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+                            className="h-11 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-xs sm:text-sm transition-all duration-200 shadow-2xs active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
                             onClick={resetBooking}
                         >
-                            <RotateCcw size={16} />
-                            Book Again
+                            <RotateCcw size={15} />
+                            <span>Book Again</span>
                         </button>
                     </div>
 
-                    {/* ═══ Email Notice (Bright & Clear) ═══ */}
+                    {/* ═══ Email Notice (Soft & Clean) ═══ */}
                     <div className="text-center pt-1 pb-1">
-                        <p className="text-xs sm:text-sm font-semibold text-gray-800 flex items-center justify-center gap-1.5">
+                        <p className="text-xs sm:text-sm font-medium text-slate-600 flex items-center justify-center gap-1.5">
                             <Mail size={15} className="text-[#003580]" />
-                            Confirmation details & invoice sent to <strong className="text-gray-950 underline">{form.guest_email}</strong>
+                            Confirmation details & invoice sent to <strong className="text-slate-800 font-semibold underline">{form.guest_email}</strong>
                         </p>
                     </div>
 

@@ -32,22 +32,22 @@ const inter = Inter({
 });
 
 const navLinks = [
-  { name: "Home", href: "/home" },
-  { name: "Hotels", href: "/hotels" },
-  { name: "Vacation Rentals", href: "/vacanationalrental" },
+  { name: "Hostels", href: "/home", image: "/images/3d-hostel.webp", alt: "Hostels" },
+  { name: "Hotels", href: "/hotels", image: "/images/3d-hotel.webp", alt: "Hotels" },
+  { name: "Vacation Rentals", href: "/vacanationalrental", image: "/images/3d-vacation.webp", alt: "Vacation Rentals" },
 ];
 
 const mobileNavLinks = [
-  { name: "Home", href: "/home", icon: Home },
-  { name: "Hotels", href: "/hotels", icon: Hotel },
-  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree },
+  { name: "Home", href: "/home", icon: Home, image: "/images/3d-hostel.webp" },
+  { name: "Hotels", href: "/hotels", icon: Hotel, image: "/images/3d-hotel.webp" },
+  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree, image: "/images/3d-vacation.webp" },
   { name: "Trip Boards", href: "/saved", icon: Heart },
 ];
 
 const mobileFloatingNav = [
-  { name: "Hostels", href: "/home", icon: Building2 },
-  { name: "Hotels", href: "/hotels", icon: Hotel },
-  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree },
+  { name: "Hostels", href: "/home", icon: Building2, image: "/images/3d-hostel.webp" },
+  { name: "Hotels", href: "/hotels", icon: Hotel, image: "/images/3d-hotel.webp" },
+  { name: "Vacation Rentals", href: "/vacanationalrental", icon: Palmtree, image: "/images/3d-vacation.webp" },
 ];
 
 export default function Header() {
@@ -134,10 +134,13 @@ export default function Header() {
   if (isDashboardRoute) return null;
   if (isMounted && (isAuthenticated || isLoggingOut)) return null;
 
+  const isHotelListing = pathname === "/hotels" || pathname === "/home/hotels";
+  const isVacationRentalListing = pathname === "/vacanationalrental" || pathname === "/home/vacanationalrental";
+
   const hasHero =
     pathname === "/home" ||
-    pathname.startsWith("/hotels") ||
-    pathname.startsWith("/vacanationalrental");
+    isHotelListing ||
+    isVacationRentalListing;
 
   const isTransparent = hasHero && !isScrolled;
 
@@ -184,7 +187,7 @@ export default function Header() {
         </div>
 
         {/* MIDDLE: NAVIGATION (Shifted slightly left of center for optical balance and zero overlap) */}
-        <nav className="hidden lg:flex items-center gap-3 xl:gap-4 whitespace-nowrap absolute left-[calc(50%-130px)] xl:left-[calc(50%-115px)] -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+        <nav className="hidden lg:flex items-center gap-2.5 xl:gap-3.5 whitespace-nowrap absolute left-[calc(50%-100px)] xl:left-[calc(50%-80px)] -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.href !== "/home" && pathname.startsWith(link.href));
             return (
@@ -192,7 +195,7 @@ export default function Header() {
                 key={link.name}
                 href={link.href}
                 className={clsx(
-                  "px-3 xl:px-3.5 py-1 xl:py-1.5 text-[13px] xl:text-[14px] tracking-normal rounded-full transition-all duration-200 ease-out whitespace-nowrap active:scale-95 select-none",
+                  "group inline-flex items-center gap-2 px-3 xl:px-3.5 py-1.5 text-[13px] xl:text-[14px] tracking-normal rounded-full transition-all duration-200 ease-out whitespace-nowrap active:scale-95 select-none",
                   isTransparent
                     ? isActive
                       ? "text-white font-bold bg-white/20 border border-white/35 backdrop-blur-md shadow-[0_2px_12px_rgba(255,255,255,0.2),inset_0_1px_1px_rgba(255,255,255,0.65)] hover:bg-white/35 hover:border-white/50 hover:shadow-[0_4px_20px_rgba(255,255,255,0.35),inset_0_1px_1px_rgba(255,255,255,0.9)]"
@@ -202,7 +205,17 @@ export default function Header() {
                       : "text-slate-700 font-medium border border-transparent hover:border-slate-200/80 hover:bg-slate-100 hover:text-black hover:shadow-xs"
                 )}
               >
-                {link.name}
+                {link.image && (
+                  <div className="relative w-[19px] h-[19px] xl:w-[21px] xl:h-[21px] rounded-[5px] overflow-hidden shrink-0 transition-transform duration-300 group-hover:scale-120 group-hover:-translate-y-0.5 filter drop-shadow-xs">
+                    <Image
+                      src={link.image}
+                      alt={link.alt || link.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <span>{link.name}</span>
               </Link>
             );
           })}
@@ -479,13 +492,19 @@ export default function Header() {
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={clsx(
-                              "flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all",
+                              "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all",
                               isActive
                                 ? "bg-[#312E81]/10 text-[#312E81] font-bold"
                                 : "text-slate-700 hover:bg-slate-100 hover:text-slate-950"
                             )}
                           >
-                            <Icon className={clsx("w-4 h-4 shrink-0", isActive ? "text-[#312E81]" : "text-slate-500")} />
+                            {link.image ? (
+                              <div className="relative w-6 h-6 rounded-md overflow-hidden shrink-0 shadow-2xs">
+                                <Image src={link.image} alt={link.name} fill className="object-cover" />
+                              </div>
+                            ) : (
+                              <Icon className={clsx("w-4 h-4 shrink-0", isActive ? "text-[#312E81]" : "text-slate-500")} />
+                            )}
                             <span>{link.name}</span>
                           </Link>
                         );
@@ -528,7 +547,8 @@ export default function Header() {
       <nav
         aria-label="Mobile category switcher"
         className={clsx(
-          "fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 lg:hidden flex items-center p-1 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.2)] rounded-full transition-all duration-300",
+          "fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 lg:hidden flex items-center p-1.5 sm:p-2 gap-1 sm:gap-1.5 max-w-[calc(100vw-1rem)]",
+          "bg-white/80 backdrop-blur-2xl border border-white/90 shadow-[0_16px_36px_rgba(15,23,42,0.12),0_4px_12px_rgba(15,23,42,0.06),inset_0_1px_2px_rgba(255,255,255,0.95)] rounded-full transition-all duration-300",
           isMobileMenuOpen && "opacity-0 pointer-events-none translate-y-4"
         )}
       >
@@ -542,18 +562,29 @@ export default function Header() {
               key={item.name}
               href={item.href}
               className={clsx(
-                "flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap transition-all duration-200 active:scale-95 select-none",
+                "flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full text-[12.5px] sm:text-[13.5px] font-semibold tracking-tight whitespace-nowrap transition-all duration-200 active:scale-95 select-none",
                 isActive
-                  ? "bg-[#1E1B4B] text-white font-semibold shadow-xs"
-                  : "text-slate-600 hover:text-slate-950 hover:bg-slate-100/80"
+                  ? "bg-gradient-to-b from-white via-white to-slate-50/95 text-slate-900 font-bold border border-slate-200/90 shadow-[0_4px_14px_rgba(15,23,42,0.09),0_1px_2px_rgba(15,23,42,0.04),inset_0_1px_2px_rgba(255,255,255,1)]"
+                  : "text-slate-600 hover:text-slate-900 font-medium border border-transparent hover:bg-white/50"
               )}
             >
-              <Icon
-                className={clsx(
-                  "w-3.5 h-3.5 shrink-0 transition-colors",
-                  isActive ? "text-white" : "text-slate-500"
-                )}
-              />
+              {item.image ? (
+                <div
+                  className={clsx(
+                    "relative w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-[6px] overflow-hidden shrink-0 transition-transform duration-200 filter drop-shadow-xs",
+                    isActive && "scale-105"
+                  )}
+                >
+                  <Image src={item.image} alt={item.name} fill className="object-cover" />
+                </div>
+              ) : (
+                <Icon
+                  className={clsx(
+                    "w-4 h-4 shrink-0 transition-colors",
+                    isActive ? "text-slate-900" : "text-slate-500"
+                  )}
+                />
+              )}
               <span>{item.name}</span>
             </Link>
           );

@@ -142,3 +142,12 @@
 .animate-marquee-continuous:hover {
   animation-play-state: paused;
 }
+
+/* Razorpay checkout iframe and container compatibility when rendered over modals */
+.razorpay-container,
+.razorpay-checkout-frame,
+iframe[src*="razorpay"],
+div[class*="razorpay"] {
+  pointer-events: auto !important;
+  z-index: 2147483647 !important;
+}

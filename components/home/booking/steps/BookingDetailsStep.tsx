@@ -112,20 +112,29 @@ export function BookingDetailsStep({
                     {/* Mobile & Age */}
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="mobile" className="text-xs font-bold text-gray-900 uppercase tracking-wider">Mobile Number</Label>
+                            <Label htmlFor="mobile" className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                                Mobile Number <span className="text-[10px] text-gray-400 font-normal lowercase">(10 digits starting with 6-9)</span>
+                            </Label>
                             <Input
                                 id="mobile"
                                 type="tel"
-                                placeholder="+1 (555) 000-0000"
+                                maxLength={13}
+                                placeholder="+91 9876543210"
                                 value={form.mobile_number}
                                 disabled={isConfirmed}
                                 readOnly={isConfirmed}
                                 onChange={(e) => {
-                                    let val = e.target.value;
-                                    if (!val.startsWith("+91")) {
-                                        val = "+91" + val.replace(/^\+?91?/, "");
+                                    let raw = e.target.value;
+                                    // Strip anything that is not digit or plus
+                                    let digits = raw.replace(/[^\d+]/g, "");
+                                    if (!digits.startsWith("+91")) {
+                                        digits = "+91" + digits.replace(/^\+?91?/, "");
                                     }
-                                    setForm({ ...form, mobile_number: val });
+                                    // Max 10 digits after +91
+                                    const prefix = "+91";
+                                    const body = digits.slice(3).replace(/\D/g, "").slice(0, 10);
+                                    const finalVal = prefix + body;
+                                    setForm({ ...form, mobile_number: finalVal });
                                     if (errors.mobile_number) setErrors(prev => ({ ...prev, mobile_number: "" }));
                                 }}
                                 className={cn(

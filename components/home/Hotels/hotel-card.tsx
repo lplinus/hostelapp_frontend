@@ -46,17 +46,17 @@ export default function HotelCard({ hotel }: HotelCardProps) {
     return (
         <div
             onMouseLeave={() => setIsAmenitiesExpanded(false)}
-            className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden transition-none w-full"
+            className="bg-white rounded-xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-slate-300 overflow-hidden transition-all duration-300 w-full"
         >
             <div className="flex flex-col md:flex-row items-stretch">
-                {/* 1. IMAGE CONTAINER (Flush, Rectangular, No Upper Gap) */}
-                <div className="relative w-full md:w-[320px] lg:w-[340px] h-56 md:h-auto min-h-[220px] bg-slate-100 shrink-0 overflow-hidden">
+                {/* 1. IMAGE CONTAINER (Increased size matching Vacation Rental scale) */}
+                <div className="relative w-full md:w-[360px] lg:w-[380px] h-64 md:h-auto min-h-[250px] md:min-h-[260px] bg-slate-100 shrink-0 overflow-hidden">
                     {imageUrl ? (
                         <Image
                             src={imageUrl}
                             alt={hotel.name}
                             fill
-                            sizes="(max-width: 768px) 100vw, 340px"
+                            sizes="(max-width: 768px) 100vw, 380px"
                             className="object-cover object-center"
                             unoptimized={isExternalImage(imageUrl)}
                         />
@@ -68,7 +68,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                     )}
 
                     {/* BADGES ON IMAGE */}
-                    <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
+                    <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                         {/* Rectangular Hotel Type Badge */}
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wider uppercase bg-[#312E81] text-white shadow-sm border border-indigo-900/20">
                             <Sparkles size={10} className="text-amber-300" />
@@ -84,7 +84,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                     </div>
 
                     {/* Star Rating Badge on Bottom-Left of Image */}
-                    <div className="absolute bottom-2.5 left-2.5 bg-black/75 backdrop-blur-[2px] px-2.5 py-1 rounded-md flex items-center gap-1 text-white z-10">
+                    <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-[2px] px-2.5 py-1 rounded-md flex items-center gap-1 text-white z-10">
                         <div className="flex items-center gap-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
@@ -99,8 +99,8 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                     </div>
                 </div>
 
-                {/* 2. HOTEL DETAILS CONTENT */}
-                <div className="flex-1 p-4 md:p-5 flex flex-col justify-between gap-3 min-w-0">
+                {/* 2. HOTEL DETAILS CONTENT (Expanded spacing & layout) */}
+                <div className="flex-1 p-5 md:p-6 flex flex-col justify-between gap-3.5 min-w-0">
                     <div className="space-y-2">
                         {/* Top Row: Type & Star Rating & Status */}
                         <div className="flex items-center justify-between gap-2 flex-wrap">

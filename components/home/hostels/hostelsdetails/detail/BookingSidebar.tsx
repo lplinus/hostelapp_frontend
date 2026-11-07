@@ -116,7 +116,7 @@ export default function BookingSidebar({
     const showDiscount = hostel.is_discounted && currentPrice < originalPrice;
 
     return (
-        <div className="lg:self-start lg:sticky lg:top-24 hidden lg:block z-10 w-full max-w-[380px] ml-auto">
+        <div className="lg:self-start lg:sticky lg:top-[120px] hidden lg:block z-10 w-full max-w-[380px] ml-auto">
             <div className="border border-gray-200 rounded-2xl bg-white shadow-sm overflow-hidden">
                 {/* Price Display */}
                 <div className="p-6 pb-5">

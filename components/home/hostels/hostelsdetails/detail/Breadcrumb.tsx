@@ -16,7 +16,7 @@ export default function Breadcrumb({ hostelName, className = "" }: BreadcrumbPro
     };
 
     return (
-        <nav aria-label="Breadcrumb" className={`w-full py-3.5 text-sm text-gray-700 font-semibold ${className}`.trim()}>
+        <nav aria-label="Breadcrumb" className={`w-full py-0 text-sm text-gray-700 font-semibold ${className}`.trim()}>
             <ol className="flex items-center gap-2 flex-wrap">
                 <li>
                     <button 

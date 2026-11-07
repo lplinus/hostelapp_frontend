@@ -67,6 +67,10 @@ export interface VacationRentalBooking {
     rental: string;
     rental_title: string;
     host: number;
+    host_name?: string;
+    owner?: number | null;
+    owner_name?: string;
+    owner_email?: string;
     check_in_date: string;
     check_out_date: string;
     number_of_nights: number;
@@ -130,6 +134,10 @@ export interface VacationRental {
     allows_smoking: boolean;
     allows_parties: boolean;
     custom_rules?: string;
+    caretaker_name?: string;
+    caretaker_number?: string;
+    wifi_name?: string;
+    wifi_password?: string;
     amenities_list?: Array<{ id: number; name: string; icon?: string }>;
     rating_avg: string;
     rating_count: number;

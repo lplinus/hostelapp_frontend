@@ -98,6 +98,18 @@ export const deleteVacationRental = async (slug: string): Promise<void> => {
     return authApiClient.delete(`/api/vacanationrentals/properties/${slug}/`);
 };
 
+export const uploadVacationRentalImages = async (
+    data: FormData
+): Promise<any> => {
+    return authApiClient.post("/api/vacanationrentals/images/", data);
+};
+
+export const deleteVacationRentalImage = async (
+    imageId: number
+): Promise<void> => {
+    return authApiClient.delete(`/api/vacanationrentals/images/${imageId}/`);
+};
+
 export const blockVacationRentalDates = async (
     slug: string,
     payload: { start_date: string; end_date: string; reason?: string }

@@ -70,6 +70,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import VacationRentalManagement from "@/components/hostelowner/vacationrental/vacation-rental-management";
+import { cn } from "@/lib/utils";
 
 export default function VacationRentalDashboard() {
     const { user } = useAuth();
@@ -79,24 +81,13 @@ export default function VacationRentalDashboard() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab");
+    const currentTab = tabParam === "bookings" ? "bookings" : "property";
 
-    // View Perspective: Guest trips vs Host inquiries
-    const [perspective, setPerspective] = useState<"guest" | "host">(
-        tabParam === "property" ? "host" : "guest"
-    );
-
-    useEffect(() => {
-        if (tabParam === "property" && perspective !== "host") {
-            setPerspective("host");
-        } else if (tabParam === "bookings" && perspective !== "guest") {
-            setPerspective("guest");
-        }
-    }, [tabParam, perspective]);
+    // View Perspective: Guest trips vs Host inquiries (within bookings view)
+    const [perspective, setPerspective] = useState<"guest" | "host">("host");
 
     const handlePerspectiveChange = (newPerspective: "guest" | "host") => {
         setPerspective(newPerspective);
-        const targetTab = newPerspective === "host" ? "property" : "bookings";
-        router.replace(`/vacanrentalbooking?tab=${targetTab}`, { scroll: false });
     };
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<VacationRentalBookingStatus | "all">("all");
@@ -115,12 +106,12 @@ export default function VacationRentalDashboard() {
         isRefetching: isGuestRefetching,
         refetch: refetchGuest,
     } = useQuery({
-        queryKey: ["vacationRentalBookings", "guest", selectedStatus],
+        queryKey: ["vacationRentalBookings", "guest", user?.id, selectedStatus],
         queryFn: () =>
             getMyVacationRentalBookings({
                 status: selectedStatus === "all" ? undefined : selectedStatus,
             }),
-        enabled: isAuthenticated && perspective === "guest",
+        enabled: isAuthenticated && perspective === "guest" && !!user?.id,
         refetchInterval: isAuthenticated ? 6000 : false,
     });
 
@@ -130,12 +121,12 @@ export default function VacationRentalDashboard() {
         isRefetching: isHostRefetching,
         refetch: refetchHost,
     } = useQuery({
-        queryKey: ["vacationRentalBookings", "host", selectedStatus],
+        queryKey: ["vacationRentalBookings", "host", user?.id, selectedStatus],
         queryFn: () =>
             getHostedVacationRentalBookings({
                 status: selectedStatus === "all" ? undefined : selectedStatus,
             }),
-        enabled: isAuthenticated && perspective === "host",
+        enabled: isAuthenticated && perspective === "host" && !!user?.id,
         refetchInterval: isAuthenticated ? 6000 : false,
     });
 
@@ -294,7 +285,7 @@ export default function VacationRentalDashboard() {
     const totalCount = activeList.length;
     const upcomingCount = activeList.filter((b) => b.status === "confirmed").length;
     const pendingCount = activeList.filter((b) => b.status === "pending_approval").length;
-    const totalFolioSum = activeList
+    const totalRevenueSum = activeList
         .filter((b) => b.status !== "cancelled" && b.status !== "declined")
         .reduce((sum, b) => sum + parseFloat(b.total_price || "0"), 0);
 
@@ -306,8 +297,57 @@ export default function VacationRentalDashboard() {
         { key: "cancelled", label: "Cancelled" },
     ];
 
+    const renderTopTabs = () => (
+        <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-6">
+            <div className="flex items-center gap-1.5 p-1 bg-muted/70 rounded-2xl border shadow-2xs">
+                <button
+                    type="button"
+                    onClick={() => router.replace("/vacanrentalbooking?tab=property", { scroll: false })}
+                    className={cn(
+                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                        currentTab === "property"
+                            ? "bg-white text-slate-950 font-bold shadow-xs border border-slate-200/90"
+                            : "text-muted-foreground hover:text-foreground hover:bg-slate-100/60"
+                    )}
+                >
+                    <Palmtree size={15} className={currentTab === "property" ? "text-[#312E81]" : ""} />
+                    <span>Vacation Rental Properties</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => router.replace("/vacanrentalbooking?tab=bookings", { scroll: false })}
+                    className={cn(
+                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                        currentTab === "bookings"
+                            ? "bg-white text-slate-950 font-bold shadow-xs border border-slate-200/90"
+                            : "text-muted-foreground hover:text-foreground hover:bg-slate-100/60"
+                    )}
+                >
+                    <Calendar size={15} className={currentTab === "bookings" ? "text-[#312E81]" : ""} />
+                    <span>Vacation Stays (Bookings)</span>
+                    {hostedBookings.length > 0 && (
+                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-100 text-[#312E81]">
+                            {hostedBookings.length}
+                        </span>
+                    )}
+                </button>
+            </div>
+        </div>
+    );
+
+    if (currentTab === "property") {
+        return (
+            <div className="space-y-6">
+                {renderTopTabs()}
+                <VacationRentalManagement />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
+            {renderTopTabs()}
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -424,7 +464,7 @@ export default function VacationRentalDashboard() {
                                 {perspective === "guest" ? "Total Vacation Spend" : "Host Revenue"}
                             </p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {formatCurrency(totalFolioSum)}
+                                {formatCurrency(totalRevenueSum)}
                             </p>
                             <p className="text-[11px] text-muted-foreground">Total booking value</p>
                         </div>
@@ -572,7 +612,7 @@ export default function VacationRentalDashboard() {
                                     Guests
                                 </TableHead>
                                 <TableHead className="font-semibold text-xs text-foreground">
-                                    Total Folio
+                                    Total Amount
                                 </TableHead>
                                 <TableHead className="font-semibold text-xs text-foreground">
                                     Status
@@ -712,7 +752,7 @@ export default function VacationRentalDashboard() {
                                                         setSelectedBooking(b);
                                                     }}
                                                 >
-                                                    Folio
+                                                    Details
                                                     <ChevronRight size={12} />
                                                 </Button>
                                             </div>
@@ -725,9 +765,9 @@ export default function VacationRentalDashboard() {
                 </div>
             )}
 
-            {/* Folio & Details Dialog */}
+            {/* Details Dialog */}
             <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg sm:rounded-lg border border-border/80 shadow-2xl p-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth overscroll-contain [-webkit-overflow-scrolling:touch]">
                     {selectedBooking && (
                         <>
                             <DialogHeader className="border-b pb-4">
@@ -735,7 +775,7 @@ export default function VacationRentalDashboard() {
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
                                             <DialogTitle className="text-lg font-bold tracking-tight">
-                                                Vacation Folio #{selectedBooking.booking_reference}
+                                                Reservation Details #{selectedBooking.booking_reference}
                                             </DialogTitle>
                                             <span
                                                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${getStatusVariant(selectedBooking.status).textClass
@@ -757,7 +797,7 @@ export default function VacationRentalDashboard() {
 
                             <div className="space-y-5 py-2">
                                 {/* Property & Schedule Info */}
-                                <div className="p-4 rounded-xl bg-muted/40 border border-border/50 space-y-3">
+                                <div className="p-4 rounded-lg bg-muted/40 border border-border/50 space-y-3">
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
@@ -768,7 +808,7 @@ export default function VacationRentalDashboard() {
                                                 Entire Vacation Home / Villa
                                             </p>
                                         </div>
-                                        <Badge variant="outline" className="text-xs">
+                                        <Badge variant="outline" className="text-xs rounded-md">
                                             {selectedBooking.number_of_nights} Night Stay
                                         </Badge>
                                     </div>
@@ -807,7 +847,7 @@ export default function VacationRentalDashboard() {
                                         <User size={13} />
                                         Guest Breakdown
                                     </h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl border border-border/50 bg-card text-xs">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-lg border border-border/50 bg-card text-xs">
                                         <div>
                                             <span className="text-muted-foreground text-[10px] block">Primary Guest</span>
                                             <span className="font-medium text-foreground">
@@ -847,13 +887,13 @@ export default function VacationRentalDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Airbnb Pricing Folio */}
+                                {/* Itemized Pricing Breakdown */}
                                 <div className="space-y-2">
                                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                         <Receipt size={13} />
-                                        Airbnb Itemized Receipt
+                                        Pricing Breakdown
                                     </h4>
-                                    <div className="p-4 rounded-xl border border-border/50 bg-card space-y-2.5 text-xs">
+                                    <div className="p-4 rounded-lg border border-border/50 bg-card space-y-2.5 text-xs">
                                         <div className="flex justify-between text-muted-foreground">
                                             <span>
                                                 Nightly Base Rate × {selectedBooking.number_of_nights} Night(s)
@@ -879,7 +919,7 @@ export default function VacationRentalDashboard() {
                                         {selectedBooking.pricing_details?.service_fee &&
                                             parseFloat(selectedBooking.pricing_details.service_fee) > 0 && (
                                                 <div className="flex justify-between text-muted-foreground">
-                                                    <span>Airbnb Platform & Host Service Fee</span>
+                                                    <span>Platform & Host Service Fee</span>
                                                     <span className="font-medium text-foreground tabular-nums">
                                                         {formatCurrency(selectedBooking.pricing_details.service_fee)}
                                                     </span>
@@ -916,7 +956,7 @@ export default function VacationRentalDashboard() {
 
                                 {/* Cancellation Record if any */}
                                 {selectedBooking.cancellation_details && (
-                                    <div className="p-3.5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 text-xs text-rose-800 dark:text-rose-200">
+                                    <div className="p-3.5 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 text-xs text-rose-800 dark:text-rose-200">
                                         <div className="flex items-center gap-1.5 font-semibold">
                                             <AlertCircle size={14} />
                                             <span>Stay Cancelled or Declined</span>
@@ -979,7 +1019,7 @@ export default function VacationRentalDashboard() {
                                     onClick={() => setSelectedBooking(null)}
                                     className="text-xs"
                                 >
-                                    Close Folio
+                                    Close
                                 </Button>
                             </DialogFooter>
                         </>
@@ -989,7 +1029,7 @@ export default function VacationRentalDashboard() {
 
             {/* Cancel Modal (for Guest or Host) */}
             <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-md rounded-lg sm:rounded-lg border border-border/80 shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold text-destructive flex items-center gap-2">
                             <AlertCircle size={18} />
@@ -1045,7 +1085,7 @@ export default function VacationRentalDashboard() {
 
             {/* Host Decline Modal */}
             <Dialog open={isDeclineModalOpen} onOpenChange={setIsDeclineModalOpen}>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-md rounded-lg sm:rounded-lg border border-border/80 shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold text-destructive flex items-center gap-2">
                             <AlertCircle size={18} />

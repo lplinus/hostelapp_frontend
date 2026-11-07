@@ -36,6 +36,10 @@ import type { VacationRental, VacationRentalBooking } from "@/types/vacationrent
 import { createVacationRentalBooking } from "@/services/vacanatinalrentalservices/vacationrental.service";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
+import { VacationRentalBookingModal } from "./VacationRentalBookingModal";
+import { VacationRentalMobileBookingBar } from "./VacationRentalMobileBookingBar";
+import { loadRazorpayScript } from "@/lib/razorpay";
+import { validateIndianMobile } from "@/lib/validation";
 import {
     Dialog,
     DialogContent,
@@ -163,6 +167,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
             toast.error("Pets are not permitted at this property.");
             return;
         }
+        setConfirmedBooking(null);
         setIsBookingModalOpen(true);
     };
 
@@ -175,49 +180,103 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
             toast.error("Please enter a valid email address.");
             return;
         }
-        if (!guestMobile.trim() || guestMobile.replace(/\D/g, "").length < 10) {
-            toast.error("Please enter a valid 10-digit mobile number.");
+        const phoneValidation = validateIndianMobile(guestMobile);
+        if (!phoneValidation.isValid) {
+            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
             return;
         }
 
-        setIsSubmittingBooking(true);
-        try {
-            const booking = await createVacationRentalBooking({
-                rental_id: rental.id,
-                check_in_date: checkInDate,
-                check_out_date: checkOutDate,
-                guest_name: guestName.trim(),
-                guest_email: guestEmail.trim(),
-                mobile_number: guestMobile.trim(),
-                adults,
-                children,
-                infants,
-                pets,
-                special_requests: specialRequests.trim(),
-                payment_method: paymentMethod,
-            });
+        const proceedBookingSubmission = async (razorpayPaymentId?: string) => {
+            setIsSubmittingBooking(true);
+            try {
+                const booking = await createVacationRentalBooking({
+                    rental_id: rental.id,
+                    check_in_date: checkInDate,
+                    check_out_date: checkOutDate,
+                    guest_name: guestName.trim(),
+                    guest_email: guestEmail.trim(),
+                    mobile_number: phoneValidation.cleanNumber || guestMobile.trim(),
+                    adults,
+                    children,
+                    infants,
+                    pets,
+                    special_requests: specialRequests.trim() + (razorpayPaymentId ? ` [Razorpay ID: ${razorpayPaymentId}]` : ""),
+                    payment_method: paymentMethod,
+                });
 
-            setConfirmedBooking(booking);
-            toast.success("Reservation placed successfully!", {
-                description: `Confirmation #${booking.booking_reference}`,
-            });
-        } catch (err: any) {
-            const errorMsg =
-                err?.response?.data?.detail ||
-                err?.response?.data?.check_in_date ||
-                err?.response?.data?.adults ||
-                "Failed to complete reservation. Please review dates and details.";
-            toast.error(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
-        } finally {
-            setIsSubmittingBooking(false);
+                setConfirmedBooking(booking);
+                toast.success("Reservation confirmed successfully!", {
+                    description: `Confirmation #${booking.booking_reference}`,
+                });
+            } catch (err: any) {
+                const errorMsg =
+                    err?.response?.data?.detail ||
+                    err?.response?.data?.check_in_date ||
+                    err?.response?.data?.adults ||
+                    "Failed to complete reservation. Please review dates and details.";
+                toast.error(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
+            } finally {
+                setIsSubmittingBooking(false);
+            }
+        };
+
+        if (paymentMethod === "online") {
+            setIsSubmittingBooking(true);
+            try {
+                const isLoaded = await loadRazorpayScript();
+                if (!isLoaded || typeof (window as any).Razorpay === "undefined") {
+                    toast.error("Unable to load Razorpay payment gateway. Please check your internet connection.");
+                    setIsSubmittingBooking(false);
+                    return;
+                }
+
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_SRVXPRrskTPpW6",
+                    amount: Math.round(pricingCalculation.grandTotal * 100), // paise
+                    currency: "INR",
+                    name: "Hostel In Rentals",
+                    description: `Reservation for ${rental.title}`,
+                    handler: async function (response: any) {
+                        toast.success("Online payment successful!");
+                        await proceedBookingSubmission(response.razorpay_payment_id);
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setIsSubmittingBooking(false);
+                            toast.info("Payment window closed.");
+                        }
+                    },
+                    prefill: {
+                        name: guestName.trim(),
+                        email: guestEmail.trim(),
+                        contact: phoneValidation.cleanNumber || guestMobile.trim()
+                    },
+                    theme: {
+                        color: "#312E81"
+                    }
+                };
+
+                const rzp = new (window as any).Razorpay(options);
+                rzp.on("payment.failed", function (response: any) {
+                    toast.error(response.error?.description || "Payment failed.");
+                    setIsSubmittingBooking(false);
+                });
+                rzp.open();
+            } catch (e: any) {
+                toast.error(e.message || "Failed to initiate Razorpay checkout.");
+                setIsSubmittingBooking(false);
+            }
+        } else {
+            // Pay on arrival
+            await proceedBookingSubmission();
         }
     };
 
     return (
         <div className="min-h-screen bg-slate-50/70 pb-24 font-sans text-slate-800">
             {/* 1. TOP BREADCRUMB & ACTION ROW */}
-            <div className="bg-white border-b border-slate-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between text-xs font-medium text-slate-500">
+            <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between text-xs font-medium text-slate-500">
                     <div className="flex items-center gap-1.5 overflow-hidden">
                         <Link href="/home" className="hover:text-slate-900 shrink-0">Home</Link>
                         <ChevronRight size={13} className="text-slate-400 shrink-0" />
@@ -359,9 +418,9 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
 
             {/* 4. MAIN TWO-COLUMN BODY */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    {/* LEFT COLUMN: Property Highlights, Host, Description, Specs & Rules (7 cols) */}
-                    <div className="lg:col-span-7 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 xl:gap-10 items-start">
+                    {/* LEFT COLUMN: Property Highlights, Host, Description, Specs & Rules */}
+                    <div className="min-w-0 space-y-8">
                         {/* Host Overview */}
                         <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -493,9 +552,9 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Sticky Reservation Folio Card (5 cols) */}
-                    <div className="lg:col-span-5 lg:self-start lg:sticky lg:top-24 z-20">
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-6 space-y-5">
+                    {/* RIGHT COLUMN: Sticky Reservation Folio Card (Compact 380px like Hostel) */}
+                    <div className="lg:self-start lg:sticky lg:top-[120px] hidden lg:block z-20 w-full max-w-[380px] ml-auto">
+                        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
                             {/* Nightly Tariff Header */}
                             <div className="flex items-baseline justify-between border-b border-slate-100 pb-4">
                                 <div className="flex items-baseline gap-1">
@@ -523,7 +582,16 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                             type="date"
                                             value={checkInDate}
                                             min={new Date().toISOString().split("T")[0]}
-                                            onChange={(e) => setCheckInDate(e.target.value)}
+                                            onChange={(e) => {
+                                                const newIn = e.target.value;
+                                                if (!newIn) return;
+                                                setCheckInDate(newIn);
+                                                if (newIn && checkOutDate && newIn >= checkOutDate) {
+                                                    const next = new Date(newIn);
+                                                    next.setDate(next.getDate() + 1);
+                                                    setCheckOutDate(next.toISOString().split("T")[0]);
+                                                }
+                                            }}
                                             className="w-full font-bold text-slate-950 bg-transparent focus:outline-none pt-0.5 cursor-pointer"
                                         />
                                     </div>
@@ -630,16 +698,16 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                 </div>
                             </div>
 
-                            {/* CTA Action - Dark Blue */}
+                            {/* CTA Action */}
                             <button
                                 onClick={handleOpenBookingModal}
-                                className="w-full py-3.5 rounded-sm bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-sm tracking-wide shadow-md active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
+                                className="w-full h-12 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold text-[15px] shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
                             >
                                 <Zap size={16} className="fill-current text-amber-300" />
                                 {rental.instant_book ? "Instant Book Stay" : "Request to Book"}
                             </button>
 
-                            <p className="text-[11px] text-center text-slate-600 font-medium">
+                            <p className="text-[11px] text-center text-slate-500 font-medium leading-relaxed">
                                 You won't be charged yet. Instant confirmation upon reservation.
                             </p>
                         </div>
@@ -647,188 +715,52 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 </div>
             </div>
 
-            {/* 5. RESERVATION CONFIRMATION & GUEST FOLIO MODAL */}
-            <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
-                <DialogContent className="max-w-lg">
-                    {confirmedBooking ? (
-                        <div className="text-center py-6 space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
-                                <CheckCircle2 size={32} />
-                            </div>
+            {/* 5. RESERVATION CONFIRMATION & GUEST FOLIO MODAL (SEPARATE MODULAR COMPONENT) */}
+            <VacationRentalBookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => {
+                    setIsBookingModalOpen(false);
+                    setConfirmedBooking(null);
+                }}
+                rental={rental}
+                confirmedBooking={confirmedBooking}
+                setConfirmedBooking={setConfirmedBooking}
+                checkInDate={checkInDate}
+                checkOutDate={checkOutDate}
+                numberOfNights={numberOfNights}
+                pricingCalculation={pricingCalculation}
+                guestName={guestName}
+                setGuestName={setGuestName}
+                guestEmail={guestEmail}
+                setGuestEmail={setGuestEmail}
+                guestMobile={guestMobile}
+                setGuestMobile={setGuestMobile}
+                specialRequests={specialRequests}
+                setSpecialRequests={setSpecialRequests}
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+                isSubmittingBooking={isSubmittingBooking}
+                handleConfirmBooking={handleConfirmBooking}
+            />
 
-                            <div className="space-y-1">
-                                <DialogTitle className="text-xl font-bold text-slate-950">
-                                    Reservation Confirmed!
-                                </DialogTitle>
-                                <DialogDescription className="text-xs text-slate-700 font-medium">
-                                    Your vacation stay at {rental.title} is officially reserved.
-                                </DialogDescription>
-                            </div>
+            {/* 6. MOBILE STICKY BOTTOM BAR (RESERVE BUTTON & DATES DRAWER) */}
+            <VacationRentalMobileBookingBar
+                rental={rental}
+                checkInDate={checkInDate}
+                setCheckInDate={setCheckInDate}
+                checkOutDate={checkOutDate}
+                setCheckOutDate={setCheckOutDate}
+                guestsCount={adults + children}
+                setGuestsCount={(count) => {
+                    setAdults(count);
+                    setChildren(0);
+                }}
+                numberOfNights={numberOfNights}
+                pricingCalculation={pricingCalculation}
+                onOpenBookingModal={handleOpenBookingModal}
+            />
 
-                            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-xs text-left space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-slate-700 font-medium">Booking Reference:</span>
-                                    <span className="font-mono font-bold text-slate-950">
-                                        #{confirmedBooking.booking_reference}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-700 font-medium">Check-In:</span>
-                                    <span className="font-bold text-slate-950">{confirmedBooking.check_in_date}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-700 font-medium">Check-Out:</span>
-                                    <span className="font-bold text-slate-950">{confirmedBooking.check_out_date}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-700 font-medium">Total Price:</span>
-                                    <span className="font-bold text-slate-950">₹{confirmedBooking.total_price}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-700 font-medium">Status:</span>
-                                    <span className="font-bold text-[#312E81]">
-                                        {confirmedBooking.status_display}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <DialogFooter className="gap-2 sm:justify-center pt-2">
-                                <Button
-                                    asChild
-                                    className="bg-[#1E1B4B] hover:bg-[#312E81] text-xs font-semibold"
-                                >
-                                    <Link href="/vacanrentalbooking">
-                                        View in Dashboard Folio
-                                    </Link>
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        setIsBookingModalOpen(false);
-                                        setConfirmedBooking(null);
-                                    }}
-                                    className="text-xs font-semibold text-slate-700"
-                                >
-                                    Done
-                                </Button>
-                            </DialogFooter>
-                        </div>
-                    ) : (
-                        <>
-                            <DialogHeader>
-                                <DialogTitle className="text-lg font-bold text-slate-950 flex items-center gap-2">
-                                    <Palmtree size={18} className="text-[#312E81]" />
-                                    Reserve {rental.title}
-                                </DialogTitle>
-                                <DialogDescription className="text-xs text-slate-700 font-medium">
-                                    {numberOfNights} night(s) from {checkInDate} to {checkOutDate} • ₹{pricingCalculation.grandTotal.toLocaleString("en-IN")} Total
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <div className="space-y-4 py-2 text-xs">
-                                <div className="space-y-1.5">
-                                    <label className="font-semibold text-slate-800">Primary Guest Name</label>
-                                    <Input
-                                        placeholder="Full Name (e.g. Aarav Sharma)"
-                                        value={guestName}
-                                        onChange={(e) => setGuestName(e.target.value)}
-                                        className="h-9 text-xs font-medium text-slate-900"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1.5">
-                                        <label className="font-semibold text-slate-800">Email Address</label>
-                                        <Input
-                                            type="email"
-                                            placeholder="guest@example.com"
-                                            value={guestEmail}
-                                            onChange={(e) => setGuestEmail(e.target.value)}
-                                            className="h-9 text-xs font-medium text-slate-900"
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <label className="font-semibold text-slate-800">Mobile Number</label>
-                                        <Input
-                                            placeholder="+91 9876543210"
-                                            value={guestMobile}
-                                            onChange={(e) => setGuestMobile(e.target.value)}
-                                            className="h-9 text-xs font-medium text-slate-900"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="font-semibold text-slate-800">Special Notes for Host (Optional)</label>
-                                    <Input
-                                        placeholder="Late check-in, anniversary setup, airport transfer inquiry..."
-                                        value={specialRequests}
-                                        onChange={(e) => setSpecialRequests(e.target.value)}
-                                        className="h-9 text-xs font-medium text-slate-900"
-                                    />
-                                </div>
-
-                                <div className="space-y-2 pt-2 border-t border-slate-100">
-                                    <label className="font-semibold text-slate-800 block">Payment Method</label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => setPaymentMethod("online")}
-                                            className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between ${paymentMethod === "online"
-                                                    ? "border-[#312E81] bg-indigo-50/50 text-[#312E81]"
-                                                    : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                                                }`}
-                                        >
-                                            <span>UPI / Online Pay</span>
-                                            {paymentMethod === "online" && <Check size={14} />}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setPaymentMethod("on_arrival")}
-                                            className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between ${paymentMethod === "on_arrival"
-                                                    ? "border-[#312E81] bg-indigo-50/50 text-[#312E81]"
-                                                    : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                                                }`}
-                                        >
-                                            <span>Pay on Arrival</span>
-                                            {paymentMethod === "on_arrival" && <Check size={14} />}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <DialogFooter className="gap-2 pt-2 border-t">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setIsBookingModalOpen(false)}
-                                    disabled={isSubmittingBooking}
-                                    className="text-xs text-slate-700 font-semibold"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    onClick={handleConfirmBooking}
-                                    disabled={isSubmittingBooking}
-                                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white text-xs font-medium tracking-wide gap-1.5 shadow-sm rounded-sm"
-                                >
-                                    {isSubmittingBooking ? (
-                                        <>
-                                            <Loader2 size={13} className="animate-spin" />
-                                            Locking Reservation...
-                                        </>
-                                    ) : (
-                                        "Confirm & Reserve"
-                                    )}
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
-
-            {/* 6. FULL-SCREEN GALLERY LIGHTBOX */}
+            {/* 7. FULL-SCREEN GALLERY LIGHTBOX */}
             <Dialog open={isGalleryModalOpen} onOpenChange={setIsGalleryModalOpen}>
                 <DialogContent className="max-w-4xl w-[94vw] sm:w-[92vw] md:w-[90vw] lg:w-full max-h-[88vh] sm:max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col bg-white no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                     {/* Fixed Modal Header */}

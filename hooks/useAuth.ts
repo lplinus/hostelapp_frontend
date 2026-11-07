@@ -46,6 +46,8 @@ export const useAuth = () => {
         async (credentials: LoginCredentials) => {
             setLoading(true);
             try {
+                // Wipe any cached data from previous user session
+                queryClient.clear();
                 const data = await loginUser(credentials);
                 // Instantly update the global auth state
                 queryClient.setQueryData(['authUser'], data.user);
@@ -103,9 +105,9 @@ export const useAuth = () => {
             tokenManager.clearAccessToken();
             tokenManager.clearAuthFlag();
         } finally {
-            // Instantly clear the global auth state across all components
+            // Completely purge all cached query data across the application
+            queryClient.clear();
             queryClient.setQueryData(['authUser'], null);
-            queryClient.invalidateQueries({ queryKey: ['dashboardStats'] }); // Purge dashboard data
 
             router.push('/login');
             router.refresh();
