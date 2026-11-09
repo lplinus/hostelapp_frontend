@@ -229,6 +229,11 @@ export function PaymentStep({
                             className="w-full h-14 rounded-2xl text-base font-bold bg-[#003580] hover:bg-[#002244] text-white transition-all shadow-md hover:shadow-lg active:scale-[0.98] mb-4"
                             disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                             onClick={() => {
+                                if (!isEmailVerified) {
+                                    onRequireEmailOtp?.();
+                                    return;
+                                }
+
                                 const checkInFormatted = format(form.check_in, "yyyy-MM-dd");
                                 const checkOutFormatted = format(form.check_out, "yyyy-MM-dd");
 

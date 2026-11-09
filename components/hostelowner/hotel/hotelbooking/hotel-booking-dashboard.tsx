@@ -2,34 +2,33 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    getMyVacationRentalBookings,
-    getHostedVacationRentalBookings,
-    approveVacationRentalBooking,
-    declineVacationRentalBooking,
-    cancelVacationRentalBooking,
-} from "@/services/vacanatinalrentalservices/vacationrental.service";
+    getMyHotels,
+    getMyHotelBookings,
+    cancelHotelBooking,
+} from "@/services/hotelservices/hotel.service";
 import type {
-    VacationRentalBooking,
-    VacationRentalBookingStatus,
-} from "@/types/vacationrental.types";
+    HotelBooking,
+    HotelBookingStatus,
+} from "@/types/hotel.types";
 import { useAuth } from "@/hooks/useAuth";
 import { tokenManager } from "@/lib/token";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
-    Home,
-    Palmtree,
+    Hotel,
+    Building2,
     Calendar,
     Search,
     RefreshCw,
     X,
     Clock,
     User,
-    Users,
     Phone,
     Mail,
+    BedDouble,
     CreditCard,
     AlertCircle,
     CheckCircle2,
@@ -39,15 +38,9 @@ import {
     ChevronRight,
     MapPin,
     ShieldCheck,
+    ArrowUpRight,
     Ban,
-    Check,
-    CheckCheck,
-    Bed,
-    Building,
-    Compass,
-    PawPrint,
-    Baby,
-    Sparkle,
+    DollarSign,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,113 +63,59 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import VacationRentalManagement from "@/components/hostelowner/vacationrental/vacation-rental-management";
-import { cn } from "@/lib/utils";
 
-export default function VacationRentalDashboard() {
+export interface HotelBookingDashboardProps {
+    hideTopTabs?: boolean;
+}
+
+export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBookingDashboardProps = {}) {
+    const router = useRouter();
     const { user } = useAuth();
     const queryClient = useQueryClient();
     const isAuthenticated = !!user && tokenManager.getAuthFlag() === "authenticated";
+    const [isMounted, setIsMounted] = useState(false);
 
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const tabParam = searchParams.get("tab");
-    const currentTab = tabParam === "bookings" ? "bookings" : "property";
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
-    // View Perspective: Guest trips vs Host inquiries (within bookings view)
-    const [perspective, setPerspective] = useState<"guest" | "host">("host");
+    const { data: hotels = [] } = useQuery({
+        queryKey: ["myHotelsList", user?.id],
+        queryFn: () => getMyHotels(),
+        enabled: isAuthenticated && !hideTopTabs && !!user?.id,
+    });
 
-    const handlePerspectiveChange = (newPerspective: "guest" | "host") => {
-        setPerspective(newPerspective);
-    };
+    const totalRoomsCount = hotels.reduce(
+        (acc, h) => acc + (h.room_types?.length || 0),
+        0
+    );
+
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState<VacationRentalBookingStatus | "all">("all");
-    const [selectedBooking, setSelectedBooking] = useState<VacationRentalBooking | null>(null);
-
-    // Modals
+    const [selectedStatus, setSelectedStatus] = useState<HotelBookingStatus | "all">("all");
+    const [selectedBooking, setSelectedBooking] = useState<HotelBooking | null>(null);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
-    const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-    const [declineReason, setDeclineReason] = useState("");
-
-    // Queries
-    const {
-        data: guestBookings = [],
-        isLoading: isGuestLoading,
-        isRefetching: isGuestRefetching,
-        refetch: refetchGuest,
-    } = useQuery({
-        queryKey: ["vacationRentalBookings", "guest", user?.id, selectedStatus],
-        queryFn: () =>
-            getMyVacationRentalBookings({
-                status: selectedStatus === "all" ? undefined : selectedStatus,
-            }),
-        enabled: isAuthenticated && perspective === "guest" && !!user?.id,
-        refetchInterval: isAuthenticated ? 6000 : false,
-    });
 
     const {
-        data: hostedBookings = [],
-        isLoading: isHostLoading,
-        isRefetching: isHostRefetching,
-        refetch: refetchHost,
+        data: bookings = [],
+        isLoading,
+        isRefetching,
+        refetch,
     } = useQuery({
-        queryKey: ["vacationRentalBookings", "host", user?.id, selectedStatus],
-        queryFn: () =>
-            getHostedVacationRentalBookings({
-                status: selectedStatus === "all" ? undefined : selectedStatus,
-            }),
-        enabled: isAuthenticated && perspective === "host" && !!user?.id,
+        queryKey: ["hotelBookings", user?.id, selectedStatus],
+        queryFn: () => getMyHotelBookings({
+            status: selectedStatus === "all" ? undefined : selectedStatus,
+        }),
+        enabled: isAuthenticated && !!user?.id,
         refetchInterval: isAuthenticated ? 6000 : false,
-    });
-
-    const activeList = perspective === "guest" ? guestBookings : hostedBookings;
-    const isLoading = perspective === "guest" ? isGuestLoading : isHostLoading;
-    const isRefetching = perspective === "guest" ? isGuestRefetching : isHostRefetching;
-    const refetch = perspective === "guest" ? refetchGuest : refetchHost;
-
-    // Mutations
-    const approveMutation = useMutation({
-        mutationFn: (id: string) => approveVacationRentalBooking(id),
-        onSuccess: (updated) => {
-            queryClient.invalidateQueries({ queryKey: ["vacationRentalBookings"] });
-            toast.success("Reservation approved!", {
-                description: `Booking #${updated.booking_reference} confirmed & dates locked.`,
-            });
-            if (selectedBooking && selectedBooking.id === updated.id) {
-                setSelectedBooking(updated);
-            }
-        },
-        onError: (err: any) => {
-            toast.error(err?.response?.data?.detail || "Failed to approve reservation.");
-        },
-    });
-
-    const declineMutation = useMutation({
-        mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-            declineVacationRentalBooking(id, reason),
-        onSuccess: (updated) => {
-            queryClient.invalidateQueries({ queryKey: ["vacationRentalBookings"] });
-            toast.success("Reservation declined", {
-                description: `Booking #${updated.booking_reference} has been declined.`,
-            });
-            setIsDeclineModalOpen(false);
-            setDeclineReason("");
-            if (selectedBooking && selectedBooking.id === updated.id) {
-                setSelectedBooking(updated);
-            }
-        },
-        onError: (err: any) => {
-            toast.error(err?.response?.data?.detail || "Failed to decline reservation.");
-        },
     });
 
     const cancelMutation = useMutation({
         mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-            cancelVacationRentalBooking(id, reason),
+            cancelHotelBooking(id, reason),
         onSuccess: (updated) => {
-            queryClient.invalidateQueries({ queryKey: ["vacationRentalBookings"] });
-            toast.success("Reservation cancelled", {
+            queryClient.invalidateQueries({ queryKey: ["hotelBookings"] });
+            toast.success("Reservation cancelled successfully", {
                 description: `Booking #${updated.booking_reference} has been cancelled.`,
             });
             setIsCancelModalOpen(false);
@@ -185,8 +124,12 @@ export default function VacationRentalDashboard() {
                 setSelectedBooking(updated);
             }
         },
-        onError: (err: any) => {
-            toast.error(err?.response?.data?.detail || "Failed to cancel reservation.");
+        onError: (error: any) => {
+            const msg =
+                error?.response?.data?.detail ||
+                error?.message ||
+                "Failed to cancel booking. Please try again.";
+            toast.error(msg);
         },
     });
 
@@ -211,7 +154,7 @@ export default function VacationRentalDashboard() {
     };
 
     const getStatusVariant = (
-        status: VacationRentalBookingStatus
+        status: HotelBookingStatus
     ): {
         badgeVariant: "default" | "secondary" | "destructive" | "outline";
         dotClass: string;
@@ -226,18 +169,11 @@ export default function VacationRentalDashboard() {
                     textClass: "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800",
                     label: "Confirmed",
                 };
-            case "pending_approval":
+            case "checked_in":
                 return {
                     badgeVariant: "secondary",
                     dotClass: "bg-amber-500 animate-pulse",
                     textClass: "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800",
-                    label: "Pending Approval",
-                };
-            case "checked_in":
-                return {
-                    badgeVariant: "default",
-                    dotClass: "bg-indigo-500",
-                    textClass: "text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800",
                     label: "Checked In",
                 };
             case "completed":
@@ -247,13 +183,6 @@ export default function VacationRentalDashboard() {
                     textClass: "text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800",
                     label: "Completed",
                 };
-            case "declined":
-                return {
-                    badgeVariant: "destructive",
-                    dotClass: "bg-orange-500",
-                    textClass: "text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800",
-                    label: "Declined",
-                };
             case "cancelled":
                 return {
                     badgeVariant: "destructive",
@@ -261,6 +190,7 @@ export default function VacationRentalDashboard() {
                     textClass: "text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800",
                     label: "Cancelled",
                 };
+            case "pending":
             default:
                 return {
                     badgeVariant: "outline",
@@ -271,64 +201,72 @@ export default function VacationRentalDashboard() {
         }
     };
 
-    // Client filtering
-    const filteredBookings = activeList.filter((b) => {
+    // Filter by client search query
+    const filteredBookings = bookings.filter((b) => {
         const query = searchQuery.toLowerCase().trim();
         if (!query) return true;
         const refMatch = b.booking_reference.toLowerCase().includes(query);
-        const titleMatch = b.rental_title?.toLowerCase().includes(query);
+        const hotelMatch = b.hotel_name?.toLowerCase().includes(query);
+        const roomMatch = b.room_type_name?.toLowerCase().includes(query);
         const guestMatch = b.guest_details?.guest_name.toLowerCase().includes(query);
-        return refMatch || titleMatch || guestMatch;
+        return refMatch || hotelMatch || roomMatch || guestMatch;
     });
 
     // KPI Metrics
-    const totalCount = activeList.length;
-    const upcomingCount = activeList.filter((b) => b.status === "confirmed").length;
-    const pendingCount = activeList.filter((b) => b.status === "pending_approval").length;
-    const totalRevenueSum = activeList
-        .filter((b) => b.status !== "cancelled" && b.status !== "declined")
-        .reduce((sum, b) => sum + parseFloat(b.total_price || "0"), 0);
+    const totalBookingsCount = bookings.length;
+    const activeStaysCount = bookings.filter((b) => b.status === "checked_in").length;
+    const upcomingCount = bookings.filter((b) => b.status === "confirmed").length;
+    const totalSpentAmount = bookings
+        .filter((b) => b.status !== "cancelled")
+        .reduce((sum, b) => sum + parseFloat(b.total_amount || "0"), 0);
 
-    const statusOptions: Array<{ key: VacationRentalBookingStatus | "all"; label: string }> = [
-        { key: "all", label: "All Reservations" },
+    const statusOptions: Array<{ key: HotelBookingStatus | "all"; label: string }> = [
+        { key: "all", label: "All Bookings" },
         { key: "confirmed", label: "Confirmed" },
-        { key: "pending_approval", label: "Pending Approval" },
+        { key: "checked_in", label: "Checked In" },
         { key: "completed", label: "Completed" },
         { key: "cancelled", label: "Cancelled" },
     ];
 
     const renderTopTabs = () => (
         <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-6">
-            <div className="flex items-center gap-1.5 p-1 bg-muted/70 rounded-2xl border shadow-2xs">
+            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs">
+                {/* 1. Hotel Properties */}
                 <button
                     type="button"
-                    onClick={() => router.replace("/vacanrentalbooking?tab=property", { scroll: false })}
-                    className={cn(
-                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                        currentTab === "property"
-                            ? "bg-white text-slate-950 font-bold shadow-xs border border-slate-200/90"
-                            : "text-muted-foreground hover:text-foreground hover:bg-slate-100/60"
-                    )}
+                    onClick={() => router.replace("/hotel?tab=property")}
+                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                 >
-                    <Palmtree size={15} className={currentTab === "property" ? "text-[#312E81]" : ""} />
-                    <span>Vacation Rental Properties</span>
+                    <Building2 size={15} />
+                    <span>Hotel Properties</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        {isMounted ? hotels.length : 0}
+                    </span>
                 </button>
 
+                {/* 2. Rooms & Units */}
                 <button
                     type="button"
-                    onClick={() => router.replace("/vacanrentalbooking?tab=bookings", { scroll: false })}
-                    className={cn(
-                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                        currentTab === "bookings"
-                            ? "bg-white text-slate-950 font-bold shadow-xs border border-slate-200/90"
-                            : "text-muted-foreground hover:text-foreground hover:bg-slate-100/60"
-                    )}
+                    onClick={() => router.replace("/hotel?tab=rooms")}
+                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                 >
-                    <Calendar size={15} className={currentTab === "bookings" ? "text-[#312E81]" : ""} />
-                    <span>Vacation Stays (Bookings)</span>
-                    {hostedBookings.length > 0 && (
-                        <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-100 text-[#312E81]">
-                            {hostedBookings.length}
+                    <BedDouble size={15} />
+                    <span>Rooms & Units</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        {isMounted ? totalRoomsCount : 0}
+                    </span>
+                </button>
+
+                {/* 3. Hotel Bookings */}
+                <button
+                    type="button"
+                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
+                >
+                    <Calendar size={15} className="text-[#312E81] dark:text-indigo-400" />
+                    <span>Hotel Bookings</span>
+                    {bookings.length > 0 && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-indigo-50 text-[#312E81] dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            {bookings.length}
                         </span>
                     )}
                 </button>
@@ -336,63 +274,30 @@ export default function VacationRentalDashboard() {
         </div>
     );
 
-    if (currentTab === "property") {
-        return (
-            <div className="space-y-6">
-                {renderTopTabs()}
-                <VacationRentalManagement />
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6">
-            {renderTopTabs()}
+            {!hideTopTabs && renderTopTabs()}
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1.5">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-                            <Palmtree size={12} className="text-rose-500" />
-                            Airbnb Style Stays
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            <Sparkles size={12} className="text-amber-500" />
+                            Luxury & Suites
                         </span>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border">
-                            Vacation Rentals
+                            Hotel Reservations
                         </span>
                     </div>
                     <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                        Vacation Rental Bookings
+                        Hotel Bookings
                     </h1>
                     <p className="text-sm text-muted-foreground mt-0.5">
-                        Manage private villas, holiday homes, guest trips, and host approvals.
+                        Manage your hotel stays, room reservations, invoices, and payment receipts.
                     </p>
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                    {/* Perspective Switcher */}
-                    <div className="flex items-center p-0.5 bg-muted rounded-xl border">
-                        <button
-                            onClick={() => handlePerspectiveChange("guest")}
-                            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${perspective === "guest"
-                                    ? "bg-card text-foreground shadow-xs"
-                                    : "text-muted-foreground hover:text-foreground"
-                                }`}
-                        >
-                            <Compass size={13} />
-                            My Trips
-                        </button>
-                        <button
-                            onClick={() => handlePerspectiveChange("host")}
-                            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${perspective === "host"
-                                    ? "bg-card text-foreground shadow-xs"
-                                    : "text-muted-foreground hover:text-foreground"
-                                }`}
-                        >
-                            <Home size={13} />
-                            Host Inquiries
-                        </button>
-                    </div>
-
                     <Button
                         variant="outline"
                         size="sm"
@@ -403,6 +308,17 @@ export default function VacationRentalDashboard() {
                         <RefreshCw size={13} className={isRefetching ? "animate-spin" : ""} />
                         Refresh
                     </Button>
+
+                    <Button
+                        asChild
+                        size="sm"
+                        className="gap-2 text-xs bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white shadow-sm"
+                    >
+                        <Link href="/city">
+                            <Hotel size={14} />
+                            Explore Hotels
+                        </Link>
+                    </Button>
                 </div>
             </div>
 
@@ -411,48 +327,14 @@ export default function VacationRentalDashboard() {
                 <Card className="border-border/50 bg-card shadow-xs">
                     <CardContent className="p-4 flex items-center justify-between">
                         <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">
-                                {perspective === "guest" ? "Total Trips" : "Total Requests"}
-                            </p>
+                            <p className="text-xs font-medium text-muted-foreground">Total Bookings</p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {totalCount}
+                                {isMounted ? totalBookingsCount : 0}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Vacation reservations</p>
-                        </div>
-                        <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-                            <Palmtree size={18} />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Confirmed Stays</p>
-                            <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
-                                {upcomingCount}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground">Upcoming locked dates</p>
-                        </div>
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                            <CheckCheck size={18} />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Pending Approval</p>
-                            <p className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400 tabular-nums">
-                                {pendingCount}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground">
-                                {perspective === "guest" ? "Awaiting host" : "Action required"}
-                            </p>
+                            <p className="text-[11px] text-muted-foreground">All-time stays reserved</p>
                         </div>
                         <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                            <Clock size={18} />
+                            <Hotel size={18} />
                         </div>
                     </CardContent>
                 </Card>
@@ -460,13 +342,41 @@ export default function VacationRentalDashboard() {
                 <Card className="border-border/50 bg-card shadow-xs">
                     <CardContent className="p-4 flex items-center justify-between">
                         <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">
-                                {perspective === "guest" ? "Total Vacation Spend" : "Host Revenue"}
+                            <p className="text-xs font-medium text-muted-foreground">Active Stays</p>
+                            <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
+                                {isMounted ? activeStaysCount : 0}
                             </p>
+                            <p className="text-[11px] text-muted-foreground">Currently checked in</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                            <BedDouble size={18} />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="border-border/50 bg-card shadow-xs">
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div className="space-y-1">
+                            <p className="text-xs font-medium text-muted-foreground">Upcoming Stays</p>
+                            <p className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums">
+                                {isMounted ? upcomingCount : 0}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground">Confirmed future check-ins</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                            <Calendar size={18} />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="border-border/50 bg-card shadow-xs">
+                    <CardContent className="p-4 flex items-center justify-between">
+                        <div className="space-y-1">
+                            <p className="text-xs font-medium text-muted-foreground">Total Spent</p>
                             <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
-                                {formatCurrency(totalRevenueSum)}
+                                {isMounted ? formatCurrency(totalSpentAmount) : "₹0"}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Total booking value</p>
+                            <p className="text-[11px] text-muted-foreground">Total booking revenue</p>
                         </div>
                         <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                             <CreditCard size={18} />
@@ -475,7 +385,7 @@ export default function VacationRentalDashboard() {
                 </Card>
             </div>
 
-            {/* Filter Tabs & Search Bar */}
+            {/* Filter Tabs & Search Controls */}
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
                 {/* Status Tabs */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
@@ -483,8 +393,8 @@ export default function VacationRentalDashboard() {
                         const isSelected = selectedStatus === opt.key;
                         const count =
                             opt.key === "all"
-                                ? activeList.length
-                                : activeList.filter((b) => b.status === opt.key).length;
+                                ? bookings.length
+                                : bookings.filter((b) => b.status === opt.key).length;
 
                         return (
                             <button
@@ -517,7 +427,7 @@ export default function VacationRentalDashboard() {
                     />
                     <Input
                         type="text"
-                        placeholder="Search ref, rental, or guest..."
+                        placeholder="Search ref, hotel, or guest..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9 pr-8 text-xs h-9 bg-card border-border/50"
@@ -534,7 +444,7 @@ export default function VacationRentalDashboard() {
             </div>
 
             {/* Bookings Table / Listing */}
-            {isLoading ? (
+            {!isMounted || isLoading ? (
                 <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
                         <Card key={i} className="border-border/40">
@@ -553,23 +463,17 @@ export default function VacationRentalDashboard() {
             ) : filteredBookings.length === 0 ? (
                 <Card className="border-border/40 bg-card p-12 text-center">
                     <div className="max-w-md mx-auto space-y-4">
-                        <div className="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
-                            <Palmtree size={26} />
+                        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+                            <Hotel size={26} />
                         </div>
                         <div className="space-y-1.5">
                             <h3 className="text-base font-semibold text-foreground">
-                                {searchQuery
-                                    ? "No matching vacation rentals found"
-                                    : perspective === "guest"
-                                        ? "No vacation trips reserved yet"
-                                        : "No host inquiries received yet"}
+                                {searchQuery ? "No matching hotel reservations" : "No hotel bookings found"}
                             </h3>
                             <p className="text-xs text-muted-foreground">
                                 {searchQuery
-                                    ? `No reservations matching "${searchQuery}". Please check spelling or filters.`
-                                    : perspective === "guest"
-                                        ? "Book private beach houses, scenic villas, and cozy hillside retreats."
-                                        : "When guests book your vacation rental properties, their requests will appear here."}
+                                    ? `We couldn't find any reservation matching "${searchQuery}". Try a different keyword.`
+                                    : "You haven't reserved any hotel rooms yet. Discover premier suites and boutique hotels."}
                             </p>
                         </div>
                         {searchQuery ? (
@@ -581,17 +485,17 @@ export default function VacationRentalDashboard() {
                             >
                                 Clear Search
                             </Button>
-                        ) : perspective === "guest" ? (
+                        ) : (
                             <Button
                                 asChild
                                 size="sm"
-                                className="text-xs bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white"
+                                className="text-xs bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white"
                             >
                                 <Link href="/city">
-                                    Discover Getaways
+                                    Browse Hotels
                                 </Link>
                             </Button>
-                        ) : null}
+                        )}
                     </div>
                 </Card>
             ) : (
@@ -600,13 +504,13 @@ export default function VacationRentalDashboard() {
                         <TableHeader className="bg-muted/40">
                             <TableRow className="hover:bg-transparent">
                                 <TableHead className="font-semibold text-xs text-foreground py-3.5">
-                                    Reservation Code
+                                    Booking Reference
                                 </TableHead>
                                 <TableHead className="font-semibold text-xs text-foreground">
-                                    Rental Property
+                                    Hotel & Room Type
                                 </TableHead>
                                 <TableHead className="font-semibold text-xs text-foreground">
-                                    Stay Dates
+                                    Stay Schedule
                                 </TableHead>
                                 <TableHead className="font-semibold text-xs text-foreground">
                                     Guests
@@ -618,7 +522,7 @@ export default function VacationRentalDashboard() {
                                     Status
                                 </TableHead>
                                 <TableHead className="text-right font-semibold text-xs text-foreground pr-4">
-                                    Actions
+                                    Action
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -631,7 +535,7 @@ export default function VacationRentalDashboard() {
                                         className="group hover:bg-muted/30 cursor-pointer transition-colors"
                                         onClick={() => setSelectedBooking(b)}
                                     >
-                                        {/* Reference */}
+                                        {/* Booking Reference */}
                                         <TableCell className="py-3.5">
                                             <div className="flex flex-col gap-1">
                                                 <span className="font-mono text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -644,24 +548,24 @@ export default function VacationRentalDashboard() {
                                             </div>
                                         </TableCell>
 
-                                        {/* Property Title */}
+                                        {/* Hotel & Room Type */}
                                         <TableCell>
                                             <div className="flex items-center gap-2.5">
-                                                <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-600 flex items-center justify-center shrink-0">
-                                                    <Palmtree size={14} />
+                                                <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                                                    <Hotel size={14} />
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="text-xs font-semibold text-foreground truncate max-w-[220px]">
-                                                        {b.rental_title || "Vacation Rental Property"}
+                                                    <span className="text-xs font-semibold text-foreground truncate max-w-[200px]">
+                                                        {b.hotel_name || "Hotel Reservation"}
                                                     </span>
                                                     <span className="text-[11px] text-muted-foreground truncate">
-                                                        Private Stay
+                                                        {b.room_type_name || "Standard Room"} • {b.number_of_rooms} Room(s)
                                                     </span>
                                                 </div>
                                             </div>
                                         </TableCell>
 
-                                        {/* Dates */}
+                                        {/* Schedule */}
                                         <TableCell>
                                             <div className="flex flex-col gap-0.5">
                                                 <span className="text-xs font-medium text-foreground whitespace-nowrap">
@@ -680,20 +584,20 @@ export default function VacationRentalDashboard() {
                                                     {b.guest_details?.guest_name || "Guest"}
                                                 </span>
                                                 <span className="text-[10px] text-muted-foreground">
-                                                    {b.guest_details?.total_guests || 1} Guest(s)
-                                                    {b.guest_details?.pets ? " • Pets 🐾" : ""}
+                                                    {b.guest_details?.adults_count || 1} Adult(s)
+                                                    {b.guest_details?.children_count ? `, ${b.guest_details.children_count} Child` : ""}
                                                 </span>
                                             </div>
                                         </TableCell>
 
-                                        {/* Pricing */}
+                                        {/* Total Amount */}
                                         <TableCell>
                                             <div className="flex flex-col gap-0.5">
                                                 <span className="text-xs font-semibold text-foreground tabular-nums">
-                                                    {formatCurrency(b.total_price)}
+                                                    {formatCurrency(b.total_amount)}
                                                 </span>
                                                 <span className="text-[10px] text-muted-foreground capitalize">
-                                                    {b.pricing_details?.payment_method?.replace(/_/g, " ") || "Online"}
+                                                    {b.payment_details?.payment_method?.replace(/_/g, " ") || "Pay at property"}
                                                 </span>
                                             </div>
                                         </TableCell>
@@ -708,54 +612,20 @@ export default function VacationRentalDashboard() {
                                             </span>
                                         </TableCell>
 
-                                        {/* Actions */}
+                                        {/* Action Button */}
                                         <TableCell className="text-right pr-4">
-                                            <div className="flex items-center justify-end gap-1.5">
-                                                {/* If Host and Pending Approval: Show one-click approve/decline */}
-                                                {perspective === "host" && b.status === "pending_approval" && (
-                                                    <>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="default"
-                                                            className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1 px-2.5"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                approveMutation.mutate(b.id);
-                                                            }}
-                                                            disabled={approveMutation.isPending}
-                                                        >
-                                                            <Check size={12} />
-                                                            Approve
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            className="h-7 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border-rose-200 dark:border-rose-900 gap-1 px-2.5"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setSelectedBooking(b);
-                                                                setIsDeclineModalOpen(true);
-                                                            }}
-                                                        >
-                                                            <X size={12} />
-                                                            Decline
-                                                        </Button>
-                                                    </>
-                                                )}
-
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    className="h-7 text-xs gap-1 group-hover:border-primary/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setSelectedBooking(b);
-                                                    }}
-                                                >
-                                                    Details
-                                                    <ChevronRight size={12} />
-                                                </Button>
-                                            </div>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="h-7 text-xs gap-1 group-hover:border-primary/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedBooking(b);
+                                                }}
+                                            >
+                                                Details
+                                                <ChevronRight size={12} />
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -765,7 +635,7 @@ export default function VacationRentalDashboard() {
                 </div>
             )}
 
-            {/* Details Dialog */}
+            {/* Booking Details Dialog */}
             <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg sm:rounded-lg border border-border/80 shadow-2xl p-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth overscroll-contain [-webkit-overflow-scrolling:touch]">
                     {selectedBooking && (
@@ -789,34 +659,34 @@ export default function VacationRentalDashboard() {
                                             </span>
                                         </div>
                                         <DialogDescription className="text-xs">
-                                            Reserved on {formatDate(selectedBooking.created_at)}
+                                            Booked on {formatDate(selectedBooking.created_at)}
                                         </DialogDescription>
                                     </div>
                                 </div>
                             </DialogHeader>
 
                             <div className="space-y-5 py-2">
-                                {/* Property & Schedule Info */}
+                                {/* Hotel & Stay Specs */}
                                 <div className="p-4 rounded-lg bg-muted/40 border border-border/50 space-y-3">
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                                                <Palmtree size={16} className="text-rose-500" />
-                                                {selectedBooking.rental_title}
+                                                <Hotel size={16} className="text-amber-500" />
+                                                {selectedBooking.hotel_name}
                                             </h4>
                                             <p className="text-xs text-muted-foreground mt-0.5">
-                                                Entire Vacation Home / Villa
+                                                Room Category: {selectedBooking.room_type_name}
                                             </p>
                                         </div>
                                         <Badge variant="outline" className="text-xs rounded-md">
-                                            {selectedBooking.number_of_nights} Night Stay
+                                            {selectedBooking.number_of_rooms} Room(s)
                                         </Badge>
                                     </div>
 
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-border/40 text-xs">
                                         <div>
                                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">
-                                                Check-In
+                                                Check-In Date
                                             </span>
                                             <span className="font-semibold text-foreground">
                                                 {formatDate(selectedBooking.check_in_date)}
@@ -824,7 +694,7 @@ export default function VacationRentalDashboard() {
                                         </div>
                                         <div>
                                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">
-                                                Check-Out
+                                                Check-Out Date
                                             </span>
                                             <span className="font-semibold text-foreground">
                                                 {formatDate(selectedBooking.check_out_date)}
@@ -832,10 +702,10 @@ export default function VacationRentalDashboard() {
                                         </div>
                                         <div>
                                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">
-                                                Headcount
+                                                Duration
                                             </span>
                                             <span className="font-semibold text-foreground">
-                                                {selectedBooking.guest_details?.total_guests || 1} Total Guest(s)
+                                                {selectedBooking.number_of_nights} Night(s)
                                             </span>
                                         </div>
                                     </div>
@@ -845,7 +715,7 @@ export default function VacationRentalDashboard() {
                                 <div className="space-y-2">
                                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                         <User size={13} />
-                                        Guest Breakdown
+                                        Guest Information
                                     </h4>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-lg border border-border/50 bg-card text-xs">
                                         <div>
@@ -855,7 +725,7 @@ export default function VacationRentalDashboard() {
                                             </span>
                                         </div>
                                         <div>
-                                            <span className="text-muted-foreground text-[10px] block">Contact Mobile</span>
+                                            <span className="text-muted-foreground text-[10px] block">Contact Phone</span>
                                             <span className="font-medium text-foreground">
                                                 {selectedBooking.guest_details?.mobile_number || "N/A"}
                                             </span>
@@ -866,18 +736,10 @@ export default function VacationRentalDashboard() {
                                                 {selectedBooking.guest_details?.guest_email || "N/A"}
                                             </span>
                                         </div>
-
-                                        <div className="col-span-full pt-2 border-t border-border/40 flex items-center gap-4 text-muted-foreground text-[11px]">
-                                            <span>Adults: {selectedBooking.guest_details?.adults || 1}</span>
-                                            <span>Children: {selectedBooking.guest_details?.children || 0}</span>
-                                            <span>Infants: {selectedBooking.guest_details?.infants || 0}</span>
-                                            <span>Pets: {selectedBooking.guest_details?.pets || 0}</span>
-                                        </div>
-
                                         {selectedBooking.guest_details?.special_requests && (
                                             <div className="col-span-full pt-2 border-t border-border/40">
                                                 <span className="text-muted-foreground text-[10px] block">
-                                                    Special Guest Note
+                                                    Special Requests
                                                 </span>
                                                 <p className="text-xs text-foreground italic mt-0.5">
                                                     "{selectedBooking.guest_details.special_requests}"
@@ -887,7 +749,7 @@ export default function VacationRentalDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Itemized Pricing Breakdown */}
+                                {/* Itemized Payment Breakdown */}
                                 <div className="space-y-2">
                                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                                         <Receipt size={13} />
@@ -896,70 +758,59 @@ export default function VacationRentalDashboard() {
                                     <div className="p-4 rounded-lg border border-border/50 bg-card space-y-2.5 text-xs">
                                         <div className="flex justify-between text-muted-foreground">
                                             <span>
-                                                Nightly Base Rate × {selectedBooking.number_of_nights} Night(s)
+                                                Room Rate × {selectedBooking.number_of_nights} Night(s) ×{" "}
+                                                {selectedBooking.number_of_rooms} Room(s)
                                             </span>
                                             <span className="font-medium text-foreground tabular-nums">
                                                 {formatCurrency(
-                                                    selectedBooking.pricing_details?.stay_subtotal ||
-                                                    selectedBooking.total_price
+                                                    selectedBooking.payment_details?.stay_subtotal ||
+                                                    selectedBooking.total_amount
                                                 )}
                                             </span>
                                         </div>
 
-                                        {selectedBooking.pricing_details?.cleaning_fee &&
-                                            parseFloat(selectedBooking.pricing_details.cleaning_fee) > 0 && (
+                                        {selectedBooking.payment_details?.taxes_and_fees &&
+                                            parseFloat(selectedBooking.payment_details.taxes_and_fees) > 0 && (
                                                 <div className="flex justify-between text-muted-foreground">
-                                                    <span>Cleaning Fee</span>
+                                                    <span>Taxes & Service Hospitality Fees</span>
                                                     <span className="font-medium text-foreground tabular-nums">
-                                                        {formatCurrency(selectedBooking.pricing_details.cleaning_fee)}
+                                                        {formatCurrency(selectedBooking.payment_details.taxes_and_fees)}
                                                     </span>
                                                 </div>
                                             )}
 
-                                        {selectedBooking.pricing_details?.service_fee &&
-                                            parseFloat(selectedBooking.pricing_details.service_fee) > 0 && (
-                                                <div className="flex justify-between text-muted-foreground">
-                                                    <span>Platform & Host Service Fee</span>
-                                                    <span className="font-medium text-foreground tabular-nums">
-                                                        {formatCurrency(selectedBooking.pricing_details.service_fee)}
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                        {selectedBooking.pricing_details?.discount_amount &&
-                                            parseFloat(selectedBooking.pricing_details.discount_amount) > 0 && (
+                                        {selectedBooking.payment_details?.discount_amount &&
+                                            parseFloat(selectedBooking.payment_details.discount_amount) > 0 && (
                                                 <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
-                                                    <span>Weekly/Monthly Stay Discount</span>
+                                                    <span>Promotional Discount</span>
                                                     <span className="font-medium tabular-nums">
-                                                        -{formatCurrency(selectedBooking.pricing_details.discount_amount)}
+                                                        -{formatCurrency(selectedBooking.payment_details.discount_amount)}
                                                     </span>
                                                 </div>
                                             )}
 
                                         <div className="pt-2.5 border-t border-border/50 flex justify-between items-center text-sm font-bold">
-                                            <span>Total Reservation Price</span>
+                                            <span>Total Amount</span>
                                             <span className="text-base text-foreground tabular-nums">
-                                                {formatCurrency(selectedBooking.total_price)}
+                                                {formatCurrency(selectedBooking.total_amount)}
                                             </span>
                                         </div>
 
                                         <div className="pt-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                                            <span>
-                                                Method: {selectedBooking.pricing_details?.payment_method_display || "Online"}
-                                            </span>
+                                            <span>Payment Method: {selectedBooking.payment_details?.payment_method_display || "Pay at Property"}</span>
                                             <span className="capitalize">
-                                                Payment Status: {selectedBooking.pricing_details?.payment_status_display || "Pending"}
+                                                Status: {selectedBooking.payment_details?.payment_status_display || "Pending"}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Cancellation Record if any */}
+                                {/* Cancellation Record (if cancelled) */}
                                 {selectedBooking.cancellation_details && (
                                     <div className="p-3.5 rounded-lg border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 space-y-1.5 text-xs text-rose-800 dark:text-rose-200">
                                         <div className="flex items-center gap-1.5 font-semibold">
                                             <AlertCircle size={14} />
-                                            <span>Stay Cancelled or Declined</span>
+                                            <span>Reservation Cancelled</span>
                                         </div>
                                         <p className="text-[11px]">
                                             Reason: {selectedBooking.cancellation_details.reason}
@@ -973,32 +824,7 @@ export default function VacationRentalDashboard() {
                             </div>
 
                             <DialogFooter className="border-t pt-3 flex items-center justify-between">
-                                {/* Host Actions */}
-                                {perspective === "host" && selectedBooking.status === "pending_approval" ? (
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            variant="default"
-                                            size="sm"
-                                            className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
-                                            disabled={approveMutation.isPending}
-                                            onClick={() => approveMutation.mutate(selectedBooking.id)}
-                                        >
-                                            <Check size={13} />
-                                            {approveMutation.isPending ? "Approving..." : "Approve Reservation"}
-                                        </Button>
-
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            className="text-xs gap-1"
-                                            onClick={() => setIsDeclineModalOpen(true)}
-                                        >
-                                            <X size={13} />
-                                            Decline
-                                        </Button>
-                                    </div>
-                                ) : selectedBooking.status !== "cancelled" &&
-                                    selectedBooking.status !== "declined" &&
+                                {selectedBooking.status !== "cancelled" &&
                                     selectedBooking.status !== "completed" ? (
                                     <Button
                                         variant="destructive"
@@ -1027,17 +853,17 @@ export default function VacationRentalDashboard() {
                 </DialogContent>
             </Dialog>
 
-            {/* Cancel Modal (for Guest or Host) */}
+            {/* Cancel Confirmation Modal */}
             <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
                 <DialogContent className="max-w-md rounded-lg sm:rounded-lg border border-border/80 shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold text-destructive flex items-center gap-2">
                             <AlertCircle size={18} />
-                            Cancel Vacation Rental Stay
+                            Cancel Hotel Stay
                         </DialogTitle>
                         <DialogDescription className="text-xs">
-                            Are you sure you want to cancel reservation #{selectedBooking?.booking_reference}?
-                            The calendar dates will be restored for other guests.
+                            Are you sure you want to cancel booking #{selectedBooking?.booking_reference}?
+                            Your room will be released back to hotel inventory.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -1046,7 +872,7 @@ export default function VacationRentalDashboard() {
                             Reason for cancellation (Optional):
                         </label>
                         <Input
-                            placeholder="Travel plan changes, emergency, etc..."
+                            placeholder="Change of plans, schedule clash, etc..."
                             value={cancelReason}
                             onChange={(e) => setCancelReason(e.target.value)}
                             className="text-xs h-9"
@@ -1061,7 +887,7 @@ export default function VacationRentalDashboard() {
                             disabled={cancelMutation.isPending}
                             className="text-xs"
                         >
-                            Keep Reservation
+                            Keep Booking
                         </Button>
                         <Button
                             variant="destructive"
@@ -1071,69 +897,13 @@ export default function VacationRentalDashboard() {
                                 if (selectedBooking) {
                                     cancelMutation.mutate({
                                         id: selectedBooking.id,
-                                        reason: cancelReason.trim() || "Cancelled by user",
+                                        reason: cancelReason.trim() || "Cancelled by guest",
                                     });
                                 }
                             }}
                             className="text-xs gap-1.5"
                         >
                             {cancelMutation.isPending ? "Cancelling..." : "Confirm Cancellation"}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* Host Decline Modal */}
-            <Dialog open={isDeclineModalOpen} onOpenChange={setIsDeclineModalOpen}>
-                <DialogContent className="max-w-md rounded-lg sm:rounded-lg border border-border/80 shadow-2xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-base font-bold text-destructive flex items-center gap-2">
-                            <AlertCircle size={18} />
-                            Decline Reservation Request
-                        </DialogTitle>
-                        <DialogDescription className="text-xs">
-                            Are you sure you want to decline this booking request from{" "}
-                            {selectedBooking?.guest_details?.guest_name || "the guest"}?
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="space-y-3 py-2">
-                        <label className="text-xs font-medium text-foreground block">
-                            Reason for declining (Optional):
-                        </label>
-                        <Input
-                            placeholder="Property under maintenance, minimum nights not met..."
-                            value={declineReason}
-                            onChange={(e) => setDeclineReason(e.target.value)}
-                            className="text-xs h-9"
-                        />
-                    </div>
-
-                    <DialogFooter className="gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setIsDeclineModalOpen(false)}
-                            disabled={declineMutation.isPending}
-                            className="text-xs"
-                        >
-                            Back
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            disabled={declineMutation.isPending}
-                            onClick={() => {
-                                if (selectedBooking) {
-                                    declineMutation.mutate({
-                                        id: selectedBooking.id,
-                                        reason: declineReason.trim() || "Declined by host",
-                                    });
-                                }
-                            }}
-                            className="text-xs gap-1.5"
-                        >
-                            {declineMutation.isPending ? "Declining..." : "Confirm Decline"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

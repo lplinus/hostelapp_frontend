@@ -39,6 +39,7 @@ interface VacationRentalBookingModalProps {
     setPaymentMethod: (method: "online" | "on_arrival") => void;
     isSubmittingBooking: boolean;
     handleConfirmBooking: () => void;
+    isEmailVerified?: boolean;
 }
 
 export function VacationRentalBookingModal({
@@ -65,6 +66,7 @@ export function VacationRentalBookingModal({
     setPaymentMethod,
     isSubmittingBooking,
     handleConfirmBooking,
+    isEmailVerified,
 }: VacationRentalBookingModalProps) {
     useEffect(() => {
         if (isOpen) {
@@ -228,7 +230,14 @@ export function VacationRentalBookingModal({
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1.5">
-                                    <label className="font-semibold text-slate-800">Email Address</label>
+                                    <div className="flex items-center justify-between">
+                                        <label className="font-semibold text-slate-800">Email Address</label>
+                                        {isEmailVerified && (
+                                            <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                <CheckCircle2 size={11} /> Verified
+                                            </span>
+                                        )}
+                                    </div>
                                     <Input
                                         type="email"
                                         placeholder="guest@example.com"

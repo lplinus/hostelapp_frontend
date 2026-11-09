@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
-import VacationRentalDashboard from "@/components/hostelowner/vacatrentalbooking/vacation-rental-dashboard";
+import VacationRentalDashboard from "@/components/hostelowner/vacationrental/vacatrentalbooking/vacation-rental-dashboard";
 
 export const metadata: Metadata = {
     title: "Vacation Rental Bookings | Owner Panel",

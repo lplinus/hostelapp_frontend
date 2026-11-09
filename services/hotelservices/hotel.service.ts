@@ -54,6 +54,19 @@ export const createHotelRoomType = async (
     return authApiClient.post<HotelRoomType>("/api/hotels/room-types/", data);
 };
 
+export const updateHotelRoomType = async (
+    id: number | string,
+    data: any
+): Promise<HotelRoomType> => {
+    return authApiClient.patch<HotelRoomType>(`/api/hotels/room-types/${id}/`, data);
+};
+
+export const deleteHotelRoomType = async (
+    id: number | string
+): Promise<void> => {
+    return authApiClient.delete<void>(`/api/hotels/room-types/${id}/`);
+};
+
 export const uploadHotelImages = async (
     data: FormData
 ): Promise<any> => {

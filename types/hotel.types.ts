@@ -84,8 +84,11 @@ export interface HotelImage {
     id: number;
     image: string;
     caption?: string;
+    alt_text?: string;
     is_primary: boolean;
-    display_order: number;
+    display_order?: number;
+    order?: number;
+    room_type?: number | null;
 }
 
 export interface HotelRoomType {
@@ -95,9 +98,11 @@ export interface HotelRoomType {
     category?: string;
     room_category?: string;
     category_display?: string;
+    description?: string;
     price_per_night?: string;
     base_price_per_night?: string;
     weekend_price_per_night?: string;
+    tax_percentage?: string | number;
     total_rooms: number;
     rooms_available: number;
     max_adults: number;
@@ -110,7 +115,39 @@ export interface HotelRoomType {
     has_view?: boolean;
     includes_breakfast?: boolean;
     is_refundable?: boolean;
+    features?: string;
     is_available: boolean;
+    images?: Array<{
+        id: number;
+        image: string;
+        alt_text?: string;
+        is_primary?: boolean;
+        order?: number;
+    }>;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface HotelRoomTypeInput {
+    hotel: string;
+    name: string;
+    room_category: string;
+    bed_type: string;
+    base_price_per_night: string | number;
+    total_rooms: number;
+    rooms_available: number;
+    max_adults: number;
+    max_children: number;
+    max_occupancy?: number;
+    room_size_sqft?: number | null;
+    description?: string;
+    features?: string;
+    has_balcony?: boolean;
+    has_view?: boolean;
+    includes_breakfast?: boolean;
+    is_refundable?: boolean;
+    is_available?: boolean;
+    tax_percentage?: string | number;
 }
 
 export interface Hotel {

@@ -47,7 +47,10 @@ function isItemActive(itemHref: string, pathname: string, searchParams: URLSearc
             if (currentTab) {
                 return currentTab === itemTab;
             }
-            // If no tab in URL, default to 'bookings' for vacation rental
+            // If no tab in URL, default to 'property' for hotel and vacation rental
+            if (itemPath === '/hotel' || itemPath === '/vacanrentalbooking') {
+                return itemTab === 'property';
+            }
             return itemTab === 'bookings';
         }
 
@@ -59,10 +62,12 @@ function isItemActive(itemHref: string, pathname: string, searchParams: URLSearc
         return true;
     }
 
-    // If itemHref has no query params, but pathname is /vacanrentalbooking:
-    // (since vacation rental has tab=property and tab=bookings)
-    if (itemPath === '/vacanrentalbooking') {
-        return false;
+    // If itemHref has no query params, but pathname is /vacanrentalbooking or /hotel:
+    if (itemPath === '/vacanrentalbooking' || itemPath === '/hotel') {
+        const currentTab = searchParams?.get('tab');
+        if (currentTab && currentTab !== 'property') {
+            return false;
+        }
     }
 
     return true;
@@ -177,7 +182,7 @@ function DashboardSidebarContent() {
                             showFull={showFull}
                             items={[
                                 { label: "Hostels", href: "/hostel", icon: Building2 },
-                                { label: "Hotels", href: "/hotel", icon: Hotel },
+                                { label: "Hotels", href: "/hotel?tab=property", icon: Hotel },
                                 { label: "Rooms", href: "/rooms", icon: BedDouble },
                                 { label: "Vacation Rentals", href: "/vacanrentalbooking?tab=property", icon: Palmtree },
                             ]}
@@ -193,7 +198,7 @@ function DashboardSidebarContent() {
                             showFull={showFull}
                             items={[
                                 { label: "Hostel Bookings", href: "/bookings", icon: CalendarCheck },
-                                { label: "Hotel Bookings", href: "/hotelbooking", icon: Hotel },
+                                { label: "Hotel Bookings", href: "/hotel?tab=bookings", icon: Hotel },
                                 { label: "Vacation Stays", href: "/vacanrentalbooking?tab=bookings", icon: Palmtree },
                             ]}
                             closeMobile={() => setIsOpenMobile(false)}

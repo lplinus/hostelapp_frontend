@@ -88,7 +88,7 @@ export function EmailOtpModal({
         try {
             const res = await verifyBookingEmailOtp(email, cleanOtp);
             if (res.verified || res.message) {
-                toast.success("Email verified successfully! Proceeding to payment...");
+                toast.success("Email verified successfully!");
                 onVerified();
                 onClose();
             } else {
@@ -106,7 +106,7 @@ export function EmailOtpModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[420px] p-6 sm:p-7 relative border border-gray-100 animate-in zoom-in-95 duration-200">
                 {/* Close Button */}
                 <button

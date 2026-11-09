@@ -40,6 +40,10 @@ import { VacationRentalBookingModal } from "./VacationRentalBookingModal";
 import { VacationRentalMobileBookingBar } from "./VacationRentalMobileBookingBar";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { validateIndianMobile } from "@/lib/validation";
+import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfile } from "@/services/user.service";
 import {
     Dialog,
     DialogContent,
@@ -88,6 +92,20 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
     const [paymentMethod, setPaymentMethod] = useState<"online" | "on_arrival">("online");
     const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
     const [confirmedBooking, setConfirmedBooking] = useState<VacationRentalBooking | null>(null);
+
+    const { user } = useAuth();
+    const { data: profile } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        enabled: !!user,
+    });
+    const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+    const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
+
+    const isEmailVerified = Boolean(
+        (profile?.is_email_verified && profile?.email?.toLowerCase() === guestEmail.trim().toLowerCase()) ||
+        (verifiedEmail && verifiedEmail.toLowerCase() === guestEmail.trim().toLowerCase())
+    );
 
     // Images
     const images = rental.images && rental.images.length > 0 ? rental.images : [];
@@ -171,21 +189,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
         setIsBookingModalOpen(true);
     };
 
-    const handleConfirmBooking = async () => {
-        if (!guestName.trim() || guestName.trim().length < 3) {
-            toast.error("Please enter a valid guest full name.");
-            return;
-        }
-        if (!guestEmail.trim() || !guestEmail.includes("@")) {
-            toast.error("Please enter a valid email address.");
-            return;
-        }
-        const phoneValidation = validateIndianMobile(guestMobile);
-        if (!phoneValidation.isValid) {
-            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
-            return;
-        }
-
+    const executeConfirmedBooking = async (cleanedGuestEmail: string, cleanedMobile: string) => {
         const proceedBookingSubmission = async (razorpayPaymentId?: string) => {
             setIsSubmittingBooking(true);
             try {
@@ -194,8 +198,8 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                     check_in_date: checkInDate,
                     check_out_date: checkOutDate,
                     guest_name: guestName.trim(),
-                    guest_email: guestEmail.trim(),
-                    mobile_number: phoneValidation.cleanNumber || guestMobile.trim(),
+                    guest_email: cleanedGuestEmail,
+                    mobile_number: cleanedMobile,
                     adults,
                     children,
                     infants,
@@ -248,8 +252,8 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                     },
                     prefill: {
                         name: guestName.trim(),
-                        email: guestEmail.trim(),
-                        contact: phoneValidation.cleanNumber || guestMobile.trim()
+                        email: cleanedGuestEmail,
+                        contact: cleanedMobile
                     },
                     theme: {
                         color: "#312E81"
@@ -270,6 +274,33 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
             // Pay on arrival
             await proceedBookingSubmission();
         }
+    };
+
+    const handleConfirmBooking = async () => {
+        if (!guestName.trim() || guestName.trim().length < 3) {
+            toast.error("Please enter a valid guest full name (at least 3 characters).");
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!guestEmail.trim() || !emailRegex.test(guestEmail.trim())) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+        const phoneValidation = validateIndianMobile(guestMobile);
+        if (!phoneValidation.isValid) {
+            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
+            return;
+        }
+
+        const cleanEmail = guestEmail.trim().toLowerCase();
+        const cleanMobile = phoneValidation.cleanNumber || guestMobile.trim();
+
+        if (!isEmailVerified) {
+            setShowEmailOtpModal(true);
+            return;
+        }
+
+        await executeConfirmedBooking(cleanEmail, cleanMobile);
     };
 
     return (
@@ -741,6 +772,21 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 setPaymentMethod={setPaymentMethod}
                 isSubmittingBooking={isSubmittingBooking}
                 handleConfirmBooking={handleConfirmBooking}
+                isEmailVerified={isEmailVerified}
+            />
+
+            <EmailOtpModal
+                isOpen={showEmailOtpModal}
+                onClose={() => setShowEmailOtpModal(false)}
+                email={guestEmail.trim()}
+                guestName={guestName.trim()}
+                onVerified={() => {
+                    const cleanEmail = guestEmail.trim().toLowerCase();
+                    setVerifiedEmail(cleanEmail);
+                    const phoneValidation = validateIndianMobile(guestMobile);
+                    const cleanMobile = phoneValidation.cleanNumber || guestMobile.trim();
+                    executeConfirmedBooking(cleanEmail, cleanMobile);
+                }}
             />
 
             {/* 6. MOBILE STICKY BOTTOM BAR (RESERVE BUTTON & DATES DRAWER) */}

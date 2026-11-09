@@ -612,7 +612,12 @@ export default function BookingContainer({
         }
     };
 
-    const executePayment = () => {
+    const executePayment = (bypassEmailCheck = false) => {
+        if (!isEmailVerified && !bypassEmailCheck) {
+            setShowEmailOtpModal(true);
+            return;
+        }
+
         const checkInFormatted = format(form.check_in, "yyyy-MM-dd");
         const checkOutFormatted = format(form.check_out, "yyyy-MM-dd");
 
@@ -899,7 +904,7 @@ export default function BookingContainer({
                     if (form.booking_type === "visit") {
                         handleConfirmBooking();
                     } else {
-                        executePayment();
+                        executePayment(true);
                     }
                 }}
             />

@@ -32,6 +32,10 @@ import { HotelBookingModal } from "./HotelBookingModal";
 import { HotelMobileBookingBar } from "./HotelMobileBookingBar";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { validateIndianMobile } from "@/lib/validation";
+import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfile } from "@/services/user.service";
 
 interface HotelDetailClientProps {
     readonly hotel: Hotel;
@@ -76,6 +80,20 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
     const [confirmedBooking, setConfirmedBooking] = useState<HotelBooking | null>(null);
 
+    const { user } = useAuth();
+    const { data: profile } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        enabled: !!user,
+    });
+    const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
+    const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
+
+    const isEmailVerified = Boolean(
+        (profile?.is_email_verified && profile?.email?.toLowerCase() === guestEmail.trim().toLowerCase()) ||
+        (verifiedEmail && verifiedEmail.toLowerCase() === guestEmail.trim().toLowerCase())
+    );
+
     const handleSelectAndBookRoom = (room: HotelRoomType) => {
         setSelectedRoom(room);
         const bookingCard = document.getElementById("hotel-booking-card");
@@ -115,22 +133,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
         setIsBookingModalOpen(true);
     };
 
-    const handleConfirmBooking = async () => {
-        if (!guestName.trim() || guestName.trim().length < 3) {
-            toast.error("Please enter a valid guest full name (at least 3 characters).");
-            return;
-        }
-        if (!guestEmail.trim() || !guestEmail.includes("@")) {
-            toast.error("Please enter a valid email address.");
-            return;
-        }
-
-        const phoneValidation = validateIndianMobile(guestMobile);
-        if (!phoneValidation.isValid) {
-            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number.");
-            return;
-        }
-
+    const executeConfirmedBooking = async (cleanedGuestEmail: string, cleanedMobile: string) => {
         const roomTypeId = selectedRoom?.id || hotel.room_types?.[0]?.id;
         if (!roomTypeId) {
             toast.error("Please select a valid suite / room type.");
@@ -147,8 +150,8 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     check_out_date: checkOutDate,
                     number_of_rooms: 1,
                     guest_name: guestName.trim(),
-                    guest_email: guestEmail.trim(),
-                    mobile_number: phoneValidation.cleanNumber || guestMobile.trim(),
+                    guest_email: cleanedGuestEmail,
+                    mobile_number: cleanedMobile,
                     adults_count: 2,
                     children_count: 0,
                     special_requests: specialRequests.trim() + (razorpayPaymentId ? ` [Razorpay Payment ID: ${razorpayPaymentId}]` : ""),
@@ -201,8 +204,8 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     },
                     prefill: {
                         name: guestName.trim(),
-                        email: guestEmail.trim(),
-                        contact: phoneValidation.cleanNumber || guestMobile.trim()
+                        email: cleanedGuestEmail,
+                        contact: cleanedMobile
                     },
                     theme: {
                         color: "#003580"
@@ -223,6 +226,40 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
             // Pay on arrival
             await proceedBookingSubmission();
         }
+    };
+
+    const handleConfirmBooking = async () => {
+        if (!guestName.trim() || guestName.trim().length < 3) {
+            toast.error("Please enter a valid guest full name (at least 3 characters).");
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!guestEmail.trim() || !emailRegex.test(guestEmail.trim())) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+
+        const phoneValidation = validateIndianMobile(guestMobile);
+        if (!phoneValidation.isValid) {
+            toast.error(phoneValidation.error || "Please enter a valid 10-digit mobile number.");
+            return;
+        }
+
+        const roomTypeId = selectedRoom?.id || hotel.room_types?.[0]?.id;
+        if (!roomTypeId) {
+            toast.error("Please select a valid suite / room type.");
+            return;
+        }
+
+        const cleanEmail = guestEmail.trim().toLowerCase();
+        const cleanMobile = phoneValidation.cleanNumber || guestMobile.trim();
+
+        if (!isEmailVerified) {
+            setShowEmailOtpModal(true);
+            return;
+        }
+
+        await executeConfirmedBooking(cleanEmail, cleanMobile);
     };
 
     return (
@@ -750,6 +787,21 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                 setPaymentMethod={setPaymentMethod}
                 isSubmittingBooking={isSubmittingBooking}
                 handleConfirmBooking={handleConfirmBooking}
+                isEmailVerified={isEmailVerified}
+            />
+
+            <EmailOtpModal
+                isOpen={showEmailOtpModal}
+                onClose={() => setShowEmailOtpModal(false)}
+                email={guestEmail.trim()}
+                guestName={guestName.trim()}
+                onVerified={() => {
+                    const cleanEmail = guestEmail.trim().toLowerCase();
+                    setVerifiedEmail(cleanEmail);
+                    const phoneValidation = validateIndianMobile(guestMobile);
+                    const cleanMobile = phoneValidation.cleanNumber || guestMobile.trim();
+                    executeConfirmedBooking(cleanEmail, cleanMobile);
+                }}
             />
 
             {/* 7. MOBILE STICKY BOTTOM BAR (STATIC DOWN BUTTON) */}
