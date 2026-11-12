@@ -132,7 +132,7 @@ export const cancelHotelBooking = async (
 
 export interface CheckHotelAvailabilityParams {
     hotel_id?: string;
-    room_type_id: string;
+    room_type_id: string | number;
     check_in_date: string;
     check_out_date: string;
     number_of_rooms?: number;
