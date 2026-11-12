@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 
 interface SectionRevealProps {
   children: ReactNode;
@@ -12,6 +12,16 @@ export default function SectionReveal({
   children,
   delay = 0,
 }: SectionRevealProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div suppressHydrationWarning>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}

@@ -11,15 +11,15 @@ export async function getSEO(page: string) {
 
         const data = await res.json()
 
-        // Map page to content_type since backend might just return the whole list
+        // Map page to content_type in Django backend
         const CONTENT_TYPE_MAP: Record<string, number> = {
-            "home": 20,
-            "landing": 43,
-            "about-us": 22,
-            "contact-us": 26,
-            "pricing": 30,
-            "blog": 34,
-            "faqs": 51,
+            "home": 50,
+            "landing": 53,
+            "about-us": 42,
+            "contact-us": 46,
+            "pricing": 57,
+            "blog": 39,
+            "faqs": 34,
         };
 
         let seo = null;

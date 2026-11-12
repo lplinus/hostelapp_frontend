@@ -82,6 +82,14 @@ export function middleware(request: NextRequest) {
             request.nextUrl.pathname === '/register')
     ) {
         const role = request.cookies.get('user_role')?.value;
+        // Guests can freely explore the website to book hostels, hotels, vacation rentals
+        if (role === 'guest') {
+            if (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register') {
+                return NextResponse.redirect(new URL('/home/guestprofile', request.url));
+            }
+            return NextResponse.next();
+        }
+
         if (role === 'vendor') {
             return NextResponse.redirect(new URL('/vendordashboard/vendors', request.url));
         }

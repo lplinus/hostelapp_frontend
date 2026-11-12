@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import VendorSidebar from '@/components/vendordashboard/vendor-sidebar';
 import DashboardHeader from '@/components/hostelowner/dashboard/dashboard-header';
@@ -20,6 +20,7 @@ export default function VendorDashboardLayout({
 }) {
     const { user, initializing, isAuthenticated } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [isMounted, setIsMounted] = useState(false);
     const [hasRoleCookie, setHasRoleCookie] = useState(false);
 
@@ -33,6 +34,17 @@ export default function VendorDashboardLayout({
             router.push('/login');
         }
     }, [initializing, isAuthenticated, hasRoleCookie, router]);
+
+    // Protect locked vendor sub-routes directly in the layout
+    useEffect(() => {
+        const role = user?.role || getRoleCookie();
+        if (role === 'vendor') {
+            const allowedVendorPaths = ['/vendordashboard/vendors', '/profile'];
+            if (!allowedVendorPaths.includes(pathname)) {
+                router.replace('/vendordashboard/vendors');
+            }
+        }
+    }, [pathname, user?.role, router]);
 
     // Show loading ONLY if we have no signal at all (no cookie AND no user data yet), or if not hydrated
     if (!isMounted || (!hasRoleCookie && (initializing || !user))) {

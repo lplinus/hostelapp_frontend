@@ -15,7 +15,8 @@ import {
     LogOut,
     Loader2,
     CreditCard,
-    Bell
+    Bell,
+    Lock
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -48,12 +49,12 @@ export default function VendorSidebar() {
 
     const menuItems = role === 'vendor'
         ? [
-            { href: '/vendordashboard/vendors', icon: LayoutDashboard, label: 'Dashboard' },
-            { href: '/vendordashboard/orders', icon: ShoppingCart, label: 'My Orders' },
-            { href: '/vendordashboard/products', icon: Package, label: 'Products' },
-            { href: '/vendordashboard/notifications', icon: Bell, label: 'Notifications' },
-            { href: '/vendordashboard/vendorssettings', icon: Settings, label: 'Settings' },
-            { href: '/profile', icon: UserCircle, label: 'Profile' }
+            { href: '/vendordashboard/vendors', icon: LayoutDashboard, label: 'Dashboard', locked: false },
+            { href: '/profile', icon: UserCircle, label: 'Profile', locked: false },
+            { href: '/vendordashboard/orders', icon: ShoppingCart, label: 'My Orders', locked: true },
+            { href: '/vendordashboard/products', icon: Package, label: 'Products', locked: true },
+            { href: '/vendordashboard/notifications', icon: Bell, label: 'Notifications', locked: true },
+            { href: '/vendordashboard/vendorssettings', icon: Settings, label: 'Settings', locked: true },
         ]
         : [
             { href: '/dashboard', icon: LayoutDashboard, label: 'Main Dashboard' },
@@ -125,8 +126,50 @@ export default function VendorSidebar() {
                             </p>
                         )}
 
-                        {menuItems.map((item) => {
+                        {menuItems.map((item: any) => {
                             const isActive = pathname === item.href;
+                            const isLocked = item.locked;
+
+                            if (isLocked) {
+                                const lockedContent = (
+                                    <div
+                                        key={item.href}
+                                        aria-disabled="true"
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-not-allowed select-none opacity-40 text-muted-foreground bg-muted/10 border border-transparent",
+                                            !showFull && 'justify-center px-0'
+                                        )}
+                                    >
+                                        <item.icon size={18} className="shrink-0 text-muted-foreground/60" />
+                                        {showFull && (
+                                            <div className="flex items-center justify-between flex-1 min-w-0">
+                                                <span className="truncate">{item.label}</span>
+                                                <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground border border-border/60 ml-2 shrink-0">
+                                                    <Lock size={10} />
+                                                    Locked
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+
+                                if (!showFull) {
+                                    return (
+                                        <Tooltip key={item.href}>
+                                            <TooltipTrigger asChild>
+                                                {lockedContent}
+                                            </TooltipTrigger>
+                                            <TooltipContent side="right" className="flex items-center gap-1.5 text-xs">
+                                                <Lock size={12} />
+                                                <span>{item.label} (Locked)</span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    );
+                                }
+
+                                return lockedContent;
+                            }
+
                             const linkContent = (
                                 <Link
                                     key={item.href}

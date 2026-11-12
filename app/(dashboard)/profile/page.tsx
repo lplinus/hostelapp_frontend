@@ -179,7 +179,7 @@ export default function ProfilePage() {
             <main className="flex-1 p-6 space-y-6">
                 <DashboardHeader />
                 <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
-                    <div className="max-w-3xl mx-auto bg-card p-6 md:p-8 rounded-xl shadow-xs border border-border/40">
+                    <div className="w-full bg-card p-6 md:p-8 rounded-sm shadow-xs border border-border/40">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h2 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -190,16 +190,16 @@ export default function ProfilePage() {
                                 </p>
                             </div>
                             {profile?.role === 'vendor' && (
-                                <div className="flex p-1 bg-muted/50 rounded-lg">
+                                <div className="flex p-1 bg-muted/50 rounded-sm border border-border/40">
                                     <button
                                         onClick={() => setActiveTab('personal')}
-                                        className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'personal' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                                        className={`px-3.5 py-1.5 rounded-xs text-xs font-semibold transition-all cursor-pointer ${activeTab === 'personal' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
                                     >
                                         Personal
                                     </button>
                                     <button
                                         onClick={() => setActiveTab('business')}
-                                        className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'business' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
+                                        className={`px-3.5 py-1.5 rounded-xs text-xs font-semibold transition-all cursor-pointer ${activeTab === 'business' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}
                                     >
                                         Business
                                     </button>

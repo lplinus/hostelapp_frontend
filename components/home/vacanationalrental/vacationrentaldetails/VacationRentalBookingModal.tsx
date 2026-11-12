@@ -186,35 +186,30 @@ export function VacationRentalBookingModal({
                         </DialogHeader>
 
                         <div className="space-y-4 py-2 text-xs">
-                            {/* Dates Selection While Booking */}
-                            <div className="grid grid-cols-2 gap-3 p-3 bg-indigo-50/40 rounded-xl border border-indigo-100">
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                            {/* Dates (Frozen from Reserve bar selection) */}
+                            <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                                         <Calendar size={12} className="text-[#312E81]" />
-                                        Check-In Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={checkInDate}
-                                        onChange={(e) => setCheckInDate?.(e.target.value)}
-                                        min={new Date().toISOString().split("T")[0]}
-                                        disabled={!setCheckInDate || isSubmittingBooking}
-                                        className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#312E81]"
-                                    />
+                                        Selected Stay Dates
+                                    </span>
+                                    <span className="text-[10px] font-bold text-[#312E81] bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                                        {numberOfNights} {numberOfNights === 1 ? "Night" : "Nights"} (Confirmed)
+                                    </span>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                        <Calendar size={12} className="text-[#312E81]" />
-                                        Check-Out Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={checkOutDate}
-                                        onChange={(e) => setCheckOutDate?.(e.target.value)}
-                                        min={checkInDate}
-                                        disabled={!setCheckOutDate || isSubmittingBooking}
-                                        className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#312E81]"
-                                    />
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-In</span>
+                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                            {checkInDate ? new Date(checkInDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkInDate}
+                                        </span>
+                                    </div>
+                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-Out</span>
+                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                            {checkOutDate ? new Date(checkOutDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkOutDate}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 

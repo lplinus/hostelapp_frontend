@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Zap } from "lucide-react";
+import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Zap, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import type { VacationRental } from "@/types/vacationrental.types";
@@ -24,6 +24,7 @@ interface VacationRentalMobileBookingBarProps {
         grandTotal: number;
     };
     onOpenBookingModal: () => void;
+    isCheckingAvailability?: boolean;
 }
 
 export function VacationRentalMobileBookingBar({
@@ -37,6 +38,7 @@ export function VacationRentalMobileBookingBar({
     numberOfNights,
     pricingCalculation,
     onOpenBookingModal,
+    isCheckingAvailability = false,
 }: VacationRentalMobileBookingBarProps) {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -224,10 +226,17 @@ export function VacationRentalMobileBookingBar({
                 <Button
                     type="button"
                     onClick={onOpenBookingModal}
-                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-bold text-sm h-12 px-6 rounded-xl shadow-md active:scale-95 transition-all shrink-0 flex items-center gap-1.5"
+                    disabled={isCheckingAvailability}
+                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-sm h-12 px-5 rounded-xl shadow-md active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-85 tracking-normal"
                 >
-                    <Zap size={15} className="fill-current text-amber-300" />
-                    <span>Reserve</span>
+                    {isCheckingAvailability ? (
+                        <>
+                            <Loader2 size={15} className="animate-spin text-white" />
+                            <span>Checking...</span>
+                        </>
+                    ) : (
+                        <span>Check Availability</span>
+                    )}
                 </Button>
             </div>
         </div>

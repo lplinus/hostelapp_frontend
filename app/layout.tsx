@@ -96,7 +96,7 @@ export default async function RootLayout({
           {children}
           <ConditionalFooter />
           <ChatWidget />
-          <Toaster position="bottom-right" richColors />
+          <Toaster position="bottom-right" richColors closeButton duration={4000} />
         </Providers>
 
         <Script

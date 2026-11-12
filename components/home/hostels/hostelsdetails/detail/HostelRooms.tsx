@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Snowflake, Fan, Check, Lock } from "lucide-react";
+import { Snowflake, Fan, Check, Lock, CheckCircle2, XCircle } from "lucide-react";
 import type { ExtraCharge } from "@/types/hostel.types";
 
 interface RoomType {
@@ -25,9 +25,11 @@ interface HostelRoomsProps {
     priceMode: "monthly" | "daily";
     extraCharges?: readonly ExtraCharge[];
     suitableFor?: string[];
+    selectedRoom?: RoomType | null;
+    onSelectRoom?: (room: RoomType) => void;
 }
 
-export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges, suitableFor }: HostelRoomsProps) {
+export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges, suitableFor, selectedRoom, onSelectRoom }: HostelRoomsProps) {
     const [showAll, setShowAll] = useState(false);
     const hasExtraCharges = extraCharges && extraCharges.length > 0;
     const [activeTab, setActiveTab] = useState<"sharing" | "extra" | "suitable">("sharing");
@@ -140,13 +142,17 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {displayed.map((room) => {
                             const features = getRoomFeatures(room);
+                            const isSelected = selectedRoom?.id === room.id;
                             return (
                                 <div
                                     key={room.id}
-                                    className={`rounded-2xl border transition-all duration-300 ${room.is_available
-                                        ? "bg-white border-gray-200 hover:border-indigo-200 hover:shadow-lg"
-                                        : "bg-gray-50 border-gray-100 opacity-60"
-                                        }`}
+                                    className={`rounded-2xl border transition-all duration-300 ${
+                                        isSelected
+                                            ? "border-[#312E81] bg-indigo-50/30 ring-2 ring-[#312E81] shadow-md"
+                                            : room.is_available
+                                            ? "bg-white border-gray-200 hover:border-indigo-200 hover:shadow-lg"
+                                            : "bg-gray-50 border-gray-100 opacity-60"
+                                    }`}
                                 >
                                     <div className="p-5">
                                         {/* Room Header */}
@@ -160,8 +166,16 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
                                                         <Fan size={13} className="text-gray-600" />
                                                     )}
                                                     <span>{room.category_display}</span>
-                                                    {!room.is_available && (
-                                                        <span className="ml-1 bg-red-50 text-red-500 text-[10px] font-bold px-1.5 py-0.5 rounded">Sold Out</span>
+                                                    {room.is_available ? (
+                                                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
+                                                            <CheckCircle2 size={10} className="text-emerald-600" />
+                                                            Available
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-200">
+                                                            <XCircle size={10} className="text-rose-600" />
+                                                            Sold Out
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -200,12 +214,23 @@ export default function HostelRooms({ rooms, hostelSlug, priceMode, extraCharges
 
                                         {/* CTA */}
                                         {room.is_available ? (
-                                            <Link
-                                                href={`/hostels/${hostelSlug}/book?roomId=${room.id}&priceMode=${priceMode}`}
-                                                className="w-full flex items-center justify-center py-3 text-sm font-bold text-white bg-[#312E81] hover:bg-[#1E1B4B] rounded-xl transition-all active:scale-[0.98] shadow-sm"
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        onSelectRoom?.(null as any);
+                                                    } else {
+                                                        onSelectRoom?.(room);
+                                                    }
+                                                }}
+                                                className={`w-full flex items-center justify-center py-3 text-sm font-bold rounded-xl transition-all active:scale-[0.98] shadow-sm cursor-pointer ${
+                                                    isSelected
+                                                        ? "bg-[#312E81] text-white shadow-xs ring-2 ring-[#312E81]/30 hover:bg-[#1E1B4B]"
+                                                        : "bg-white text-[#312E81] border border-[#312E81] hover:bg-[#312E81] hover:text-white"
+                                                }`}
                                             >
-                                                Select Room
-                                            </Link>
+                                                {isSelected ? "Selected (Click to Unselect)" : "Select Room"}
+                                            </button>
                                         ) : (
                                             <button disabled className="w-full flex items-center justify-center py-3 text-sm font-medium text-gray-400 bg-gray-100 rounded-xl cursor-not-allowed gap-2">
                                                 <Lock size={14} />

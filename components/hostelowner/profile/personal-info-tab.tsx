@@ -60,241 +60,152 @@ export default function PersonalInfoTab({
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">First Name</label>
+            {/* Avatar & High-level Banner Section */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-7 bg-muted/40 rounded-sm border border-border/60">
+                <div className="relative group shrink-0">
+                    <div className="w-24 h-24 rounded-sm overflow-hidden bg-background border border-border shadow-2xs flex items-center justify-center transition-transform group-hover:scale-102">
+                        {preview ? (
+                            <img src={preview} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-3xl text-muted-foreground font-bold capitalize">{profile?.username?.[0] || 'U'}</span>
+                        )}
+                    </div>
+                    <label className="absolute -bottom-1.5 -right-1.5 cursor-pointer w-7 h-7 bg-primary rounded-xs flex items-center justify-center text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors">
+                        <Pencil size={12} />
+                        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    </label>
+                </div>
+                <div className="flex-1 text-center sm:text-left space-y-1">
+                    <h3 className="text-base font-bold text-foreground">
+                        {profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : profile?.username || 'User Profile'}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                        {profile?.role ? `${profile.role.charAt(0).toUpperCase() + profile.role.slice(1)} Account` : 'Hostel In Member'} · {profile?.email || 'No email registered'}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/80 pt-1">
+                        JPG, PNG or GIF. Max {storageSettings.max_image_size_mb}MB
+                    </p>
+                </div>
+            </div>
+
+            {/* Input fields in responsive grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-1.5">
+                    <label htmlFor="first_name" className="text-xs font-semibold text-foreground uppercase tracking-wider block">First Name</label>
                     <input
                         id="first_name"
                         type="text"
                         name="first_name"
                         value={formData.first_name || ""}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+                        className="w-full px-3.5 py-2.5 rounded-sm border border-border bg-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium"
                     />
                 </div>
-                <div>
-                    <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Last Name</label>
+                <div className="space-y-1.5">
+                    <label htmlFor="last_name" className="text-xs font-semibold text-foreground uppercase tracking-wider block">Last Name</label>
                     <input
                         id="last_name"
                         type="text"
                         name="last_name"
                         value={formData.last_name || ""}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+                        className="w-full px-3.5 py-2.5 rounded-sm border border-border bg-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium"
                     />
                 </div>
-            </div>
 
-            {/* Password Section - MOVED TO SETTINGS */}
-            {/* <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                <div className="mt-1 flex items-center gap-2">
-                    <div className="relative flex-1">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                            <Lock className="h-4 w-4" />
-                        </div>
+                <div className="space-y-1.5">
+                    <label htmlFor="email" className="text-xs font-semibold text-foreground uppercase tracking-wider block">Email Address</label>
+                    <div className="flex items-center gap-2">
                         <input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={formData.password ?? "********"}
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={formData.email || ""}
                             onChange={handleChange}
-                            disabled={!isPasswordEditable}
-                            placeholder="Enter new password"
-                            className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 pl-10 ${!isPasswordEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed font-mono" : "bg-white"}`}
+                            disabled={!isEmailEditable}
+                            className={`flex-1 px-3.5 py-2.5 rounded-sm border border-border text-sm font-medium focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${!isEmailEditable ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "bg-background"}`}
                         />
                         <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            disabled={!isPasswordEditable}
-                            className={`absolute inset-y-0 right-0 pr-3 flex items-center ${!isPasswordEditable ? "text-gray-300 cursor-not-allowed" : "text-gray-400 hover:text-gray-600"} transition-colors`}
+                            onClick={() => setIsEmailEditable(!isEmailEditable)}
+                            className={`p-2.5 rounded-sm transition-all shadow-2xs flex items-center justify-center border cursor-pointer ${isEmailEditable
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-background text-muted-foreground hover:text-foreground border-border hover:bg-muted"
+                                }`}
+                            title={isEmailEditable ? "Editing Email" : "Edit Email"}
                         >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            <Pencil className={`w-4 h-4 ${isEmailEditable ? "animate-pulse" : ""}`} />
                         </button>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (isPasswordEditable) {
-                                setShowPassword(false);
-                                setFormData({ ...formData, password: undefined });
-                            }
-                            setIsPasswordEditable(!isPasswordEditable);
-                        }}
-                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${isPasswordEditable
-                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110"
-                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
-                            }`}
-                        title={isPasswordEditable ? "Cancel" : "Edit Password"}
-                    >
-                        <Pencil className={`w-4 h-4 ${isPasswordEditable ? "animate-pulse" : ""}`} />
-                    </button>
+                </div>
 
-                    {isPasswordEditable && (
+                <div className="space-y-1.5">
+                    <label htmlFor="phone" className="text-xs font-semibold text-foreground uppercase tracking-wider block">Phone Number</label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            id="phone"
+                            type="tel"
+                            name="phone"
+                            maxLength={10}
+                            value={formData.phone || ""}
+                            disabled={!isPhoneEditable}
+                            onChange={(e) => {
+                                const val = e.target.value.replaceAll(/\D/g, "");
+                                if (val.length <= 10) {
+                                    setFormData({ ...formData, phone: val });
+                                }
+                            }}
+                            placeholder="10-digit mobile number"
+                            className={`flex-1 px-3.5 py-2.5 rounded-sm border border-border text-sm font-medium focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${!isPhoneEditable ? "bg-muted/40 text-muted-foreground cursor-not-allowed" : "bg-background"}`}
+                        />
                         <button
                             type="button"
-                            onClick={() => {
-                                const pwd = formData.password || "";
-                                const isValid = pwd.length >= 8 &&
-                                    /[A-Z]/.test(pwd) &&
-                                    /[a-z]/.test(pwd) &&
-                                    /\d/.test(pwd) &&
-                                    /[^A-Za-z0-9]/.test(pwd);
-
-                                if (!isValid) {
-                                    toast.error("Please meet all password requirements.");
-                                    return;
-                                }
-
-                                const data = new FormData();
-                                data.append("password", pwd);
-                                mutation.mutate(data, {
-                                    onSuccess: () => {
-                                        setIsPasswordEditable(false);
-                                        setShowPassword(false);
-                                        setFormData({ ...formData, password: undefined });
-                                    }
-                                });
-                            }}
-                            className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                            onClick={() => setIsPhoneEditable(!isPhoneEditable)}
+                            className={`p-2.5 rounded-sm transition-all shadow-2xs flex items-center justify-center border cursor-pointer ${isPhoneEditable
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-background text-muted-foreground hover:text-foreground border-border hover:bg-muted"
+                                }`}
+                            title={isPhoneEditable ? "Editing Phone" : "Edit Phone"}
                         >
-                            {mutation.isPending ? "Saving..." : "Save"}
+                            <Pencil className={`w-4 h-4 ${isPhoneEditable ? "animate-pulse" : ""}`} />
                         </button>
-                    )}
-                </div>
-                {isPasswordEditable && (
-                    <div className="mt-3 space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-300">
-                        <div className="mb-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
-                            <p className="text-[9px] text-orange-700 leading-relaxed font-bold">
-                                <span className="text-orange-600 uppercase tracking-wider block mb-0.5">⚠️ Security Caution</span>
-                                Please remember your password carefully. Once saved, it will be encrypted and shown only as stars for security, and cannot be viewed in plain text.
-                            </p>
-                        </div>
-                        <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider mb-2">Password Requirements</p>
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                            <ValidationItem label="8+ Characters" met={(formData.password?.length ?? 0) >= 8} />
-                            <ValidationItem label="Upper Case" met={/[A-Z]/.test(formData.password || "")} />
-                            <ValidationItem label="Lower Case" met={/[a-z]/.test(formData.password || "")} />
-                            <ValidationItem label="Numbers" met={/\d/.test(formData.password || "")} />
-                            <ValidationItem label="Special Char" met={/[^A-Za-z0-9]/.test(formData.password || "")} />
-                        </div>
-                    </div>
-                )}
-            </div> */}
-
-            <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                <div className="mt-1 flex items-center gap-2">
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={formData.email || ""}
-                        onChange={handleChange}
-                        disabled={!isEmailEditable}
-                        className={`flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 ${!isEmailEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white"}`}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setIsEmailEditable(!isEmailEditable)}
-                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${isEmailEditable
-                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110"
-                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
-                            }`}
-                        title={isEmailEditable ? "Editing Email" : "Edit Email"}
-                    >
-                        <Pencil className={`w-4 h-4 ${isEmailEditable ? "animate-pulse" : ""}`} />
-                    </button>
-                </div>
-            </div>
-            <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-                <div className="mt-1 flex items-center gap-2">
-                    <input
-                        id="phone"
-                        type="tel"
-                        name="phone"
-                        maxLength={10}
-                        value={formData.phone || ""}
-                        disabled={!isPhoneEditable}
-                        onChange={(e) => {
-                            const val = e.target.value.replaceAll(/\D/g, "");
-                            if (val.length <= 10) {
-                                setFormData({ ...formData, phone: val });
-                            }
-                        }}
-                        placeholder="10-digit mobile number"
-                        className={`flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2 ${!isPhoneEditable ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white"}`}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setIsPhoneEditable(!isPhoneEditable)}
-                        className={`p-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center ${isPhoneEditable
-                            ? "bg-indigo-600 text-white shadow-indigo-200 rotate-12 scale-110"
-                            : "bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-100 hover:scale-105"
-                            }`}
-                        title={isPhoneEditable ? "Editing Phone" : "Edit Phone"}
-                    >
-                        <Pencil className={`w-4 h-4 ${isPhoneEditable ? "animate-pulse" : ""}`} />
-                    </button>
-                    {isVerified ? (
-                        <span className="inline-flex items-center px-3 py-2 rounded-md bg-green-50 text-green-700 border border-green-200 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
-                            ✓ Verified
-                        </span>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (!formData.phone || formData.phone.length < 10) {
-                                    toast.error("Please enter a valid 10-digit phone number first.");
-                                    return;
-                                }
-                                // setShowOtpModal(true);
-                                toast.success("OTP verification disabled. Proceeding...");
-                            }}
-                            className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95 whitespace-nowrap"
-                        >
-                            Verify
-                        </button>
-                    )}
-                </div>
-                {formData.phone && formData.phone.length > 0 && formData.phone.length < 10 && (
-                    <p className="mt-1 text-xs text-red-500 font-semibold">Please enter a valid 10-digit phone number.</p>
-                )}
-            </div>
-
-            {/* Avatar section inside personal info */}
-            <div className="flex items-center gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="relative group">
-                    <div className="w-20 h-20 rounded-full overflow-hidden bg-white border-2 border-white shadow-md flex items-center justify-center transition-transform group-hover:scale-105">
-                        {preview ? (
-                            <img src={preview} alt="Profile" className="w-full h-full object-cover" />
+                        {isVerified ? (
+                            <span className="inline-flex items-center px-3 py-2.5 rounded-sm bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold uppercase tracking-wider whitespace-nowrap">
+                                ✓ Verified
+                            </span>
                         ) : (
-                            <span className="text-2xl text-slate-300 font-black capitalize">{profile?.username?.[0] || 'U'}</span>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (!formData.phone || formData.phone.length < 10) {
+                                        toast.error("Please enter a valid 10-digit phone number first.");
+                                        return;
+                                    }
+                                    toast.success("OTP verification disabled. Proceeding...");
+                                }}
+                                className="inline-flex items-center px-4 py-2.5 rounded-sm bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer"
+                            >
+                                Verify
+                            </button>
                         )}
                     </div>
-                    <label className="absolute -bottom-1 -right-1 cursor-pointer w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg border-2 border-white hover:bg-blue-700 transition-colors">
-                        <Pencil size={14} />
-                        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                    </label>
-                </div>
-                <div className="flex-1">
-                    <h4 className="text-sm font-bold text-slate-700">Display Picture</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">JPG, PNG or GIF. Max {storageSettings.max_image_size_mb}MB</p>
+                    {formData.phone && formData.phone.length > 0 && formData.phone.length < 10 && (
+                        <p className="mt-1 text-xs text-rose-500 font-semibold">Please enter a valid 10-digit phone number.</p>
+                    )}
                 </div>
             </div>
 
             {profile?.role === 'vendor' ? (
-                <div className="flex items-center gap-3 mt-10">
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-6 border-t border-border/40">
                     <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="flex-1 bg-[#0a0e27] text-white h-11 rounded-xl hover:bg-black transition-all text-xs font-bold tracking-wide flex items-center justify-center gap-2"
+                        className="w-full sm:flex-1 h-11 rounded-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                     >
                         {mutation.isPending ? (
-                            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-3.5 h-3.5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                         ) : (
-                            <Check size={14} className="stroke-[3]" />
+                            <Check size={15} className="stroke-[3]" />
                         )}
                         {mutation.isPending ? "Saving..." : "Update Profile"}
                     </Button>
@@ -302,23 +213,23 @@ export default function PersonalInfoTab({
                         type="button"
                         variant="outline"
                         onClick={() => setActiveTab('business')}
-                        className="flex-1 h-11 rounded-xl border-slate-200 text-slate-700 text-xs font-bold tracking-wide hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
+                        className="w-full sm:flex-1 h-11 rounded-sm text-xs font-bold tracking-wide hover:bg-muted transition-all flex items-center justify-center gap-2 cursor-pointer border-border"
                     >
                         Business Details
                         <ChevronDown className="-rotate-90" size={14} />
                     </Button>
                 </div>
             ) : (
-                <div className="mt-10">
+                <div className="pt-6 border-t border-border/40">
                     <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="w-full bg-[#0a0e27] text-white h-11 rounded-xl hover:bg-black transition-all text-xs font-bold tracking-wide flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto min-w-[200px] h-11 rounded-sm font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-xs px-8"
                     >
                         {mutation.isPending ? (
-                            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-3.5 h-3.5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                         ) : (
-                            <Check size={14} className="stroke-[3]" />
+                            <Check size={15} className="stroke-[3]" />
                         )}
                         {mutation.isPending ? "Saving..." : "Update Profile"}
                     </Button>

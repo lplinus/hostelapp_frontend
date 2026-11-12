@@ -323,63 +323,63 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
             </div>
 
             {/* KPI Overview Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Total Bookings</p>
-                            <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+                <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                    <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                        <div className="space-y-0.5 min-w-0">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Total Bookings</p>
+                            <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground tabular-nums leading-none">
                                 {isMounted ? totalBookingsCount : 0}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">All-time stays reserved</p>
+                            <p className="text-[10px] text-muted-foreground/80 truncate">All-time stays</p>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                            <Hotel size={18} />
+                        <div className="w-8 h-8 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                            <Hotel size={15} />
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Active Stays</p>
-                            <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
+                <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                    <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                        <div className="space-y-0.5 min-w-0">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Active Stays</p>
+                            <p className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums leading-none">
                                 {isMounted ? activeStaysCount : 0}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Currently checked in</p>
+                            <p className="text-[10px] text-muted-foreground/80 truncate">Checked in</p>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                            <BedDouble size={18} />
+                        <div className="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                            <BedDouble size={15} />
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Upcoming Stays</p>
-                            <p className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums">
+                <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                    <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                        <div className="space-y-0.5 min-w-0">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Upcoming Stays</p>
+                            <p className="text-lg sm:text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums leading-none">
                                 {isMounted ? upcomingCount : 0}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Confirmed future check-ins</p>
+                            <p className="text-[10px] text-muted-foreground/80 truncate">Future check-ins</p>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                            <Calendar size={18} />
+                        <div className="w-8 h-8 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                            <Calendar size={15} />
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-card shadow-xs">
-                    <CardContent className="p-4 flex items-center justify-between">
-                        <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">Total Spent</p>
-                            <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                    <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                        <div className="space-y-0.5 min-w-0">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Total Spent</p>
+                            <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground tabular-nums leading-none">
                                 {isMounted ? formatCurrency(totalSpentAmount) : "₹0"}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">Total booking revenue</p>
+                            <p className="text-[10px] text-muted-foreground/80 truncate">Total revenue</p>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                            <CreditCard size={18} />
+                        <div className="w-8 h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <CreditCard size={15} />
                         </div>
                     </CardContent>
                 </Card>

@@ -243,19 +243,23 @@ export default function RegisterForm() {
             {/* Role Selection */}
             <div className="space-y-1.5">
               <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 ml-0.5">I am a...</Label>
+              {/* 
+                Vendor and Service roles are temporarily disabled from registration.
+                Only Guest and Hostel Owner self-registration is enabled.
+              */}
               <RadioGroup
                 value={role}
                 onValueChange={(value: any) => setRole(value)}
-                className="grid grid-cols-4 gap-1.5 sm:gap-2"
+                className="grid grid-cols-2 gap-2"
               >
                 <div className="relative">
                   <RadioGroupItem value="guest" id="guest" className="peer sr-only" />
                   <Label
                     htmlFor="guest"
-                    className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
+                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
                   >
-                    <User className={cn("w-3.5 h-3.5 mb-0.5 transition-colors", role === "guest" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-[10px] tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Guest</span>
+                    <User className={cn("w-4 h-4 mb-1 transition-colors", role === "guest" ? "text-[#1E1B4B]" : "text-slate-500")} />
+                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Guest</span>
                   </Label>
                 </div>
 
@@ -263,13 +267,14 @@ export default function RegisterForm() {
                   <RadioGroupItem value="hostel_owner" id="hostel_owner" className="peer sr-only" />
                   <Label
                     htmlFor="hostel_owner"
-                    className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
+                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
                   >
-                    <Building2 className={cn("w-3.5 h-3.5 mb-0.5 transition-colors", role === "hostel_owner" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-[10px] tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Owner</span>
+                    <Building2 className={cn("w-4 h-4 mb-1 transition-colors", role === "hostel_owner" ? "text-[#1E1B4B]" : "text-slate-500")} />
+                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Owner</span>
                   </Label>
                 </div>
 
+                {/* 
                 <div className="relative">
                   <RadioGroupItem value="vendor" id="vendor" className="peer sr-only" />
                   <Label
@@ -291,6 +296,7 @@ export default function RegisterForm() {
                     <span className={cn("text-[10px] tracking-tight text-center leading-tight transition-colors", role === "service" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Service</span>
                   </Label>
                 </div>
+                */}
               </RadioGroup>
             </div>
 

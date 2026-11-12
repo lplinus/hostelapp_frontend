@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Building2 } from "lucide-react";
+import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Building2, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import type { Hotel, HotelRoomType } from "@/types/hotel.types";
@@ -17,6 +17,7 @@ interface HotelMobileBookingBarProps {
     numberOfNights: number;
     totalAmount: number;
     onOpenBookingModal: () => void;
+    isCheckingAvailability?: boolean;
 }
 
 export function HotelMobileBookingBar({
@@ -30,6 +31,7 @@ export function HotelMobileBookingBar({
     numberOfNights,
     totalAmount,
     onOpenBookingModal,
+    isCheckingAvailability = false,
 }: HotelMobileBookingBarProps) {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -130,7 +132,20 @@ export function HotelMobileBookingBar({
                                                         }`}
                                                     >
                                                         <div>
-                                                            <p className="text-xs font-bold text-slate-900">{room.name}</p>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <p className="text-xs font-bold text-slate-900">{room.name}</p>
+                                                                {(room.is_available && (room.rooms_available === undefined || room.rooms_available > 0)) ? (
+                                                                    <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
+                                                                        <CheckCircle2 size={10} className="text-emerald-600" />
+                                                                        Available
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded-full border border-rose-200">
+                                                                        <XCircle size={10} className="text-rose-600" />
+                                                                        Sold Out
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                             <p className="text-[10px] text-slate-500 font-medium">
                                                                 Max {room.max_occupancy} Guests • {room.bed_type}
                                                             </p>
@@ -210,9 +225,17 @@ export function HotelMobileBookingBar({
                 <Button
                     type="button"
                     onClick={onOpenBookingModal}
-                    className="bg-[#003580] hover:bg-[#002244] text-white font-bold text-sm h-11 px-6 rounded-xl shadow-md active:scale-95 transition-all"
+                    disabled={isCheckingAvailability}
+                    className="bg-[#003580] hover:bg-[#002244] text-white font-medium text-sm h-11 px-5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-85 tracking-normal"
                 >
-                    Reserve Suite
+                    {isCheckingAvailability ? (
+                        <>
+                            <Loader2 size={15} className="animate-spin text-white" />
+                            <span>Checking...</span>
+                        </>
+                    ) : (
+                        <span>Check Availability</span>
+                    )}
                 </Button>
             </div>
         </div>

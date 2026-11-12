@@ -33,11 +33,12 @@ import {
     Loader2
 } from "lucide-react";
 import type { VacationRental, VacationRentalBooking } from "@/types/vacationrental.types";
-import { createVacationRentalBooking } from "@/services/vacanatinalrentalservices/vacationrental.service";
+import { createVacationRentalBooking, checkVacationRentalAvailability } from "@/services/vacanatinalrentalservices/vacationrental.service";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
 import { VacationRentalBookingModal } from "./VacationRentalBookingModal";
 import { VacationRentalMobileBookingBar } from "./VacationRentalMobileBookingBar";
+import { FullPageAvailabilityLoader } from "@/components/ui/FullPageAvailabilityLoader";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { validateIndianMobile } from "@/lib/validation";
 import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
@@ -84,6 +85,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
     const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
 
     // Reservation Checkout Modal States
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [guestName, setGuestName] = useState("");
     const [guestEmail, setGuestEmail] = useState("");
@@ -175,7 +177,17 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
         }
     };
 
-    const handleOpenBookingModal = () => {
+    const handleOpenBookingModal = async () => {
+        if (!checkInDate || !checkOutDate) {
+            toast.error("Please select valid check-in and check-out dates.");
+            return;
+        }
+
+        if (numberOfNights < 1 || checkInDate >= checkOutDate) {
+            toast.error("Check-out date must be strictly after check-in date. Minimum stay is 1 night.");
+            return;
+        }
+
         const totalGuests = adults + children;
         if (totalGuests > rental.max_guests) {
             toast.error(`Headcount exceeds property limit of ${rental.max_guests} guests.`);
@@ -185,8 +197,49 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
             toast.error("Pets are not permitted at this property.");
             return;
         }
-        setConfirmedBooking(null);
-        setIsBookingModalOpen(true);
+
+        setIsCheckingAvailability(true);
+        const startTime = Date.now();
+        const MIN_WAIT_MS = 6000;
+
+        try {
+            const res = await checkVacationRentalAvailability({
+                rental_id: rental.id,
+                check_in_date: checkInDate,
+                check_out_date: checkOutDate,
+                guest_email: guestEmail.trim() || user?.email || undefined,
+                mobile_number: guestMobile.trim() || user?.phone || undefined,
+            });
+
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+
+            if (!res.available) {
+                toast.error(res.message || "These dates are unavailable or booked. Please select different dates.");
+                return;
+            }
+
+            toast.success(res.message || "Property available! Proceeding to booking...");
+            setConfirmedBooking(null);
+            setIsBookingModalOpen(true);
+        } catch (error: any) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+            const errMsg =
+                error?.message ||
+                error?.error ||
+                error?.response?.data?.error ||
+                error?.response?.data?.detail ||
+                "Failed to verify availability. Please try again.";
+            toast.error(errMsg);
+            return;
+        } finally {
+            setIsCheckingAvailability(false);
+        }
     };
 
     const executeConfirmedBooking = async (cleanedGuestEmail: string, cleanedMobile: string) => {
@@ -213,12 +266,25 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                     description: `Confirmation #${booking.booking_reference}`,
                 });
             } catch (err: any) {
-                const errorMsg =
-                    err?.response?.data?.detail ||
-                    err?.response?.data?.check_in_date ||
-                    err?.response?.data?.adults ||
-                    "Failed to complete reservation. Please review dates and details.";
-                toast.error(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
+                const errorData = err?.response?.data || err?.errors;
+                let errorMsg =
+                    err?.message ||
+                    errorData?.detail ||
+                    errorData?.non_field_errors?.[0] ||
+                    errorData?.check_in_date ||
+                    errorData?.adults ||
+                    errorData?.error;
+
+                if (!errorMsg && errorData && typeof errorData === "object") {
+                    const firstVal = Object.values(errorData)[0];
+                    if (Array.isArray(firstVal)) {
+                        errorMsg = firstVal[0];
+                    } else if (typeof firstVal === "string") {
+                        errorMsg = firstVal;
+                    }
+                }
+
+                toast.error(errorMsg || "Failed to complete reservation. Please review dates and details.");
             } finally {
                 setIsSubmittingBooking(false);
             }
@@ -732,10 +798,17 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                             {/* CTA Action */}
                             <button
                                 onClick={handleOpenBookingModal}
-                                className="w-full h-12 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white font-semibold text-[15px] shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
+                                disabled={isCheckingAvailability}
+                                className="w-full h-12 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-base shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-85 tracking-normal"
                             >
-                                <Zap size={16} className="fill-current text-amber-300" />
-                                {rental.instant_book ? "Instant Book Stay" : "Request to Book"}
+                                {isCheckingAvailability ? (
+                                    <>
+                                        <Loader2 size={16} className="animate-spin text-white" />
+                                        <span>Checking Availability...</span>
+                                    </>
+                                ) : (
+                                    <span>Check Availability</span>
+                                )}
                             </button>
 
                             <p className="text-[11px] text-center text-slate-500 font-medium leading-relaxed">
@@ -804,6 +877,15 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 numberOfNights={numberOfNights}
                 pricingCalculation={pricingCalculation}
                 onOpenBookingModal={handleOpenBookingModal}
+                isCheckingAvailability={isCheckingAvailability}
+            />
+
+            {/* Whole-page availability checking loader */}
+            <FullPageAvailabilityLoader
+                isChecking={isCheckingAvailability}
+                onClose={() => setIsCheckingAvailability(false)}
+                title="Checking Rental Availability"
+                subtitle={`Verifying dates & calendar blocks for ${rental.title}...`}
             />
 
             {/* 7. FULL-SCREEN GALLERY LIGHTBOX */}

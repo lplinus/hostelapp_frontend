@@ -1,5 +1,6 @@
 import { authApiClient } from "@/lib/api/auth-client";
 import { apiClient } from "@/lib/api/client";
+import { tokenManager } from "@/lib/token";
 import type {
     Hotel,
     HotelRoomType,
@@ -110,7 +111,14 @@ export const getHotelBookingById = async (
 export const createHotelBooking = async (
     data: any
 ): Promise<HotelBooking> => {
-    return apiClient.post<HotelBooking>("/api/hotels/bookings/", data);
+    const token = tokenManager.getAccessToken();
+    const options: any = {};
+    if (token) {
+        options.headers = {
+            Authorization: `Bearer ${token}`,
+        };
+    }
+    return apiClient.post<HotelBooking>("/api/hotels/bookings/", data, options);
 };
 
 export const cancelHotelBooking = async (
@@ -120,4 +128,39 @@ export const cancelHotelBooking = async (
     return authApiClient.post<HotelBooking>(`/api/hotels/bookings/${id}/cancel/`, {
         reason,
     });
+};
+
+export interface CheckHotelAvailabilityParams {
+    hotel_id?: string;
+    room_type_id: string;
+    check_in_date: string;
+    check_out_date: string;
+    number_of_rooms?: number;
+    guest_email?: string;
+    mobile_number?: string;
+}
+
+export interface CheckHotelAvailabilityResponse {
+    available: boolean;
+    available_rooms?: number;
+    requested_rooms?: number;
+    room_type_id?: string;
+    room_type_name?: string;
+    hotel_id?: string;
+    hotel_name?: string;
+    message?: string;
+    error?: string;
+}
+
+export const checkHotelAvailability = async (
+    params: CheckHotelAvailabilityParams
+): Promise<CheckHotelAvailabilityResponse> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = { params };
+    if (token) {
+        options.headers = {
+            Authorization: `Bearer ${token}`,
+        };
+    }
+    return apiClient.get<CheckHotelAvailabilityResponse>("/api/hotels/bookings/check-availability/", options);
 };

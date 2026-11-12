@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import DashboardSidebar from "@/components/hostelowner/dashboard/dashboard-sidebar";
 import DashboardHeader from "@/components/hostelowner/dashboard/dashboard-header";
-import RoomsContainer from "@/components/hostelowner/rooms/rooms-container";
+import RoomsContainer from "@/components/hostelowner/hostel/hostelrooms/rooms-container";
 import { getGroupedRoomsServer } from "@/lib/api/server-rooms";
 import { Loader2 } from "lucide-react";
 import type { Metadata } from "next";

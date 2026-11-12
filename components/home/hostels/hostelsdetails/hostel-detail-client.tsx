@@ -20,6 +20,7 @@ import HostelLocation from "./detail/HostelLocation";
 import HostelReviews from "./detail/HostelReviews";
 import BookingSidebar from "./detail/BookingSidebar";
 import MobileBookingBar from "./detail/MobileBookingBar";
+import { FullPageAvailabilityLoader } from "@/components/ui/FullPageAvailabilityLoader";
 
 interface Props {
     hostel: HostelDetail;
@@ -27,6 +28,8 @@ interface Props {
 
 export default function HostelDetailClient({ hostel }: Props) {
     const [priceMode, setPriceMode] = useState<"monthly" | "daily">("monthly");
+    const [selectedRoom, setSelectedRoom] = useState<any>(null);
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
     const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
     const previousReviewCount = useRef(hostel.rating_count);
     const router = useRouter();
@@ -136,6 +139,8 @@ export default function HostelDetailClient({ hostel }: Props) {
                             priceMode={priceMode}
                             extraCharges={hostel.extra_charges}
                             suitableFor={hostel.suitable_for}
+                            selectedRoom={selectedRoom}
+                            onSelectRoom={setSelectedRoom}
                         />
 
                         <HostelAmenities amenities={hostel.amenities} />
@@ -164,8 +169,13 @@ export default function HostelDetailClient({ hostel }: Props) {
                             rating_avg: currentHostel.rating_avg,
                             rating_count: currentHostel.rating_count
                         }}
+                        roomTypes={hostel.room_types}
                         priceMode={priceMode}
                         setPriceMode={setPriceMode}
+                        selectedRoom={selectedRoom}
+                        setSelectedRoom={setSelectedRoom}
+                        isCheckingAvailability={isCheckingAvailability}
+                        setIsCheckingAvailability={setIsCheckingAvailability}
                     />
                 </div>
             </div>
@@ -176,7 +186,20 @@ export default function HostelDetailClient({ hostel }: Props) {
                     rating_avg: currentHostel.rating_avg,
                     rating_count: currentHostel.rating_count
                 }}
+                roomTypes={hostel.room_types}
                 priceMode={priceMode}
+                selectedRoom={selectedRoom}
+                setSelectedRoom={setSelectedRoom}
+                isCheckingAvailability={isCheckingAvailability}
+                setIsCheckingAvailability={setIsCheckingAvailability}
+            />
+
+            {/* Whole-page availability checking loader */}
+            <FullPageAvailabilityLoader
+                isChecking={isCheckingAvailability}
+                onClose={() => setIsCheckingAvailability(false)}
+                title="Checking Hostel Availability"
+                subtitle={`Verifying bed & room inventory at ${hostel.name}...`}
             />
         </div>
     );

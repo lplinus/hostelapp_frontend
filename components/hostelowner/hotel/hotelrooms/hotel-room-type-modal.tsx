@@ -1,7 +1,7 @@
 "use client";
 
 import type { Hotel } from "@/types/hotel.types";
-import type { RoomFormData } from "./hotel-management-types";
+import type { RoomFormData } from "../hotel-management-types";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { BedDouble } from "lucide-react";
 import { Button } from "@/components/ui/button";

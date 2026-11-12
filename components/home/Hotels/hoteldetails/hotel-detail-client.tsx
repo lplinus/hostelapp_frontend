@@ -22,14 +22,17 @@ import {
     Calendar,
     PhoneCall,
     Car,
-    Waves
+    Waves,
+    Loader2,
+    XCircle
 } from "lucide-react";
 import { Hotel, HotelRoomType, HotelBooking } from "@/types/hotel.types";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
-import { createHotelBooking } from "@/services/hotelservices/hotel.service";
+import { createHotelBooking, checkHotelAvailability } from "@/services/hotelservices/hotel.service";
 import { HotelBookingModal } from "./HotelBookingModal";
 import { HotelMobileBookingBar } from "./HotelMobileBookingBar";
+import { FullPageAvailabilityLoader } from "@/components/ui/FullPageAvailabilityLoader";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { validateIndianMobile } from "@/lib/validation";
 import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
@@ -49,6 +52,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     const [highlightBooking, setHighlightBooking] = useState(false);
 
     // Reservation Checkout Modal States
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [checkInDate, setCheckInDate] = useState<string>(() => new Date().toISOString().split("T")[0]);
     const [checkOutDate, setCheckOutDate] = useState<string>(() => {
@@ -95,10 +99,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     );
 
     const handleSelectAndBookRoom = (room: HotelRoomType) => {
-        setSelectedRoom(room);
-        const bookingCard = document.getElementById("hotel-booking-card");
-        if (bookingCard) {
-            bookingCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (selectedRoom?.id === room.id) {
+            setSelectedRoom(null);
+        } else {
+            setSelectedRoom(room);
             setHighlightBooking(true);
             setTimeout(() => setHighlightBooking(false), 1500);
         }
@@ -128,9 +132,67 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
         }
     };
 
-    const handleBookNow = () => {
-        setConfirmedBooking(null);
-        setIsBookingModalOpen(true);
+    const handleBookNow = async () => {
+        if (!checkInDate || !checkOutDate) {
+            toast.error("Please select valid check-in and check-out dates.");
+            return;
+        }
+
+        if (nights < 1 || checkInDate >= checkOutDate) {
+            toast.error("Check-out date must be strictly after check-in date. Minimum stay is 1 night.");
+            return;
+        }
+
+        const roomTypeId = selectedRoom?.id || hotel.room_types?.[0]?.id;
+        if (!roomTypeId) {
+            toast.error("Please select a suite or room type to proceed.");
+            return;
+        }
+
+        setIsCheckingAvailability(true);
+        const startTime = Date.now();
+        const MIN_WAIT_MS = 6000;
+
+        try {
+            const res = await checkHotelAvailability({
+                hotel_id: hotel.id,
+                room_type_id: roomTypeId,
+                check_in_date: checkInDate,
+                check_out_date: checkOutDate,
+                number_of_rooms: 1,
+                guest_email: guestEmail.trim() || user?.email || undefined,
+                mobile_number: guestMobile.trim() || user?.phone || undefined,
+            });
+
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+
+            if (!res.available) {
+                toast.error(res.message || res.error || "Selected suite is sold out for these dates. Please choose different dates or suite.");
+                return;
+            }
+
+            toast.success(res.message || "Suite available! Proceeding to reservation...");
+            setConfirmedBooking(null);
+            setIsBookingModalOpen(true);
+        } catch (error: any) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+            const errMsg =
+                error?.message ||
+                error?.error ||
+                error?.response?.data?.error ||
+                error?.response?.data?.detail ||
+                "Failed to verify availability. Please try again.";
+            toast.error(errMsg);
+            return;
+        } finally {
+            setIsCheckingAvailability(false);
+        }
     };
 
     const executeConfirmedBooking = async (cleanedGuestEmail: string, cleanedMobile: string) => {
@@ -163,14 +225,27 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     description: `Confirmation #${booking.booking_reference}`,
                 });
             } catch (err: any) {
-                const errorData = err?.response?.data;
-                const errorMsg =
+                const errorData = err?.response?.data || err?.errors;
+                let errorMsg =
+                    err?.message ||
                     errorData?.detail ||
                     errorData?.non_field_errors?.[0] ||
-                    errorData?.error ||
-                    (typeof errorData === "string" ? errorData : null) ||
-                    "Failed to complete reservation. Please review dates and room availability.";
-                toast.error(typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg));
+                    errorData?.error;
+
+                if (!errorMsg && errorData && typeof errorData === "object") {
+                    const firstVal = Object.values(errorData)[0];
+                    if (Array.isArray(firstVal)) {
+                        errorMsg = firstVal[0];
+                    } else if (typeof firstVal === "string") {
+                        errorMsg = firstVal;
+                    }
+                }
+
+                if (!errorMsg && typeof errorData === "string") {
+                    errorMsg = errorData;
+                }
+
+                toast.error(errorMsg || "Failed to complete reservation. Please review dates and room availability.");
             } finally {
                 setIsSubmittingBooking(false);
             }
@@ -479,13 +554,24 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                             >
                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                                     <div className="space-y-1.5">
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex flex-wrap items-center gap-2">
                                                             <h3 className="font-bold text-slate-950 text-base capitalize">
                                                                 {room.name || room.category_display}
                                                             </h3>
                                                             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-800">
                                                                 {room.category_display || room.room_category}
                                                             </span>
+                                                            {(room.is_available && (room.rooms_available === undefined || room.rooms_available > 0)) ? (
+                                                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                                    <CheckCircle2 size={12} className="text-emerald-600" />
+                                                                    Available
+                                                                </span>
+                                                            ) : (
+                                                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                                                                    <XCircle size={12} className="text-rose-600" />
+                                                                    Sold Out
+                                                                </span>
+                                                            )}
                                                         </div>
 
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-slate-700 font-medium">
@@ -651,8 +737,21 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                     <label className="text-xs font-semibold text-slate-900 block mb-1">
                                         Selected Suite
                                     </label>
-                                    <div className="p-2.5 rounded-xl border border-indigo-200/90 bg-indigo-50/50 text-xs font-semibold text-[#1E1B4B]">
-                                        {selectedRoom?.category_display || selectedRoom?.name || "Standard Luxury Suite"}
+                                    <div className="p-2.5 rounded-xl border border-indigo-200/90 bg-indigo-50/50 text-xs font-semibold text-[#1E1B4B] flex items-center justify-between">
+                                        <span>{selectedRoom?.category_display || selectedRoom?.name || "Standard Luxury Suite"}</span>
+                                        {selectedRoom && (
+                                            (selectedRoom.is_available && (selectedRoom.rooms_available === undefined || selectedRoom.rooms_available > 0)) ? (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                                                    <CheckCircle2 size={11} className="text-emerald-600" />
+                                                    Available
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded-full">
+                                                    <XCircle size={11} className="text-rose-600" />
+                                                    Sold Out
+                                                </span>
+                                            )
+                                        )}
                                     </div>
                                 </div>
 
@@ -742,12 +841,20 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                 </div>
                             </div>
 
-                            {/* Solid Dark Blue CTA Button */}
+                            {/* Simple & Elegant Button */}
                             <button
                                 onClick={handleBookNow}
-                                className="w-full py-3.5 rounded-sm bg-[#312E81] hover:bg-[#1E1B4B] text-white text-xs font-medium uppercase tracking-wider transition-all shadow-sm active:scale-[0.99]"
+                                disabled={isCheckingAvailability}
+                                className="w-full py-3.5 rounded-sm bg-[#312E81] hover:bg-[#1E1B4B] text-white text-sm font-medium tracking-normal transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85"
                             >
-                                Reserve Suite Now
+                                {isCheckingAvailability ? (
+                                    <>
+                                        <Loader2 size={16} className="animate-spin text-white" />
+                                        <span>Checking Availability...</span>
+                                    </>
+                                ) : (
+                                    <span>Check Availability</span>
+                                )}
                             </button>
 
                             <p className="text-[11px] text-slate-600 text-center font-medium leading-relaxed">
@@ -815,7 +922,16 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                 setCheckOutDate={setCheckOutDate}
                 numberOfNights={nights}
                 totalAmount={totalAmount}
-                onOpenBookingModal={() => setIsBookingModalOpen(true)}
+                onOpenBookingModal={handleBookNow}
+                isCheckingAvailability={isCheckingAvailability}
+            />
+
+            {/* Whole-page availability checking loader */}
+            <FullPageAvailabilityLoader
+                isChecking={isCheckingAvailability}
+                onClose={() => setIsCheckingAvailability(false)}
+                title="Checking Suite Availability"
+                subtitle={`Verifying live room inventory at ${hotel.name}...`}
             />
         </div>
     );

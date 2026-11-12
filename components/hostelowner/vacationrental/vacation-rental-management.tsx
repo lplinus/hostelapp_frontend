@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import RoomsUnitsTab from "@/components/hostelowner/rooms/rooms-units/rooms-units-tab";
+import RoomsUnitsTab from "@/components/hostelowner/hostel/hostelrooms/rooms-units/rooms-units-tab";
 import { CATEGORIES } from "./vacation-rental-types";
 import { useVacationRentalManagement } from "./vacation-rental-hooks";
 import VacationRentalFormHeader from "./vacation-rental-form-header";
@@ -72,20 +72,20 @@ export default function VacationRentalManagement({
     return (
         <div className="space-y-6">
             {/* 1. HEADER */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border rounded-2xl p-5 sm:p-6 shadow-xs">
-                <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <Palmtree size={13} /><span>Vacation Rental Portfolio</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-card border border-border/80 rounded-lg p-4 sm:p-4.5 shadow-2xs">
+                <div className="space-y-0.5">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        <Palmtree size={12} /><span>Vacation Rental Portfolio</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Vacation Rentals Inventory</h1>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Register and manage your private villas, holiday cottages, beach havens, and homestays.</p>
+                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">Vacation Rentals Inventory</h1>
+                    <p className="text-xs text-muted-foreground">Register and manage your private villas, holiday cottages, beach havens, and homestays.</p>
                 </div>
                 <div className="flex items-center gap-2 self-stretch sm:self-auto">
-                    <Button size="sm" onClick={() => v.refetch()} disabled={v.isRefetching} className="gap-2 text-xs font-semibold rounded-xl bg-[#312E81] text-white hover:bg-[#1E1B4B] border border-[#312E81] shadow-2xs cursor-pointer transition-colors">
-                        <RefreshCw size={14} className={v.isRefetching ? "animate-spin text-white" : "text-white"} /><span>Refresh</span>
+                    <Button size="sm" onClick={() => v.refetch()} disabled={v.isRefetching} className="gap-1.5 text-xs font-semibold rounded-md bg-[#312E81] text-white hover:bg-[#1E1B4B] border border-[#312E81] shadow-2xs cursor-pointer transition-colors h-8 px-3">
+                        <RefreshCw size={12} className={v.isRefetching ? "animate-spin text-white" : "text-white"} /><span>Refresh</span>
                     </Button>
-                    <Button size="sm" onClick={() => { v.resetForm(); v.setEditingRental(null); v.setIsCreating(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="bg-[#312E81] hover:bg-[#1E1B4B] text-white gap-2 text-xs font-semibold rounded-xl shadow-xs px-4 cursor-pointer border border-[#312E81] transition-colors">
-                        <Plus size={16} /><span>Add Vacation Rental</span>
+                    <Button size="sm" onClick={() => { v.resetForm(); v.setEditingRental(null); v.setIsCreating(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="bg-[#312E81] hover:bg-[#1E1B4B] text-white gap-1.5 text-xs font-semibold rounded-md shadow-2xs px-3.5 h-8 cursor-pointer border border-[#312E81] transition-colors">
+                        <Plus size={14} /><span>Add Vacation Rental</span>
                     </Button>
                 </div>
             </div>
@@ -113,41 +113,45 @@ export default function VacationRentalManagement({
             ) : (
                 <>
                     {/* 2. KPI STATS CARDS */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                        <Card className="border shadow-2xs">
-                            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Properties</p>
-                                    <p className="text-2xl sm:text-3xl font-extrabold text-foreground">{v.isMounted ? v.totalProperties : 0}</p>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Total Properties</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground tabular-nums leading-none">{v.isMounted ? v.totalProperties : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Registered</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-[#312E81] flex items-center justify-center"><Palmtree size={20} /></div>
+                                <div className="w-8 h-8 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-[#312E81] dark:text-indigo-300 flex items-center justify-center shrink-0"><Palmtree size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border shadow-2xs">
-                            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Listings</p>
-                                    <p className="text-2xl sm:text-3xl font-extrabold text-emerald-600">{v.isMounted ? v.activeListings : 0}</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Active Listings</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums leading-none">{v.isMounted ? v.activeListings : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Online stays</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 size={20} /></div>
+                                <div className="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><CheckCircle2 size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border shadow-2xs">
-                            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Instant Bookable</p>
-                                    <p className="text-2xl sm:text-3xl font-extrabold text-indigo-600">{v.isMounted ? v.instantBookCount : 0}</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Instant Bookable</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400 tabular-nums leading-none">{v.isMounted ? v.instantBookCount : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Instant checkout</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><Zap size={20} /></div>
+                                <div className="w-8 h-8 rounded-md bg-indigo-500/10 text-indigo-600 flex items-center justify-center shrink-0"><Zap size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border shadow-2xs">
-                            <CardContent className="p-4 sm:p-5 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Avg. Nightly Rate</p>
-                                    <p className="text-2xl sm:text-3xl font-extrabold text-foreground">{v.isMounted ? `₹${v.avgRate.toLocaleString("en-IN")}` : "₹0"}</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Avg. Nightly Rate</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground tabular-nums leading-none">{v.isMounted ? `₹${v.avgRate.toLocaleString("en-IN")}` : "₹0"}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Per night tariff</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><DollarSign size={20} /></div>
+                                <div className="w-8 h-8 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0"><DollarSign size={15} /></div>
                             </CardContent>
                         </Card>
                     </div>

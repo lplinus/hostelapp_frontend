@@ -3,11 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
 import { useAuth } from "@/hooks/useAuth";
-import BookingPieChart from "./booking-pie-chart";
+import BookingPieChart, { TimelinePoint, StreamData } from "./booking-pie-chart";
 
 interface DashboardStats {
     total_bookings: number;
     cancelled_bookings: number;
+    timeline?: TimelinePoint[];
+    streams?: Record<string, StreamData>;
 }
 
 export default function BookingChartWrapper() {
@@ -15,7 +17,7 @@ export default function BookingChartWrapper() {
     const { data, isLoading } = useQuery<DashboardStats>({
         queryKey: ["dashboardStats", user?.id],
         queryFn: () => authApiClient.get("/api/dashboard/stats/"),
-        enabled: !!user?.id,
+        enabled: !!user?.id && user.id > 0,
         refetchInterval: 5000,
     });
 
@@ -23,7 +25,9 @@ export default function BookingChartWrapper() {
         <BookingPieChart
             total={data?.total_bookings || 0}
             cancelled={data?.cancelled_bookings || 0}
-            isLoading={isLoading}
+            timeline={data?.timeline || []}
+            streams={data?.streams}
+            isLoading={isLoading || !data}
         />
     );
 }

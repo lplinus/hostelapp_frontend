@@ -131,8 +131,8 @@ export default function DashboardHeader() {
                         <span className="text-xs font-semibold text-slate-800 leading-tight group-hover:text-primary transition-colors truncate max-w-[100px]">
                             {displayName}
                         </span>
-                        <span className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">
-                            {user?.role || "Owner"}
+                        <span className="text-[9px] font-medium text-slate-400 uppercase tracking-wider" suppressHydrationWarning>
+                            {isMounted ? (user?.role || "Owner") : "Owner"}
                         </span>
                     </div>
                 </Link>

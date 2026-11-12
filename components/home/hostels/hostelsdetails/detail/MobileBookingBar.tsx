@@ -2,8 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronUp, ChevronDown, Calendar, Users, TrendingDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronUp, ChevronDown, Calendar, Users, TrendingDown, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { checkHostelAvailability } from "@/services/booking.service";
+import { useAuth } from "@/hooks/useAuth";
+import type { RoomType } from "@/types/hostel.types";
 import { Button } from "@/components/ui/button";
 
 interface MobileBookingBarProps {
@@ -19,10 +24,28 @@ interface MobileBookingBarProps {
         rating_avg: number;
         rating_count: number;
     };
+    roomTypes?: readonly RoomType[];
     priceMode: "monthly" | "daily";
+    selectedRoom?: RoomType | null;
+    setSelectedRoom?: (room: RoomType) => void;
+    isCheckingAvailability?: boolean;
+    setIsCheckingAvailability?: (val: boolean) => void;
 }
 
-export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBarProps) {
+export default function MobileBookingBar({
+    hostel,
+    roomTypes,
+    priceMode,
+    selectedRoom,
+    setSelectedRoom,
+    isCheckingAvailability: propIsChecking,
+    setIsCheckingAvailability: propSetIsChecking,
+}: MobileBookingBarProps) {
+    const router = useRouter();
+    const { user } = useAuth();
+    const [localIsChecking, setLocalIsChecking] = useState(false);
+    const isCheckingAvailability = propIsChecking !== undefined ? propIsChecking : localIsChecking;
+    const setIsCheckingAvailability = propSetIsChecking || setLocalIsChecking;
     const [isExpanded, setIsExpanded] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +66,7 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
 
         observer.observe(containerRef.current);
         
-        return () => {
+    return () => {
             observer.disconnect();
             document.documentElement.style.setProperty('--booking-bar-height', '0px');
             window.dispatchEvent(new CustomEvent('booking-bar-resize', { 
@@ -61,8 +84,15 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
     const nights = Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)));
     const isMonthlyStay = nights >= 30;
 
-    // 2. Extract Base Rates (Direct values from hostel object)
+    // 2. Extract Base Rates (Direct values from hostel object, or selected room)
     const getBaseRate = (mode: "monthly" | "daily", type: "current" | "original") => {
+        if (selectedRoom) {
+            if (mode === "monthly") {
+                return Number(selectedRoom.base_price || hostel.price);
+            }
+            return Number(selectedRoom.price_per_day || (selectedRoom.base_price ? Math.round(Number(selectedRoom.base_price) / 30) : (Number(hostel.price) / 30)));
+        }
+
         if (mode === "monthly") {
             if (type === "current") return Number(hostel.is_discounted && hostel.discounted_price ? hostel.discounted_price : hostel.price);
             return Number(hostel.price);
@@ -88,6 +118,70 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
     const totalOriginalPrice = originalRate * guests * stayFactor;
 
     const showDiscount = hostel.is_discounted;
+
+    const handleCheckAvailability = async () => {
+        if (!checkIn || !checkOut) {
+            toast.error("Please select valid check-in and check-out dates.");
+            return;
+        }
+
+        const calculatedNights = Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24));
+        if (calculatedNights < 1 || checkIn >= checkOut) {
+            toast.error("Check-out date must be strictly after check-in date. Minimum stay is 1 night.");
+            return;
+        }
+
+        setIsCheckingAvailability(true);
+        const startTime = Date.now();
+        const MIN_WAIT_MS = 6000;
+
+        try {
+            const targetRoomType = selectedRoom || (roomTypes && roomTypes.length > 0 ? roomTypes[0] : null);
+            if (targetRoomType) {
+                const res = await checkHostelAvailability({
+                    room_type_id: targetRoomType.id,
+                    check_in: checkIn,
+                    check_out: checkOut,
+                    guests_count: guests,
+                    guest_email: user?.email || undefined,
+                    mobile_number: user?.phone || undefined,
+                });
+
+                const elapsed = Date.now() - startTime;
+                if (elapsed < MIN_WAIT_MS) {
+                    await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+                }
+
+                if (!res.available) {
+                    toast.error(res.message || res.error || "No beds available for the selected dates. Please adjust dates or sharing type.");
+                    return;
+                }
+                toast.success(res.message || "Beds available! Proceeding to booking...");
+            } else {
+                const elapsed = Date.now() - startTime;
+                if (elapsed < MIN_WAIT_MS) {
+                    await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+                }
+            }
+
+            router.push(`/hostels/${hostel.slug}/book?roomId=${targetRoomType?.id || ""}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`);
+        } catch (error: any) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+            const errMsg =
+                error?.message ||
+                error?.error ||
+                error?.response?.data?.error ||
+                error?.response?.data?.detail ||
+                "Failed to verify availability. Please try again.";
+            toast.error(errMsg);
+            return;
+        } finally {
+            setIsCheckingAvailability(false);
+        }
+    };
 
     return (
         <div ref={containerRef} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100]">
@@ -222,13 +316,20 @@ export default function MobileBookingBar({ hostel, priceMode }: MobileBookingBar
                 </div>
 
                 <Button
-                    asChild
+                    type="button"
+                    onClick={handleCheckAvailability}
+                    disabled={isCheckingAvailability}
                     size="lg"
-                    className="bg-[#003580] hover:bg-[#002244] text-white font-semibold px-8 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 text-sm flex-shrink-0 border-none"
+                    className="bg-[#003580] hover:bg-[#002244] text-white font-medium text-sm px-6 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 flex-shrink-0 border-none cursor-pointer tracking-normal disabled:opacity-85"
                 >
-                    <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
-                        Reserve
-                    </Link>
+                    {isCheckingAvailability ? (
+                        <>
+                            <Loader2 size={16} className="animate-spin text-white" />
+                            <span>Checking...</span>
+                        </>
+                    ) : (
+                        <span>Check Availability</span>
+                    )}
                 </Button>
             </div>
         </div>

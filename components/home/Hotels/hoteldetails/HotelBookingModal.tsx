@@ -188,52 +188,29 @@ export function HotelBookingModal({
                         </DialogHeader>
 
                         <div className="space-y-4 py-2 text-xs">
-                            {/* Stay Dates Selection While Booking */}
-                            <div className="bg-blue-50/50 rounded-xl border border-blue-100 p-3 space-y-2">
+                            {/* Stay Dates (Frozen from Reserve bar selection) */}
+                            <div className="bg-slate-50/80 rounded-xl border border-slate-200/80 p-3 space-y-2">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                                         <Calendar size={12} className="text-[#003580]" />
-                                        Stay Dates
+                                        Selected Stay Dates
                                     </span>
-                                    <span className="text-[10px] font-bold text-[#003580] bg-white border border-blue-200 px-2 py-0.5 rounded-full">
-                                        {numberOfNights} {numberOfNights === 1 ? "Night" : "Nights"}
+                                    <span className="text-[10px] font-bold text-[#003580] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                                        {numberOfNights} {numberOfNights === 1 ? "Night" : "Nights"} (Confirmed)
                                     </span>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-semibold text-slate-600 block">Check-In</label>
-                                        <input
-                                            type="date"
-                                            value={checkInDate}
-                                            onChange={(e) => {
-                                                const newIn = e.target.value;
-                                                if (!newIn) return;
-                                                setCheckInDate?.(newIn);
-                                                if (newIn && checkOutDate && newIn >= checkOutDate) {
-                                                    const next = new Date(newIn);
-                                                    next.setDate(next.getDate() + 1);
-                                                    setCheckOutDate?.(next.toISOString().split("T")[0]);
-                                                }
-                                            }}
-                                            min={new Date().toISOString().split("T")[0]}
-                                            disabled={!setCheckInDate || isSubmittingBooking}
-                                            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#003580] cursor-pointer"
-                                        />
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-In</span>
+                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                            {checkInDate ? new Date(checkInDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkInDate}
+                                        </span>
                                     </div>
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-semibold text-slate-600 block">Check-Out</label>
-                                        <input
-                                            type="date"
-                                            value={checkOutDate}
-                                            onChange={(e) => {
-                                                const newOut = e.target.value;
-                                                if (!newOut) return;
-                                                setCheckOutDate?.(newOut);
-                                            }}
-                                            min={checkInDate}
-                                            disabled={!setCheckOutDate || isSubmittingBooking}
-                                            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#003580] cursor-pointer"
-                                        />
+                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-Out</span>
+                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                            {checkOutDate ? new Date(checkOutDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkOutDate}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

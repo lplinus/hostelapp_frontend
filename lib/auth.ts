@@ -54,6 +54,7 @@ export async function registerUser(
     const response = await fetch(`${BASE_URL}${API_ENDPOINTS.AUTH.REGISTER}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(userData),
     });
 
@@ -74,7 +75,14 @@ export async function registerUser(
         );
     }
 
-    return response.json();
+    const data: RegisterResponse = await response.json();
+
+    if (data.access) {
+        tokenManager.setAccessToken(data.access);
+        tokenManager.setAuthFlag();
+    }
+
+    return data;
 }
 
 export async function refreshAccessToken(): Promise<string | null> {

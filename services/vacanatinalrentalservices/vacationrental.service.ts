@@ -1,5 +1,6 @@
 import { authApiClient } from "@/lib/api/auth-client";
 import { apiClient } from "@/lib/api/client";
+import { tokenManager } from "@/lib/token";
 import type {
     VacationRental,
     VacationRentalBooking,
@@ -57,6 +58,38 @@ export const createVacationRentalBooking = async (
     data: VacationRentalBookingInput
 ): Promise<VacationRentalBooking> => {
     return authApiClient.post<VacationRentalBooking>("/api/vacanationrentals/bookings/", data);
+};
+
+export interface CheckVacationRentalAvailabilityParams {
+    rental_id: string;
+    check_in_date: string;
+    check_out_date: string;
+    guest_email?: string;
+    mobile_number?: string;
+}
+
+export interface CheckVacationRentalAvailabilityResponse {
+    available: boolean;
+    rental_id?: string;
+    rental_title?: string;
+    message?: string;
+    error?: string;
+}
+
+export const checkVacationRentalAvailability = async (
+    params: CheckVacationRentalAvailabilityParams
+): Promise<CheckVacationRentalAvailabilityResponse> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = { params };
+    if (token) {
+        options.headers = {
+            Authorization: `Bearer ${token}`,
+        };
+    }
+    return apiClient.get<CheckVacationRentalAvailabilityResponse>(
+        "/api/vacanationrentals/bookings/check-availability/",
+        options
+    );
 };
 
 export const getVacationRentals = async (

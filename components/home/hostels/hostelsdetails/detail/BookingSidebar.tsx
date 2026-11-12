@@ -2,10 +2,13 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { Phone, Users, CheckCircle2, ShieldCheck, TrendingDown, Clock, Truck, AlertCircle, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Phone, Users, CheckCircle2, XCircle, ShieldCheck, TrendingDown, Clock, Truck, AlertCircle, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { sendContactMessage } from "@/services/public.service";
-import { createHostelInquiry } from "@/services/booking.service";
+import { createHostelInquiry, checkHostelAvailability } from "@/services/booking.service";
+import { useAuth } from "@/hooks/useAuth";
+import type { RoomType } from "@/types/hostel.types";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -33,15 +36,30 @@ interface BookingSidebarProps {
         rating_avg: number;
         rating_count: number;
     };
+    roomTypes?: readonly RoomType[];
     priceMode: "monthly" | "daily";
     setPriceMode: (mode: "monthly" | "daily") => void;
+    selectedRoom?: RoomType | null;
+    setSelectedRoom?: (room: RoomType) => void;
+    isCheckingAvailability?: boolean;
+    setIsCheckingAvailability?: (val: boolean) => void;
 }
 
 export default function BookingSidebar({
     hostel,
+    roomTypes,
     priceMode,
     setPriceMode,
+    selectedRoom,
+    setSelectedRoom,
+    isCheckingAvailability: propIsChecking,
+    setIsCheckingAvailability: propSetIsChecking,
 }: BookingSidebarProps) {
+    const router = useRouter();
+    const { user } = useAuth();
+    const [localIsChecking, setLocalIsChecking] = useState(false);
+    const isCheckingAvailability = propIsChecking !== undefined ? propIsChecking : localIsChecking;
+    const setIsCheckingAvailability = propSetIsChecking || setLocalIsChecking;
     const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
     const [formSending, setFormSending] = useState(false);
     const [formSent, setFormSent] = useState(false);
@@ -102,6 +120,17 @@ export default function BookingSidebar({
 
     // Compute total
     const getDisplayPrice = () => {
+        // If a specific room is selected, use that room's specific price
+        if (selectedRoom) {
+            if (priceMode === "monthly") {
+                if (selectedRoom.base_price) return Number(selectedRoom.base_price);
+            } else {
+                if (selectedRoom.price_per_day) return Number(selectedRoom.price_per_day);
+                if (selectedRoom.base_price) return Math.round(Number(selectedRoom.base_price) / 30);
+            }
+        }
+
+        // Default normal owner pricing when no room is specifically selected
         if (priceMode === "monthly") {
             if (hostel.is_discounted && hostel.discounted_price) return Number(hostel.discounted_price);
             return Number(hostel.price);
@@ -112,8 +141,77 @@ export default function BookingSidebar({
     };
 
     const currentPrice = getDisplayPrice();
-    const originalPrice = priceMode === "monthly" ? Number(hostel.price) : Math.round(Number(hostel.price) / 30);
-    const showDiscount = hostel.is_discounted && currentPrice < originalPrice;
+    const originalPrice = selectedRoom
+        ? (priceMode === "monthly" ? Number(selectedRoom.base_price || hostel.price) : Math.round(Number(selectedRoom.base_price || hostel.price) / 30))
+        : (priceMode === "monthly" ? Number(hostel.price) : Math.round(Number(hostel.price) / 30));
+    const showDiscount = !selectedRoom && hostel.is_discounted && currentPrice < originalPrice;
+
+    const handleCheckAvailability = async () => {
+        if (!checkIn || !checkOut) {
+            toast.error("Please select valid check-in and check-out dates.");
+            return;
+        }
+
+        const nights = Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24));
+        if (nights < 1 || checkIn >= checkOut) {
+            toast.error("Check-out date must be strictly after check-in date. Minimum stay is 1 night.");
+            return;
+        }
+
+        setIsCheckingAvailability(true);
+        const startTime = Date.now();
+        const MIN_WAIT_MS = 6000;
+
+        try {
+            // Find preferred room type (prioritize selectedRoom, fallback to first available room type)
+            const targetRoomType = selectedRoom || (roomTypes && roomTypes.length > 0 ? roomTypes[0] : null);
+
+            if (targetRoomType) {
+                const res = await checkHostelAvailability({
+                    room_type_id: targetRoomType.id,
+                    check_in: checkIn,
+                    check_out: checkOut,
+                    guests_count: guests,
+                    guest_email: user?.email || undefined,
+                    mobile_number: user?.phone || undefined,
+                });
+
+                const elapsed = Date.now() - startTime;
+                if (elapsed < MIN_WAIT_MS) {
+                    await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+                }
+
+                if (!res.available) {
+                    toast.error(res.message || res.error || "No beds available for the selected dates. Please adjust dates or sharing type.");
+                    return;
+                }
+                toast.success(res.message || "Beds available! Proceeding to booking...");
+            } else {
+                const elapsed = Date.now() - startTime;
+                if (elapsed < MIN_WAIT_MS) {
+                    await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+                }
+            }
+
+            // Smoothly navigate to the booking checkout step
+            router.push(`/hostels/${hostel.slug}/book?roomId=${targetRoomType?.id || ""}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`);
+        } catch (error: any) {
+            const elapsed = Date.now() - startTime;
+            if (elapsed < MIN_WAIT_MS) {
+                await new Promise((resolve) => setTimeout(resolve, MIN_WAIT_MS - elapsed));
+            }
+            const errMsg =
+                error?.message ||
+                error?.error ||
+                error?.response?.data?.error ||
+                error?.response?.data?.detail ||
+                "Failed to verify availability. Please try again.";
+            toast.error(errMsg);
+            return;
+        } finally {
+            setIsCheckingAvailability(false);
+        }
+    };
 
     return (
         <div className="lg:self-start lg:sticky lg:top-[120px] hidden lg:block z-10 w-full max-w-[380px] ml-auto">
@@ -158,6 +256,42 @@ export default function BookingSidebar({
 
                 {/* Interactive Dates/Guests selection */}
                 <div className="border-t border-gray-200">
+                    {/* Selected Room Replication */}
+                    <div className="p-3.5 border-b border-gray-200 bg-gray-50/60">
+                        <div className="flex items-center justify-between mb-1">
+                            <span className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                {selectedRoom ? "Selected Room" : "Room Selection"}
+                            </span>
+                            {selectedRoom && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedRoom?.(null as any)}
+                                    className="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800 underline cursor-pointer"
+                                >
+                                    Reset to Default
+                                </button>
+                            )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-black">
+                                {selectedRoom ? `${selectedRoom.sharing_display} (${selectedRoom.category_display})` : "Standard Room (Default Pricing)"}
+                            </span>
+                            {selectedRoom && (
+                                selectedRoom.is_available ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                        <CheckCircle2 size={11} className="text-emerald-600" />
+                                        Available
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                                        <XCircle size={11} className="text-rose-600" />
+                                        Sold Out
+                                    </span>
+                                )
+                            )}
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 border-b border-gray-200">
                         <div className="p-3.5 border-r border-gray-200 hover:bg-gray-50/50 transition-colors">
                             <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">Check-in</span>
@@ -224,13 +358,20 @@ export default function BookingSidebar({
                     </div>
 
                     <Button
-                        asChild
+                        type="button"
+                        onClick={handleCheckAvailability}
+                        disabled={isCheckingAvailability}
                         size="lg"
-                        className="w-full bg-[#003580] hover:bg-[#002244] text-white font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] border-none text-[15px]"
+                        className="w-full bg-[#003580] hover:bg-[#002244] text-white font-medium text-base h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] border-none cursor-pointer tracking-normal disabled:opacity-85"
                     >
-                        <Link href={`/hostels/${hostel.slug}/book?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&priceMode=${priceMode}`}>
-                            Reserve Now
-                        </Link>
+                        {isCheckingAvailability ? (
+                            <>
+                                <Loader2 size={18} className="animate-spin text-white" />
+                                <span>Checking Availability...</span>
+                            </>
+                        ) : (
+                            <span>Check Availability</span>
+                        )}
                     </Button>
 
                     {/* Contact Owner Button */}

@@ -24,7 +24,7 @@ export interface AuthUser {
     first_name: string;
     last_name: string;
     phone: string;
-    role: 'guest' | 'hostel_owner' | 'vendor' | 'service';
+    role: 'guest' | 'hostel_owner' | 'vendor' | 'service' | 'admin' | 'superadmin';
     is_verified: boolean;
     profile_picture?: string;
     date_joined: string;
@@ -39,6 +39,8 @@ export interface AuthResponse {
 export interface RegisterResponse {
     message: string;
     user: AuthUser;
+    access?: string;
+    redirect_url?: string;
 }
 
 export interface LoginCredentials {

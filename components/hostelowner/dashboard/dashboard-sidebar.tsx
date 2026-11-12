@@ -20,7 +20,9 @@ import {
     ChevronRight,
     LogOut,
     Loader2,
-    Palmtree
+    Palmtree,
+    DollarSign,
+    Bot
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -204,7 +206,29 @@ function DashboardSidebarContent() {
                             closeMobile={() => setIsOpenMobile(false)}
                         />
 
-                        {/* 5. Profile */}
+                        {/* 5. Google AdSense */}
+                        <SidebarLink
+                            href="/adsense"
+                            icon={DollarSign}
+                            label="AdSense"
+                            pathname={pathname}
+                            searchParams={searchParams}
+                            showFull={showFull}
+                            closeMobile={() => setIsOpenMobile(false)}
+                        />
+
+                        {/* 6. AI Assistance */}
+                        <SidebarLink
+                            href="/Aiassitance"
+                            icon={Bot}
+                            label="AI Assistant"
+                            pathname={pathname}
+                            searchParams={searchParams}
+                            showFull={showFull}
+                            closeMobile={() => setIsOpenMobile(false)}
+                        />
+
+                        {/* 7. Profile */}
                         <SidebarLink
                             href="/profile"
                             icon={UserCircle}
@@ -215,7 +239,7 @@ function DashboardSidebarContent() {
                             closeMobile={() => setIsOpenMobile(false)}
                         />
 
-                        {/* 6. Settings */}
+                        {/* 8. Settings */}
                         <SidebarLink
                             href="/settings"
                             icon={Settings}

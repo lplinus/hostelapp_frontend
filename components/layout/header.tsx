@@ -55,7 +55,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const { isAuthenticated, isLoggingOut } = useAuth();
+  const { isAuthenticated, isLoggingOut, user, logout } = useAuth();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const loginTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -126,13 +126,20 @@ export default function Header() {
     pathname.startsWith("/hotelbooking/") ||
     pathname === "/vacanrentalbooking" ||
     pathname.startsWith("/vacanrentalbooking/") ||
+    pathname === "/adsense" ||
+    pathname.startsWith("/adsense/") ||
+    pathname === "/Aiassitance" ||
+    pathname.startsWith("/Aiassitance/") ||
     pathname.startsWith("/vendordashboard") ||
     pathname.startsWith("/usermarketplace") ||
     pathname === "/login" ||
-    pathname === "/register";
+    pathname === "/register" ||
+    pathname === "/home/guestprofile" ||
+    pathname.startsWith("/home/guestprofile");
 
   if (isDashboardRoute) return null;
-  if (isMounted && (isAuthenticated || isLoggingOut)) return null;
+  // If user is hostel owner or vendor, they operate in their dashboard
+  if (isMounted && (isAuthenticated || isLoggingOut) && user?.role !== "guest") return null;
 
   const isHotelListing = pathname === "/hotels" || pathname === "/home/hotels";
   const isVacationRentalListing = pathname === "/vacanationalrental" || pathname === "/home/vacanationalrental";
@@ -348,6 +355,22 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          )}
+
+          {/* LOGGED IN GUEST MENU */}
+          {isMounted && isAuthenticated && user?.role === "guest" && (
+            <Link
+              href="/home/guestprofile"
+              className={clsx(
+                "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-300 ease-in-out whitespace-nowrap shrink-0",
+                isTransparent
+                  ? "text-white bg-white/20 hover:bg-white/30 border border-white/40 backdrop-blur-md shadow-xs"
+                  : "text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300/80"
+              )}
+            >
+              <User className="w-3.5 h-3.5 text-primary" />
+              <span>{user.first_name || user.username || "My Dashboard"}</span>
+            </Link>
           )}
 
           {/* HELP DROPDOWN */}

@@ -153,3 +153,35 @@ export const getOwnerInquiries = async (params?: any): Promise<HostelInquiry[]> 
 export const updateInquiryStatus = async (id: string, status: string): Promise<HostelInquiry> => {
     return authApiClient.patch<HostelInquiry>(`/api/bookings/inquiries/${id}/`, { status });
 };
+
+export interface CheckHostelAvailabilityParams {
+    room_type_id: number;
+    check_in: string;
+    check_out: string;
+    guests_count?: number;
+    guest_email?: string;
+    mobile_number?: string;
+}
+
+export interface CheckAvailabilityResponse {
+    available: boolean;
+    available_beds?: number;
+    requested_beds?: number;
+    room_type_id?: number;
+    room_type_name?: string;
+    message?: string;
+    error?: string;
+}
+
+export const checkHostelAvailability = async (
+    params: CheckHostelAvailabilityParams
+): Promise<CheckAvailabilityResponse> => {
+    const token = tokenManager.getAccessToken();
+    const options: any = { params };
+    if (token) {
+        options.headers = {
+            Authorization: `Bearer ${token}`,
+        };
+    }
+    return apiClient.get<CheckAvailabilityResponse>("/api/bookings/check_availability/", options);
+};

@@ -77,6 +77,17 @@ export const useAuth = () => {
             setLoading(true);
             try {
                 const data = await registerUser(userData);
+
+                if (userData.role === 'guest' && data.access) {
+                    queryClient.clear();
+                    queryClient.setQueryData(['authUser'], data.user);
+                    toast.success('Registration Successful 🎉', {
+                        description: 'Welcome to Hostel In! You are now logged in.',
+                    });
+                    router.push(data.redirect_url || '/home/guestprofile');
+                    return data;
+                }
+
                 toast.success('Account created 🎉', {
                     description: 'Please check your email for the verification code.',
                 });
@@ -91,7 +102,7 @@ export const useAuth = () => {
                 setLoading(false);
             }
         },
-        [router]
+        [router, queryClient]
     );
 
     const logout = useCallback(async () => {

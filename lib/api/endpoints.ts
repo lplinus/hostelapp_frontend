@@ -55,4 +55,8 @@ export const API_ENDPOINTS = {
         CREATE_IMAGE_SCAN: '/api/orders/create-image-scan/',
         UPDATE_STATUS: (id: string | number) => `/api/orders/${id}/update-status/`,
     },
+    GUEST_PROFILE: {
+        ME: '/api/guestprofile/me/',
+        BOOKINGS: '/api/guestprofile/bookings/',
+    },
 } as const;

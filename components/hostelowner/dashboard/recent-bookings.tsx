@@ -9,12 +9,14 @@ import { cn } from "@/lib/utils";
 
 export default function RecentBookings() {
     const { user } = useAuth();
-    const { data: bookings, isLoading } = useQuery<Booking[]>({
+    const { data: bookings, isLoading: queryLoading } = useQuery<Booking[]>({
         queryKey: ["recentBookings", user?.id],
         queryFn: () => authApiClient.get("/api/bookings/"),
-        enabled: !!user?.id,
+        enabled: !!user?.id && user.id > 0,
         refetchInterval: 5000,
     });
+    // Depend only on data so server and first client render match (no hydration mismatch)
+    const isLoading = queryLoading || !bookings;
 
     const recentBookings = [...(bookings || [])]
         .sort((a, b) => new Date(b.created_at ?? b.check_in).getTime() - new Date(a.created_at ?? a.check_in).getTime())

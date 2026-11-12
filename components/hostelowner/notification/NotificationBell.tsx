@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { getUnreadCount, getNotifications, markAsRead, clearAllNotifications } from "@/services/notification.service";
-import { 
-    getVendorUnreadCount, 
-    getVendorNotifications, 
-    markVendorAsRead, 
-    clearAllVendorNotifications 
-} from "@/services/vendor-notification.service";
+import {
+  getVendorUnreadCount,
+  getVendorNotifications,
+  markVendorAsRead,
+  clearAllVendorNotifications
+} from "@/services/vendorservices/vendor-notification.service";
 import { Bell, CheckCircle, Package, Home, Calendar, Info, X, Trash2, ExternalLink, Clock, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -39,13 +39,13 @@ const bgMap: Record<string, string> = {
 };
 
 interface UnifiedNotification {
-    id: number;
-    title: string;
-    message: string;
-    notification_type: NotificationType;
-    related_object_id: string | null;
-    is_read: boolean;
-    created_at: string;
+  id: number;
+  title: string;
+  message: string;
+  notification_type: NotificationType;
+  related_object_id: string | null;
+  is_read: boolean;
+  created_at: string;
 }
 
 export default function NotificationBell() {
@@ -152,37 +152,37 @@ export default function NotificationBell() {
   };
 
   const getLinkForNotification = (type: string) => {
-      if (type === 'order') {
-          if (isVendor) {
-              return '/vendordashboard/orders';
-          } else {
-              return '/usermarketplace/myorders';
-          }
+    if (type === 'order') {
+      if (isVendor) {
+        return '/vendordashboard/orders';
+      } else {
+        return '/usermarketplace/myorders';
       }
-      if (type === 'booking') return '/dashboard';
-      if (type === 'hostel') return '/dashboard';
-      if (isVendor) return '/vendordashboard/notifications';
-      return '/notification';
+    }
+    if (type === 'booking') return '/dashboard';
+    if (type === 'hostel') return '/dashboard';
+    if (isVendor) return '/vendordashboard/notifications';
+    return '/notification';
   };
 
   const handleDetailsClick = (notif: UnifiedNotification) => {
-      setIsOpen(false);
-      if (!notif.is_read) handleMarkAsRead({ stopPropagation: () => {} } as any, notif.id);
-      
-      // Invalidate relevant React Query caches
-      if (notif.notification_type === 'hostel') {
-          queryClient.invalidateQueries({ queryKey: ["myHostels"] });
-      } else if (notif.notification_type === 'order') {
-          queryClient.invalidateQueries({ queryKey: ["vendorOrders"] });
-          queryClient.invalidateQueries({ queryKey: ["myOrders"] });
-      } else if (notif.notification_type === 'booking') {
-          queryClient.invalidateQueries({ queryKey: ["recentBookings"] });
-          queryClient.invalidateQueries({ queryKey: ["myBookings"] });
-      }
+    setIsOpen(false);
+    if (!notif.is_read) handleMarkAsRead({ stopPropagation: () => { } } as any, notif.id);
+
+    // Invalidate relevant React Query caches
+    if (notif.notification_type === 'hostel') {
+      queryClient.invalidateQueries({ queryKey: ["myHostels"] });
+    } else if (notif.notification_type === 'order') {
+      queryClient.invalidateQueries({ queryKey: ["vendorOrders"] });
+      queryClient.invalidateQueries({ queryKey: ["myOrders"] });
+    } else if (notif.notification_type === 'booking') {
+      queryClient.invalidateQueries({ queryKey: ["recentBookings"] });
+      queryClient.invalidateQueries({ queryKey: ["myBookings"] });
+    }
   };
 
   if (!isMounted || !user) return null;
-  
+
   const visibleNotifications = showAll ? notifications : notifications.slice(0, 4);
 
   // Extracting the nested ternary operation into a separate render logic
@@ -207,11 +207,10 @@ export default function NotificationBell() {
     return visibleNotifications.map((notif) => (
       <div
         key={notif.id}
-        className={`group relative p-3 sm:p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
-          !notif.is_read 
-             ? `bg-white ${bgMap[notif.notification_type] || "bg-gray-50"} shadow-sm` 
-             : "bg-gray-50/50 border-gray-100 opacity-80 hover:opacity-100"
-        }`}
+        className={`group relative p-3 sm:p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${!notif.is_read
+            ? `bg-white ${bgMap[notif.notification_type] || "bg-gray-50"} shadow-sm`
+            : "bg-gray-50/50 border-gray-100 opacity-80 hover:opacity-100"
+          }`}
       >
         <div className="flex items-start gap-3">
           <div className={`mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border bg-white ${bgMap[notif.notification_type] || "bg-gray-50"}`}>
@@ -233,22 +232,22 @@ export default function NotificationBell() {
               </span>
 
               <div className="flex items-center gap-3">
-                  <Link 
-                    href={getLinkForNotification(notif.notification_type)}
-                    onClick={() => handleDetailsClick(notif)}
-                    className="text-[9px] flex items-center gap-1 font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-full transition-colors"
-                  >
-                    Details <ExternalLink className="w-3 h-3" />
-                  </Link>
+                <Link
+                  href={getLinkForNotification(notif.notification_type)}
+                  onClick={() => handleDetailsClick(notif)}
+                  className="text-[9px] flex items-center gap-1 font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-full transition-colors"
+                >
+                  Details <ExternalLink className="w-3 h-3" />
+                </Link>
 
-                  {!notif.is_read && (
-                    <button
-                      onClick={(e) => handleMarkAsRead(e, notif.id)}
-                      className="text-[9px] font-medium text-gray-500 hover:text-gray-900 underline underline-offset-2"
-                    >
-                      Mark Read
-                    </button>
-                  )}
+                {!notif.is_read && (
+                  <button
+                    onClick={(e) => handleMarkAsRead(e, notif.id)}
+                    className="text-[9px] font-medium text-gray-500 hover:text-gray-900 underline underline-offset-2"
+                  >
+                    Mark Read
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -261,9 +260,8 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className={`relative p-2 rounded-lg transition-colors flex items-center justify-center group ${
-          isOpen ? "bg-indigo-50 text-indigo-600" : "text-gray-600 hover:bg-gray-100"
-        }`}
+        className={`relative p-2 rounded-lg transition-colors flex items-center justify-center group ${isOpen ? "bg-indigo-50 text-indigo-600" : "text-gray-600 hover:bg-gray-100"
+          }`}
       >
         <Bell className={`w-5 h-5 group-hover:scale-110 transition-transform ${isOpen ? "fill-indigo-100" : ""}`} />
         {unreadCount > 0 && (
@@ -280,22 +278,22 @@ export default function NotificationBell() {
               <h3 className="font-semibold text-gray-900 group flex items-center gap-2 text-sm">
                 {isVendor ? "Vendor Alerts" : "Notifications"}
                 {unreadCount > 0 && (
-                   <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                     {unreadCount} New
-                   </span>
+                  <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {unreadCount} New
+                  </span>
                 )}
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              <button 
-                 onClick={handleClearAll} 
-                 className="text-gray-400 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 transition-colors flex items-center gap-1 group"
-                 title="Clear All"
+              <button
+                onClick={handleClearAll}
+                className="text-gray-400 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 transition-colors flex items-center gap-1 group"
+                title="Clear All"
               >
-                 <Trash2 className="w-4 h-4 group-hover:scale-105" />
+                <Trash2 className="w-4 h-4 group-hover:scale-105" />
               </button>
               <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600 p-1.5 rounded-md hover:bg-gray-200 transition-colors">
-                 <X className="w-4 h-4"/>
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>

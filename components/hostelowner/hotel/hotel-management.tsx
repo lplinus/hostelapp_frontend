@@ -29,13 +29,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import RoomsUnitsTab from "@/components/hostelowner/rooms/rooms-units/rooms-units-tab";
+import RoomsUnitsTab from "@/components/hostelowner/hostel/hostelrooms/rooms-units/rooms-units-tab";
 import HotelBookingDashboard from "@/components/hostelowner/hotel/hotelbooking/hotel-booking-dashboard";
 import { useHotelManagement } from "./hotel-management-hooks";
 import HotelForm from "./hotel-form";
 import HotelCard from "./hotel-card";
 import HotelPhotoModal from "./hotel-photo-modal";
-import HotelRoomTypeModal from "./hotel-room-type-modal";
+import HotelRoomTypeModal from "./hotelrooms/hotel-room-type-modal";
 
 const HotelMapPicker = dynamic(() => import("./hotel-map-picker"), {
     ssr: false,
@@ -104,67 +104,67 @@ export default function HotelOwnerManagement() {
             ) : (
                 <>
                     {/* Top Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1.5">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                                    <Sparkles size={12} className="text-amber-500" />Hotel Management
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 bg-card p-4 sm:p-4.5 rounded-lg border border-border/80 shadow-2xs">
+                        <div className="space-y-0.5">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                    <Sparkles size={11} className="text-amber-500" />Hotel Management
                                 </span>
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border">Property Portfolio</span>
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[11px] font-medium bg-muted text-muted-foreground border">Property Portfolio</span>
                             </div>
-                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Hotels & Luxury Suites</h1>
-                            <p className="text-sm text-muted-foreground mt-0.5">Add and manage your boutique hotels, suites, per-night tariffs, photos, and inventory.</p>
+                            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">Hotels & Luxury Suites</h1>
+                            <p className="text-xs text-muted-foreground">Add and manage your boutique hotels, suites, per-night tariffs, photos, and inventory.</p>
                         </div>
-                        <div className="flex items-center gap-2.5">
-                            <Button variant="outline" size="sm" onClick={() => h.refetch()} disabled={h.isRefetching} className="gap-2 text-xs">
-                                <RefreshCw size={13} className={h.isRefetching ? "animate-spin" : ""} />Refresh
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline" size="sm" onClick={() => h.refetch()} disabled={h.isRefetching} className="gap-1.5 text-xs font-semibold rounded-md h-8 px-3">
+                                <RefreshCw size={12} className={h.isRefetching ? "animate-spin" : ""} />Refresh
                             </Button>
-                            <Button size="sm" onClick={() => { if (h.isCreating) { h.setIsCreating(false); h.setEditingHotel(null); } else { h.resetForm(); h.setIsCreating(true); } }} className={`gap-1.5 text-xs text-white shadow-sm transition-all ${h.isCreating ? "bg-muted-foreground hover:bg-muted-foreground/90" : "bg-[#312E81] hover:bg-[#252269] active:bg-[#1E1B4B]"}`}>
-                                {h.isCreating ? (<><X size={14} /> Cancel</>) : (<><Plus size={14} /> Add Hotel</>)}
+                            <Button size="sm" onClick={() => { if (h.isCreating) { h.setIsCreating(false); h.setEditingHotel(null); } else { h.resetForm(); h.setIsCreating(true); } }} className={`gap-1.5 text-xs text-white font-semibold rounded-md shadow-2xs h-8 px-3.5 transition-all ${h.isCreating ? "bg-muted-foreground hover:bg-muted-foreground/90" : "bg-[#312E81] hover:bg-[#252269] active:bg-[#1E1B4B]"}`}>
+                                {h.isCreating ? (<><X size={13} /> Cancel</>) : (<><Plus size={13} /> Add Hotel</>)}
                             </Button>
                         </div>
                     </div>
 
                     {/* KPI Cards */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <Card className="border-border/50 bg-card shadow-xs">
-                            <CardContent className="p-4 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-medium text-muted-foreground">Hotels Managed</p>
-                                    <p className="text-2xl font-bold tracking-tight text-foreground tabular-nums">{h.isMounted ? h.hotels.length : 0}</p>
-                                    <p className="text-[11px] text-muted-foreground">Properties registered</p>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Hotels Managed</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-foreground tabular-nums leading-none">{h.isMounted ? h.hotels.length : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Registered</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><HotelIcon size={18} /></div>
+                                <div className="w-8 h-8 rounded-md bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><HotelIcon size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border-border/50 bg-card shadow-xs">
-                            <CardContent className="p-4 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-medium text-muted-foreground">Room Inventory</p>
-                                    <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">{h.isMounted ? h.totalRoomsCount : 0}</p>
-                                    <p className="text-[11px] text-muted-foreground">Suites & rooms across all hotels</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Room Inventory</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums leading-none">{h.isMounted ? h.totalRoomsCount : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Suites & rooms</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><BedDouble size={18} /></div>
+                                <div className="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0"><BedDouble size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border-border/50 bg-card shadow-xs">
-                            <CardContent className="p-4 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-medium text-muted-foreground">Active Listings</p>
-                                    <p className="text-2xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums">{h.isMounted ? h.hotels.filter((htl) => htl.is_active).length : 0}</p>
-                                    <p className="text-[11px] text-muted-foreground">Ready for online reservations</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Active Listings</p>
+                                    <p className="text-lg sm:text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400 tabular-nums leading-none">{h.isMounted ? h.hotels.filter((htl) => htl.is_active).length : 0}</p>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Online reservations</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><CheckCircle2 size={18} /></div>
+                                <div className="w-8 h-8 rounded-md bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0"><CheckCircle2 size={15} /></div>
                             </CardContent>
                         </Card>
-                        <Card className="border-border/50 bg-card shadow-xs">
-                            <CardContent className="p-4 flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-medium text-muted-foreground">Booking Dashboard</p>
-                                    <Link href="/hotelbooking" className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 pt-1">View Reservations <ChevronRight size={13} /></Link>
-                                    <p className="text-[11px] text-muted-foreground">Check-ins & daily folios</p>
+                        <Card className="border border-border/70 rounded-md bg-card shadow-2xs">
+                            <CardContent className="p-3 sm:p-3.5 flex items-center justify-between">
+                                <div className="space-y-0.5 min-w-0">
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">Booking Dashboard</p>
+                                    <Link href="/hotelbooking" className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 pt-0.5">View <ChevronRight size={12} /></Link>
+                                    <p className="text-[10px] text-muted-foreground/80 truncate">Check-ins & folios</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><Layers size={18} /></div>
+                                <div className="w-8 h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0"><Layers size={15} /></div>
                             </CardContent>
                         </Card>
                     </div>

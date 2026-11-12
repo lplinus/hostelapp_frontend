@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { 
-  VendorNotification, 
-  getVendorNotifications, 
-  markAllVendorAsRead, 
-  markVendorAsRead, 
-  clearAllVendorNotifications 
-} from "@/services/vendor-notification.service";
+import {
+  VendorNotification,
+  getVendorNotifications,
+  markAllVendorAsRead,
+  markVendorAsRead,
+  clearAllVendorNotifications
+} from "@/services/vendorservices/vendor-notification.service";
 import { Bell, CheckCircle, Package, CreditCard, Info, Clock, Trash2, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
@@ -81,7 +81,7 @@ export default function VendorNotificationList() {
       setNotifications([]);
       toast.success("Notifications cleared");
     } catch (error) {
-       toast.error("Failed to clear notifications");
+      toast.error("Failed to clear notifications");
     }
   };
 
@@ -113,24 +113,24 @@ export default function VendorNotificationList() {
           </p>
         </div>
         <div className="flex items-center gap-3 mt-4 sm:mt-0">
-            {unreadCount > 0 && (
-                <button
-                    onClick={handleMarkAllAsRead}
-                    className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5"
-                >
-                    <CheckCircle size={14} />
-                    Mark all read
-                </button>
-            )}
-            {notifications.length > 0 && (
-                <button
-                    onClick={handleClearAll}
-                    className="text-xs font-semibold text-destructive hover:underline flex items-center gap-1.5 ml-4"
-                >
-                    <Trash2 size={14} />
-                    Clear all
-                </button>
-            )}
+          {unreadCount > 0 && (
+            <button
+              onClick={handleMarkAllAsRead}
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5"
+            >
+              <CheckCircle size={14} />
+              Mark all read
+            </button>
+          )}
+          {notifications.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="text-xs font-semibold text-destructive hover:underline flex items-center gap-1.5 ml-4"
+            >
+              <Trash2 size={14} />
+              Clear all
+            </button>
+          )}
         </div>
       </div>
 
@@ -145,11 +145,10 @@ export default function VendorNotificationList() {
           notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`group flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 ${
-                !notification.is_read 
-                  ? `${bgMap[notification.notification_type] || "bg-card"} shadow-sm` 
+              className={`group flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 ${!notification.is_read
+                  ? `${bgMap[notification.notification_type] || "bg-card"} shadow-sm`
                   : "bg-background opacity-70"
-              }`}
+                }`}
             >
               <div className={`w-10 h-10 shrink-0 rounded-lg flex items-center justify-center border bg-white shadow-sm`}>
                 {iconMap[notification.notification_type] || <Bell size={18} />}

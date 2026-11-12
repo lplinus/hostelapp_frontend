@@ -29,6 +29,10 @@ export default function ConditionalFooter() {
         pathname.startsWith("/subscription/") ||
         pathname === "/settings" ||
         pathname.startsWith("/settings/") ||
+        pathname === "/adsense" ||
+        pathname.startsWith("/adsense/") ||
+        pathname === "/Aiassitance" ||
+        pathname.startsWith("/Aiassitance/") ||
         pathname === "/notification" ||
         pathname.startsWith("/notification/") ||
         pathname === "/help&support" ||
@@ -37,7 +41,9 @@ export default function ConditionalFooter() {
         pathname.startsWith("/usermarketplace") ||
         pathname === "/login" ||
         pathname === "/register" ||
-        pathname === "/verify-email";
+        pathname === "/verify-email" ||
+        pathname === "/home/guestprofile" ||
+        pathname.startsWith("/home/guestprofile");
 
     if (isDashboardRoute) {
         return null;
