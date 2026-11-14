@@ -711,16 +711,16 @@ export default function BookingContainer({
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-500 hover:text-[#003580] transition-colors mb-8 group"
+                className="flex items-center gap-2 text-[#686259] hover:text-[#1A1916] transition-colors mb-8 group"
             >
-                <div className="p-1.5 rounded-full border border-gray-200 group-hover:bg-gray-50 transition-all text-gray-600">
+                <div className="p-1.5 rounded-lg border border-[#D2CABC] bg-[#E5DFD4] group-hover:bg-[#DBD5C8] transition-all text-[#1A1916]">
                     <ArrowLeft size={16} />
                 </div>
                 <span className="text-sm font-semibold">Back to Hostel</span>
             </button>
 
             {/* Sticky Progress Bar (1, 2, 3 Steps) */}
-            <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md -mx-4 sm:-mx-6 px-4 sm:px-6 py-3.5 mb-6 sm:mb-8 border-b border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all">
+            <div className="sticky top-16 z-30 bg-[#EDE8DF]/95 backdrop-blur-md -mx-4 sm:-mx-6 px-4 sm:px-6 py-3.5 mb-6 sm:mb-8 border-b border-[#D2CABC] transition-all">
                 <BookingProgressBar
                     currentStep={step}
                     isPhoneVerified={isPhoneVerified}
@@ -755,9 +755,9 @@ export default function BookingContainer({
                         bookingStatus={bookingStatus}
                     />
 
-                    <div className="p-2.5 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center gap-2 text-[#003580]">
-                        <Activity className="shrink-0 text-[#003580]" size={15} />
-                        <p className="text-[11px] text-[#003580] leading-snug font-semibold">
+                    <div className="p-2.5 bg-[#E5DFD4] rounded-xl border border-[#D2CABC] flex items-center gap-2 text-[#1A1916]">
+                        <Activity className="shrink-0 text-[#1F1E1B]" size={15} />
+                        <p className="text-[11px] text-[#1A1916] leading-snug font-semibold">
                             Free cancellation available 24 hours before check-in. Book with confidence.
                         </p>
                     </div>

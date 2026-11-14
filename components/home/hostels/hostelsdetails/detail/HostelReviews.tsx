@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { MessageSquarePlus, Star, ShieldCheck, ChevronRight } from "lucide-react";
+import { useState, useRef, useEffect, FormEvent } from "react";
+import { MessageSquarePlus, Star, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,30 +18,6 @@ interface Review {
     comment: string;
     created_at: string;
 }
-
-const DEFAULT_REVIEWS: Review[] = [
-    {
-        id: -1,
-        user_name: "Aarav S.",
-        rating: 5,
-        comment: "Great place to stay! Clean rooms and friendly staff. Highly recommended for students.",
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: -2,
-        user_name: "Priya M.",
-        rating: 4,
-        comment: "Lovely hostel. Modern amenities and excellent food service. Will definitely recommend it to my friends.",
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: -3,
-        user_name: "Rohan K.",
-        rating: 5,
-        comment: "Excellent hostel! Close to colleges and very well maintained. Safe and secure.",
-        created_at: new Date().toISOString(),
-    },
-];
 
 interface HostelReviewsProps {
     hostelId: number;
@@ -60,6 +36,31 @@ export default function HostelReviews({
 }: HostelReviewsProps) {
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const checkScrollButtons = () => {
+        if (!scrollContainerRef.current) return;
+        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+        setCanScrollLeft(scrollLeft > 10);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    };
+
+    useEffect(() => {
+        checkScrollButtons();
+    }, [reviews]);
+
+    const scroll = (direction: "left" | "right") => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = Math.min(360, scrollContainerRef.current.clientWidth * 0.85);
+            scrollContainerRef.current.scrollBy({
+                left: direction === "left" ? -scrollAmount : scrollAmount,
+                behavior: "smooth",
+            });
+            setTimeout(checkScrollButtons, 350);
+        }
+    };
     const [reviewForm, setReviewForm] = useState({
         name: "",
         hostel_rating: 5,
@@ -96,102 +97,147 @@ export default function HostelReviews({
         }
     };
 
-    const hasRealReviews = Array.isArray(reviews) && reviews.length > 0;
-    const reviewsToShow = hasRealReviews ? reviews : DEFAULT_REVIEWS;
-    const displayReviewCount = hasRealReviews ? reviews.length : ratingCount || DEFAULT_REVIEWS.length;
-    const displayAvgRating = hasRealReviews ? ratingAvg : 4.5;
+    const realReviews = Array.isArray(reviews) ? reviews : [];
+    const reviewsToShow = realReviews;
+    const displayReviewCount = realReviews.length || (Number(ratingCount) || 0);
+    const displayAvgRating = Number(ratingAvg) || 0;
 
     return (
-        <section className="mb-10 pt-8 border-t border-gray-100">
+        <section className="mb-10 pt-6 border-t border-gray-100">
             {/* Section Header */}
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-900">What Guests Say</h2>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <button className="text-sm font-semibold text-[#312E81] hover:text-[#1E1B4B] flex items-center gap-0.5 transition-colors">
-                            View all reviews
-                            <ChevronRight size={16} />
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-xl rounded-2xl p-5 md:p-6 max-h-[80vh] overflow-y-auto w-[95%] border-0 shadow-2xl">
-                        <DialogHeader className="mb-4">
-                            <DialogTitle className="text-xl font-bold text-gray-900">All Reviews</DialogTitle>
-                            <DialogDescription className="text-sm text-gray-500">
-                                What others are saying about this hostel.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-3">
-                            {reviewsToShow.map((review) => (
-                                <div key={review.id} className="flex flex-col gap-3 bg-gray-50 rounded-xl p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex flex-shrink-0 items-center justify-center text-[#312E81] font-bold text-sm">
-                                            {review.user_name?.charAt(0)?.toUpperCase() || "U"}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-black text-sm flex items-center gap-1.5">
-                                                {review.user_name || "Anonymous User"}
-                                                {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
-                                            </p>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <StarRating rating={review.rating} size={10} />
-                                                <span className="text-[11px] text-gray-700 font-medium">
-                                                    · {new Date(review.created_at).toLocaleDateString("en-IN", {
-                                                        month: "short",
-                                                        year: "numeric",
-                                                    })}
-                                                </span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6">
+                <h2 className="text-xl font-bold text-gray-900">What Guests Say</h2>
+                <div className="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <button className="text-sm font-semibold text-[#312E81] hover:text-[#1E1B4B] flex items-center gap-0.5 transition-colors cursor-pointer">
+                                View all reviews
+                                <ChevronRight size={16} />
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-xl rounded-2xl p-5 md:p-6 max-h-[80vh] overflow-y-auto w-[95%] border-0 shadow-2xl">
+                            <DialogHeader className="mb-4">
+                                <DialogTitle className="text-xl font-bold text-gray-900">All Reviews</DialogTitle>
+                                <DialogDescription className="text-sm text-gray-500">
+                                    What others are saying about this hostel.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-3">
+                                {reviewsToShow.map((review) => (
+                                    <div key={review.id} className="flex flex-col gap-3 bg-gray-50 rounded-xl p-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex flex-shrink-0 items-center justify-center text-[#312E81] font-bold text-sm">
+                                                {review.user_name?.charAt(0)?.toUpperCase() || "U"}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-black text-sm flex items-center gap-1.5">
+                                                    {review.user_name || "Anonymous User"}
+                                                    {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <StarRating rating={review.rating} size={10} />
+                                                    <span className="text-[11px] text-gray-700 font-medium">
+                                                        · {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                                            month: "short",
+                                                            year: "numeric",
+                                                        })}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <p className="text-gray-950 text-sm font-medium leading-relaxed">
+                                            {review.comment}
+                                        </p>
                                     </div>
-                                    <p className="text-gray-950 text-sm font-medium leading-relaxed">
-                                        {review.comment}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                                ))}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+
+                    {/* Very little size arrow side scrolling buttons */}
+                    <div className="flex items-center gap-1 pl-2 border-l border-gray-200">
+                        <button
+                            type="button"
+                            onClick={() => scroll("left")}
+                            disabled={!canScrollLeft}
+                            aria-label="Scroll reviews left"
+                            className="w-6 h-6 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-2xs"
+                        >
+                            <ChevronLeft size={13} />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => scroll("right")}
+                            disabled={!canScrollRight}
+                            aria-label="Scroll reviews right"
+                            className="w-6 h-6 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-2xs"
+                        >
+                            <ChevronRight size={13} />
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            {/* Review Cards - Horizontal Scroll */}
+            {/* Review Cards - Horizontal Scroll or Empty State */}
             <style jsx>{`
-                .scrollbar-hide::-webkit-scrollbar { display: none; }
-                .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style: none !important;
+                    scrollbar-width: none !important;
+                }
             `}</style>
-            <div className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 pb-4 -mx-1 px-1">
-                {reviewsToShow.map((review) => (
-                    <div
-                        key={review.id}
-                        className="flex flex-col gap-4 bg-white border border-gray-200 rounded-2xl p-6 snap-start min-w-[280px] sm:min-w-[340px] md:min-w-[380px] flex-shrink-0 hover:shadow-md transition-shadow duration-300"
-                    >
-                        {/* Reviewer */}
-                        <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center text-[#312E81] font-bold text-base flex-shrink-0">
-                                {review.user_name?.charAt(0)?.toUpperCase() || "U"}
-                            </div>
-                            <div>
-                                <p className="font-bold text-black text-sm flex items-center gap-1.5">
-                                    {review.user_name || "Anonymous User"}
-                                    {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
-                                </p>
-                                <div className="flex items-center gap-2 mt-0.5">
-                                    <StarRating rating={review.rating} size={11} />
-                                    <span className="text-xs text-gray-700 font-medium">
-                                        · {new Date(review.created_at).toLocaleDateString("en-IN", {
-                                            month: "short",
-                                            year: "numeric",
-                                        })}
-                                    </span>
+
+            {reviewsToShow.length === 0 ? (
+                <div className="py-7 px-4 text-center rounded-xl bg-slate-50/70 border border-dashed border-slate-200">
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800">No verified reviews yet</p>
+                    <p className="text-[11px] sm:text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                        Be the first verified guest to share a review after your stay at this hostel.
+                    </p>
+                </div>
+            ) : (
+                <div
+                    ref={scrollContainerRef}
+                    onScroll={checkScrollButtons}
+                    className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-4 pb-2 -mx-1 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
+                    {reviewsToShow.map((review) => (
+                        <div
+                            key={review.id}
+                            className="flex flex-col gap-4 bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 snap-start w-[80vw] xs:w-[280px] sm:min-w-[340px] md:min-w-[380px] flex-shrink-0 hover:shadow-md transition-shadow duration-300"
+                        >
+                            {/* Reviewer */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center text-[#312E81] font-bold text-base flex-shrink-0">
+                                    {review.user_name?.charAt(0)?.toUpperCase() || "U"}
+                                </div>
+                                <div>
+                                    <p className="font-bold text-black text-sm flex items-center gap-1.5">
+                                        {review.user_name || "Anonymous User"}
+                                        {review.rating >= 4 && <ShieldCheck size={13} className="text-[#10B981]" />}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <StarRating rating={review.rating} size={11} />
+                                        <span className="text-xs text-gray-700 font-medium">
+                                            · {new Date(review.created_at).toLocaleDateString("en-IN", {
+                                                month: "short",
+                                                year: "numeric",
+                                            })}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
+                            {/* Comment */}
+                            <p className="text-gray-950 text-sm font-medium leading-relaxed line-clamp-4">
+                                {review.comment}
+                            </p>
                         </div>
-                        {/* Comment */}
-                        <p className="text-gray-950 text-sm font-medium leading-relaxed line-clamp-4">
-                            {review.comment}
-                        </p>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* Write Review Button */}
             <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>

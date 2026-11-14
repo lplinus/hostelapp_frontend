@@ -1,6 +1,7 @@
 import { authApiClient } from "@/lib/api/auth-client";
 import { apiClient } from "@/lib/api/client";
 import { tokenManager } from "@/lib/token";
+import { collectAllPages } from "@/lib/api/paginated";
 import type {
     VacationRental,
     VacationRentalBooking,
@@ -95,10 +96,13 @@ export const checkVacationRentalAvailability = async (
 export const getVacationRentals = async (
     params?: Record<string, string | number | boolean | undefined>
 ): Promise<VacationRental[]> => {
-    const data = await apiClient.get<any>("/api/vacanationrentals/properties/", { params });
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.results)) return data.results;
-    return [];
+    // Backend is paginated: read every page so filters, sorting and the
+    // 9-per-page grid work across all rentals, not just the first page.
+    return collectAllPages<VacationRental>((page, pageSize) =>
+        apiClient.get<any>("/api/vacanationrentals/properties/", {
+            params: { page_size: pageSize, ...params, page },
+        })
+    );
 };
 
 export const getVacationRentalBySlug = async (

@@ -107,25 +107,25 @@ export function EmailOtpModal({
 
     return (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[420px] p-6 sm:p-7 relative border border-gray-100 animate-in zoom-in-95 duration-200">
+            <div className="bg-[#E5DFD4] rounded-2xl shadow-2xl w-full max-w-[420px] p-6 sm:p-7 relative border border-[#D2CABC] animate-in zoom-in-95 duration-200">
                 {/* Close Button */}
                 <button
                     type="button"
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="absolute top-4 right-4 p-1.5 rounded-full text-[#686259] hover:text-[#1A1916] hover:bg-[#DBD5C8] transition-colors"
                 >
                     <X size={18} />
                 </button>
 
                 {/* Header with Mail Icon Badge */}
                 <div className="text-center space-y-2 mb-6">
-                    <div className="w-14 h-14 bg-blue-50 border border-blue-100 text-[#003580] rounded-2xl flex items-center justify-center mx-auto shadow-xs">
+                    <div className="w-14 h-14 bg-[#DBD5C8] border border-[#D2CABC] text-[#1F1E1B] rounded-2xl flex items-center justify-center mx-auto shadow-xs">
                         <Mail size={26} strokeWidth={2.3} />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-950 tracking-tight">Verify Your Email</h3>
-                    <p className="text-xs text-gray-600 leading-relaxed max-w-xs mx-auto">
+                    <h3 className="text-2xl font-black text-[#1A1916] tracking-tight">Verify Your Email</h3>
+                    <p className="text-xs text-[#686259] leading-relaxed max-w-xs mx-auto">
                         We sent a 6-digit verification code to{" "}
-                        <strong className="text-gray-950 font-bold break-all underline decoration-blue-200">{email}</strong>
+                        <strong className="text-[#1A1916] font-bold break-all underline decoration-[#D2CABC]">{email}</strong>
                     </p>
                 </div>
 
@@ -150,10 +150,10 @@ export function EmailOtpModal({
                                 }
                             }}
                             className={cn(
-                                "h-14 text-center text-2xl tracking-[0.4em] font-black font-mono rounded-xl bg-gray-50/60 border-2 transition-all focus:bg-white text-gray-950",
+                                "h-14 text-center text-2xl tracking-[0.4em] font-black font-mono rounded-xl bg-[#EDE8DF] border transition-all text-[#1A1916]",
                                 errorMsg
                                     ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-                                    : "border-gray-200 focus:border-[#003580] focus:ring-[#003580]/15"
+                                    : "border-[#D2CABC] focus:border-[#1F1E1B] focus:ring-2 focus:ring-[#1F1E1B]/15"
                             )}
                         />
                         {errorMsg && (
@@ -165,7 +165,7 @@ export function EmailOtpModal({
 
                     {/* Resend Code Section */}
                     <div className="flex items-center justify-between text-xs pt-1 px-1">
-                        <span className="text-gray-500">Didn't receive code?</span>
+                        <span className="text-[#686259]">Didn't receive code?</span>
                         <button
                             type="button"
                             onClick={() => handleSendOtp(false)}
@@ -173,8 +173,8 @@ export function EmailOtpModal({
                             className={cn(
                                 "font-bold flex items-center gap-1 transition-colors cursor-pointer",
                                 timer > 0 || isSending
-                                    ? "text-gray-400 cursor-not-allowed"
-                                    : "text-[#003580] hover:text-[#002244] hover:underline"
+                                    ? "text-[#7A746B] cursor-not-allowed"
+                                    : "text-[#1A1916] hover:underline"
                             )}
                         >
                             {isSending && <RefreshCw size={12} className="animate-spin" />}
@@ -188,7 +188,7 @@ export function EmailOtpModal({
                             type="button"
                             onClick={handleVerify}
                             disabled={isVerifying || otp.length < 6}
-                            className="w-full h-12 rounded-xl text-sm font-extrabold bg-[#003580] hover:bg-[#002244] text-white shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                            className="w-full h-12 rounded-xl text-sm font-extrabold bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                         >
                             {isVerifying ? (
                                 <>
@@ -206,7 +206,7 @@ export function EmailOtpModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="w-full h-9 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
+                            className="w-full h-9 rounded-lg text-xs font-semibold text-[#686259] hover:text-[#1A1916] hover:bg-[#DBD5C8] transition-colors cursor-pointer"
                         >
                             Cancel & Edit Details
                         </button>

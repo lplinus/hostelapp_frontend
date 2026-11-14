@@ -86,11 +86,10 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
                     )}
                 </Link>
 
-                {/* SUPERHOST BADGE (ONLY BADGE ON IMAGE) */}
+                {/* SUPERHOST BADGE (Glossy rectangular finish with less soft corners, no icon) */}
                 {rental.is_superhost && (
-                    <div className="absolute top-3 left-3 z-10 pointer-events-none">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-[10px] font-medium tracking-wide uppercase bg-amber-500 text-white shadow-sm">
-                            <Sparkles size={11} />
+                    <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[9px] font-semibold tracking-wider uppercase bg-white/85 text-slate-900 shadow-xs border border-white/60 backdrop-blur-md">
                             Superhost
                         </span>
                     </div>
@@ -127,44 +126,13 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
                         </button>
                     </div>
                 )}
-
-                {/* DOTS INDICATOR */}
-                {images.length > 1 && (
-                    <div className="absolute bottom-2.5 inset-x-0 flex justify-center items-center gap-1.5 z-10 pointer-events-none">
-                        {images.slice(0, 5).map((_, idx) => (
-                            <span
-                                key={idx}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${
-                                    idx === currentImageIndex
-                                        ? "w-4 bg-white"
-                                        : "w-1.5 bg-white/60"
-                                }`}
-                            />
-                        ))}
-                    </div>
-                )}
             </div>
 
             {/* 2. CARD CONTENT */}
             <div className="p-4 flex-1 flex flex-col justify-between gap-3">
-                <div className="space-y-2">
-                    {/* Property Badges (Moved below image) */}
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] font-medium tracking-wide uppercase bg-[#1E1B4B] text-white shadow-xs">
-                            <Palmtree size={10} className="text-rose-300" />
-                            {categoryLabel}
-                        </span>
-
-                        {rental.instant_book && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] font-medium tracking-wide uppercase bg-emerald-600 text-white shadow-xs">
-                                <Zap size={10} className="fill-current" />
-                                Instant Book
-                            </span>
-                        )}
-                    </div>
-
+                <div className="space-y-1.5">
                     {/* Location & Rating Header */}
-                    <div className="flex items-center justify-between text-xs text-slate-500">
+                    <div className="flex items-center justify-between text-xs text-slate-500 h-5">
                         <div className="flex items-center gap-1 font-medium text-slate-600 truncate max-w-[200px]">
                             <MapPin size={13} className="text-rose-500 shrink-0" />
                             <span className="truncate">
@@ -182,56 +150,64 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
 
                     {/* Title */}
                     <Link href={`/vacanationalrental/${rental.slug}/`} className="block">
-                        <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-indigo-950 transition-colors line-clamp-1">
+                        <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-indigo-950 transition-colors truncate">
                             {rental.title}
                         </h3>
                     </Link>
 
                     {/* Tagline / Subtitle */}
-                    {rental.tagline && (
-                        <p className="text-xs text-slate-500 line-clamp-1 italic">
-                            "{rental.tagline}"
-                        </p>
-                    )}
+                    <p className="text-xs text-slate-500 truncate italic h-4">
+                        {rental.tagline ? `"${rental.tagline}"` : "\u00A0"}
+                    </p>
 
-                    {/* Space Breakdown Badges */}
-                    <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-600 font-medium">
-                        <span className="flex items-center gap-1">
+                    {/* Space Breakdown Badges (Guaranteed Single Line, No Wrapping) */}
+                    <div className="flex items-center gap-2 text-[11px] text-slate-600 font-medium whitespace-nowrap overflow-hidden h-5">
+                        <span className="inline-flex items-center gap-1 shrink-0">
                             <Users size={12} className="text-slate-400" />
                             {rental.max_guests} Guests
                         </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
+                        <span className="text-slate-300">•</span>
+                        <span className="inline-flex items-center gap-1 shrink-0">
                             <Bed size={12} className="text-slate-400" />
                             {rental.bedrooms} Bed{rental.bedrooms > 1 ? "s" : ""}
                         </span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
+                        <span className="text-slate-300">•</span>
+                        <span className="inline-flex items-center gap-1 shrink-0">
                             <Bath size={12} className="text-slate-400" />
                             {rental.bathrooms} Bath{rental.bathrooms > 1 ? "s" : ""}
                         </span>
+                    </div>
+
+                    {/* Property Terms (Villa, Farmhouse, Instant Book, Pet-Friendly) - Fixed Height Row */}
+                    <div className="flex items-center gap-1.5 flex-wrap h-6 overflow-hidden">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-slate-100 text-slate-700 border border-slate-200/90 shadow-2xs shrink-0">
+                            {categoryLabel}
+                        </span>
+
+                        {rental.instant_book && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs shrink-0">
+                                Instant Book
+                            </span>
+                        )}
+
                         {rental.allows_pets && (
-                            <>
-                                <span>•</span>
-                                <span className="flex items-center gap-1 text-emerald-600">
-                                    <PawPrint size={12} />
-                                    Pet-Friendly
-                                </span>
-                            </>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs shrink-0">
+                                Pet-Friendly
+                            </span>
                         )}
                     </div>
                 </div>
 
-                {/* Footer / Pricing & CTA */}
+                {/* Footer / Pricing & CTA (Always Locked on Equal Level) */}
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex items-baseline gap-1">
                             <span className="text-lg font-extrabold text-slate-900 tracking-tight">
                                 {formattedPrice}
                             </span>
                             <span className="text-xs text-slate-500 font-normal">/ night</span>
                         </div>
-                        <p className="text-[10px] text-slate-400 font-medium">
+                        <p className="text-[10px] text-slate-400 font-medium truncate">
                             {rental.weekly_discount_percentage > 0
                                 ? `${rental.weekly_discount_percentage}% off for 7+ nights`
                                 : "No hidden charges"}
@@ -240,7 +216,7 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
 
                     <Link
                         href={`/vacanationalrental/${rental.slug}/`}
-                        className="px-4 py-2 rounded-sm text-xs font-medium tracking-wide bg-[#1E1B4B] hover:bg-[#312E81] text-white shadow-xs transition-colors shrink-0"
+                        className="px-4 py-2 rounded-sm text-xs font-medium tracking-wide bg-[#1E1B4B] hover:bg-[#312E81] text-white shadow-xs transition-colors shrink-0 active:scale-95"
                     >
                         Reserve
                     </Link>

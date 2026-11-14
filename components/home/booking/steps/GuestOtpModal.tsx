@@ -29,10 +29,10 @@ export function GuestOtpModal({
 }: GuestOtpModalProps) {
     return (
         <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 transition-all", isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")}>
-            <div className={cn("bg-white rounded-3xl shadow-xl w-full max-w-[400px] p-6 transition-transform duration-300", isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-8")}>
+            <div className={cn("bg-[#E5DFD4] rounded-2xl border border-[#D2CABC] shadow-xl w-full max-w-[400px] p-6 transition-transform duration-300", isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-8")}>
                 <div className="text-center space-y-2 mb-6">
-                    <h2 className="text-2xl font-bold">Verify Phone</h2>
-                    <p className="text-gray-500 text-sm">We'll send a 6-digit verification code to your mobile number.</p>
+                    <h2 className="text-2xl font-bold text-[#1A1916]">Verify Phone</h2>
+                    <p className="text-[#686259] text-sm">We'll send a 6-digit verification code to your mobile number.</p>
                 </div>
 
                 <div className="flex flex-col items-center gap-4">
@@ -40,7 +40,7 @@ export function GuestOtpModal({
                         variant="outline"
                         onClick={handleGuestOtpSend}
                         disabled={isGuestOtpVerifying || guestOtpTimer > 0}
-                        className="w-full h-11 rounded-xl border-blue-100 hover:bg-blue-50/60 hover:text-[#003580] transition-all font-semibold"
+                        className="w-full h-11 rounded-lg border-[#D2CABC] bg-[#EDE8DF] hover:bg-[#DBD5C8] text-[#1A1916] transition-all font-semibold"
                     >
                         {isGuestOtpSent && guestOtpTimer > 0 ? (
                             `Resend OTP in ${guestOtpTimer}s`
@@ -58,7 +58,7 @@ export function GuestOtpModal({
                             maxLength={6}
                             value={guestOtp}
                             onChange={(e) => setGuestOtp(e.target.value.replace(/\D/g, ""))}
-                            className="h-12 text-center text-xl tracking-[0.3em] font-bold rounded-xl bg-white border border-gray-300 hover:border-black focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 text-gray-900 transition-all"
+                            className="h-12 text-center text-xl tracking-[0.3em] font-bold rounded-lg bg-[#EDE8DF] border border-[#D2CABC] hover:border-[#1F1E1B] focus:border-[#1F1E1B] focus:ring-2 focus:ring-[#1F1E1B]/15 text-[#1A1916] transition-all"
                         />
                     </div>
 
@@ -66,14 +66,14 @@ export function GuestOtpModal({
                         <Button
                             variant="ghost"
                             onClick={onClose}
-                            className="flex-1 h-11 rounded-xl"
+                            className="flex-1 h-11 rounded-lg text-[#686259] hover:text-[#1A1916] hover:bg-[#DBD5C8]"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleGuestOtpVerify}
                             disabled={isGuestOtpVerifying || guestOtp.length < 6}
-                            className="flex-1 h-11 rounded-xl bg-[#003580] hover:bg-[#002244] text-white shadow-md transition-all font-semibold"
+                            className="flex-1 h-11 rounded-lg bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] shadow-md transition-all font-semibold"
                         >
                             {isGuestOtpVerifying ? "Verifying..." : "Verify & Proceed"}
                         </Button>

@@ -31,7 +31,7 @@ function getPrimaryImage(hostel: HostelListItem): string | null {
 
 export default function HostelGrid({ hostels, isFiltering = false }: HostelGridProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 9;
 
   // Apply priority sorting:
   // 1. Discounts & Verified

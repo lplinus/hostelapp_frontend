@@ -26,7 +26,25 @@ export async function safeFetch<T>(
     // Handle DRF style paginated results or direct array
     if (Array.isArray(data)) return data;
     if (data && typeof data === 'object' && Array.isArray(data.results)) {
-        return data.results;
+        // Paginated endpoint: keep reading pages so the sitemap lists every item,
+        // not only the first page.
+        const items: T[] = [...data.results];
+        const totalPages = Number(data.total_pages) || 0;
+        const separator = url.includes('?') ? '&' : '?';
+
+        for (let page = 2; page <= totalPages && page <= 500; page++) {
+            const pageRes = await fetch(`${url}${separator}page=${page}`, {
+                ...options,
+                next: { revalidate: 3600, ...(options.next || {}) },
+            });
+            if (!pageRes.ok) break;
+
+            const pageData = await pageRes.json();
+            if (!pageData || !Array.isArray(pageData.results)) break;
+            items.push(...pageData.results);
+        }
+
+        return items;
     }
 
     return [];

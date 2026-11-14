@@ -47,10 +47,10 @@ export default function FeaturedCitiesCarousel({
                 {/* Navigation Buttons */}
                 <div className="absolute -top-[3.75rem] sm:-top-[3.5rem] right-0 flex gap-1.5 z-20">
                     <CarouselPrevious
-                        className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none"
+                        className="static translate-y-0 size-8 rounded-full border border-[#D2CABC] bg-[#E5DFD4] text-[#1F1E1B] shadow-none hover:bg-[#DBD5C8] hover:border-[#1F1E1B] active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none"
                     />
                     <CarouselNext
-                        className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none"
+                        className="static translate-y-0 size-8 rounded-full border border-[#D2CABC] bg-[#E5DFD4] text-[#1F1E1B] shadow-none hover:bg-[#DBD5C8] hover:border-[#1F1E1B] active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none"
                     />
                 </div>
 
@@ -65,11 +65,11 @@ export default function FeaturedCitiesCarousel({
                                 className="group block select-none h-full"
                             >
                                 {/* Centered Highlighted City Card without Badge or Icon */}
-                                <div className="flex flex-col items-center justify-center text-center p-5 bg-white rounded-2xl border border-slate-200/90 hover:border-black hover:shadow-md transition-all duration-200 min-h-[105px] sm:min-h-[110px] active:scale-[0.98]">
-                                    <h3 className="font-bold text-base sm:text-[17px] text-[#0F172A] leading-tight group-hover:text-black transition-colors truncate max-w-full">
+                                <div className="flex flex-col items-center justify-center text-center p-5 bg-[#E5DFD4] rounded-2xl border border-[#D2CABC] hover:border-[#1F1E1B] hover:shadow-md transition-all duration-200 min-h-[105px] sm:min-h-[110px] active:scale-[0.98]">
+                                    <h3 className="font-bold text-base sm:text-[17px] text-[#1A1916] leading-tight group-hover:text-black transition-colors truncate max-w-full">
                                         {city.name}
                                     </h3>
-                                    <p className="text-xs text-slate-500 mt-1.5 font-medium truncate max-w-full">
+                                    <p className="text-xs text-[#686259] mt-1.5 font-medium truncate max-w-full">
                                         {city.hostel_count ? `${city.hostel_count.toLocaleString()} hostels` : "Explore stays"}
                                     </p>
                                 </div>

@@ -215,22 +215,22 @@ export default function BookingSidebar({
 
     return (
         <div className="lg:self-start lg:sticky lg:top-[120px] hidden lg:block z-10 w-full max-w-[380px] ml-auto">
-            <div className="border border-gray-200 rounded-2xl bg-white shadow-sm overflow-hidden">
+            <div className="border border-[#D2CABC] rounded-2xl bg-[#E5DFD4] shadow-xs overflow-hidden">
                 {/* Price Display */}
                 <div className="p-6 pb-5">
                     <div className="flex items-baseline gap-2 mb-1">
-                        <span className="text-3xl font-extrabold text-black tracking-tight">
+                        <span className="text-3xl font-extrabold text-[#1A1916] tracking-tight">
                             ₹{currentPrice.toLocaleString()}
                         </span>
-                        <span className="text-sm text-gray-800 font-bold">
+                        <span className="text-sm text-[#686259] font-bold">
                             /{priceMode === "monthly" ? "month" : "day"}
                         </span>
                     </div>
 
                     {showDiscount && (
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm text-gray-500 line-through font-medium">₹{originalPrice.toLocaleString()}</span>
-                            <span className="text-[11px] font-bold bg-red-50 text-red-500 px-2 py-0.5 rounded flex items-center gap-1">
+                            <span className="text-sm text-[#686259] line-through font-medium">₹{originalPrice.toLocaleString()}</span>
+                            <span className="text-[11px] font-bold bg-[#DBD5C8] text-[#1F1E1B] px-2 py-0.5 rounded flex items-center gap-1 border border-[#D2CABC]">
                                 <TrendingDown size={10} />
                                 {Math.round(Number(hostel.discount_percentage))}% OFF
                             </span>
@@ -238,14 +238,14 @@ export default function BookingSidebar({
                     )}
 
                     {/* Price Mode Toggle */}
-                    <div className="flex mt-3 bg-gray-100 rounded-lg p-0.5 w-fit">
+                    <div className="flex mt-3 bg-[#DBD5C8] rounded-lg p-0.5 w-fit border border-[#D2CABC]">
                         {(["monthly", "daily"] as const).map((mode) => (
                             <button
                                 key={mode}
                                 onClick={() => setPriceMode(mode)}
                                 className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${priceMode === mode
-                                        ? "bg-white text-black shadow-sm"
-                                        : "text-gray-700 hover:text-black"
+                                        ? "bg-[#E5DFD4] text-[#1A1916] shadow-xs"
+                                        : "text-[#686259] hover:text-[#1A1916]"
                                     }`}
                             >
                                 {mode === "monthly" ? "MONTHLY" : "DAILY"}
@@ -255,25 +255,25 @@ export default function BookingSidebar({
                 </div>
 
                 {/* Interactive Dates/Guests selection */}
-                <div className="border-t border-gray-200">
+                <div className="border-t border-[#D2CABC]">
                     {/* Selected Room Replication */}
-                    <div className="p-3.5 border-b border-gray-200 bg-gray-50/60">
+                    <div className="p-3.5 border-b border-[#D2CABC] bg-[#DBD5C8]/40">
                         <div className="flex items-center justify-between mb-1">
-                            <span className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            <span className="block text-[10px] font-bold text-[#686259] uppercase tracking-wider">
                                 {selectedRoom ? "Selected Room" : "Room Selection"}
                             </span>
                             {selectedRoom && (
                                 <button
                                     type="button"
                                     onClick={() => setSelectedRoom?.(null as any)}
-                                    className="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800 underline cursor-pointer"
+                                    className="text-[10px] font-semibold text-[#1F1E1B] hover:underline cursor-pointer"
                                 >
                                     Reset to Default
                                 </button>
                             )}
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-black">
+                            <span className="text-xs font-bold text-[#1A1916]">
                                 {selectedRoom ? `${selectedRoom.sharing_display} (${selectedRoom.category_display})` : "Standard Room (Default Pricing)"}
                             </span>
                             {selectedRoom && (
@@ -292,46 +292,46 @@ export default function BookingSidebar({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 border-b border-gray-200">
-                        <div className="p-3.5 border-r border-gray-200 hover:bg-gray-50/50 transition-colors">
-                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">Check-in</span>
+                    <div className="grid grid-cols-2 border-b border-[#D2CABC]">
+                        <div className="p-3.5 border-r border-[#D2CABC] hover:bg-[#DBD5C8]/30 transition-colors">
+                            <span className="block text-[10px] font-bold text-[#686259] uppercase tracking-wider mb-1">Check-in</span>
                             <input
                                 type="date"
                                 value={checkIn}
                                 onChange={(e) => setCheckIn(e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
-                                className="text-sm font-bold text-black bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
+                                className="text-sm font-bold text-[#1A1916] bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
                             />
                         </div>
-                        <div className="p-3.5 hover:bg-gray-50/50 transition-colors">
-                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">End date</span>
+                        <div className="p-3.5 hover:bg-[#DBD5C8]/30 transition-colors">
+                            <span className="block text-[10px] font-bold text-[#686259] uppercase tracking-wider mb-1">End date</span>
                             <input
                                 type="date"
                                 value={checkOut}
                                 onChange={(e) => setCheckOut(e.target.value)}
                                 min={checkIn}
-                                className="text-sm font-bold text-black bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
+                                className="text-sm font-bold text-[#1A1916] bg-transparent border-none p-0 focus:ring-0 w-full cursor-pointer appearance-none"
                             />
                         </div>
                     </div>
-                    <div className="p-3.5 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                    <div className="p-3.5 flex items-center justify-between hover:bg-[#DBD5C8]/30 transition-colors">
                         <div>
-                            <span className="block text-[10px] font-bold text-black uppercase tracking-wider mb-1">Guests</span>
-                            <span className="text-sm font-bold text-black">{guests} Guest{guests > 1 ? "s" : ""}</span>
+                            <span className="block text-[10px] font-bold text-[#686259] uppercase tracking-wider mb-1">Guests</span>
+                            <span className="text-sm font-bold text-[#1A1916]">{guests} Guest{guests > 1 ? "s" : ""}</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); setGuests(Math.max(1, guests - 1)); }}
-                                className="w-7 h-7 rounded-full border border-gray-400 flex items-center justify-center hover:border-black transition-colors text-black font-bold text-sm"
+                                className="w-7 h-7 rounded-full border border-[#D2CABC] bg-[#DBD5C8] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] transition-colors text-[#1F1E1B] font-bold text-sm cursor-pointer"
                             >
                                 −
                             </button>
-                            <span className="text-sm font-bold text-black min-w-[1rem] text-center">{guests}</span>
+                            <span className="text-sm font-bold text-[#1A1916] min-w-[1rem] text-center">{guests}</span>
                             <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); setGuests(Math.min(10, guests + 1)); }}
-                                className="w-7 h-7 rounded-full border border-gray-400 flex items-center justify-center hover:border-black transition-colors text-black font-bold text-sm"
+                                className="w-7 h-7 rounded-full border border-[#D2CABC] bg-[#DBD5C8] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] transition-colors text-[#1F1E1B] font-bold text-sm cursor-pointer"
                             >
                                 +
                             </button>
@@ -342,19 +342,19 @@ export default function BookingSidebar({
                 {/* CTA */}
                 <div className="p-5 pt-4">
                     {/* Total Fare Above */}
-                    <div className="mb-4 pb-3 border-b border-gray-100 flex items-center justify-between">
+                    <div className="mb-4 pb-3 border-b border-[#D2CABC] flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-black">Total after taxes</span>
+                            <span className="text-sm font-bold text-[#1A1916]">Total after taxes</span>
                             <button
                                 type="button"
                                 onClick={() => setIsPolicyModalOpen(true)}
-                                className="text-gray-500 hover:text-[#003580] p-0.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                                className="text-[#686259] hover:text-[#1F1E1B] p-0.5 rounded-full hover:bg-[#DBD5C8] transition-colors cursor-pointer"
                                 title="View policies and protection"
                             >
                                 <AlertCircle size={15} />
                             </button>
                         </div>
-                        <span className="text-base font-extrabold text-black">₹{(currentPrice * guests).toLocaleString()}</span>
+                        <span className="text-base font-extrabold text-[#1A1916]">₹{(currentPrice * guests).toLocaleString()}</span>
                     </div>
 
                     <Button
@@ -362,7 +362,7 @@ export default function BookingSidebar({
                         onClick={handleCheckAvailability}
                         disabled={isCheckingAvailability}
                         size="lg"
-                        className="w-full bg-[#003580] hover:bg-[#002244] text-white font-medium text-base h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] border-none cursor-pointer tracking-normal disabled:opacity-85"
+                        className="w-full bg-[#1F1E1B] hover:bg-[#34322D] text-[#EDE8DF] font-medium text-base h-12 rounded-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] border-none cursor-pointer tracking-normal disabled:opacity-85"
                     >
                         {isCheckingAvailability ? (
                             <>
@@ -380,7 +380,7 @@ export default function BookingSidebar({
                             <Button
                                 variant="default"
                                 size="lg"
-                                className="w-full mt-3 bg-[#003580] hover:bg-[#002244] text-white border-none font-semibold h-12 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] text-[15px] shadow-sm"
+                                className="w-full mt-3 bg-[#003580] hover:bg-[#002244] text-white border-none font-semibold h-12 rounded-sm transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] text-[15px] shadow-sm"
                             >
                                 <MessageSquare size={18} className="text-white" />
                                 Contact Owner
@@ -465,7 +465,7 @@ export default function BookingSidebar({
                                 <Button
                                     type="submit"
                                     disabled={isContactSending}
-                                    className="w-full h-12 bg-[#003580] hover:bg-[#002244] text-white font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
+                                    className="w-full h-12 bg-[#003580] hover:bg-[#002244] text-white font-bold rounded-sm shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
                                 >
                                     {isContactSending ? "Sending Inquiry..." : "Submit Inquiry"}
                                 </Button>

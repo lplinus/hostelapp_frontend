@@ -135,7 +135,7 @@ export default function TypeClient({ data }: Props) {
     }, [appliedFilters]);
 
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const itemsPerPage = 6;
+    const itemsPerPage = 9;
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([...data.results]);
     const [isSearching, setIsSearching] = useState(false);

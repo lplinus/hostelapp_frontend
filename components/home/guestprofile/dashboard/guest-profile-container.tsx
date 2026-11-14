@@ -79,12 +79,17 @@ function mapApiBookingToFrontend(api: GuestBookingAPIResponse): GuestTripSummary
         bookingRef: api.booking_reference || api.id.slice(0, 8).toUpperCase(),
         propertyName: api.property_name,
         propertyType: api.booking_type,
+        propertyId: api.property_id || undefined,
+        propertySlug: api.property_slug || undefined,
         roomTitle: api.room_title,
         checkIn: api.check_in || "",
         checkOut: api.check_out || "",
         status: statusMap[api.status] || "pending",
         totalAmount: parseFloat(api.total_price) || 0,
         paymentStatus: api.payment_status,
+        hasReviewed: api.has_reviewed || false,
+        reviewRating: api.review_rating ?? null,
+        reviewComment: api.review_comment ?? null,
     };
 }
 

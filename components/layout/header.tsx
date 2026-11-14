@@ -159,7 +159,7 @@ export default function Header() {
         hasHero && "-mb-16",
         isTransparent
           ? "bg-white/0 border-b border-transparent shadow-none"
-          : "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+          : "bg-[#EDE8DF]/95 backdrop-blur-md border-b border-[#DCD6CB] shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
       )}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between gap-4 relative">

@@ -72,16 +72,16 @@ export function PaymentStep({
             isConfirmed && "opacity-60 pointer-events-none"
         )}>
             {(!isFormValid || !isPhoneVerified) ? (
-                <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
-                    <div className="py-10 px-6 text-center space-y-4 bg-orange-50/40 rounded-xl border border-dashed border-orange-200">
+                <div className="bg-[#E5DFD4] rounded-xl border border-[#D2CABC] p-8 shadow-sm">
+                    <div className="py-10 px-6 text-center space-y-4 bg-[#DBD5C8]/40 rounded-xl border border-dashed border-[#D2CABC]">
                         <div className="flex justify-center">
-                            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
+                            <div className="w-12 h-12 bg-[#DBD5C8] rounded-full flex items-center justify-center text-[#1A1916]">
                                 <CreditCard size={22} />
                             </div>
                         </div>
                         <div className="space-y-1.5">
-                            <h4 className="font-bold text-gray-900">Complete Previous Step</h4>
-                            <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                            <h4 className="font-bold text-[#1A1916]">Complete Previous Step</h4>
+                            <p className="text-xs text-[#686259] max-w-xs mx-auto">
                                 {!isFormValid
                                     ? "Please complete and fix errors in guest details first."
                                     : "Please verify your mobile number in the previous step first."}
@@ -90,7 +90,7 @@ export function PaymentStep({
                         <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-xl font-bold border-orange-200 text-orange-700 hover:bg-orange-100"
+                            className="rounded-lg font-bold border-[#D2CABC] bg-[#EDE8DF] text-[#1A1916] hover:bg-[#DBD5C8]"
                             onClick={() => setStep("details")}
                         >
                             <ChevronLeft size={14} className="mr-1" />
@@ -101,25 +101,25 @@ export function PaymentStep({
             ) : (
                 <>
                     {/* Secure Payment Header */}
-                    <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 mb-6 shadow-sm">
+                    <div className="bg-[#E5DFD4] rounded-xl border border-[#D2CABC] p-6 sm:p-8 mb-6 shadow-sm">
                         <div className="flex items-start gap-4 mb-6">
-                            <div className="w-10 h-10 rounded-xl bg-[#003580]/10 flex items-center justify-center flex-shrink-0">
-                                <Shield size={20} className="text-[#003580]" />
+                            <div className="w-10 h-10 rounded-lg bg-[#DBD5C8] flex items-center justify-center flex-shrink-0 text-[#1F1E1B]">
+                                <Shield size={20} className="text-[#1F1E1B]" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Secure Payment</h2>
+                                <h2 className="text-xl font-bold text-[#1A1916] tracking-tight">Secure Payment</h2>
                                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                                    <span className="flex items-center gap-1 text-xs text-[#003580] font-semibold">
+                                    <span className="flex items-center gap-1 text-xs text-[#1A1916] font-semibold">
                                         <Check size={12} /> Includes all taxes
                                     </span>
-                                    <span className="text-gray-300">•</span>
-                                    <span className="flex items-center gap-1 text-xs text-[#003580] font-semibold">
+                                    <span className="text-[#D2CABC]">•</span>
+                                    <span className="flex items-center gap-1 text-xs text-[#1A1916] font-semibold">
                                         <Check size={12} /> No hidden charges
                                     </span>
                                     {isEmailVerified && (
                                         <>
-                                            <span className="text-gray-300">•</span>
-                                            <span className="flex items-center gap-1 text-xs text-[#003580] font-bold">
+                                            <span className="text-[#D2CABC]">•</span>
+                                            <span className="flex items-center gap-1 text-xs text-[#1A1916] font-bold">
                                                 <CheckCircle2 size={12} /> Email verified
                                             </span>
                                         </>
@@ -129,16 +129,17 @@ export function PaymentStep({
                         </div>
 
                         {/* Select Payment Method */}
-                        <h3 className="text-sm font-bold text-gray-900 mb-4">Select Payment Method</h3>                        <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                        <h3 className="text-sm font-bold text-[#1A1916] mb-4">Select Payment Method</h3>
+                        <div className="grid sm:grid-cols-2 gap-4 mb-6">
                             {/* Pay at Hostel */}
                             <button
                                 className={cn(
-                                    "relative rounded-2xl border-2 p-5 text-left transition-all duration-200",
+                                    "relative rounded-xl border-2 p-5 text-left transition-all duration-200",
                                     "hover:shadow-md",
                                     (bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment) && "opacity-50 pointer-events-none",
                                     paymentMethod === "on_arrival"
-                                        ? "border-[#003580] bg-[#003580]/[0.03]"
-                                        : "border-gray-200 bg-white hover:border-gray-900"
+                                        ? "border-[#1F1E1B] bg-[#DBD5C8]/50"
+                                        : "border-[#D2CABC] bg-[#EDE8DF] hover:border-[#1F1E1B]/50"
                                 )}
                                 disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                                 onClick={() => setPaymentMethod("on_arrival")}
@@ -147,18 +148,18 @@ export function PaymentStep({
                                 <div className="absolute top-4 right-4">
                                     <div className={cn(
                                         "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                                        paymentMethod === "on_arrival" ? "border-[#003580]" : "border-gray-300"
+                                        paymentMethod === "on_arrival" ? "border-[#1F1E1B]" : "border-[#D2CABC]"
                                     )}>
                                         {paymentMethod === "on_arrival" && (
-                                            <div className="w-2.5 h-2.5 rounded-full bg-[#003580]" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[#1F1E1B]" />
                                         )}
                                     </div>
                                 </div>
-                                <div className="w-11 h-11 rounded-xl bg-[#003580]/10 flex items-center justify-center mb-4">
-                                    <Building2 size={20} className="text-[#003580]" />
+                                <div className="w-11 h-11 rounded-lg bg-[#DBD5C8] flex items-center justify-center mb-4 text-[#1F1E1B]">
+                                    <Building2 size={20} className="text-[#1F1E1B]" />
                                 </div>
-                                <p className="font-bold text-gray-900 text-sm mb-1">Pay at Hostel</p>
-                                <p className="text-xs text-gray-500 leading-relaxed">
+                                <p className="font-bold text-[#1A1916] text-sm mb-1">Pay at Hostel</p>
+                                <p className="text-xs text-[#686259] leading-relaxed">
                                     No upfront payment required. Pay during your stay at the reception.
                                 </p>
                             </button>
@@ -166,12 +167,12 @@ export function PaymentStep({
                             {/* Card Payment */}
                             <button
                                 className={cn(
-                                    "relative rounded-2xl border-2 p-5 text-left transition-all duration-200",
+                                    "relative rounded-xl border-2 p-5 text-left transition-all duration-200",
                                     "hover:shadow-md",
                                     (bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment) && "opacity-50 pointer-events-none",
                                     paymentMethod === "online"
-                                        ? "border-[#003580] bg-[#003580]/[0.03]"
-                                        : "border-gray-200 bg-white hover:border-gray-900"
+                                        ? "border-[#1F1E1B] bg-[#DBD5C8]/50"
+                                        : "border-[#D2CABC] bg-[#EDE8DF] hover:border-[#1F1E1B]/50"
                                 )}
                                 disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                                 onClick={() => setPaymentMethod("online")}
@@ -180,31 +181,31 @@ export function PaymentStep({
                                 <div className="absolute top-4 right-4">
                                     <div className={cn(
                                         "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-                                        paymentMethod === "online" ? "border-[#003580]" : "border-gray-300"
+                                        paymentMethod === "online" ? "border-[#1F1E1B]" : "border-[#D2CABC]"
                                     )}>
                                         {paymentMethod === "online" && (
-                                            <div className="w-2.5 h-2.5 rounded-full bg-[#003580]" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[#1F1E1B]" />
                                         )}
                                     </div>
                                 </div>
-                                <div className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center mb-4">
-                                    <CreditCard size={20} className="text-gray-600" />
+                                <div className="w-11 h-11 rounded-lg bg-[#DBD5C8] flex items-center justify-center mb-4 text-[#1F1E1B]">
+                                    <CreditCard size={20} className="text-[#1F1E1B]" />
                                 </div>
-                                <p className="font-bold text-gray-900 text-sm mb-1">Card Payment</p>
-                                <p className="text-xs text-gray-500 leading-relaxed">
+                                <p className="font-bold text-[#1A1916] text-sm mb-1">Card Payment</p>
+                                <p className="text-xs text-[#686259] leading-relaxed">
                                     Securely pay now with Visa, Mastercard, or American Express.
                                 </p>
                             </button>
                         </div>
 
                         {/* Message to Property Owner */}
-                        <div className="mb-5 p-4 rounded-xl border border-gray-200 bg-white">
+                        <div className="mb-5 p-4 rounded-lg border border-[#D2CABC] bg-[#EDE8DF]">
                             <div className="flex items-center justify-between mb-2">
-                                <Label htmlFor="special-request" className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
-                                    <MessageSquareQuote size={15} className="text-[#003580]" />
-                                    Message for Hostel Owner <span className="text-[10px] font-normal lowercase text-gray-500">(optional)</span>
+                                <Label htmlFor="special-request" className="text-xs font-bold text-[#1A1916] uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
+                                    <MessageSquareQuote size={15} className="text-[#1F1E1B]" />
+                                    Message for Hostel Owner <span className="text-[10px] font-normal lowercase text-[#686259]">(optional)</span>
                                 </Label>
-                                <span className="text-[10px] font-semibold text-gray-400">Forwarded to owner</span>
+                                <span className="text-[10px] font-semibold text-[#7A746B]">Forwarded to owner</span>
                             </div>
                             <Textarea
                                 id="special-request"
@@ -220,13 +221,13 @@ export function PaymentStep({
                                 }}
                                 disabled={isConfirmed || bookingMutation.isPending || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                                 placeholder="Add any special requests, estimated arrival time, or notes for the hostel owner..."
-                                className="min-h-[64px] rounded-lg border border-gray-300 hover:border-black bg-white focus:border-emerald-800 focus:ring-[3px] focus:ring-emerald-800/40 focus-visible:border-emerald-800 focus-visible:ring-[3px] focus-visible:ring-emerald-800/40 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 p-3 resize-none transition-all"
+                                className="min-h-[64px] rounded-lg border border-[#D2CABC] hover:border-[#1F1E1B]/50 bg-[#EDE8DF] focus:border-[#1F1E1B] focus:ring-2 focus:ring-[#1F1E1B]/15 text-xs sm:text-sm text-[#1A1916] placeholder:text-[#7A746B] p-3 resize-none transition-all"
                             />
                         </div>
 
                         {/* Confirm Booking Button */}
                         <Button
-                            className="w-full h-14 rounded-2xl text-base font-bold bg-[#003580] hover:bg-[#002244] text-white transition-all shadow-md hover:shadow-lg active:scale-[0.98] mb-4"
+                            className="w-full h-14 rounded-xl text-base font-bold bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] transition-all shadow-md hover:shadow-lg active:scale-[0.98] mb-4"
                             disabled={bookingMutation.isPending || isPaymentVerified || isConfirmed || confirmPropertyPaymentMutation.isPending || isProcessingPayment}
                             onClick={() => {
                                 if (!isEmailVerified) {
@@ -305,11 +306,11 @@ export function PaymentStep({
                         </Button>
 
                         {/* Encryption Notice */}
-                        <div className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-                            <Lock size={18} className="text-gray-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-3 p-4 rounded-xl bg-[#DBD5C8]/50 border border-[#D2CABC]">
+                            <Lock size={18} className="text-[#686259] flex-shrink-0 mt-0.5" />
                             <div>
-                                <p className="font-semibold text-sm text-gray-800">Your connection is encrypted</p>
-                                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                                <p className="font-semibold text-sm text-[#1A1916]">Your connection is encrypted</p>
+                                <p className="text-xs text-[#686259] mt-0.5 leading-relaxed">
                                     We use industry-standard SSL encryption to protect your personal data. Your financial information is never stored on our servers.
                                 </p>
                             </div>
@@ -319,7 +320,7 @@ export function PaymentStep({
                     {/* Back to details link */}
                     <button
                         onClick={() => setStep("details")}
-                        className="text-sm text-gray-500 hover:text-[#003580] font-semibold flex items-center gap-1 transition-colors"
+                        className="text-sm text-[#686259] hover:text-[#1A1916] font-semibold flex items-center gap-1 transition-colors"
                     >
                         <ChevronLeft size={16} />
                         Back to Details

@@ -36,6 +36,8 @@ export interface GuestBookingAPIResponse {
     id: string;
     booking_type: "hostel" | "hotel" | "vacation_rental";
     booking_reference: string;
+    property_id?: string | number | null;
+    property_slug?: string | null;
     property_name: string;
     room_title: string;
     check_in: string | null;
@@ -44,6 +46,9 @@ export interface GuestBookingAPIResponse {
     total_price: string;
     guests_count: number;
     payment_status: string;
+    has_reviewed?: boolean;
+    review_rating?: number | null;
+    review_comment?: string | null;
     created_at: string | null;
 }
 

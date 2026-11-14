@@ -184,6 +184,13 @@ export interface Hotel {
     og_image?: string;
     images?: HotelImage[];
     room_types?: HotelRoomType[];
+    reviews?: Array<{
+        id: number | string;
+        user_name?: string;
+        rating: number;
+        comment: string;
+        created_at: string;
+    }>;
     created_at?: string;
     updated_at?: string;
 }

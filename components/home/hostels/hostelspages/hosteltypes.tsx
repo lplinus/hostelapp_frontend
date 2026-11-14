@@ -92,7 +92,7 @@ export default function HostelTypes({ hostels }: HostelTypesProps) {
     if (!dynamicTypes || dynamicTypes.length === 0 || !hostels || hostels.length === 0) return null;
 
     return (
-        <section className="py-4 sm:py-6 bg-white font-inter">
+        <section className="py-4 sm:py-6 bg-transparent font-inter">
             <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
                 <Carousel opts={{ align: "start", loop: false, dragFree: true, containScroll: "trimSnaps", duration: 28 }} className="w-full">
                     {/* Header */}
@@ -132,8 +132,8 @@ export default function HostelTypes({ hostels }: HostelTypesProps) {
                                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                 </Link>
                                 <div className="flex items-center gap-1.5 shrink-0">
-                                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
-                                    <CarouselNext className="static translate-y-0 size-8 rounded-full border border-neutral-200/90 bg-white text-neutral-800 shadow-none hover:bg-neutral-100 hover:border-neutral-300 hover:text-black active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
+                                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full border border-[#D2CABC] bg-[#E5DFD4] text-[#1F1E1B] shadow-none hover:bg-[#DBD5C8] hover:border-[#1F1E1B] active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
+                                    <CarouselNext className="static translate-y-0 size-8 rounded-full border border-[#D2CABC] bg-[#E5DFD4] text-[#1F1E1B] shadow-none hover:bg-[#DBD5C8] hover:border-[#1F1E1B] active:scale-90 disabled:opacity-25 disabled:pointer-events-none transition-all touch-manipulation select-none" />
                                 </div>
                             </div>
                         </div>
@@ -142,9 +142,9 @@ export default function HostelTypes({ hostels }: HostelTypesProps) {
                     {/* Content Sections */}
                     <div className="relative min-h-[260px]">
                         {isLoading ? (
-                            <div className="h-[260px] w-full flex flex-col items-center justify-center gap-2.5 bg-white rounded-2xl border border-slate-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                                <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-[#312E81] animate-spin" />
-                                <p className="text-xs font-semibold text-slate-700">
+                            <div className="h-[260px] w-full flex flex-col items-center justify-center gap-2.5 bg-[#E5DFD4] rounded-2xl border border-[#D2CABC] shadow-xs">
+                                <div className="w-8 h-8 rounded-full border-2 border-[#D2CABC] border-t-[#1F1E1B] animate-spin" />
+                                <p className="text-xs font-semibold text-[#1A1916]">
                                     Updating hostels...
                                 </p>
                             </div>

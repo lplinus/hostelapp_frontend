@@ -103,7 +103,7 @@ function DashboardSidebarContent() {
 
                 <aside
                     className={cn(
-                        "fixed md:sticky top-0 inset-y-0 left-0 z-50 h-full md:h-screen bg-card border-r flex flex-col transition-all duration-300 ease-in-out w-64 overflow-hidden",
+                        "fixed md:sticky top-0 inset-y-0 left-0 z-50 h-full md:h-screen bg-sidebar border-r border-[#DCD6CB] flex flex-col transition-all duration-300 ease-in-out w-64 overflow-hidden",
                         isOpenMobile ? "translate-x-0 shadow-xl" : "-translate-x-full shadow-none",
                         "md:translate-x-0",
                         isCollapsed && !isOpenMobile && 'md:w-[68px]'

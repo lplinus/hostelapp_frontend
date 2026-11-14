@@ -77,26 +77,26 @@ export function BookingMobileBottomBar({
                             animate={{ y: 0 }}
                             exit={{ y: "100%" }}
                             transition={{ type: "spring", damping: 28, stiffness: 260 }}
-                            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[100] max-h-[85vh] flex flex-col overflow-hidden border-t border-gray-100"
+                            className="fixed bottom-0 left-0 right-0 bg-[#E5DFD4] rounded-t-3xl shadow-2xl z-[100] max-h-[85vh] flex flex-col overflow-hidden border-t border-[#D2CABC]"
                         >
                             {/* Drawer Header */}
-                            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-slate-50/70 shrink-0">
+                            <div className="px-5 py-4 border-b border-[#D2CABC] flex items-center justify-between bg-[#DBD5C8]/40 shrink-0">
                                 <div className="space-y-0.5">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#686259]">
                                             Booking Summary
                                         </span>
-                                        <Badge className="bg-[#003580]/10 text-[#003580] border-[#003580]/20 text-[10px] font-bold px-2 py-0">
+                                        <Badge className="bg-[#DBD5C8] text-[#1A1916] border border-[#D2CABC] text-[10px] font-bold px-2 py-0">
                                             {hostel.name}
                                         </Badge>
                                     </div>
-                                    <p className="text-xs font-semibold text-gray-800">
+                                    <p className="text-xs font-semibold text-[#1A1916]">
                                         {nights} Night{nights > 1 ? "s" : ""} Stay • {form.adults || 1} Guest{Number(form.adults || 1) > 1 ? "s" : ""}
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => setIsDrawerOpen(false)}
-                                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors"
+                                    className="w-8 h-8 rounded-full bg-[#DBD5C8] hover:bg-[#D2CABC] flex items-center justify-center text-[#1A1916] transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
@@ -105,10 +105,10 @@ export function BookingMobileBottomBar({
                             {/* Scrollable Summary Content */}
                             <div className="p-5 space-y-4 overflow-y-auto flex-1">
                                 {/* Booking Dates Selection */}
-                                <div className="grid grid-cols-2 gap-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100">
+                                <div className="grid grid-cols-2 gap-3 p-3 bg-[#EDE8DF] rounded-xl border border-[#D2CABC]">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <Calendar size={12} className="text-[#003580]" />
+                                        <label className="text-[10px] font-bold text-[#686259] uppercase tracking-wider flex items-center gap-1.5">
+                                            <Calendar size={12} className="text-[#1F1E1B]" />
                                             Check-In Date
                                         </label>
                                         <input
@@ -117,12 +117,12 @@ export function BookingMobileBottomBar({
                                             onChange={(e) => setForm && setForm({ ...form, check_in: parseISO(e.target.value) })}
                                             min={format(new Date(), "yyyy-MM-dd")}
                                             disabled={isConfirmed || !setForm}
-                                            className="w-full text-xs font-semibold text-gray-900 bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#003580]"
+                                            className="w-full text-xs font-semibold text-[#1A1916] bg-[#E5DFD4] border border-[#D2CABC] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#1F1E1B]"
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <Calendar size={12} className="text-[#003580]" />
+                                        <label className="text-[10px] font-bold text-[#686259] uppercase tracking-wider flex items-center gap-1.5">
+                                            <Calendar size={12} className="text-[#1F1E1B]" />
                                             Check-Out Date
                                         </label>
                                         <input
@@ -131,14 +131,14 @@ export function BookingMobileBottomBar({
                                             onChange={(e) => setForm && setForm({ ...form, check_out: parseISO(e.target.value) })}
                                             min={format(addDays(form.check_in, 1), "yyyy-MM-dd")}
                                             disabled={isConfirmed || !setForm}
-                                            className="w-full text-xs font-semibold text-gray-900 bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#003580]"
+                                            className="w-full text-xs font-semibold text-[#1A1916] bg-[#E5DFD4] border border-[#D2CABC] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#1F1E1B]"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Room Selection */}
                                 <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    <Label className="text-[10px] font-bold text-[#686259] uppercase tracking-wider">
                                         Selected Room Category
                                     </Label>
                                     <Select
@@ -146,30 +146,30 @@ export function BookingMobileBottomBar({
                                         onValueChange={setSelectedRoomId}
                                         disabled={isConfirmed}
                                     >
-                                        <SelectTrigger className="w-full h-11 px-3 rounded-xl border border-gray-200 bg-gray-50/80 text-sm">
+                                        <SelectTrigger className="w-full h-11 px-3 rounded-xl border border-[#D2CABC] bg-[#EDE8DF] text-sm text-[#1A1916]">
                                             {(() => {
                                                 const currentRoom = selectedRoom || hostel.room_types?.find(r => r.id.toString() === selectedRoomId);
-                                                if (!currentRoom) return <span className="text-gray-400">Choose room</span>;
+                                                if (!currentRoom) return <span className="text-[#7A746B]">Choose room</span>;
                                                 return (
                                                     <div className="flex items-center gap-2 truncate">
                                                         <span className={cn(
                                                             "px-1.5 py-0.5 text-[10px] font-bold rounded uppercase shrink-0",
                                                             currentRoom.room_category === "AC"
-                                                                ? "bg-blue-50 text-[#003580] border border-blue-100"
-                                                                : "bg-slate-100 text-slate-700 border border-slate-200"
+                                                                ? "bg-[#DBD5C8] text-[#1A1916] border border-[#D2CABC]"
+                                                                : "bg-[#DBD5C8]/70 text-[#1A1916] border border-[#D2CABC]"
                                                         )}>
                                                             {currentRoom.room_category || "Standard"}
                                                         </span>
-                                                        <span className="font-semibold text-gray-900 truncate">
+                                                        <span className="font-semibold text-[#1A1916] truncate">
                                                             {currentRoom.sharing_display}
                                                         </span>
                                                     </div>
                                                 );
                                             })()}
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="bg-[#E5DFD4] border border-[#D2CABC] text-[#1A1916]">
                                             {hostel.room_types?.map((room) => (
-                                                <SelectItem key={room.id} value={room.id.toString()}>
+                                                <SelectItem key={room.id} value={room.id.toString()} className="focus:bg-[#DBD5C8] focus:text-[#1A1916] text-[#1A1916]">
                                                     {room.category_display} - {room.sharing_display} (₹{Number(room.base_price).toLocaleString()}/mo)
                                                 </SelectItem>
                                             ))}
@@ -178,33 +178,33 @@ export function BookingMobileBottomBar({
                                 </div>
 
                                 {/* Price Breakdown */}
-                                <div className="p-3.5 bg-gray-50/80 rounded-2xl border border-gray-100 space-y-2 text-xs">
-                                    <div className="flex justify-between text-gray-600">
+                                <div className="p-3.5 bg-[#EDE8DF] rounded-2xl border border-[#D2CABC] space-y-2 text-xs">
+                                    <div className="flex justify-between text-[#686259]">
                                         <span>Base Price</span>
-                                        <span className="font-semibold text-gray-900">₹{totalPrice.toLocaleString()}</span>
+                                        <span className="font-semibold text-[#1A1916]">₹{totalPrice.toLocaleString()}</span>
                                     </div>
-                                    <div className="flex justify-between text-gray-600">
+                                    <div className="flex justify-between text-[#686259]">
                                         <span>Booking &amp; Service Fee</span>
-                                        <span className="font-semibold text-gray-900">₹{bookingFee.toLocaleString()}</span>
+                                        <span className="font-semibold text-[#1A1916]">₹{bookingFee.toLocaleString()}</span>
                                     </div>
                                     {hostel.extra_charges && hostel.extra_charges.length > 0 && (
                                         <>
                                             {hostel.extra_charges.map((charge, i) => (
-                                                <div key={charge.id ?? i} className="flex justify-between text-gray-600">
+                                                <div key={charge.id ?? i} className="flex justify-between text-[#686259]">
                                                     <span className="capitalize">{charge.charge_type.replace('_', ' ')}</span>
-                                                    <span className="font-semibold text-gray-900">₹{Number(charge.amount).toLocaleString()}</span>
+                                                    <span className="font-semibold text-[#1A1916]">₹{Number(charge.amount).toLocaleString()}</span>
                                                 </div>
                                             ))}
                                         </>
                                     )}
-                                    <div className="pt-2 border-t border-gray-200 flex justify-between items-baseline font-bold text-gray-900 text-sm">
+                                    <div className="pt-2 border-t border-[#D2CABC] flex justify-between items-baseline font-bold text-[#1A1916] text-sm">
                                         <span>Total Amount</span>
-                                        <span className="text-base text-[#003580] font-extrabold">₹{finalTotalPrice.toLocaleString()}</span>
+                                        <span className="text-base text-[#1A1916] font-extrabold">₹{finalTotalPrice.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-[#003580] font-medium flex items-center gap-2">
-                                    <ShieldCheck size={16} className="shrink-0" />
+                                <div className="p-3 bg-[#DBD5C8]/50 rounded-xl border border-[#D2CABC] text-[11px] text-[#1A1916] font-medium flex items-center gap-2">
+                                    <ShieldCheck size={16} className="shrink-0 text-[#1F1E1B]" />
                                     <span>Free cancellation up to 24 hours prior to check-in.</span>
                                 </div>
                             </div>
@@ -214,7 +214,7 @@ export function BookingMobileBottomBar({
             </AnimatePresence>
 
             {/* Static / Fixed Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3">
+            <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#EDE8DF]/98 backdrop-blur-md border-t border-[#D2CABC] px-4 py-3 flex items-center justify-between gap-3">
                 {/* Left: Price and Summary Toggle */}
                 <button
                     type="button"
@@ -222,15 +222,15 @@ export function BookingMobileBottomBar({
                     className="flex flex-col text-left group min-w-0"
                 >
                     <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-extrabold text-slate-900 tracking-tight">
+                        <span className="text-lg font-extrabold text-[#1A1916] tracking-tight">
                             ₹{finalTotalPrice.toLocaleString()}
                         </span>
-                        <span className="text-[10px] font-bold uppercase text-gray-500 tracking-wider">
+                        <span className="text-[10px] font-bold uppercase text-[#686259] tracking-wider">
                             total
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-[11px] font-semibold text-[#003580]">
+                    <div className="flex items-center gap-1 text-[11px] font-semibold text-[#686259] group-hover:text-[#1A1916]">
                         <span className="truncate max-w-[150px]">
                             {selectedRoom?.sharing_display || "View breakdown"}
                         </span>
@@ -248,7 +248,7 @@ export function BookingMobileBottomBar({
                         <Button
                             type="button"
                             onClick={handleNext}
-                            className="bg-[#003580] hover:bg-[#002244] text-white font-bold text-sm h-12 px-5 sm:px-6 rounded-xl shadow-md active:scale-95 transition-all"
+                            className="bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] font-bold text-sm h-12 px-5 sm:px-6 rounded-xl shadow-md active:scale-95 transition-all"
                         >
                             {form.booking_type === "visit" ? "Request Visit" : "Continue to Pay"}
                         </Button>
@@ -259,7 +259,7 @@ export function BookingMobileBottomBar({
                             type="button"
                             onClick={handleConfirmPayment}
                             disabled={isProcessingPayment}
-                            className="bg-[#003580] hover:bg-[#002244] text-white font-bold text-sm h-12 px-5 sm:px-6 rounded-xl shadow-md active:scale-95 transition-all"
+                            className="bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] font-bold text-sm h-12 px-5 sm:px-6 rounded-xl shadow-md active:scale-95 transition-all"
                         >
                             {isProcessingPayment ? (
                                 "Processing..."

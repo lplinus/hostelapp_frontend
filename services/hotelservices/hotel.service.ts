@@ -1,6 +1,7 @@
 import { authApiClient } from "@/lib/api/auth-client";
 import { apiClient } from "@/lib/api/client";
 import { tokenManager } from "@/lib/token";
+import { collectAllPages } from "@/lib/api/paginated";
 import type {
     Hotel,
     HotelRoomType,
@@ -18,10 +19,13 @@ export const getMyHotels = async (): Promise<Hotel[]> => {
 export const getHotels = async (
     params?: Record<string, string | number | boolean | undefined>
 ): Promise<Hotel[]> => {
-    const data = await apiClient.get<any>("/api/hotels/properties/", { params });
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.results)) return data.results;
-    return [];
+    // Backend is paginated: read every page so filters, sorting and the
+    // 9-per-page grid work across all hotels, not just the first page.
+    return collectAllPages<Hotel>((page, pageSize) =>
+        apiClient.get<any>("/api/hotels/properties/", {
+            params: { page_size: pageSize, ...params, page },
+        })
+    );
 };
 
 export const getHotelBySlug = async (

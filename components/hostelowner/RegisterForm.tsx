@@ -110,7 +110,7 @@ export default function RegisterForm() {
   ];
 
   return (
-    <div className="w-full min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:flex-row overflow-x-hidden lg:overflow-hidden bg-white">
+    <div className="w-full min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:flex-row overflow-x-hidden lg:overflow-hidden bg-[#EDE8DF]">
       {/* ───── LEFT PANEL — Hero Image (Compact & Stable) ───── */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -128,12 +128,12 @@ export default function RegisterForm() {
         />
 
         {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/85 via-indigo-900/65 to-[#0F172A]/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1F1E1B]/90 via-[#2A2824]/85 to-[#141311]/90" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
         {/* Subtle decorative orbs */}
-        <div className="absolute top-20 left-16 w-60 h-60 rounded-full bg-indigo-500/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-32 right-20 w-52 h-52 rounded-full bg-purple-500/15 blur-3xl pointer-events-none" />
+        <div className="absolute top-20 left-16 w-60 h-60 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-32 right-20 w-52 h-52 rounded-full bg-stone-500/10 blur-3xl pointer-events-none" />
 
         {/* Content on top */}
         <div className="relative z-10 flex flex-col justify-between p-8 xl:p-10 h-full w-full">
@@ -152,13 +152,13 @@ export default function RegisterForm() {
             <h1 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
               Your Complete
               <br />
-              <span className="bg-gradient-to-r from-amber-300 via-orange-200 to-amber-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-amber-200 via-stone-200 to-amber-200 bg-clip-text text-transparent">
                 Hostel Living
               </span>
               <br />
               Experience.
             </h1>
-            <p className="text-slate-200 text-sm font-medium leading-relaxed">
+            <p className="text-stone-200 text-sm font-medium leading-relaxed">
               Join verified student and working-professional accommodations with hassle-free booking.
             </p>
           </div>
@@ -169,9 +169,9 @@ export default function RegisterForm() {
               {features.map((f) => (
                 <div
                   key={f.label}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white text-xs font-semibold"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/20 text-white text-xs font-semibold"
                 >
-                  <f.icon className="w-3.5 h-3.5 text-amber-300" />
+                  <f.icon className="w-3.5 h-3.5 text-amber-200" />
                   {f.label}
                 </div>
               ))}
@@ -183,13 +183,13 @@ export default function RegisterForm() {
                 {["A", "B", "C"].map((char) => (
                   <div
                     key={char}
-                    className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 border-2 border-white/40 flex items-center justify-center text-white text-[11px] font-bold shadow-sm"
+                    className="w-7 h-7 rounded-full bg-[#1F1E1B] border-2 border-[#D2CABC] flex items-center justify-center text-[#EDE8DF] text-[11px] font-bold shadow-sm"
                   >
                     {char}
                   </div>
                 ))}
               </div>
-              <span className="text-slate-200 text-xs font-medium">
+              <span className="text-stone-200 text-xs font-medium">
                 Trusted by 1,000+ residents & owners
               </span>
             </div>
@@ -198,12 +198,12 @@ export default function RegisterForm() {
       </motion.div>
 
       {/* ───── RIGHT PANEL — Registration Form (Scrollable & Stable) ───── */}
-      <div className="w-full lg:flex-1 h-full overflow-y-auto flex flex-col items-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/20 px-4 sm:px-6 py-6 sm:py-8 lg:py-8 relative">
+      <div className="w-full lg:flex-1 h-full overflow-y-auto flex flex-col items-center bg-[#EDE8DF] px-4 sm:px-6 py-6 sm:py-8 lg:py-8 relative">
         {/* Subtle decorative grid */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
           style={{
-            backgroundImage: `radial-gradient(circle, #6366f1 1px, transparent 1px)`,
+            backgroundImage: `radial-gradient(circle, #1F1E1B 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
           }}
         />
@@ -213,7 +213,7 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => router.push("/home")}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#1E1B4B] transition-colors mb-3 group cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#686259] hover:text-[#1F1E1B] transition-colors mb-3 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             Back to Home
@@ -221,18 +221,18 @@ export default function RegisterForm() {
 
           {/* Mobile-only brand badge */}
           <div className="lg:hidden flex items-center gap-2 mb-4 justify-center">
-            <div className="w-8 h-8 rounded-xl bg-[#1E1B4B] flex items-center justify-center shadow-sm">
-              <span className="text-sm font-bold text-white">H</span>
+            <div className="w-8 h-8 rounded-xl bg-[#1F1E1B] flex items-center justify-center shadow-sm">
+              <span className="text-sm font-bold text-[#EDE8DF]">H</span>
             </div>
-            <span className="text-base font-bold text-slate-900 tracking-tight">Hostel In</span>
+            <span className="text-base font-bold text-[#1A1916] tracking-tight">Hostel In</span>
           </div>
 
           {/* Header */}
           <div className="mb-3.5">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A1916] tracking-tight">
               Create Account
             </h2>
-            <p className="text-slate-600 font-medium text-xs sm:text-sm mt-0.5">
+            <p className="text-[#686259] font-medium text-xs sm:text-sm mt-0.5">
               Join Hostel In and start exploring hostels
             </p>
           </div>
@@ -242,11 +242,7 @@ export default function RegisterForm() {
 
             {/* Role Selection */}
             <div className="space-y-1.5">
-              <Label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 ml-0.5">I am a...</Label>
-              {/* 
-                Vendor and Service roles are temporarily disabled from registration.
-                Only Guest and Hostel Owner self-registration is enabled.
-              */}
+              <Label className="text-[11px] font-bold uppercase tracking-wider text-[#686259] ml-0.5">I am a...</Label>
               <RadioGroup
                 value={role}
                 onValueChange={(value: any) => setRole(value)}
@@ -256,10 +252,10 @@ export default function RegisterForm() {
                   <RadioGroupItem value="guest" id="guest" className="peer sr-only" />
                   <Label
                     htmlFor="guest"
-                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
+                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1F1E1B] peer-data-[state=checked]:bg-[#DBD5C8] hover:bg-[#DBD5C8]/50 bg-[#E5DFD4] cursor-pointer transition-all duration-150 h-full border-[#D2CABC]"
                   >
-                    <User className={cn("w-4 h-4 mb-1 transition-colors", role === "guest" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Guest</span>
+                    <User className={cn("w-4 h-4 mb-1 transition-colors", role === "guest" ? "text-[#1F1E1B]" : "text-[#686259]")} />
+                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "guest" ? "text-[#1F1E1B] font-bold" : "text-[#686259] font-semibold")}>Guest</span>
                   </Label>
                 </div>
 
@@ -267,49 +263,25 @@ export default function RegisterForm() {
                   <RadioGroupItem value="hostel_owner" id="hostel_owner" className="peer sr-only" />
                   <Label
                     htmlFor="hostel_owner"
-                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
+                    className="flex flex-col items-center justify-center py-2 px-2 rounded-lg border-2 peer-data-[state=checked]:border-[#1F1E1B] peer-data-[state=checked]:bg-[#DBD5C8] hover:bg-[#DBD5C8]/50 bg-[#E5DFD4] cursor-pointer transition-all duration-150 h-full border-[#D2CABC]"
                   >
-                    <Building2 className={cn("w-4 h-4 mb-1 transition-colors", role === "hostel_owner" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Owner</span>
+                    <Building2 className={cn("w-4 h-4 mb-1 transition-colors", role === "hostel_owner" ? "text-[#1F1E1B]" : "text-[#686259]")} />
+                    <span className={cn("text-xs tracking-tight text-center leading-tight transition-colors", role === "hostel_owner" ? "text-[#1F1E1B] font-bold" : "text-[#686259] font-semibold")}>Owner</span>
                   </Label>
                 </div>
-
-                {/* 
-                <div className="relative">
-                  <RadioGroupItem value="vendor" id="vendor" className="peer sr-only" />
-                  <Label
-                    htmlFor="vendor"
-                    className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
-                  >
-                    <Zap className={cn("w-3.5 h-3.5 mb-0.5 transition-colors", role === "vendor" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-[10px] tracking-tight text-center leading-tight transition-colors", role === "vendor" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Vendor</span>
-                  </Label>
-                </div>
-
-                <div className="relative">
-                  <RadioGroupItem value="service" id="service" className="peer sr-only" />
-                  <Label
-                    htmlFor="service"
-                    className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border-2 peer-data-[state=checked]:border-[#1E1B4B] peer-data-[state=checked]:bg-indigo-50/70 hover:bg-slate-50 cursor-pointer transition-all duration-150 h-full border-slate-200"
-                  >
-                    <Wrench className={cn("w-3.5 h-3.5 mb-0.5 transition-colors", role === "service" ? "text-[#1E1B4B]" : "text-slate-500")} />
-                    <span className={cn("text-[10px] tracking-tight text-center leading-tight transition-colors", role === "service" ? "text-[#1E1B4B] font-bold" : "text-slate-700 font-semibold")}>Service</span>
-                  </Label>
-                </div>
-                */}
               </RadioGroup>
             </div>
 
             {/* Name */}
             <div className="space-y-1">
-              <Label className="text-xs font-bold text-slate-900">Full Name</Label>
+              <Label className="text-xs font-bold text-[#1A1916]">Full Name</Label>
               <div className="relative group">
-                <User className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-[#1E1B4B]" />
+                <User className="absolute left-3.5 top-3 w-4 h-4 text-[#7A746B] transition-colors group-focus-within:text-[#1F1E1B]" />
                 <Input
                   type="text"
                   placeholder="Your full name"
                   className={cn(
-                    "pl-10 h-10 rounded-xl bg-white border-slate-300 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all hover:border-black focus:border-black focus-visible:border-black focus:ring-1 focus:ring-black focus-visible:ring-1 focus-visible:ring-black",
+                    "pl-10 h-10 rounded-xl bg-[#E5DFD4] border-[#D2CABC] text-sm font-medium text-[#1A1916] placeholder:text-[#7A746B] transition-all hover:border-[#1F1E1B] focus:border-[#1F1E1B] focus-visible:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B] focus-visible:ring-1 focus-visible:ring-[#1F1E1B]",
                     errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-100 focus-visible:border-red-500 focus-visible:ring-red-100 hover:border-red-500" : ""
                   )}
                   value={name}
@@ -324,14 +296,14 @@ export default function RegisterForm() {
 
             {/* Email */}
             <div className="space-y-1">
-              <Label className="text-xs font-bold text-slate-900">Email Address</Label>
+              <Label className="text-xs font-bold text-[#1A1916]">Email Address</Label>
               <div className="relative group">
-                <Mail className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-[#1E1B4B]" />
+                <Mail className="absolute left-3.5 top-3 w-4 h-4 text-[#7A746B] transition-colors group-focus-within:text-[#1F1E1B]" />
                 <Input
                   type="email"
                   placeholder="you@example.com"
                   className={cn(
-                    "pl-10 h-10 rounded-xl bg-white border-slate-300 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all hover:border-black focus:border-black focus-visible:border-black focus:ring-1 focus:ring-black focus-visible:ring-1 focus-visible:ring-black",
+                    "pl-10 h-10 rounded-xl bg-[#E5DFD4] border-[#D2CABC] text-sm font-medium text-[#1A1916] placeholder:text-[#7A746B] transition-all hover:border-[#1F1E1B] focus:border-[#1F1E1B] focus-visible:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B] focus-visible:ring-1 focus-visible:ring-[#1F1E1B]",
                     errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100 focus-visible:border-red-500 focus-visible:ring-red-100 hover:border-red-500" : ""
                   )}
                   value={email}
@@ -346,14 +318,14 @@ export default function RegisterForm() {
 
             {/* Password */}
             <div className="space-y-1">
-              <Label className="text-xs font-bold text-slate-900">Password</Label>
+              <Label className="text-xs font-bold text-[#1A1916]">Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-[#1E1B4B]" />
+                <Lock className="absolute left-3.5 top-3 w-4 h-4 text-[#7A746B] transition-colors group-focus-within:text-[#1F1E1B]" />
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Create password (min 8 chars)"
                   className={cn(
-                    "pl-10 pr-10 h-10 rounded-xl bg-white border-slate-300 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all hover:border-black focus:border-black focus-visible:border-black focus:ring-1 focus:ring-black focus-visible:ring-1 focus-visible:ring-black",
+                    "pl-10 pr-10 h-10 rounded-xl bg-[#E5DFD4] border-[#D2CABC] text-sm font-medium text-[#1A1916] placeholder:text-[#7A746B] transition-all hover:border-[#1F1E1B] focus:border-[#1F1E1B] focus-visible:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B] focus-visible:ring-1 focus-visible:ring-[#1F1E1B]",
                     errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100 focus-visible:border-red-500 focus-visible:ring-red-100 hover:border-red-500" : ""
                   )}
                   value={password}
@@ -365,7 +337,7 @@ export default function RegisterForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                  className="absolute right-3.5 top-2.5 text-[#7A746B] hover:text-[#1A1916] transition-colors cursor-pointer"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -379,14 +351,14 @@ export default function RegisterForm() {
 
             {/* Confirm Password */}
             <div className="space-y-1">
-              <Label className="text-xs font-bold text-slate-900">Confirm Password</Label>
+              <Label className="text-xs font-bold text-[#1A1916]">Confirm Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-3.5 top-3 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-[#1E1B4B]" />
+                <Lock className="absolute left-3.5 top-3 w-4 h-4 text-[#7A746B] transition-colors group-focus-within:text-[#1F1E1B]" />
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm password"
                   className={cn(
-                    "pl-10 pr-10 h-10 rounded-xl bg-white border-slate-300 text-sm font-medium text-slate-900 placeholder:text-slate-400 transition-all hover:border-black focus:border-black focus-visible:border-black focus:ring-1 focus:ring-black focus-visible:ring-1 focus-visible:ring-black",
+                    "pl-10 pr-10 h-10 rounded-xl bg-[#E5DFD4] border-[#D2CABC] text-sm font-medium text-[#1A1916] placeholder:text-[#7A746B] transition-all hover:border-[#1F1E1B] focus:border-[#1F1E1B] focus-visible:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B] focus-visible:ring-1 focus-visible:ring-[#1F1E1B]",
                     errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-100 focus-visible:border-red-500 focus-visible:ring-red-100 hover:border-red-500" : ""
                   )}
                   value={confirmPassword}
@@ -400,7 +372,7 @@ export default function RegisterForm() {
                   onClick={() =>
                     setShowConfirmPassword(!showConfirmPassword)
                   }
-                  className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                  className="absolute right-3.5 top-2.5 text-[#7A746B] hover:text-[#1A1916] transition-colors cursor-pointer"
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -416,7 +388,7 @@ export default function RegisterForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-10.5 rounded-xl bg-[#1E1B4B] hover:bg-[#312E81] active:bg-[#1E1B4B] text-white font-bold text-sm shadow-md shadow-indigo-950/20 transition-all duration-200 mt-1.5 cursor-pointer"
+              className="w-full h-10.5 rounded-xl bg-[#1F1E1B] hover:bg-[#34322D] active:bg-[#1F1E1B] text-[#EDE8DF] font-bold text-sm shadow-md shadow-black/10 transition-all duration-200 mt-1.5 cursor-pointer"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -426,20 +398,20 @@ export default function RegisterForm() {
             </Button>
           </form>
 
-          <Separator className="my-3.5 bg-slate-200" />
+          <Separator className="my-3.5 bg-[#D2CABC]" />
 
-          <p className="text-center text-xs sm:text-sm font-medium text-slate-700">
+          <p className="text-center text-xs sm:text-sm font-medium text-[#686259]">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-[#1E1B4B] font-bold hover:underline cursor-pointer transition-colors ml-1"
+              className="text-[#1F1E1B] font-bold hover:underline cursor-pointer transition-colors ml-1"
             >
               Login
             </Link>
           </p>
 
           {/* Footer badge */}
-          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-medium text-slate-500">
+          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#686259]">
             <Shield className="w-3.5 h-3.5" />
             <span>Secured with 256-bit SSL encryption</span>
           </div>

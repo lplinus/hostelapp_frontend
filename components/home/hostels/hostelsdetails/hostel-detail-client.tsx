@@ -17,6 +17,7 @@ import HostelDescription from "./detail/HostelDescription";
 import HostelAmenities from "./detail/HostelAmenities";
 import HostelRooms from "./detail/HostelRooms";
 import HostelLocation from "./detail/HostelLocation";
+import HostelRatings from "./detail/HostelRatings";
 import HostelReviews from "./detail/HostelReviews";
 import BookingSidebar from "./detail/BookingSidebar";
 import MobileBookingBar from "./detail/MobileBookingBar";
@@ -145,6 +146,17 @@ export default function HostelDetailClient({ hostel }: Props) {
 
                         <HostelAmenities amenities={hostel.amenities} />
 
+                        {/* 1. Hostel Ratings & Quality Scores */}
+                        <HostelRatings
+                            ratingAvg={currentHostel.rating_avg}
+                            ratingCount={currentHostel.rating_count}
+                            foodRating={currentHostel.food_rating_avg}
+                            roomRating={currentHostel.room_rating_avg}
+                            hostelRating={currentHostel.hostel_rating_avg}
+                            hostelName={hostel.name}
+                        />
+
+                        {/* 2. What Guests Say (User Reviews) */}
                         <HostelReviews
                             hostelId={hostel.id}
                             reviews={currentHostel.reviews}

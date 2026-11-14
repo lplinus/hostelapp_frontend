@@ -40,7 +40,7 @@ export default async function BookingPage({ params, searchParams }: Props) {
     }
 
     return (
-        <div className="bg-white min-h-screen">
+        <div className="bg-[#EDE8DF] min-h-screen">
             <RecaptchaWrapper>
                 <BookingContainer
                     hostel={hostel}

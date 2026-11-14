@@ -24,8 +24,10 @@ import {
     Car,
     Waves,
     Loader2,
-    XCircle
+    XCircle,
+    Grid
 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Hotel, HotelRoomType, HotelBooking } from "@/types/hotel.types";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
@@ -39,6 +41,8 @@ import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfile } from "@/services/user.service";
+import HotelRatings from "../hotelsreviews/HotelRatings";
+import HotelReviews from "../hotelsreviews/HotelReviews";
 
 interface HotelDetailClientProps {
     readonly hotel: Hotel;
@@ -52,6 +56,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
     const [highlightBooking, setHighlightBooking] = useState(false);
 
     // Reservation Checkout Modal States
+    const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [checkInDate, setCheckInDate] = useState<string>(() => new Date().toISOString().split("T")[0]);
@@ -433,9 +438,12 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                 </div>
 
                 {/* 3. PHOTO GALLERY GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 h-auto md:h-[420px] rounded-2xl overflow-hidden">
+                <div className="relative grid grid-cols-1 md:grid-cols-12 gap-3 h-auto md:h-[420px] rounded-2xl overflow-hidden">
                     {/* Hero Left Photo */}
-                    <div className="md:col-span-8 relative h-72 md:h-full bg-slate-200 overflow-hidden">
+                    <div
+                        onClick={() => setIsGalleryModalOpen(true)}
+                        className="md:col-span-8 relative h-72 md:h-full bg-slate-200 overflow-hidden cursor-pointer group"
+                    >
                         {primaryImg?.image ? (
                             <Image
                                 src={primaryImg.image}
@@ -460,7 +468,8 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                             return (
                                 <div
                                     key={idx}
-                                    className="relative h-32 md:h-[202px] bg-slate-200 overflow-hidden"
+                                    onClick={() => setIsGalleryModalOpen(true)}
+                                    className="relative h-32 md:h-[202px] bg-slate-200 overflow-hidden cursor-pointer group"
                                 >
                                     {currentSecondary?.image ? (
                                         <Image
@@ -480,6 +489,18 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                             );
                         })}
                     </div>
+
+                    {/* Right below corner: Symbol & Button to see all images */}
+                    {images.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={() => setIsGalleryModalOpen(true)}
+                            className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-md bg-white/95 hover:bg-white text-slate-900 text-xs font-bold shadow-lg border border-slate-200/90 backdrop-blur-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer z-10"
+                        >
+                            <Grid size={13} className="text-slate-800 shrink-0" />
+                            <span>Show all {images.length} photos</span>
+                        </button>
+                    )}
                 </div>
 
                 {/* 4. KEY HIGHLIGHTS BAR */}
@@ -517,10 +538,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                 {/* 5. MAIN CONTENT & STICKY BOOKING CARD */}
                 <div className="grid grid-cols-12 gap-8 relative">
                     {/* LEFT COLUMN: Description, Rooms, Amenities, Address */}
-                    <div className="col-span-12 lg:col-span-8 space-y-8">
+                    <div className="col-span-12 lg:col-span-8 space-y-10">
                         {/* Description */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-3 shadow-xs">
-                            <h2 className="text-lg font-bold text-slate-950 tracking-tight">
+                        <div className="space-y-3">
+                            <h2 className="text-xl font-bold text-slate-950 tracking-tight">
                                 About {hotel.name}
                             </h2>
                             <p className="text-sm text-slate-800 leading-relaxed font-normal whitespace-pre-line">
@@ -529,12 +550,12 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                         </div>
 
                         {/* Room Types & Categories */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-xs">
+                        <div className="border-t border-slate-200/80 pt-8 space-y-4">
                             <div>
-                                <h2 className="text-lg font-bold text-slate-950 tracking-tight">
+                                <h2 className="text-xl font-bold text-slate-950 tracking-tight">
                                     Available Suites & Room Configurations
                                 </h2>
-                                <p className="text-xs text-slate-700 font-medium">
+                                <p className="text-xs text-slate-600 font-medium mt-0.5">
                                     Select your preferred room type to reserve your stay
                                 </p>
                             </div>
@@ -546,77 +567,82 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                         return (
                                             <div
                                                 key={room.id}
-                                                className={`p-4 rounded-xl border transition-all ${
+                                                className={`p-3.5 sm:px-4 sm:py-3 rounded-xl border transition-all duration-200 ${
                                                     isSelected
-                                                        ? "border-[#312E81] bg-indigo-50/40 ring-1 ring-[#312E81]"
-                                                        : "border-slate-200 bg-white"
+                                                        ? "border-[#312E81] bg-indigo-50/40 ring-1 ring-[#312E81] shadow-xs"
+                                                        : "border-slate-200 bg-white hover:border-slate-300"
                                                 }`}
                                             >
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                    <div className="space-y-1.5">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                                                    {/* Left: Suite Details & Specs */}
+                                                    <div className="space-y-1 min-w-0">
                                                         <div className="flex flex-wrap items-center gap-2">
-                                                            <h3 className="font-bold text-slate-950 text-base capitalize">
+                                                            <h3 className="font-bold text-slate-900 text-sm sm:text-base capitalize">
                                                                 {room.name || room.category_display}
                                                             </h3>
-                                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-800">
+                                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                                                                 {room.category_display || room.room_category}
                                                             </span>
                                                             {(room.is_available && (room.rooms_available === undefined || room.rooms_available > 0)) ? (
-                                                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                                                    <CheckCircle2 size={12} className="text-emerald-600" />
+                                                                <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                                                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
                                                                     Available
                                                                 </span>
                                                             ) : (
-                                                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
-                                                                    <XCircle size={12} className="text-rose-600" />
+                                                                <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                                                                    <XCircle size={12} className="text-rose-600 shrink-0" />
                                                                     Sold Out
                                                                 </span>
                                                             )}
                                                         </div>
 
-                                                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-700 font-medium">
-                                                            <span className="inline-flex items-center gap-1 font-semibold text-slate-900">
-                                                                <BedDouble size={14} className="text-[#312E81]" />
+                                                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-600">
+                                                            <span className="inline-flex items-center gap-1 font-medium text-slate-800">
+                                                                <BedDouble size={13} className="text-[#312E81]" />
                                                                 {room.bed_display || "1 King Bed"}
                                                             </span>
-                                                            <span>•</span>
+                                                            <span className="text-slate-300">•</span>
                                                             <span className="inline-flex items-center gap-1">
-                                                                <Users size={13} />
-                                                                Max {room.max_adults} Adults
-                                                                {room.max_children ? `, ${room.max_children} Child` : ""}
+                                                                <Users size={12} className="text-slate-500" />
+                                                                Max {room.max_adults} Adults{room.max_children ? `, ${room.max_children} Child` : ""}
                                                             </span>
                                                             {room.room_size_sqft && (
                                                                 <>
-                                                                    <span>•</span>
+                                                                    <span className="text-slate-300">•</span>
                                                                     <span className="inline-flex items-center gap-1">
-                                                                        <Maximize2 size={13} />
+                                                                        <Maximize2 size={12} className="text-slate-500" />
                                                                         {room.room_size_sqft} sq ft
                                                                     </span>
                                                                 </>
                                                             )}
+                                                            {room.includes_breakfast && (
+                                                                <>
+                                                                    <span className="text-slate-300">•</span>
+                                                                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50/80 px-1.5 py-0.5 rounded border border-emerald-200/60">
+                                                                        <Coffee size={11} className="text-emerald-600" />
+                                                                        Breakfast Included
+                                                                    </span>
+                                                                </>
+                                                            )}
                                                         </div>
-
-                                                        {room.includes_breakfast && (
-                                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#312E81]">
-                                                                <Coffee size={12} className="text-[#312E81]" />
-                                                                Complimentary Breakfast Included
-                                                            </span>
-                                                        )}
                                                     </div>
 
-                                                    <div className="flex sm:flex-col items-end justify-between sm:justify-center gap-2 shrink-0">
-                                                        <div className="text-right">
-                                                            <span className="text-xl font-bold text-[#1E1B4B] block leading-tight">
-                                                                ₹{parseFloat(room.base_price_per_night || room.price_per_night || "0").toLocaleString("en-IN")}
-                                                            </span>
-                                                            <span className="text-[11px] text-slate-700 font-medium">per night + taxes</span>
+                                                    {/* Right: Price & Action Button side-by-side (Taxes removed from list) */}
+                                                    <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                                                        <div className="text-left sm:text-right">
+                                                            <div className="flex items-baseline sm:justify-end gap-1">
+                                                                <span className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                                                                    ₹{parseFloat(room.base_price_per_night || room.price_per_night || "0").toLocaleString("en-IN")}
+                                                                </span>
+                                                                <span className="text-[11px] text-slate-500 font-normal">/ night</span>
+                                                            </div>
                                                         </div>
 
                                                         <button
                                                             onClick={() => handleSelectAndBookRoom(room)}
-                                                            className={`px-4 py-2 rounded-sm text-xs font-medium uppercase tracking-wider transition-all active:scale-95 ${
+                                                            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-sm text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 ${
                                                                 isSelected
-                                                                    ? "bg-[#312E81] text-white shadow-xs ring-2 ring-[#312E81]/30"
+                                                                    ? "bg-[#312E81] text-white shadow-xs ring-2 ring-[#312E81]/25"
                                                                     : "border border-[#312E81] bg-white text-[#312E81] hover:bg-[#312E81] hover:text-white"
                                                             }`}
                                                         >
@@ -636,8 +662,8 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                         </div>
 
                         {/* Amenities */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-xs">
-                            <h2 className="text-lg font-bold text-slate-950 tracking-tight flex items-center gap-2">
+                        <div className="border-t border-slate-200/80 pt-8 space-y-4">
+                            <h2 className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2">
                                 <Sparkles size={18} className="text-[#312E81]" />
                                 Amenities & Hotel Services
                             </h2>
@@ -661,9 +687,9 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                         </div>
 
                         {/* Location & Property Address (Directly below Amenities) */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-xs">
+                        <div className="border-t border-slate-200/80 pt-8 space-y-4">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-slate-950 tracking-tight flex items-center gap-2">
+                                <h2 className="text-xl font-bold text-slate-950 tracking-tight flex items-center gap-2">
                                     <MapPin size={18} className="text-[#312E81]" />
                                     Property Location & Address
                                 </h2>
@@ -707,26 +733,42 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                 </div>
                             </div>
                         </div>
+
+                        {/* 1. Guest Ratings & Scores Overview */}
+                        <HotelRatings
+                            ratingAvg={Number(hotel.rating_avg) || 0}
+                            ratingCount={hotel.rating_count || 0}
+                            hotelName={hotel.name}
+                        />
+
+                        {/* 2. What Guests Say (Verified User Reviews) */}
+                        <HotelReviews
+                            hotelId={hotel.id}
+                            hotelName={hotel.name}
+                            reviews={hotel.reviews}
+                            ratingAvg={Number(hotel.rating_avg) || 0}
+                            ratingCount={hotel.rating_count || 0}
+                        />
                     </div>
 
                     {/* RIGHT COLUMN: Sticky Reservation Card */}
                     <div className="col-span-12 lg:col-span-4 lg:self-start lg:sticky lg:top-[124px] z-20 w-full max-w-[380px] ml-auto">
                         <div
                             id="hotel-booking-card"
-                            className={`bg-white rounded-2xl border transition-all duration-300 p-6 shadow-sm space-y-5 ${
+                            className={`bg-[#E5DFD4] rounded-2xl border transition-all duration-300 p-6 shadow-xs space-y-5 ${
                                 highlightBooking
-                                    ? "border-[#312E81] ring-2 ring-[#312E81]/30 shadow-md"
-                                    : "border-slate-200"
+                                    ? "border-[#1F1E1B] ring-2 ring-[#1F1E1B]/20 shadow-md"
+                                    : "border-[#D2CABC]"
                             }`}
                         >
-                            <div className="flex items-baseline justify-between pb-3 border-b border-slate-100">
+                            <div className="flex items-baseline justify-between pb-3 border-b border-[#D2CABC]">
                                 <div>
-                                    <span className="text-2xl font-bold text-[#1E1B4B]">
+                                    <span className="text-2xl font-bold text-[#1A1916]">
                                         ₹{currentPriceNum.toLocaleString("en-IN")}
                                     </span>
-                                    <span className="text-xs text-slate-700 font-semibold"> / night</span>
+                                    <span className="text-xs text-[#686259] font-semibold"> / night</span>
                                 </div>
-                                <span className="text-xs font-bold text-[#312E81] bg-indigo-50 border border-indigo-200/80 px-2.5 py-0.5 rounded-md">
+                                <span className="text-xs font-bold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2.5 py-0.5 rounded-md">
                                     Best Rate Guaranteed
                                 </span>
                             </div>
@@ -734,10 +776,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                             {/* Booking Controls */}
                             <div className="space-y-3">
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-900 block mb-1">
+                                    <label className="text-xs font-semibold text-[#1A1916] block mb-1">
                                         Selected Suite
                                     </label>
-                                    <div className="p-2.5 rounded-xl border border-indigo-200/90 bg-indigo-50/50 text-xs font-semibold text-[#1E1B4B] flex items-center justify-between">
+                                    <div className="p-2.5 rounded-xl border border-[#D2CABC] bg-[#DBD5C8]/40 text-xs font-semibold text-[#1A1916] flex items-center justify-between">
                                         <span>{selectedRoom?.category_display || selectedRoom?.name || "Standard Luxury Suite"}</span>
                                         {selectedRoom && (
                                             (selectedRoom.is_available && (selectedRoom.rooms_available === undefined || selectedRoom.rooms_available > 0)) ? (
@@ -757,12 +799,12 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
 
                                 {/* Stay Dates Selection */}
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-900 block mb-1">
+                                    <label className="text-xs font-semibold text-[#1A1916] block mb-1">
                                         Stay Dates
                                     </label>
-                                    <div className="border border-slate-200 rounded-xl overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-slate-200 text-xs grid grid-cols-2 bg-slate-50/50">
+                                    <div className="border border-[#D2CABC] rounded-xl overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-[#D2CABC] text-xs grid grid-cols-2 bg-[#DBD5C8]/30">
                                         <div className="p-2.5">
-                                            <label className="text-[10px] uppercase font-bold text-slate-700 block mb-0.5">
+                                            <label className="text-[10px] uppercase font-bold text-[#686259] block mb-0.5">
                                                 Check-In
                                             </label>
                                             <input
@@ -779,11 +821,11 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                                         setCheckOutDate(next.toISOString().split("T")[0]);
                                                     }
                                                 }}
-                                                className="w-full font-bold text-slate-950 bg-transparent focus:outline-none cursor-pointer text-xs"
+                                                className="w-full font-bold text-[#1A1916] bg-transparent focus:outline-none cursor-pointer text-xs"
                                             />
                                         </div>
                                         <div className="p-2.5">
-                                            <label className="text-[10px] uppercase font-bold text-slate-700 block mb-0.5">
+                                            <label className="text-[10px] uppercase font-bold text-[#686259] block mb-0.5">
                                                 Check-Out
                                             </label>
                                             <input
@@ -795,29 +837,29 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                                     if (!newOut) return;
                                                     setCheckOutDate(newOut);
                                                 }}
-                                                className="w-full font-bold text-slate-950 bg-transparent focus:outline-none cursor-pointer text-xs"
+                                                className="w-full font-bold text-[#1A1916] bg-transparent focus:outline-none cursor-pointer text-xs"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-900 block mb-1">
+                                    <label className="text-xs font-semibold text-[#1A1916] block mb-1">
                                         Duration of Stay
                                     </label>
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => handleAdjustNights(-1)}
-                                            className="w-9 h-9 rounded-lg border border-slate-300 text-[#312E81] font-bold bg-white hover:bg-indigo-50 hover:border-[#312E81] flex items-center justify-center text-sm transition-colors"
+                                            className="w-9 h-9 rounded-lg border border-[#D2CABC] text-[#1F1E1B] font-bold bg-[#DBD5C8] hover:bg-[#1F1E1B] hover:text-[#EDE8DF] flex items-center justify-center text-sm transition-colors cursor-pointer"
                                         >
                                             -
                                         </button>
-                                        <div className="flex-1 text-center py-2 border border-slate-200 rounded-lg text-xs font-bold bg-slate-50 text-slate-950">
+                                        <div className="flex-1 text-center py-2 border border-[#D2CABC] rounded-lg text-xs font-bold bg-[#E5DFD4] text-[#1A1916]">
                                             {nights} {nights === 1 ? "Night" : "Nights"}
                                         </div>
                                         <button
                                             onClick={() => handleAdjustNights(1)}
-                                            className="w-9 h-9 rounded-lg border border-slate-300 text-[#312E81] font-bold bg-white hover:bg-indigo-50 hover:border-[#312E81] flex items-center justify-center text-sm transition-colors"
+                                            className="w-9 h-9 rounded-lg border border-[#D2CABC] text-[#1F1E1B] font-bold bg-[#DBD5C8] hover:bg-[#1F1E1B] hover:text-[#EDE8DF] flex items-center justify-center text-sm transition-colors cursor-pointer"
                                         >
                                             +
                                         </button>
@@ -826,18 +868,18 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                             </div>
 
                             {/* Price Breakdown */}
-                            <div className="space-y-2 pt-3 border-t border-slate-100 text-xs text-slate-700">
+                            <div className="space-y-2 pt-3 border-t border-[#D2CABC] text-xs text-[#686259]">
                                 <div className="flex justify-between">
-                                    <span className="font-medium text-slate-800">₹{currentPriceNum.toLocaleString("en-IN")} × {nights} night(s)</span>
-                                    <span className="font-bold text-slate-950">₹{subtotal.toLocaleString("en-IN")}</span>
+                                    <span className="font-medium text-[#686259]">₹{currentPriceNum.toLocaleString("en-IN")} × {nights} night(s)</span>
+                                    <span className="font-bold text-[#1A1916]">₹{subtotal.toLocaleString("en-IN")}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="font-medium text-slate-800">Estimated Taxes & Service (12%)</span>
-                                    <span className="font-bold text-slate-950">₹{taxes.toLocaleString("en-IN")}</span>
+                                    <span className="font-medium text-[#686259]">Estimated Taxes & Service (12%)</span>
+                                    <span className="font-bold text-[#1A1916]">₹{taxes.toLocaleString("en-IN")}</span>
                                 </div>
-                                <div className="flex justify-between pt-2 border-t border-slate-200 text-sm font-bold text-[#1E1B4B]">
+                                <div className="flex justify-between pt-2 border-t border-[#D2CABC] text-sm font-bold text-[#1A1916]">
                                     <span>Total Payable</span>
-                                    <span className="text-base font-extrabold text-[#1E1B4B]">₹{totalAmount.toLocaleString("en-IN")}</span>
+                                    <span className="text-base font-extrabold text-[#1A1916]">₹{totalAmount.toLocaleString("en-IN")}</span>
                                 </div>
                             </div>
 
@@ -845,11 +887,11 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                             <button
                                 onClick={handleBookNow}
                                 disabled={isCheckingAvailability}
-                                className="w-full py-3.5 rounded-sm bg-[#312E81] hover:bg-[#1E1B4B] text-white text-sm font-medium tracking-normal transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85"
+                                className="w-full py-3.5 rounded-sm bg-[#1F1E1B] hover:bg-[#34322D] text-[#EDE8DF] text-sm font-medium tracking-normal transition-all shadow-xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85"
                             >
                                 {isCheckingAvailability ? (
                                     <>
-                                        <Loader2 size={16} className="animate-spin text-white" />
+                                        <Loader2 size={16} className="animate-spin text-[#EDE8DF]" />
                                         <span>Checking Availability...</span>
                                     </>
                                 ) : (
@@ -857,7 +899,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                 )}
                             </button>
 
-                            <p className="text-[11px] text-slate-600 text-center font-medium leading-relaxed">
+                            <p className="text-[11px] text-[#686259] text-center font-medium leading-relaxed">
                                 No instant cancellation penalty for free cancellation tiers. Digital invoice sent upon check-in.
                             </p>
                         </div>
@@ -933,6 +975,47 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                 title="Checking Suite Availability"
                 subtitle={`Verifying live room inventory at ${hotel.name}...`}
             />
+
+            {/* 8. FULL-SCREEN GALLERY LIGHTBOX - RECTANGULAR WITH LESS SOFT CORNERS & BIGGER SIZE */}
+            <Dialog open={isGalleryModalOpen} onOpenChange={setIsGalleryModalOpen}>
+                <DialogContent className="max-w-5xl w-[95vw] sm:w-[94vw] md:w-[92vw] lg:w-full max-h-[90vh] sm:max-h-[88vh] p-0 gap-0 overflow-hidden rounded-md sm:rounded-lg border border-slate-200 shadow-2xl flex flex-col bg-white no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                    {/* Fixed Modal Header */}
+                    <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 shrink-0 pr-12 sm:pr-14 bg-white/95 backdrop-blur-xs">
+                        <DialogTitle className="text-sm sm:text-base font-bold text-slate-950 flex items-center gap-2 sm:gap-2.5 min-w-0">
+                            <span className="truncate">{hotel.name} Photo Gallery</span>
+                            <span className="text-[10px] sm:text-[11px] font-bold text-[#312E81] bg-indigo-50 border border-indigo-200/80 px-2 sm:px-2.5 py-0.5 rounded shrink-0">
+                                {images.length} {images.length === 1 ? "Photo" : "Photos"}
+                            </span>
+                        </DialogTitle>
+                    </div>
+
+                    {/* Smooth Scrollable Gallery - Zero Visible Scrollbar */}
+                    <div className="overflow-y-auto scroll-smooth overscroll-contain touch-pan-y px-3.5 sm:px-6 py-3.5 sm:py-5 flex-1 no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            {images.map((img, i) => (
+                                <div
+                                    key={img.id || i}
+                                    className="group relative aspect-[16/10] rounded-md overflow-hidden bg-slate-100 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                                >
+                                    <Image
+                                        src={img.image}
+                                        alt={img.caption || `${hotel.name} Photo ${i + 1}`}
+                                        fill
+                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 450px"
+                                        className="object-cover"
+                                        unoptimized={isExternalImage(img.image)}
+                                    />
+                                    {img.caption && (
+                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-2.5 sm:p-3 text-white text-xs font-medium">
+                                            {img.caption}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

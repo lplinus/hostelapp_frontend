@@ -40,7 +40,7 @@ export default async function FeaturedCities() {
   if (!cities?.length) return null;
 
   return (
-    <section className="py-4 sm:py-6 bg-[#F8FAFC] font-inter">
+    <section className="py-4 sm:py-6 bg-transparent font-inter">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 sm:mb-5">
           <div>

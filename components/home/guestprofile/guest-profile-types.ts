@@ -36,6 +36,8 @@ export interface GuestTripSummary {
     bookingRef: string;
     propertyName: string;
     propertyType: "hostel" | "hotel" | "vacation_rental";
+    propertyId?: string | number;
+    propertySlug?: string;
     roomTitle?: string;
     location?: string;
     checkIn: string;
@@ -44,4 +46,7 @@ export interface GuestTripSummary {
     totalAmount: number;
     paymentStatus?: string;
     thumbnailUrl?: string;
+    hasReviewed?: boolean;
+    reviewRating?: number | null;
+    reviewComment?: string | null;
 }

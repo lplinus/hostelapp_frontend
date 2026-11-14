@@ -51,37 +51,37 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #F8FAFC;
-  --foreground: #1E1B4B;
-  --card: #FFFFFF;
-  --card-foreground: #1E1B4B;
-  --popover: #FFFFFF;
-  --popover-foreground: #1E1B4B;
-  --primary: #312E81;
-  --primary-foreground: #F8FAFC;
-  --secondary: #64748B;
-  --secondary-foreground: #FFFFFF;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #10B981;
-  --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #10B981;
-  --chart-1: #312E81;
-  --chart-2: #64748B;
-  --chart-3: #10B981;
-  --chart-4: #F1F5F9;
-  --chart-5: #E2E8F0;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #1E1B4B;
-  --sidebar-primary: #312E81;
-  --sidebar-primary-foreground: #F8FAFC;
-  --sidebar-accent: #F1F5F9;
-  --sidebar-accent-foreground: #1E1B4B;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #10B981;
+  --background: #EDE8DF;
+  --foreground: #1A1916;
+  --card: #E5DFD4;
+  --card-foreground: #1A1916;
+  --popover: #E5DFD4;
+  --popover-foreground: #1A1916;
+  --primary: #1F1E1B;
+  --primary-foreground: #EDE8DF;
+  --secondary: #6E685E;
+  --secondary-foreground: #EDE8DF;
+  --muted: #DBD5C8;
+  --muted-foreground: #6E685E;
+  --accent: #1F1E1B;
+  --accent-foreground: #EDE8DF;
+  --destructive: #DC2626;
+  --border: #D2CABC;
+  --input: #D2CABC;
+  --ring: #1F1E1B;
+  --chart-1: #1F1E1B;
+  --chart-2: #6E685E;
+  --chart-3: #8C8477;
+  --chart-4: #DBD5C8;
+  --chart-5: #D2CABC;
+  --sidebar: #E1DBD0;
+  --sidebar-foreground: #1A1916;
+  --sidebar-primary: #1F1E1B;
+  --sidebar-primary-foreground: #EDE8DF;
+  --sidebar-accent: #DBD5C8;
+  --sidebar-accent-foreground: #1A1916;
+  --sidebar-border: #D2CABC;
+  --sidebar-ring: #1F1E1B;
 }
 
 .dark {
@@ -150,4 +150,129 @@ iframe[src*="razorpay"],
 div[class*="razorpay"] {
   pointer-events: auto !important;
   z-index: 2147483647 !important;
+}
+
+/* ==========================================================================
+   Sleek, Classic & Minimal Palette (Warm Architectural Stone Canvas)
+   Seamlessly mingles cards, sidebars, headers, and backgrounds - ZERO WHITE PATCHES
+   ========================================================================== */
+
+body,
+main,
+.bg-background,
+.bg-slate-50,
+.bg-slate-50\/60,
+.bg-slate-50\/70,
+.bg-slate-50\/80,
+.bg-gray-50,
+.bg-muted\/30,
+.bg-muted\/40,
+.bg-muted\/20,
+.bg-\[\#F8FAFC\] {
+  background-color: #EDE8DF !important;
+}
+
+/* Card & elevated surfaces: Seamlessly mingles with #EDE8DF (Warm Sculpted Stone) */
+.bg-card,
+.bg-white,
+.bg-white\/95,
+.bg-white\/90,
+.bg-white\/85,
+.bg-white\/80 {
+  background-color: #E5DFD4 !important;
+}
+
+/* Sidebar surface: Grounded architectural linen tone that flows into #EDE8DF */
+.bg-sidebar {
+  background-color: #E1DBD0 !important;
+}
+
+/* Mingle borders with soft limestone */
+.border-slate-200,
+.border-slate-200\/90,
+.border-slate-200\/80,
+.border-slate-100,
+.border-slate-100\/80,
+.border-gray-200,
+.border-gray-100,
+.border-border,
+.border-border\/60 {
+  border-color: #D2CABC !important;
+}
+
+/* Subtle muted backgrounds, chips, and inner container fills */
+.bg-muted,
+.bg-muted\/50,
+.bg-slate-100,
+.bg-gray-100,
+.bg-blue-50,
+.bg-blue-50\/80,
+.bg-blue-50\/60,
+.bg-blue-100,
+.bg-indigo-50,
+.bg-indigo-50\/80 {
+  background-color: #DBD5C8 !important;
+}
+
+/* Primary brand button & element replacement */
+.bg-\[\#312E81\],
+.bg-\[\#003580\] {
+  background-color: #1F1E1B !important;
+}
+
+.hover\:bg-\[\#1E1B4B\]:hover,
+.hover\:bg-\[\#002244\]:hover,
+.hover\:bg-\[\#312E81\]:hover {
+  background-color: #34322D !important;
+}
+
+.text-\[\#312E81\],
+.text-\[\#003580\],
+.text-\[\#1E1B4B\] {
+  color: #1F1E1B !important;
+}
+
+.hover\:text-\[\#312E81\]:hover,
+.hover\:text-\[\#1E1B4B\]:hover,
+.hover\:text-\[\#003580\]:hover {
+  color: #34322D !important;
+}
+
+.border-\[\#312E81\],
+.border-\[\#003580\],
+.border-\[\#1E1B4B\] {
+  border-color: #1F1E1B !important;
+}
+
+.hover\:border-\[\#312E81\]:hover,
+.hover\:border-\[\#1E1B4B\]:hover {
+  border-color: #34322D !important;
+}
+
+.focus\:border-\[\#312E81\]:focus,
+.focus\:border-\[\#1E1B4B\]:focus {
+  border-color: #1F1E1B !important;
+}
+
+.focus\:ring-\[\#312E81\]:focus,
+.ring-\[\#312E81\] {
+  --tw-ring-color: #1F1E1B !important;
+}
+
+/* Remap stray dashboard blue/indigo to the cohesive warm espresso palette */
+.text-blue-600,
+.text-blue-700,
+.text-blue-800,
+.text-indigo-600,
+.text-indigo-700,
+.text-indigo-800 {
+  color: #1F1E1B !important;
+}
+
+.border-blue-100,
+.border-blue-200,
+.border-blue-300,
+.border-indigo-100,
+.border-indigo-200 {
+  border-color: #D2CABC !important;
 }

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function VerifyEmailPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-100 px-6">
+        <main className="min-h-screen flex items-center justify-center bg-[#EDE8DF] px-6">
             <Suspense fallback={null}>
                 <VerificationForm />
             </Suspense>

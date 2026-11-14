@@ -23,10 +23,10 @@ export default function RecentBookings() {
         .slice(0, 3);
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex flex-col h-full">
+        <div className="bg-[#E5DFD4] p-6 rounded-xl shadow-xs border border-[#D2CABC] flex flex-col h-full">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-base text-foreground">Recent Bookings</h3>
-                <Link href="/bookings" className="text-xs font-semibold text-primary hover:underline transition-colors">
+                <h3 className="font-bold text-base text-[#1A1916]">Recent Bookings</h3>
+                <Link href="/bookings" className="text-xs font-semibold text-[#1F1E1B] hover:underline transition-colors">
                     View All
                 </Link>
             </div>
@@ -35,22 +35,22 @@ export default function RecentBookings() {
                 {isLoading && (
                     <div className="space-y-3">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-16 bg-muted/40 rounded-xl animate-pulse" />
+                            <div key={i} className="h-16 bg-[#DBD5C8] rounded-xl animate-pulse" />
                         ))}
                     </div>
                 )}
                 {!isLoading && recentBookings.length === 0 && (
                     <div className="h-full flex flex-col items-center justify-center text-center py-8">
-                        <div className="w-12 h-12 bg-muted/50 rounded-full flex items-center justify-center mb-3">
+                        <div className="w-12 h-12 bg-[#DBD5C8] rounded-full flex items-center justify-center mb-3">
                             <span className="text-2xl">📅</span>
                         </div>
-                        <p className="text-sm text-muted-foreground font-medium">No recent bookings</p>
+                        <p className="text-sm text-[#686259] font-medium">No recent bookings</p>
                     </div>
                 )}
                 {!isLoading && recentBookings.length > 0 && recentBookings.map((booking) => (
                     <div
                         key={booking.id}
-                        className="flex justify-between items-center group p-3.5 rounded-xl hover:bg-muted/40 transition-all border border-border/60 hover:border-border"
+                        className="flex justify-between items-center group p-3.5 rounded-xl hover:bg-[#DBD5C8]/60 transition-all border border-[#D2CABC]/60 hover:border-[#D2CABC]"
                     >
                         <div className="min-w-0">
                             <p className="font-semibold text-sm text-foreground truncate">

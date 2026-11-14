@@ -30,7 +30,8 @@ import {
     Building,
     FileText,
     Receipt,
-    Loader2
+    Loader2,
+    Grid
 } from "lucide-react";
 import type { VacationRental, VacationRentalBooking } from "@/types/vacationrental.types";
 import { createVacationRentalBooking, checkVacationRentalAvailability } from "@/services/vacanatinalrentalservices/vacationrental.service";
@@ -45,6 +46,8 @@ import { EmailOtpModal } from "@/components/home/booking/steps/EmailOtpModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfile } from "@/services/user.service";
+import VacationRentalRatings from "../vacanationalreviews/VacationRentalRatings";
+import VacationRentalReviews from "../vacanationalreviews/VacationRentalReviews";
 import {
     Dialog,
     DialogContent,
@@ -415,13 +418,11 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#1E1B4B] text-white uppercase tracking-wider">
-                                <Palmtree size={12} className="text-amber-300" />
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-slate-100 text-slate-800 border border-slate-200/90 shadow-2xs">
                                 {rental.category_display || rental.category || "Entire Place"}
                             </span>
                             {rental.is_superhost && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-amber-500 text-white uppercase tracking-wider">
-                                    <Sparkles size={12} />
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs">
                                     Superhost
                                 </span>
                             )}
@@ -450,16 +451,22 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 </div>
             </div>
 
-            {/* 3. AIRBNB-GRADE 5-PHOTO MASONRY GALLERY */}
+            {/* 3. PHOTO GALLERY GRID - UNIFIED 420PX LUXURY SCALE MATCHING HOTELS & HOSTELS */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-2.5 rounded-2xl overflow-hidden max-h-[460px] bg-slate-100 relative">
-                    {/* Featured Large Left Image */}
+                <div className="relative grid grid-cols-1 md:grid-cols-12 gap-3 h-auto md:h-[420px] rounded-2xl overflow-hidden bg-slate-100">
+                    {/* Main Hero Photo (Left) */}
                     <div
                         onClick={() => {
                             setActiveGalleryIndex(0);
                             setIsGalleryModalOpen(true);
                         }}
-                        className="md:col-span-2 relative h-[320px] md:h-full cursor-pointer overflow-hidden group"
+                        className={`${
+                            images.length === 1
+                                ? "md:col-span-12"
+                                : images.length === 2
+                                ? "md:col-span-6"
+                                : "md:col-span-8"
+                        } relative h-72 md:h-full bg-slate-200 overflow-hidden cursor-pointer group`}
                     >
                         {primaryImg?.image ? (
                             <Image
@@ -467,46 +474,79 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                 alt={primaryImg.caption || rental.title}
                                 fill
                                 priority
-                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 66vw"
+                                className="object-cover object-center"
                                 unoptimized={isExternalImage(primaryImg.image)}
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-slate-200 text-slate-400">
+                            <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
                                 <Palmtree size={32} />
                             </div>
                         )}
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                     </div>
 
-                    {/* 4 Supporting Grid Images */}
-                    <div className="hidden md:grid col-span-2 grid-cols-2 gap-2.5 h-full">
-                        {images.slice(1, 5).map((img, idx) => (
-                            <div
-                                key={img.id || idx}
-                                onClick={() => {
-                                    setActiveGalleryIndex(idx + 1);
-                                    setIsGalleryModalOpen(true);
-                                }}
-                                className="relative h-[225px] cursor-pointer overflow-hidden group"
-                            >
-                                <Image
-                                    src={img.image}
-                                    alt={img.caption || `Photo ${idx + 2}`}
-                                    fill
-                                    className="object-cover"
-                                    unoptimized={isExternalImage(img.image)}
-                                />
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                            </div>
-                        ))}
-                    </div>
+                    {/* Supporting Photos (Right) */}
+                    {images.length === 2 ? (
+                        <div
+                            onClick={() => {
+                                setActiveGalleryIndex(1);
+                                setIsGalleryModalOpen(true);
+                            }}
+                            className="hidden md:block md:col-span-6 relative h-full bg-slate-200 overflow-hidden cursor-pointer group"
+                        >
+                            <Image
+                                src={images[1].image}
+                                alt={images[1].caption || `${rental.title} Photo 2`}
+                                fill
+                                sizes="50vw"
+                                className="object-cover object-center"
+                                unoptimized={isExternalImage(images[1].image)}
+                            />
+                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                        </div>
+                    ) : images.length > 2 ? (
+                        <div className="hidden md:grid md:col-span-4 grid-cols-2 gap-3 h-full">
+                            {Array.from({ length: 4 }).map((_, idx) => {
+                                const currentImg = images[idx + 1] || images[idx % (images.length - 1) + 1] || images[0];
+                                return (
+                                    <div
+                                        key={idx}
+                                        onClick={() => {
+                                            setActiveGalleryIndex(images[idx + 1] ? idx + 1 : 0);
+                                            setIsGalleryModalOpen(true);
+                                        }}
+                                        className="relative h-[202px] bg-slate-200 overflow-hidden cursor-pointer group"
+                                    >
+                                        {currentImg?.image ? (
+                                            <Image
+                                                src={currentImg.image}
+                                                alt={currentImg.caption || `${rental.title} Photo ${idx + 2}`}
+                                                fill
+                                                sizes="25vw"
+                                                className="object-cover object-center"
+                                                unoptimized={isExternalImage(currentImg.image)}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400 text-[11px] p-2 text-center">
+                                                <span>Property View</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : null}
 
                     {/* "Show All Photos" Button */}
                     {images.length > 0 && (
                         <button
+                            type="button"
                             onClick={() => setIsGalleryModalOpen(true)}
-                            className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-white/95 hover:bg-white text-slate-900 text-xs font-bold shadow-lg border border-slate-200 backdrop-blur-md flex items-center gap-2 transition-transform active:scale-95"
+                            className="absolute bottom-4 right-4 px-3.5 py-2 rounded-md bg-white/95 hover:bg-white text-slate-900 text-xs font-bold shadow-lg border border-slate-200/90 backdrop-blur-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer z-10"
                         >
+                            <Grid size={13} className="text-slate-800 shrink-0" />
                             <span>Show all {images.length} photos</span>
                         </button>
                     )}
@@ -517,12 +557,12 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 xl:gap-10 items-start">
                     {/* LEFT COLUMN: Property Highlights, Host, Description, Specs & Rules */}
-                    <div className="min-w-0 space-y-8">
+                    <div className="min-w-0 space-y-10">
                         {/* Host Overview */}
-                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
+                        <div className="space-y-4">
                             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                                 <div>
-                                    <h2 className="text-lg font-bold text-slate-950">
+                                    <h2 className="text-xl font-bold text-slate-950 tracking-tight">
                                         Entire {rental.category_display || "Home"} hosted by {rental.host_name || "Superhost"}
                                     </h2>
                                     <p className="text-xs text-slate-700 mt-0.5 font-medium">
@@ -575,16 +615,16 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                         </div>
 
                         {/* Description */}
-                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                            <h3 className="text-base font-bold text-slate-950">About this place</h3>
+                        <div className="border-t border-slate-200/80 pt-8 space-y-3">
+                            <h3 className="text-xl font-bold text-slate-950 tracking-tight">About this place</h3>
                             <p className="text-sm text-slate-800 leading-relaxed font-normal whitespace-pre-line">
                                 {rental.description}
                             </p>
                         </div>
 
                         {/* Sleeping Arrangements */}
-                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
-                            <h3 className="text-base font-bold text-slate-950">Where you'll sleep</h3>
+                        <div className="border-t border-slate-200/80 pt-8 space-y-4">
+                            <h3 className="text-xl font-bold text-slate-950 tracking-tight">Where you'll sleep</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {Array.from({ length: rental.bedrooms }).map((_, i) => (
                                     <div
@@ -602,8 +642,8 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                         </div>
 
                         {/* Amenities Grid */}
-                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
-                            <h3 className="text-base font-bold text-slate-950">What this place offers</h3>
+                        <div className="border-t border-slate-200/80 pt-8 space-y-4">
+                            <h3 className="text-xl font-bold text-slate-950 tracking-tight">What this place offers</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs text-slate-800">
                                 {rental.amenities_list && rental.amenities_list.length > 0 ? (
                                     rental.amenities_list.map((am) => (
@@ -622,8 +662,8 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                         </div>
 
                         {/* House Rules & Policies */}
-                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                            <h3 className="text-base font-bold text-slate-950">House Rules &amp; Check-In</h3>
+                        <div className="border-t border-slate-200/80 pt-8 space-y-3">
+                            <h3 className="text-xl font-bold text-slate-950 tracking-tight">House Rules &amp; Check-In</h3>
                             <div className="grid grid-cols-2 gap-3 text-xs text-slate-700">
                                 <div>
                                     <span className="text-[10px] uppercase font-bold text-slate-700 block">Check-in</span>
@@ -647,32 +687,48 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                 </div>
                             </div>
                         </div>
+
+                        {/* 1. Guest Ratings & Scores Overview */}
+                        <VacationRentalRatings
+                            ratingAvg={Number(rental.rating_avg) || 0}
+                            ratingCount={rental.rating_count || 0}
+                            rentalTitle={rental.title}
+                        />
+
+                        {/* 2. What Guests Say (Verified User Reviews) */}
+                        <VacationRentalReviews
+                            rentalId={rental.id}
+                            rentalTitle={rental.title}
+                            reviews={rental.reviews}
+                            ratingAvg={Number(rental.rating_avg) || 0}
+                            ratingCount={rental.rating_count || 0}
+                        />
                     </div>
 
                     {/* RIGHT COLUMN: Sticky Reservation Folio Card (Compact 380px like Hostel) */}
                     <div className="lg:self-start lg:sticky lg:top-[120px] hidden lg:block z-20 w-full max-w-[380px] ml-auto">
-                        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                        <div className="bg-[#E5DFD4] rounded-2xl border border-[#D2CABC] shadow-xs p-6 space-y-4">
                             {/* Nightly Tariff Header */}
-                            <div className="flex items-baseline justify-between border-b border-slate-100 pb-4">
+                            <div className="flex items-baseline justify-between border-b border-[#D2CABC] pb-4">
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-2xl font-bold text-[#1E1B4B] tracking-tight">
+                                    <span className="text-2xl font-bold text-[#1A1916] tracking-tight">
                                         ₹{parseFloat(rental.price_per_night || "0").toLocaleString("en-IN")}
                                     </span>
-                                    <span className="text-xs text-slate-700 font-semibold">/ night</span>
+                                    <span className="text-xs text-[#686259] font-semibold">/ night</span>
                                 </div>
 
-                                <div className="flex items-center gap-1 text-xs font-bold text-slate-950">
+                                <div className="flex items-center gap-1 text-xs font-bold text-[#1A1916]">
                                     <Star size={13} className="fill-amber-400 text-amber-400" />
                                     <span>{rating.toFixed(2)}</span>
-                                    <span className="text-slate-600 font-medium">({reviewCount})</span>
+                                    <span className="text-[#686259] font-medium">({reviewCount})</span>
                                 </div>
                             </div>
 
                             {/* Booking Schedule Inputs */}
-                            <div className="border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-200 text-xs">
-                                <div className="grid grid-cols-2 divide-x divide-slate-200">
-                                    <div className="p-3 bg-slate-50/50">
-                                        <label className="text-[10px] uppercase font-bold text-slate-700 block">
+                            <div className="border border-[#D2CABC] rounded-xl overflow-hidden divide-y divide-[#D2CABC] text-xs bg-[#DBD5C8]/40">
+                                <div className="grid grid-cols-2 divide-x divide-[#D2CABC]">
+                                    <div className="p-3 bg-[#DBD5C8]/30">
+                                        <label className="text-[10px] uppercase font-bold text-[#686259] block">
                                             Check-In
                                         </label>
                                         <input
@@ -689,11 +745,11 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                                     setCheckOutDate(next.toISOString().split("T")[0]);
                                                 }
                                             }}
-                                            className="w-full font-bold text-slate-950 bg-transparent focus:outline-none pt-0.5 cursor-pointer"
+                                            className="w-full font-bold text-[#1A1916] bg-transparent focus:outline-none pt-0.5 cursor-pointer"
                                         />
                                     </div>
-                                    <div className="p-3 bg-slate-50/50">
-                                        <label className="text-[10px] uppercase font-bold text-slate-700 block">
+                                    <div className="p-3 bg-[#DBD5C8]/30">
+                                        <label className="text-[10px] uppercase font-bold text-[#686259] block">
                                             Check-Out
                                         </label>
                                         <input
@@ -701,49 +757,49 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                             value={checkOutDate}
                                             min={checkInDate}
                                             onChange={(e) => setCheckOutDate(e.target.value)}
-                                            className="w-full font-bold text-slate-950 bg-transparent focus:outline-none pt-0.5 cursor-pointer"
+                                            className="w-full font-bold text-[#1A1916] bg-transparent focus:outline-none pt-0.5 cursor-pointer"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Headcount Selector */}
-                                <div className="p-3 bg-slate-50/50 space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-slate-700 block">
+                                <div className="p-3 bg-[#DBD5C8]/30 space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-[#686259] block">
                                         Guests Headcount
                                     </label>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div className="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-200">
-                                            <span className="text-xs text-slate-800 font-medium">Adults:</span>
-                                            <div className="flex items-center gap-2 font-bold text-slate-950">
+                                        <div className="flex items-center justify-between bg-[#E5DFD4] px-3 py-1.5 rounded-lg border border-[#D2CABC]">
+                                            <span className="text-xs text-[#686259] font-medium">Adults:</span>
+                                            <div className="flex items-center gap-2 font-bold text-[#1A1916]">
                                                 <button
                                                     onClick={() => setAdults(Math.max(1, adults - 1))}
-                                                    className="w-5 h-5 rounded-md bg-slate-100 text-[#312E81] flex items-center justify-center hover:bg-indigo-50 font-bold"
+                                                    className="w-5 h-5 rounded-md bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] font-bold transition-colors cursor-pointer"
                                                 >
                                                     -
                                                 </button>
                                                 <span>{adults}</span>
                                                 <button
                                                     onClick={() => setAdults(adults + 1)}
-                                                    className="w-5 h-5 rounded-md bg-slate-100 text-[#312E81] flex items-center justify-center hover:bg-indigo-50 font-bold"
+                                                    className="w-5 h-5 rounded-md bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] font-bold transition-colors cursor-pointer"
                                                 >
                                                     +
                                                 </button>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between bg-white px-3 py-1.5 rounded-lg border border-slate-200">
-                                            <span className="text-xs text-slate-800 font-medium">Children:</span>
-                                            <div className="flex items-center gap-2 font-bold text-slate-950">
+                                        <div className="flex items-center justify-between bg-[#E5DFD4] px-3 py-1.5 rounded-lg border border-[#D2CABC]">
+                                            <span className="text-xs text-[#686259] font-medium">Children:</span>
+                                            <div className="flex items-center gap-2 font-bold text-[#1A1916]">
                                                 <button
                                                     onClick={() => setChildren(Math.max(0, children - 1))}
-                                                    className="w-5 h-5 rounded-md bg-slate-100 text-[#312E81] flex items-center justify-center hover:bg-indigo-50 font-bold"
+                                                    className="w-5 h-5 rounded-md bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] font-bold transition-colors cursor-pointer"
                                                 >
                                                     -
                                                 </button>
                                                 <span>{children}</span>
                                                 <button
                                                     onClick={() => setChildren(children + 1)}
-                                                    className="w-5 h-5 rounded-md bg-slate-100 text-[#312E81] flex items-center justify-center hover:bg-indigo-50 font-bold"
+                                                    className="w-5 h-5 rounded-md bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center hover:bg-[#1F1E1B] hover:text-[#EDE8DF] font-bold transition-colors cursor-pointer"
                                                 >
                                                     +
                                                 </button>
@@ -754,18 +810,18 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                             </div>
 
                             {/* Itemized Airbnb Pricing Breakdown */}
-                            <div className="space-y-2.5 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                            <div className="space-y-2.5 text-xs text-[#686259] pt-2 border-t border-[#D2CABC]">
                                 <div className="flex justify-between font-medium">
-                                    <span className="text-slate-800">
+                                    <span className="text-[#686259]">
                                         ₹{pricingCalculation.baseRate.toLocaleString("en-IN")} × {numberOfNights} night{numberOfNights > 1 ? "s" : ""}
                                     </span>
-                                    <span className="font-bold text-slate-950">
+                                    <span className="font-bold text-[#1A1916]">
                                         ₹{pricingCalculation.staySubtotal.toLocaleString("en-IN")}
                                     </span>
                                 </div>
 
                                 {pricingCalculation.discount > 0 && (
-                                    <div className="flex justify-between text-[#312E81] font-semibold">
+                                    <div className="flex justify-between text-[#1F1E1B] font-semibold">
                                         <span>Extended Stay Discount</span>
                                         <span>-₹{pricingCalculation.discount.toLocaleString("en-IN")}</span>
                                     </div>
@@ -773,23 +829,23 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
 
                                 {pricingCalculation.cleaningFee > 0 && (
                                     <div className="flex justify-between font-medium">
-                                        <span className="text-slate-800">Cleaning fee</span>
-                                        <span className="font-bold text-slate-950">
+                                        <span className="text-[#686259]">Cleaning fee</span>
+                                        <span className="font-bold text-[#1A1916]">
                                             ₹{pricingCalculation.cleaningFee.toLocaleString("en-IN")}
                                         </span>
                                     </div>
                                 )}
 
                                 <div className="flex justify-between font-medium">
-                                    <span className="text-slate-800">Platform Service Fee (5%)</span>
-                                    <span className="font-bold text-slate-950">
+                                    <span className="text-[#686259]">Platform Service Fee (5%)</span>
+                                    <span className="font-bold text-[#1A1916]">
                                         ₹{pricingCalculation.serviceFee.toLocaleString("en-IN")}
                                     </span>
                                 </div>
 
-                                <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline text-sm font-bold text-slate-950">
+                                <div className="pt-3 border-t border-[#D2CABC] flex justify-between items-baseline text-sm font-bold text-[#1A1916]">
                                     <span>Total Payable</span>
-                                    <span className="text-xl tracking-tight font-extrabold text-[#1E1B4B]">
+                                    <span className="text-xl tracking-tight font-extrabold text-[#1A1916]">
                                         ₹{pricingCalculation.grandTotal.toLocaleString("en-IN")}
                                     </span>
                                 </div>
@@ -799,11 +855,11 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                             <button
                                 onClick={handleOpenBookingModal}
                                 disabled={isCheckingAvailability}
-                                className="w-full h-12 rounded-xl bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-base shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-85 tracking-normal"
+                                className="w-full h-12 rounded-sm bg-[#1F1E1B] hover:bg-[#34322D] text-[#EDE8DF] font-medium text-base shadow-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-85 tracking-normal"
                             >
                                 {isCheckingAvailability ? (
                                     <>
-                                        <Loader2 size={16} className="animate-spin text-white" />
+                                        <Loader2 size={16} className="animate-spin text-[#EDE8DF]" />
                                         <span>Checking Availability...</span>
                                     </>
                                 ) : (
@@ -811,7 +867,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                 )}
                             </button>
 
-                            <p className="text-[11px] text-center text-slate-500 font-medium leading-relaxed">
+                            <p className="text-[11px] text-center text-[#686259] font-medium leading-relaxed">
                                 You won't be charged yet. Instant confirmation upon reservation.
                             </p>
                         </div>
@@ -888,14 +944,14 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 subtitle={`Verifying dates & calendar blocks for ${rental.title}...`}
             />
 
-            {/* 7. FULL-SCREEN GALLERY LIGHTBOX */}
+            {/* 7. FULL-SCREEN GALLERY LIGHTBOX - RECTANGULAR WITH LESS SOFT CORNERS & BIGGER SIZE */}
             <Dialog open={isGalleryModalOpen} onOpenChange={setIsGalleryModalOpen}>
-                <DialogContent className="max-w-4xl w-[94vw] sm:w-[92vw] md:w-[90vw] lg:w-full max-h-[88vh] sm:max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col bg-white no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <DialogContent className="max-w-5xl w-[95vw] sm:w-[94vw] md:w-[92vw] lg:w-full max-h-[90vh] sm:max-h-[88vh] p-0 gap-0 overflow-hidden rounded-md sm:rounded-lg border border-slate-200 shadow-2xl flex flex-col bg-white no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                     {/* Fixed Modal Header */}
                     <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 shrink-0 pr-12 sm:pr-14 bg-white/95 backdrop-blur-xs">
                         <DialogTitle className="text-sm sm:text-base font-bold text-slate-950 flex items-center gap-2 sm:gap-2.5 min-w-0">
                             <span className="truncate">{rental.title} Photo Gallery</span>
-                            <span className="text-[10px] sm:text-[11px] font-bold text-[#312E81] bg-indigo-50 border border-indigo-200/80 px-2 sm:px-2.5 py-0.5 rounded-full shrink-0">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-[#312E81] bg-indigo-50 border border-indigo-200/80 px-2 sm:px-2.5 py-0.5 rounded shrink-0">
                                 {images.length} {images.length === 1 ? "Photo" : "Photos"}
                             </span>
                         </DialogTitle>
@@ -907,7 +963,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                             {images.map((img, i) => (
                                 <div
                                     key={img.id || i}
-                                    className="group relative aspect-[16/10] rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                                    className="group relative aspect-[16/10] rounded-md overflow-hidden bg-slate-100 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
                                 >
                                     <Image
                                         src={img.image}

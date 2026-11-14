@@ -68,17 +68,17 @@ export function VacationRentalMobileBookingBar({
                             animate={{ y: 0 }}
                             exit={{ y: "100%" }}
                             transition={{ type: "spring", damping: 28, stiffness: 260 }}
-                            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[100] max-h-[85vh] flex flex-col overflow-hidden border-t border-slate-100"
+                            className="fixed bottom-0 left-0 right-0 bg-[#E5DFD4] rounded-t-3xl shadow-2xl z-[100] max-h-[85vh] flex flex-col overflow-hidden border-t border-[#D2CABC]"
                         >
                             {/* Drawer Header */}
-                            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0">
+                            <div className="px-5 py-4 border-b border-[#D2CABC] flex items-center justify-between bg-[#DBD5C8] shrink-0">
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-950">Select Dates &amp; Guests</h3>
-                                    <p className="text-xs text-slate-500 font-medium">{rental.title}</p>
+                                    <h3 className="text-sm font-bold text-[#1A1916]">Select Dates &amp; Guests</h3>
+                                    <p className="text-xs text-[#686259] font-medium">{rental.title}</p>
                                 </div>
                                 <button
                                     onClick={() => setIsDrawerOpen(false)}
-                                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                                    className="w-8 h-8 rounded-full bg-[#E5DFD4] border border-[#D2CABC] hover:bg-[#DBD5C8] flex items-center justify-center text-[#1A1916] transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
@@ -88,10 +88,10 @@ export function VacationRentalMobileBookingBar({
                             <div className="p-5 space-y-4 overflow-y-auto flex-1">
                                 {/* Date Inputs */}
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                                    <div className="bg-[#DBD5C8]/40 rounded-xl p-3 border border-[#D2CABC]">
                                         <div className="flex items-center gap-1.5 mb-1">
-                                            <Calendar size={13} className="text-[#312E81]" />
-                                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Check-in</span>
+                                            <Calendar size={13} className="text-[#1F1E1B]" />
+                                            <span className="text-[10px] font-semibold text-[#686259] uppercase tracking-wider">Check-in</span>
                                         </div>
                                         <input
                                             type="date"
@@ -107,48 +107,48 @@ export function VacationRentalMobileBookingBar({
                                                 }
                                             }}
                                             min={new Date().toISOString().split("T")[0]}
-                                            className="text-xs font-semibold text-slate-900 bg-transparent w-full focus:outline-none cursor-pointer"
+                                            className="text-xs font-semibold text-[#1A1916] bg-transparent w-full focus:outline-none cursor-pointer"
                                         />
                                     </div>
-                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                                    <div className="bg-[#DBD5C8]/40 rounded-xl p-3 border border-[#D2CABC]">
                                         <div className="flex items-center gap-1.5 mb-1">
-                                            <Calendar size={13} className="text-[#312E81]" />
-                                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Check-out</span>
+                                            <Calendar size={13} className="text-[#1F1E1B]" />
+                                            <span className="text-[10px] font-semibold text-[#686259] uppercase tracking-wider">Check-out</span>
                                         </div>
                                         <input
                                             type="date"
                                             value={checkOutDate}
                                             onChange={(e) => setCheckOutDate(e.target.value)}
                                             min={checkInDate}
-                                            className="text-xs font-semibold text-slate-900 bg-transparent w-full focus:outline-none"
+                                            className="text-xs font-semibold text-[#1A1916] bg-transparent w-full focus:outline-none"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Guests Selection */}
-                                <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 flex items-center justify-between">
+                                <div className="bg-[#DBD5C8]/40 rounded-xl p-3.5 border border-[#D2CABC] flex items-center justify-between">
                                     <div className="flex items-center gap-2.5">
-                                        <div className="w-8 h-8 rounded-lg bg-indigo-50 text-[#312E81] flex items-center justify-center">
+                                        <div className="w-8 h-8 rounded-lg bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center">
                                             <Users size={16} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Guests</p>
-                                            <p className="text-xs font-bold text-slate-900">{guestsCount} Guest{guestsCount > 1 ? "s" : ""}</p>
+                                            <p className="text-[10px] font-semibold text-[#686259] uppercase tracking-wider">Guests</p>
+                                            <p className="text-xs font-bold text-[#1A1916]">{guestsCount} Guest{guestsCount > 1 ? "s" : ""}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <button
                                             type="button"
                                             onClick={() => setGuestsCount(Math.max(1, guestsCount - 1))}
-                                            className="w-8 h-8 rounded-full border border-slate-300 bg-white flex items-center justify-center text-sm font-bold text-slate-700 active:scale-95 transition-all"
+                                            className="w-8 h-8 rounded-md border border-[#D2CABC] bg-[#DBD5C8] hover:bg-[#D2CABC] flex items-center justify-center text-sm font-bold text-[#1A1916] active:scale-95 transition-all"
                                         >
                                             −
                                         </button>
-                                        <span className="text-sm font-bold text-slate-900 min-w-[16px] text-center">{guestsCount}</span>
+                                        <span className="text-sm font-bold text-[#1A1916] min-w-[16px] text-center">{guestsCount}</span>
                                         <button
                                             type="button"
                                             onClick={() => setGuestsCount(Math.min(rental.max_guests || 20, guestsCount + 1))}
-                                            className="w-8 h-8 rounded-full border border-slate-300 bg-white flex items-center justify-center text-sm font-bold text-slate-700 active:scale-95 transition-all"
+                                            className="w-8 h-8 rounded-md border border-[#D2CABC] bg-[#DBD5C8] hover:bg-[#D2CABC] flex items-center justify-center text-sm font-bold text-[#1A1916] active:scale-95 transition-all"
                                         >
                                             +
                                         </button>
@@ -156,34 +156,34 @@ export function VacationRentalMobileBookingBar({
                                 </div>
 
                                 {/* Price Breakdown in Drawer */}
-                                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
-                                    <div className="flex justify-between text-slate-600">
+                                <div className="p-3.5 bg-[#DBD5C8]/40 rounded-xl border border-[#D2CABC] space-y-2 text-xs">
+                                    <div className="flex justify-between text-[#686259]">
                                         <span>₹{parseFloat(rental.price_per_night || "0").toLocaleString("en-IN")} × {numberOfNights} night{numberOfNights > 1 ? "s" : ""}</span>
-                                        <span className="font-semibold text-slate-900">₹{pricingCalculation.staySubtotal.toLocaleString("en-IN")}</span>
+                                        <span className="font-semibold text-[#1A1916]">₹{pricingCalculation.staySubtotal.toLocaleString("en-IN")}</span>
                                     </div>
                                     {pricingCalculation.discount > 0 && (
-                                        <div className="flex justify-between text-[#312E81] font-semibold">
+                                        <div className="flex justify-between text-[#1F1E1B] font-semibold">
                                             <span>Extended Stay Discount</span>
                                             <span>-₹{pricingCalculation.discount.toLocaleString("en-IN")}</span>
                                         </div>
                                     )}
                                     {pricingCalculation.cleaningFee > 0 && (
-                                        <div className="flex justify-between text-slate-600">
+                                        <div className="flex justify-between text-[#686259]">
                                             <span>Cleaning Fee</span>
-                                            <span className="font-semibold text-slate-900">₹{pricingCalculation.cleaningFee.toLocaleString("en-IN")}</span>
+                                            <span className="font-semibold text-[#1A1916]">₹{pricingCalculation.cleaningFee.toLocaleString("en-IN")}</span>
                                         </div>
                                     )}
-                                    <div className="flex justify-between text-slate-600">
+                                    <div className="flex justify-between text-[#686259]">
                                         <span>Platform Service Fee (5%)</span>
-                                        <span className="font-semibold text-slate-900">₹{pricingCalculation.serviceFee.toLocaleString("en-IN")}</span>
+                                        <span className="font-semibold text-[#1A1916]">₹{pricingCalculation.serviceFee.toLocaleString("en-IN")}</span>
                                     </div>
-                                    <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline font-bold text-slate-950 text-sm">
+                                    <div className="pt-2 border-t border-[#D2CABC] flex justify-between items-baseline font-bold text-[#1A1916] text-sm">
                                         <span>Total Payable</span>
-                                        <span className="text-base font-extrabold text-[#1E1B4B]">₹{pricingCalculation.grandTotal.toLocaleString("en-IN")}</span>
+                                        <span className="text-base font-extrabold text-[#1A1916]">₹{pricingCalculation.grandTotal.toLocaleString("en-IN")}</span>
                                     </div>
                                 </div>
 
-                                <div className="p-2.5 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-[#003580] font-medium flex items-center gap-2">
+                                <div className="p-2.5 bg-[#DBD5C8] rounded-xl border border-[#D2CABC] text-[11px] text-[#1A1916] font-medium flex items-center gap-2">
                                     <ShieldCheck size={16} className="shrink-0" />
                                     <span>Instant reservation with verified stay protection.</span>
                                 </div>
@@ -194,7 +194,7 @@ export function VacationRentalMobileBookingBar({
             </AnimatePresence>
 
             {/* Static Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-5 py-3.5 flex items-center justify-between gap-3">
+            <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#EDE8DF]/98 backdrop-blur-md border-t border-[#D2CABC] shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-5 py-3.5 flex items-center justify-between gap-3">
                 {/* Left: Total Price and Selection Toggle */}
                 <button
                     type="button"
@@ -202,15 +202,15 @@ export function VacationRentalMobileBookingBar({
                     className="flex flex-col text-left group min-w-0"
                 >
                     <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-extrabold text-slate-950 tracking-tight">
+                        <span className="text-lg font-extrabold text-[#1A1916] tracking-tight">
                             ₹{pricingCalculation.grandTotal.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">
+                        <span className="text-[10px] font-bold uppercase text-[#686259] tracking-wider">
                             total
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-[11px] font-semibold text-[#312E81]">
+                    <div className="flex items-center gap-1 text-[11px] font-semibold text-[#1F1E1B]">
                         <span>
                             {formatShortDate(checkInDate)} – {formatShortDate(checkOutDate)} • {guestsCount} Guest{guestsCount > 1 ? "s" : ""}
                         </span>
@@ -227,7 +227,7 @@ export function VacationRentalMobileBookingBar({
                     type="button"
                     onClick={onOpenBookingModal}
                     disabled={isCheckingAvailability}
-                    className="bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-sm h-12 px-5 rounded-xl shadow-md active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-85 tracking-normal"
+                    className="bg-[#1F1E1B] hover:bg-[#34322D] text-[#EDE8DF] font-medium text-sm h-12 px-5 rounded-sm shadow-md active:scale-95 transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-85 tracking-normal"
                 >
                     {isCheckingAvailability ? (
                         <>

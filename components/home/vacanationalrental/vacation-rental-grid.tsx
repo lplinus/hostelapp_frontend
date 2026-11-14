@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import VacationRentalCard from "./vacation-rental-card";
 import type { VacationRental } from "@/types/vacationrental.types";
 import {
@@ -11,6 +11,7 @@ import {
     Sparkles,
     Loader2
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -33,10 +34,13 @@ export default function VacationRentalGrid({
     isFiltering = false,
 }: VacationRentalGridProps) {
     const [sortBy, setSortBy] = useState<string>("featured");
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [isSortLoading, setIsSortLoading] = useState(false);
+    const itemsPerPage = 9;
 
     const handleSortChange = (value: string) => {
         setSortBy(value);
+        setCurrentPage(1);
         setIsSortLoading(true);
         setTimeout(() => setIsSortLoading(false), 250);
     };
@@ -44,21 +48,35 @@ export default function VacationRentalGrid({
     const showLoader = isFiltering || isSortLoading;
 
     // Sorting logic
-    const sortedRentals = [...rentals].sort((a, b) => {
-        if (sortBy === "price_asc") {
-            return parseFloat(a.price_per_night || "0") - parseFloat(b.price_per_night || "0");
-        }
-        if (sortBy === "price_desc") {
-            return parseFloat(b.price_per_night || "0") - parseFloat(a.price_per_night || "0");
-        }
-        if (sortBy === "rating") {
+    const sortedRentals = useMemo(() => {
+        return [...rentals].sort((a, b) => {
+            if (sortBy === "price_asc") {
+                return parseFloat(a.price_per_night || "0") - parseFloat(b.price_per_night || "0");
+            }
+            if (sortBy === "price_desc") {
+                return parseFloat(b.price_per_night || "0") - parseFloat(a.price_per_night || "0");
+            }
+            if (sortBy === "rating") {
+                return parseFloat(b.rating_avg || "0") - parseFloat(a.rating_avg || "0");
+            }
+            // Default: featured first, then rating
+            if (a.is_featured && !b.is_featured) return -1;
+            if (!a.is_featured && b.is_featured) return 1;
             return parseFloat(b.rating_avg || "0") - parseFloat(a.rating_avg || "0");
-        }
-        // Default: featured first, then rating
-        if (a.is_featured && !b.is_featured) return -1;
-        if (!a.is_featured && b.is_featured) return 1;
-        return parseFloat(b.rating_avg || "0") - parseFloat(a.rating_avg || "0");
-    });
+        });
+    }, [rentals, sortBy]);
+
+    const totalPages = Math.ceil(sortedRentals.length / itemsPerPage);
+
+    const paginatedRentals = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return sortedRentals.slice(start, start + itemsPerPage);
+    }, [sortedRentals, currentPage, itemsPerPage]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 150, behavior: "smooth" });
+    };
 
     return (
         <div className="space-y-4">
@@ -149,10 +167,51 @@ export default function VacationRentalGrid({
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {sortedRentals.map((rental) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch auto-rows-fr">
+                    {paginatedRentals.map((rental) => (
                         <VacationRentalCard key={rental.id} rental={rental} />
                     ))}
+                </div>
+            )}
+
+            {/* Pagination (9 items per page) */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 border-t border-slate-200/80">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="rounded-xl border-slate-200 text-slate-700 disabled:opacity-50 h-9 px-3 text-xs font-semibold"
+                    >
+                        Previous
+                    </Button>
+
+                    <div className="flex items-center gap-1 mx-2">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`w-8 h-8 rounded-lg text-xs font-bold transition-none ${
+                                    currentPage === page
+                                        ? "bg-[#1E1B4B] text-white"
+                                        : "border border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
+                                }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
+
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="rounded-xl border-slate-200 text-slate-700 disabled:opacity-50 h-9 px-3 text-xs font-semibold"
+                    >
+                        Next
+                    </Button>
                 </div>
             )}
         </div>

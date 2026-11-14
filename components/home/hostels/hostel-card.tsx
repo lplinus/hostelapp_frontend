@@ -153,25 +153,20 @@ export default function HostelCard({
             </div>
           )}
 
-          {/* Badges on image */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          {/* Badges on image (Glossy rectangular with less soft corners, no icons) */}
+          <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 pointer-events-none z-10">
             {isVerified && (
-              <div
-                className="bg-white/90 backdrop-blur-md text-[#10B981] p-1.5 rounded-lg shadow-sm flex items-center border border-white/50 cursor-default"
-              >
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                <span className="ml-1 text-[10px] font-bold uppercase tracking-wider">
-                  Verified
-                </span>
+              <div className="bg-white/85 backdrop-blur-md text-slate-900 px-2 py-0.5 rounded-xs shadow-xs border border-white/60 text-[9px] font-semibold uppercase tracking-wider">
+                Verified
               </div>
             )}
             {isFeatured && (
-              <div className="bg-gradient-to-br from-[#312E81]/95 to-[#4F46E5]/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(49,46,129,0.4),inset_0_1px_1px_rgba(255,255,255,0.4)]">
-                Featured Selection
+              <div className="bg-white/85 backdrop-blur-md text-slate-900 px-2 py-0.5 rounded-xs shadow-xs border border-white/60 text-[9px] font-semibold uppercase tracking-wider">
+                Featured
               </div>
             )}
             {isTopRated && (
-              <div className="bg-gradient-to-br from-amber-500/95 to-orange-500/95 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-[0_4px_12px_rgba(249,115,22,0.4),inset_0_1px_1px_rgba(255,255,255,0.5)]">
+              <div className="bg-white/85 backdrop-blur-md text-slate-900 px-2 py-0.5 rounded-xs shadow-xs border border-white/60 text-[9px] font-semibold uppercase tracking-wider">
                 Top Rated
               </div>
             )}
@@ -179,15 +174,15 @@ export default function HostelCard({
 
           {/* Wishlist button */}
           <button
-            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm hover:bg-white text-slate-400 hover:text-red-500 rounded-full p-2 shadow-sm transition-colors z-10"
+            className="absolute top-2.5 right-2.5 bg-white/85 backdrop-blur-md hover:bg-white text-slate-600 hover:text-red-500 rounded-full p-2 shadow-xs border border-white/60 transition-colors z-10"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
           >
             <Heart className="w-4 h-4" />
           </button>
 
-          {/* Discount tag on image */}
+          {/* Discount tag on image (Glossy rectangular finish) */}
           {isDiscounted && discountPercentage && (
-            <div className="absolute bottom-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wide">
+            <div className="absolute bottom-2.5 left-2.5 bg-white/85 backdrop-blur-md text-rose-700 text-[9px] font-semibold px-2 py-0.5 rounded-xs shadow-xs border border-white/60 uppercase tracking-wider">
               {discountPercentage}% OFF
             </div>
           )}

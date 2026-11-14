@@ -320,7 +320,7 @@ export default function MobileBookingBar({
                     onClick={handleCheckAvailability}
                     disabled={isCheckingAvailability}
                     size="lg"
-                    className="bg-[#003580] hover:bg-[#002244] text-white font-medium text-sm px-6 h-12 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 flex-shrink-0 border-none cursor-pointer tracking-normal disabled:opacity-85"
+                    className="bg-[#003580] hover:bg-[#002244] text-white font-medium text-sm px-6 h-12 rounded-sm transition-all active:scale-95 shadow-sm flex items-center justify-center gap-2 flex-shrink-0 border-none cursor-pointer tracking-normal disabled:opacity-85"
                 >
                     {isCheckingAvailability ? (
                         <>

@@ -11,17 +11,63 @@ import {
     CheckCircle2,
     Clock,
     XCircle,
+    Star,
+    Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { authApiClient } from "@/lib/api/auth-client";
 import type { GuestTripSummary } from "../guest-profile-types";
 
 interface GuestBookingsListProps {
     bookings: GuestTripSummary[];
 }
 
-export default function GuestBookingsList({ bookings }: GuestBookingsListProps) {
-    const [filter, setFilter] = useState<"all" | "active" | "upcoming" | "completed">("all");
+export default function GuestBookingsList({ bookings: initialBookings }: GuestBookingsListProps) {
+    const [bookings, setBookings] = useState<GuestTripSummary[]>(initialBookings);
+    const [filter, setFilter] = useState<"all" | "upcoming" | "active" | "completed">("all");
+
+    // Review Modal State
+    const [selectedBookingForReview, setSelectedBookingForReview] = useState<GuestTripSummary | null>(null);
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [reviewComment, setReviewComment] = useState("");
+
+    // Dynamic ratings dictionary
+    const [hotelRatings, setHotelRatings] = useState({
+        cleanliness: 5,
+        comfort: 5,
+        service: 5,
+        location: 5,
+    });
+
+    const [rentalRatings, setRentalRatings] = useState({
+        cleanliness: 5,
+        accuracy: 5,
+        checkin: 5,
+        communication: 5,
+        location: 5,
+        value: 5,
+    });
+
+    const [hostelRatings, setHostelRatings] = useState({
+        food: 5,
+        room: 5,
+    });
+
+    // Synchronize if prop changes
+    React.useEffect(() => {
+        setBookings(initialBookings);
+    }, [initialBookings]);
 
     const filteredBookings = bookings.filter((b) => {
         if (filter === "all") return true;
@@ -75,6 +121,93 @@ export default function GuestBookingsList({ bookings }: GuestBookingsListProps) 
                         {status}
                     </Badge>
                 );
+        }
+    };
+
+    const handleOpenReviewModal = (booking: GuestTripSummary) => {
+        setSelectedBookingForReview(booking);
+        setReviewComment("");
+        setHotelRatings({ cleanliness: 5, comfort: 5, service: 5, location: 5 });
+        setRentalRatings({ cleanliness: 5, accuracy: 5, checkin: 5, communication: 5, location: 5, value: 5 });
+        setHostelRatings({ food: 5, room: 5 });
+    };
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedBookingForReview) return;
+        if (!reviewComment.trim()) {
+            toast.error("Please add a short comment about your stay experience.");
+            return;
+        }
+
+        setIsSubmittingReview(true);
+        try {
+            const b = selectedBookingForReview;
+            let calculatedAverage = 5;
+
+            if (b.propertyType === "hotel") {
+                calculatedAverage = parseFloat(
+                    ((hotelRatings.cleanliness + hotelRatings.comfort + hotelRatings.service + hotelRatings.location) / 4).toFixed(1)
+                );
+                await authApiClient.post("/api/reviews/hotels/", {
+                    booking: b.id,
+                    hotel: b.propertyId,
+                    cleanliness_rating: hotelRatings.cleanliness,
+                    comfort_rating: hotelRatings.comfort,
+                    service_rating: hotelRatings.service,
+                    location_rating: hotelRatings.location,
+                    comment: reviewComment.trim(),
+                });
+            } else if (b.propertyType === "vacation_rental") {
+                const total =
+                    rentalRatings.cleanliness +
+                    rentalRatings.accuracy +
+                    rentalRatings.checkin +
+                    rentalRatings.communication +
+                    rentalRatings.location +
+                    rentalRatings.value;
+                calculatedAverage = parseFloat((total / 6).toFixed(1));
+                await authApiClient.post("/api/reviews/vacation-rentals/", {
+                    booking: b.id,
+                    rental: b.propertyId,
+                    cleanliness_rating: rentalRatings.cleanliness,
+                    accuracy_rating: rentalRatings.accuracy,
+                    checkin_rating: rentalRatings.checkin,
+                    communication_rating: rentalRatings.communication,
+                    location_rating: rentalRatings.location,
+                    value_rating: rentalRatings.value,
+                    comment: reviewComment.trim(),
+                });
+            } else {
+                calculatedAverage = parseFloat(
+                    ((hostelRatings.food + hostelRatings.room) / 2).toFixed(1)
+                );
+                await authApiClient.post("/api/reviews/", {
+                    booking: b.id,
+                    hostel: b.propertyId,
+                    food_rating: hostelRatings.food,
+                    room_rating: hostelRatings.room,
+                    comment: reviewComment.trim(),
+                });
+            }
+
+            // Update local state
+            setBookings((prev) =>
+                prev.map((item) =>
+                    item.id === b.id
+                        ? { ...item, hasReviewed: true, reviewRating: calculatedAverage, reviewComment: reviewComment.trim() }
+                        : item
+                )
+            );
+
+            toast.success("Thank you! Your stay review has been verified and posted.");
+            setSelectedBookingForReview(null);
+        } catch (err: any) {
+            console.error("Failed to post verified stay review:", err);
+            const msg = err?.response?.data?.detail || err?.response?.data?.booking?.[0] || "Could not post your review. Please try again.";
+            toast.error(msg);
+        } finally {
+            setIsSubmittingReview(false);
         }
     };
 
@@ -148,10 +281,29 @@ export default function GuestBookingsList({ bookings }: GuestBookingsListProps) 
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 self-end sm:self-center">
-                                <span className="text-xs font-semibold text-foreground">
+                            <div className="flex items-center gap-2 sm:gap-3 self-end sm:self-center">
+                                <span className="text-xs font-semibold text-foreground mr-1">
                                     ₹{b.totalAmount.toLocaleString()}
                                 </span>
+
+                                {/* Verified Stay Review Action */}
+                                {b.hasReviewed ? (
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/80 px-2 py-0.5 rounded-md">
+                                        <Star size={11} className="fill-amber-400 text-amber-400" />
+                                        {b.reviewRating ? `${b.reviewRating}★ Reviewed` : "Reviewed"}
+                                    </span>
+                                ) : (b.status === "completed" || b.status === "active") ? (
+                                    <Button
+                                        size="sm"
+                                        type="button"
+                                        onClick={() => handleOpenReviewModal(b)}
+                                        className="h-7 text-[11px] font-semibold bg-[#312E81] hover:bg-[#1E1B4B] text-white gap-1 px-2.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                                    >
+                                        <Star size={11} className="fill-amber-300 text-amber-300" />
+                                        Rate Stay
+                                    </Button>
+                                ) : null}
+
                                 <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5">
                                     Details <ArrowUpRight size={11} />
                                 </Button>
@@ -160,7 +312,170 @@ export default function GuestBookingsList({ bookings }: GuestBookingsListProps) 
                     ))}
                 </div>
             )}
+
+            {/* VERIFIED GUEST STAY REVIEW MODAL */}
+            <Dialog open={!!selectedBookingForReview} onOpenChange={(open) => !open && setSelectedBookingForReview(null)}>
+                <DialogContent className="sm:max-w-[460px] rounded-2xl p-6 border-0 shadow-2xl">
+                    <DialogHeader>
+                        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 w-fit px-2.5 py-0.5 rounded-full mb-1">
+                            <CheckCircle2 size={12} />
+                            Verified Guest Stay
+                        </div>
+                        <DialogTitle className="text-lg font-bold text-slate-900">
+                            Rate Your Stay at {selectedBookingForReview?.propertyName}
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-slate-500">
+                            Booking Reference: <strong className="font-mono text-slate-700">{selectedBookingForReview?.bookingRef}</strong>
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedBookingForReview && (
+                        <form onSubmit={handleSubmitReview} className="space-y-4 pt-3">
+                            {/* HOTEL CRITERIA */}
+                            {selectedBookingForReview.propertyType === "hotel" && (
+                                <div className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                    {[
+                                        { key: "cleanliness", label: "Cleanliness & Hygiene" },
+                                        { key: "comfort", label: "Suite Comfort & Bed" },
+                                        { key: "service", label: "Staff & Concierge Service" },
+                                        { key: "location", label: "Location & Accessibility" },
+                                    ].map((cat) => (
+                                        <div key={cat.key} className="flex items-center justify-between">
+                                            <span className="font-medium text-slate-700">{cat.label}</span>
+                                            <div className="flex items-center gap-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setHotelRatings((prev) => ({ ...prev, [cat.key]: star }))
+                                                        }
+                                                        className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
+                                                    >
+                                                        <Star
+                                                            size={18}
+                                                            className={`${
+                                                                star <= hotelRatings[cat.key as keyof typeof hotelRatings]
+                                                                    ? "fill-amber-400 text-amber-400"
+                                                                    : "text-slate-300 fill-slate-100"
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* VACATION RENTAL CRITERIA */}
+                            {selectedBookingForReview.propertyType === "vacation_rental" && (
+                                <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                    {[
+                                        { key: "cleanliness", label: "Cleanliness" },
+                                        { key: "accuracy", label: "Listing Accuracy" },
+                                        { key: "checkin", label: "Smooth Check-in" },
+                                        { key: "communication", label: "Host Communication" },
+                                        { key: "location", label: "Neighborhood & Location" },
+                                        { key: "value", label: "Value for Price" },
+                                    ].map((cat) => (
+                                        <div key={cat.key} className="flex items-center justify-between">
+                                            <span className="font-medium text-slate-700">{cat.label}</span>
+                                            <div className="flex items-center gap-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setRentalRatings((prev) => ({ ...prev, [cat.key]: star }))
+                                                        }
+                                                        className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
+                                                    >
+                                                        <Star
+                                                            size={17}
+                                                            className={`${
+                                                                star <= rentalRatings[cat.key as keyof typeof rentalRatings]
+                                                                    ? "fill-amber-400 text-amber-400"
+                                                                    : "text-slate-300 fill-slate-100"
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* HOSTEL CRITERIA */}
+                            {selectedBookingForReview.propertyType === "hostel" && (
+                                <div className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-xs">
+                                    {[
+                                        { key: "food", label: "Food & Dining" },
+                                        { key: "room", label: "Room Comfort & Hygiene" },
+                                    ].map((cat) => (
+                                        <div key={cat.key} className="flex items-center justify-between">
+                                            <span className="font-medium text-slate-700">{cat.label}</span>
+                                            <div className="flex items-center gap-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setHostelRatings((prev) => ({ ...prev, [cat.key]: star }))
+                                                        }
+                                                        className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
+                                                    >
+                                                        <Star
+                                                            size={18}
+                                                            className={`${
+                                                                star <= hostelRatings[cat.key as keyof typeof hostelRatings]
+                                                                    ? "fill-amber-400 text-amber-400"
+                                                                    : "text-slate-300 fill-slate-100"
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Comment */}
+                            <div className="space-y-1.5">
+                                <Label htmlFor="review-experience" className="text-xs font-semibold text-slate-700">
+                                    Your Experience
+                                </Label>
+                                <Textarea
+                                    id="review-experience"
+                                    rows={3}
+                                    required
+                                    placeholder="Tell future guests about your stay, hospitality, or amenities..."
+                                    value={reviewComment}
+                                    onChange={(e) => setReviewComment(e.target.value)}
+                                    className="text-xs rounded-xl border-slate-200 resize-none bg-slate-50/50 p-3 focus:bg-white"
+                                />
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={isSubmittingReview}
+                                className="w-full bg-[#312E81] hover:bg-[#1E1B4B] text-white text-xs font-semibold h-10 rounded-xl transition-all active:scale-[0.99] cursor-pointer"
+                            >
+                                {isSubmittingReview ? (
+                                    <>
+                                        <Loader2 size={14} className="animate-spin mr-1.5" />
+                                        Submitting Verified Review...
+                                    </>
+                                ) : (
+                                    "Submit Verified Review"
+                                )}
+                            </Button>
+                        </form>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
-

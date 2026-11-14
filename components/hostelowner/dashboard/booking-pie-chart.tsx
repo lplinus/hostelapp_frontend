@@ -117,23 +117,23 @@ export default function BookingPieChart({
     ];
 
     return (
-        <Card className="relative overflow-hidden border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-xl">
+        <Card className="relative overflow-hidden border border-[#D2CABC] bg-[#E5DFD4] shadow-xs rounded-xl">
             {/* Ambient background aura */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-blue-50/80 via-indigo-50/20 to-transparent -mr-28 -mt-28 pointer-events-none blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-emerald-50/40 via-sky-50/20 to-transparent -ml-24 -mb-24 pointer-events-none blur-2xl" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-black/5 via-black/2 to-transparent -mr-28 -mt-28 pointer-events-none blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-black/5 to-transparent -ml-24 -mb-24 pointer-events-none blur-2xl" />
 
-            <CardHeader className="pb-3.5 relative z-10 border-b border-slate-100">
+            <CardHeader className="pb-3.5 relative z-10 border-b border-[#D2CABC]">
                 <div className="flex flex-col gap-3">
                     {/* Top Row: Title, Stream Category Selector & Switcher */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                                <span className="p-2 rounded-lg bg-blue-50 text-blue-600 shadow-2xs">
+                                <span className="p-2 rounded-lg bg-[#DBD5C8] text-[#1F1E1B] shadow-2xs">
                                     <Activity className="w-4 h-4" />
                                 </span>
-                                <CardTitle className="text-base font-bold text-slate-800">Booking Analytics</CardTitle>
+                                <CardTitle className="text-base font-bold text-[#1A1916]">Booking Analytics</CardTitle>
                             </div>
-                            <CardDescription className="text-xs text-slate-500 font-normal">
+                            <CardDescription className="text-xs text-[#686259] font-normal">
                                 Real database statistics across your property streams
                             </CardDescription>
                         </div>
@@ -141,14 +141,14 @@ export default function BookingPieChart({
                         {/* Top Right Controls: Views & Rates */}
                         <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
                             {/* Interactive View Switcher: Donut vs Bar Graph (Smooth soft-corner pill container) */}
-                            <div className="inline-flex p-1 rounded-lg bg-slate-100 border border-slate-200/80">
+                            <div className="inline-flex p-1 rounded-lg bg-[#DBD5C8]/80 border border-[#D2CABC]">
                                 <button
                                     type="button"
                                     onClick={() => setChartView("donut")}
                                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
                                         chartView === "donut"
-                                            ? "bg-white text-blue-600 shadow-xs"
-                                            : "text-slate-500 hover:text-slate-800"
+                                            ? "bg-[#1F1E1B] text-white shadow-xs"
+                                            : "text-[#5A544A] hover:text-[#1A1916]"
                                     }`}
                                     title="Circular Donut View"
                                 >
@@ -160,8 +160,8 @@ export default function BookingPieChart({
                                     onClick={() => setChartView("bar")}
                                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
                                         chartView === "bar"
-                                            ? "bg-white text-blue-600 shadow-xs"
-                                            : "text-slate-500 hover:text-slate-800"
+                                            ? "bg-[#1F1E1B] text-white shadow-xs"
+                                            : "text-[#5A544A] hover:text-[#1A1916]"
                                     }`}
                                     title="Timeline Bar Graph"
                                 >
@@ -171,8 +171,8 @@ export default function BookingPieChart({
                             </div>
 
                             {!isLoading && sum > 0 && (
-                                <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-lg text-emerald-700 text-xs font-semibold shadow-2xs">
-                                    <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                                <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#DBD5C8] border border-[#D2CABC] rounded-lg text-[#1F1E1B] text-xs font-semibold shadow-2xs">
+                                    <TrendingUp className="w-3.5 h-3.5 text-[#1F1E1B]" />
                                     <span>{confirmedPercent}% Success</span>
                                 </div>
                             )}
@@ -180,7 +180,7 @@ export default function BookingPieChart({
                     </div>
 
                     {/* Second Row: Property Stream Tabs (Smooth soft-corner buttons matching dashboard) */}
-                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100/80 flex-wrap">
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#D2CABC] flex-wrap">
                         <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
                             {streamTabs.map((tab) => {
                                 const TabIcon = tab.icon;
@@ -192,8 +192,8 @@ export default function BookingPieChart({
                                         onClick={() => setStreamFilter(tab.id)}
                                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                                             isSelected
-                                                ? "bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs"
-                                                : "text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent"
+                                                ? "bg-[#1F1E1B] text-white border border-[#1F1E1B] shadow-2xs"
+                                                : "text-[#5A544A] hover:text-[#1A1916] hover:bg-[#DBD5C8]/50 border border-transparent"
                                         }`}
                                     >
                                         <TabIcon className="w-3.5 h-3.5" />
@@ -205,7 +205,7 @@ export default function BookingPieChart({
 
                         {/* Date Range Filter (Soft-corner rounded-lg container) */}
                         {chartView === "bar" && (
-                            <div className="inline-flex p-1 rounded-lg bg-slate-100/90 border border-slate-200/80 text-[11px]">
+                            <div className="inline-flex p-1 rounded-lg bg-[#DBD5C8]/80 border border-[#D2CABC] text-[11px]">
                                 {(["all", "30d", "7d"] as const).map((filter) => (
                                     <button
                                         key={filter}
@@ -213,8 +213,8 @@ export default function BookingPieChart({
                                         onClick={() => setTimeFilter(filter)}
                                         className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                                             timeFilter === filter
-                                                ? "bg-white text-blue-600 shadow-xs border border-slate-200/40"
-                                                : "text-slate-400 hover:text-slate-700"
+                                                ? "bg-[#1F1E1B] text-white shadow-xs border border-[#1F1E1B]"
+                                                : "text-[#5A544A] hover:text-[#1A1916]"
                                         }`}
                                     >
                                         {filter === "all" ? "All Time" : filter.toUpperCase()}
@@ -275,8 +275,8 @@ export default function BookingPieChart({
                                                     x2="100%"
                                                     y2="100%"
                                                 >
-                                                    <stop offset="0%" stopColor="#3b82f6" />
-                                                    <stop offset="100%" stopColor="#1d4ed8" />
+                                                    <stop offset="0%" stopColor="#1F1E1B" />
+                                                    <stop offset="100%" stopColor="#4A453C" />
                                                 </linearGradient>
                                                 <linearGradient
                                                     id="cancelledDonutGrad"
@@ -285,8 +285,8 @@ export default function BookingPieChart({
                                                     x2="100%"
                                                     y2="100%"
                                                 >
-                                                    <stop offset="0%" stopColor="#fb7185" />
-                                                    <stop offset="100%" stopColor="#e11d48" />
+                                                    <stop offset="0%" stopColor="#C25E5E" />
+                                                    <stop offset="100%" stopColor="#A83B3B" />
                                                 </linearGradient>
                                             </defs>
 
@@ -295,7 +295,7 @@ export default function BookingPieChart({
                                                 cx={center}
                                                 cy={center}
                                                 r={radius}
-                                                stroke="#f1f5f9"
+                                                stroke="#D2CABC"
                                                 strokeWidth={strokeWidth}
                                                 fill="transparent"
                                             />
@@ -344,13 +344,13 @@ export default function BookingPieChart({
 
                                         {/* Center Display with clean bold hierarchy */}
                                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-                                            <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
+                                            <span className="text-[11px] font-bold tracking-widest text-[#686259] uppercase">
                                                 Total Bookings
                                             </span>
-                                            <span className="text-4xl font-black text-slate-800 tracking-tight leading-none my-1">
+                                            <span className="text-4xl font-black text-[#1A1916] tracking-tight leading-none my-1">
                                                 {sum}
                                             </span>
-                                            <span className="text-xs font-semibold text-blue-600 bg-blue-50/90 border border-blue-100 px-2.5 py-0.5 rounded-md mt-1">
+                                            <span className="text-xs font-semibold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2.5 py-0.5 rounded-md mt-1">
                                                 {confirmedPercent}% active rate
                                             </span>
                                         </div>
@@ -367,7 +367,7 @@ export default function BookingPieChart({
                                     >
                                         <div className="flex items-center justify-between mb-3 px-1">
                                             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                                                <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                                                <Calendar className="w-3.5 h-3.5 text-[#1F1E1B]" />
                                                 <span>
                                                     {timeFilter === "all"
                                                         ? "All-Time Timeline"
@@ -376,7 +376,7 @@ export default function BookingPieChart({
                                             </div>
                                             <div className="flex items-center gap-3 text-[11px] font-medium text-slate-500">
                                                 <span className="flex items-center gap-1">
-                                                    <span className="w-2.5 h-2.5 rounded-xs bg-blue-600" /> Confirmed
+                                                    <span className="w-2.5 h-2.5 rounded-xs bg-[#1F1E1B]" /> Confirmed
                                                 </span>
                                                 <span className="flex items-center gap-1">
                                                     <span className="w-2.5 h-2.5 rounded-xs bg-rose-500" /> Cancelled
@@ -499,38 +499,38 @@ export default function BookingPieChart({
                         </div>
 
                         {/* DISTINCT BORDER DIVIDER BETWEEN LEFT AND RIGHT SIDES */}
-                        <div className="w-full md:w-px h-px md:h-auto bg-gradient-to-r md:bg-gradient-to-b from-transparent via-slate-200 to-transparent self-stretch" />
+                        <div className="w-full md:w-px h-px md:h-auto bg-gradient-to-r md:bg-gradient-to-b from-transparent via-[#D2CABC] to-transparent self-stretch" />
 
                         {/* RIGHT SECTION: Compact Data Breakdown & Health Card */}
-                        <div className="w-full md:w-[280px] lg:w-[320px] p-5 md:p-6 flex flex-col justify-center gap-3 shrink-0 bg-slate-50/30">
+                        <div className="w-full md:w-[280px] lg:w-[320px] p-5 md:p-6 flex flex-col justify-center gap-3 shrink-0 bg-[#DBD5C8]/40">
                             {/* Stream Indicator Pill (Matching app soft corners) */}
-                            <div className="px-3 py-1.5 rounded-lg bg-blue-50/60 border border-blue-100 flex items-center justify-between text-[11px]">
-                                <span className="text-slate-500 font-medium">Viewing Stream</span>
-                                <span className="font-bold text-blue-700">
+                            <div className="px-3 py-1.5 rounded-lg bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between text-[11px]">
+                                <span className="text-[#686259] font-medium">Viewing Stream</span>
+                                <span className="font-bold text-[#1F1E1B]">
                                     {streamTabs.find((t) => t.id === streamFilter)?.label}
                                 </span>
                             </div>
 
                             {/* Confirmed Metric Card (Matching app rounded-lg/rounded-xl) */}
-                            <div className="p-3.5 rounded-xl border border-slate-100 bg-white hover:border-blue-200 transition-all duration-200 shadow-2xs">
+                            <div className="p-3.5 rounded-xl border border-[#D2CABC] bg-[#E5DFD4] hover:border-[#1F1E1B] transition-all duration-200 shadow-2xs">
                                 <div className="flex items-center justify-between gap-3 mb-1.5">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                        <div className="w-7 h-7 rounded-lg bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center shrink-0">
                                             <CheckCircle2 className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-slate-800 leading-none">Confirmed</p>
-                                            <p className="text-[10px] text-slate-400 leading-tight mt-0.5">Valid bookings</p>
+                                            <p className="text-xs font-bold text-[#1A1916] leading-none">Confirmed</p>
+                                            <p className="text-[10px] text-[#686259] leading-tight mt-0.5">Valid bookings</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-sm font-extrabold text-slate-900">{confirmedCount}</span>
-                                        <span className="text-[10px] text-slate-400 ml-1">({confirmedPercent}%)</span>
+                                        <span className="text-sm font-extrabold text-[#1A1916]">{confirmedCount}</span>
+                                        <span className="text-[10px] text-[#686259] ml-1">({confirmedPercent}%)</span>
                                     </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-full overflow-hidden">
                                     <motion.div
-                                        className="h-full bg-blue-600 rounded-full"
+                                        className="h-full bg-[#1F1E1B] rounded-full"
                                         initial={{ width: 0 }}
                                         animate={{ width: `${confirmedPercent}%` }}
                                         transition={{ duration: 0.9, ease: "easeOut" }}
@@ -539,23 +539,23 @@ export default function BookingPieChart({
                             </div>
 
                             {/* Cancelled Metric Card (Matching app rounded-lg/rounded-xl) */}
-                            <div className="p-3.5 rounded-xl border border-slate-100 bg-white hover:border-rose-200 transition-all duration-200 shadow-2xs">
+                            <div className="p-3.5 rounded-xl border border-[#D2CABC] bg-[#E5DFD4] hover:border-rose-300 transition-all duration-200 shadow-2xs">
                                 <div className="flex items-center justify-between gap-3 mb-1.5">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                                        <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
                                             <XCircle className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-slate-800 leading-none">Cancelled</p>
-                                            <p className="text-[10px] text-slate-400 leading-tight mt-0.5">Revoked stays</p>
+                                            <p className="text-xs font-bold text-[#1A1916] leading-none">Cancelled</p>
+                                            <p className="text-[10px] text-[#686259] leading-tight mt-0.5">Revoked stays</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-sm font-extrabold text-slate-900">{cancelledCount}</span>
-                                        <span className="text-[10px] text-slate-400 ml-1">({cancelledPercent}%)</span>
+                                        <span className="text-sm font-extrabold text-[#1A1916]">{cancelledCount}</span>
+                                        <span className="text-[10px] text-[#686259] ml-1">({cancelledPercent}%)</span>
                                     </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-full overflow-hidden">
                                     <motion.div
                                         className="h-full bg-rose-500 rounded-full"
                                         initial={{ width: 0 }}
@@ -566,14 +566,14 @@ export default function BookingPieChart({
                             </div>
 
                             {/* Short, Compact Health Pill */}
-                            <div className="p-2.5 rounded-lg bg-white border border-slate-200/60 flex items-center justify-between shadow-2xs">
-                                <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1.5">
-                                    <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                            <div className="p-2.5 rounded-lg bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between shadow-2xs">
+                                <span className="text-[11px] font-medium text-[#686259] flex items-center gap-1.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-[#7A5C28] shrink-0" />
                                     Health Status
                                 </span>
                                 <span
                                     className={`text-[11px] font-bold ${
-                                        confirmedPercent >= 80 ? "text-emerald-600" : "text-amber-600"
+                                        confirmedPercent >= 80 ? "text-[#1F1E1B]" : "text-amber-700"
                                     }`}
                                 >
                                     {confirmedPercent >= 80 ? "Optimal" : "Needs attention"}

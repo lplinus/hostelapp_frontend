@@ -147,6 +147,13 @@ export interface VacationRental {
     is_active: boolean;
     og_image?: string;
     images?: VacationRentalImage[];
+    reviews?: Array<{
+        id: number | string;
+        user_name?: string;
+        rating: number;
+        comment: string;
+        created_at: string;
+    }>;
     created_at?: string;
     updated_at?: string;
 }

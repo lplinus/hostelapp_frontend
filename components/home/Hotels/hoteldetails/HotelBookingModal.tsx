@@ -97,7 +97,7 @@ export function HotelBookingModal({
                 modal={false}
             >
                 <DialogContent
-                    className="max-w-lg w-[95vw] sm:w-full p-5 sm:p-6 rounded-2xl bg-white shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto no-scrollbar"
+                    className="max-w-lg w-[95vw] sm:w-full p-5 sm:p-6 rounded-xl bg-[#E5DFD4] shadow-2xl border border-[#D2CABC] max-h-[90vh] overflow-y-auto no-scrollbar"
                     onPointerDownOutside={(e) => {
                         e.preventDefault();
                     }}
@@ -107,48 +107,48 @@ export function HotelBookingModal({
                 >
                 {confirmedBooking ? (
                     <div className="text-center py-4 space-y-4">
-                        <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 shadow-xs">
+                        <div className="w-14 h-14 bg-[#DBD5C8] text-[#1A1916] rounded-full flex items-center justify-center mx-auto border border-[#D2CABC] shadow-xs">
                             <CheckCircle2 size={30} strokeWidth={2.5} />
                         </div>
                         <DialogHeader className="space-y-1 text-center">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 inline-block mx-auto">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A1916] bg-[#DBD5C8] px-2.5 py-1 rounded-md border border-[#D2CABC] inline-block mx-auto">
                                 Reservation Confirmed
                             </span>
-                            <DialogTitle className="text-xl font-bold text-slate-900 mt-2 text-center">
+                            <DialogTitle className="text-xl font-bold text-[#1A1916] mt-2 text-center">
                                 Booking Confirmed!
                             </DialogTitle>
-                            <DialogDescription className="text-xs text-slate-500 mt-1 text-center">
-                                Your stay at <strong className="text-slate-800">{hotel.name}</strong> is locked in.
+                            <DialogDescription className="text-xs text-[#686259] mt-1 text-center">
+                                Your stay at <strong className="text-[#1A1916]">{hotel.name}</strong> is locked in.
                             </DialogDescription>
                         </DialogHeader>
 
                         {/* Booking Summary Box */}
-                        <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-200/70 text-left space-y-2 text-xs">
-                            <div className="flex justify-between items-center pb-2 border-b border-slate-200/60">
-                                <span className="text-slate-500">Booking Reference</span>
-                                <span className="font-mono font-bold text-slate-900 text-sm">
+                        <div className="bg-[#DBD5C8]/40 rounded-lg p-4 border border-[#D2CABC] text-left space-y-2 text-xs">
+                            <div className="flex justify-between items-center pb-2 border-b border-[#D2CABC]">
+                                <span className="text-[#686259]">Booking Reference</span>
+                                <span className="font-mono font-bold text-[#1A1916] text-sm">
                                     {confirmedBooking.booking_reference}
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-slate-500">Suite Type</span>
-                                <span className="font-semibold text-slate-900">
+                                <span className="text-[#686259]">Suite Type</span>
+                                <span className="font-semibold text-[#1A1916]">
                                     {selectedRoom?.name || "Standard Suite"}
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-slate-500">Stay Duration</span>
-                                <span className="font-semibold text-slate-900">
+                                <span className="text-[#686259]">Stay Duration</span>
+                                <span className="font-semibold text-[#1A1916]">
                                     {checkInDate} to {checkOutDate} ({numberOfNights} night{numberOfNights > 1 ? "s" : ""})
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-slate-500">Guest</span>
-                                <span className="font-semibold text-slate-900">{guestName}</span>
+                                <span className="text-[#686259]">Guest</span>
+                                <span className="font-semibold text-[#1A1916]">{guestName}</span>
                             </div>
-                            <div className="flex justify-between pt-2 border-t border-slate-200/60 items-baseline">
-                                <span className="text-slate-700 font-bold">Total Amount</span>
-                                <span className="text-base font-extrabold text-[#003580]">
+                            <div className="flex justify-between pt-2 border-t border-[#D2CABC] items-baseline">
+                                <span className="text-[#1A1916] font-bold">Total Amount</span>
+                                <span className="text-base font-extrabold text-[#1A1916]">
                                     ₹{totalAmount.toLocaleString("en-IN")}
                                 </span>
                             </div>
@@ -157,7 +157,7 @@ export function HotelBookingModal({
                         <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
                             <Button
                                 asChild
-                                className="bg-[#003580] hover:bg-[#002244] text-xs font-semibold"
+                                className="h-10 px-4 bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] text-xs font-semibold rounded-sm"
                             >
                                 <Link href="/hotelbooking">
                                     View in Dashboard Folio
@@ -169,7 +169,7 @@ export function HotelBookingModal({
                                     onClose();
                                     setConfirmedBooking(null);
                                 }}
-                                className="text-xs font-semibold text-slate-700"
+                                className="h-10 px-4 text-xs font-semibold text-[#1A1916] border border-[#D2CABC] bg-[#EDE8DF] hover:bg-[#DBD5C8] rounded-sm"
                             >
                                 Done
                             </Button>
@@ -178,58 +178,58 @@ export function HotelBookingModal({
                 ) : (
                     <>
                         <DialogHeader>
-                            <DialogTitle className="text-lg font-bold text-slate-950 flex items-center gap-2">
-                                <Building2 size={18} className="text-[#003580]" />
+                            <DialogTitle className="text-lg font-bold text-[#1A1916] flex items-center gap-2">
+                                <Building2 size={18} className="text-[#1F1E1B]" />
                                 Reserve {hotel.name}
                             </DialogTitle>
-                            <DialogDescription className="text-xs text-slate-600 font-medium">
+                            <DialogDescription className="text-xs text-[#686259] font-medium">
                                 {selectedRoom?.name || "Selected Suite"} • {numberOfNights} night{numberOfNights > 1 ? "s" : ""} • {new Date(checkInDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} – {new Date(checkOutDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} • ₹{totalAmount.toLocaleString("en-IN")} Total
                             </DialogDescription>
                         </DialogHeader>
 
                         <div className="space-y-4 py-2 text-xs">
                             {/* Stay Dates (Frozen from Reserve bar selection) */}
-                            <div className="bg-slate-50/80 rounded-xl border border-slate-200/80 p-3 space-y-2">
+                            <div className="bg-[#DBD5C8]/40 rounded-lg border border-[#D2CABC] p-3 space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                        <Calendar size={12} className="text-[#003580]" />
+                                    <span className="text-[10px] font-bold text-[#686259] uppercase tracking-wider flex items-center gap-1.5">
+                                        <Calendar size={12} className="text-[#1F1E1B]" />
                                         Selected Stay Dates
                                     </span>
-                                    <span className="text-[10px] font-bold text-[#003580] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                                    <span className="text-[10px] font-bold text-[#1A1916] bg-[#DBD5C8] border border-[#D2CABC] px-2 py-0.5 rounded-md">
                                         {numberOfNights} {numberOfNights === 1 ? "Night" : "Nights"} (Confirmed)
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 pt-1">
-                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
-                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-In</span>
-                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                    <div className="bg-[#EDE8DF] border border-[#D2CABC] rounded-md px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-[#686259] block uppercase">Check-In</span>
+                                        <span className="text-xs font-bold text-[#1A1916] block mt-0.5">
                                             {checkInDate ? new Date(checkInDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkInDate}
                                         </span>
                                     </div>
-                                    <div className="bg-white border border-slate-200 rounded-lg px-3 py-2">
-                                        <span className="text-[10px] font-semibold text-slate-500 block uppercase">Check-Out</span>
-                                        <span className="text-xs font-bold text-slate-900 block mt-0.5">
+                                    <div className="bg-[#EDE8DF] border border-[#D2CABC] rounded-md px-3 py-2">
+                                        <span className="text-[10px] font-semibold text-[#686259] block uppercase">Check-Out</span>
+                                        <span className="text-xs font-bold text-[#1A1916] block mt-0.5">
                                             {checkOutDate ? new Date(checkOutDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : checkOutDate}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="font-semibold text-slate-800">Primary Guest Full Name</label>
+                                <label className="font-semibold text-[#1A1916]">Primary Guest Full Name</label>
                                 <Input
                                     placeholder="Full Name (e.g. Aarav Sharma)"
                                     value={guestName}
                                     onChange={(e) => setGuestName(e.target.value)}
-                                    className="h-9 text-xs font-medium text-slate-900"
+                                    className="h-10 text-xs font-medium text-[#1A1916] bg-[#EDE8DF] border border-[#D2CABC] rounded-md placeholder:text-[#7A746B] focus:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B]/20 transition-all"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1.5">
                                     <div className="flex items-center justify-between">
-                                        <label className="font-semibold text-slate-800">Email Address</label>
+                                        <label className="font-semibold text-[#1A1916]">Email Address</label>
                                         {isEmailVerified && (
-                                            <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                            <span className="text-[10px] text-[#1A1916] font-bold flex items-center gap-1 bg-[#DBD5C8] px-2 py-0.5 rounded-md border border-[#D2CABC]">
                                                 <CheckCircle2 size={11} /> Verified
                                             </span>
                                         )}
@@ -239,12 +239,12 @@ export function HotelBookingModal({
                                         placeholder="guest@example.com"
                                         value={guestEmail}
                                         onChange={(e) => setGuestEmail(e.target.value)}
-                                        className="h-9 text-xs font-medium text-slate-900"
+                                        className="h-10 text-xs font-medium text-[#1A1916] bg-[#EDE8DF] border border-[#D2CABC] rounded-md placeholder:text-[#7A746B] focus:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B]/20 transition-all"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="font-semibold text-slate-800">
-                                        Mobile Number <span className="text-[10px] text-slate-400 font-normal">(10 digits)</span>
+                                    <label className="font-semibold text-[#1A1916]">
+                                        Mobile Number <span className="text-[10px] text-[#686259] font-normal">(10 digits)</span>
                                     </label>
                                     <Input
                                         type="tel"
@@ -256,30 +256,30 @@ export function HotelBookingModal({
                                             const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
                                             setGuestMobile(digitsOnly);
                                         }}
-                                        className="h-9 text-xs font-medium text-slate-900 font-mono tracking-wider"
+                                        className="h-10 text-xs font-medium text-[#1A1916] font-mono tracking-wider bg-[#EDE8DF] border border-[#D2CABC] rounded-md placeholder:text-[#7A746B] focus:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B]/20 transition-all"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="font-semibold text-slate-800">Special Notes for Concierge (Optional)</label>
+                                <label className="font-semibold text-[#1A1916]">Special Notes for Concierge (Optional)</label>
                                 <Input
                                     placeholder="Late check-in, high floor preference, airport transfer inquiry..."
                                     value={specialRequests}
                                     onChange={(e) => setSpecialRequests(e.target.value)}
-                                    className="h-9 text-xs font-medium text-slate-900"
+                                    className="h-10 text-xs font-medium text-[#1A1916] bg-[#EDE8DF] border border-[#D2CABC] rounded-md placeholder:text-[#7A746B] focus:border-[#1F1E1B] focus:ring-1 focus:ring-[#1F1E1B]/20 transition-all"
                                 />
                             </div>
 
-                            <div className="space-y-2 pt-2 border-t border-slate-100">
-                                <label className="font-semibold text-slate-800 block">Payment Method</label>
+                            <div className="space-y-2 pt-2 border-t border-[#D2CABC]">
+                                <label className="font-semibold text-[#1A1916] block">Payment Method</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod("online")}
-                                        className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all ${paymentMethod === "online"
-                                                ? "border-[#003580] bg-blue-50/50 text-[#003580]"
-                                                : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                                        className={`p-2.5 rounded-md border text-xs font-semibold flex items-center justify-between transition-all ${paymentMethod === "online"
+                                                ? "border-[#1F1E1B] bg-[#DBD5C8] text-[#1A1916]"
+                                                : "border-[#D2CABC] bg-[#EDE8DF] text-[#686259] hover:bg-[#DBD5C8]/50 hover:text-[#1A1916]"
                                             }`}
                                     >
                                         <span>UPI / Razorpay</span>
@@ -288,9 +288,9 @@ export function HotelBookingModal({
                                     <button
                                         type="button"
                                         onClick={() => setPaymentMethod("on_arrival")}
-                                        className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all ${paymentMethod === "on_arrival"
-                                                ? "border-[#003580] bg-blue-50/50 text-[#003580]"
-                                                : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                                        className={`p-2.5 rounded-md border text-xs font-semibold flex items-center justify-between transition-all ${paymentMethod === "on_arrival"
+                                                ? "border-[#1F1E1B] bg-[#DBD5C8] text-[#1A1916]"
+                                                : "border-[#D2CABC] bg-[#EDE8DF] text-[#686259] hover:bg-[#DBD5C8]/50 hover:text-[#1A1916]"
                                             }`}
                                     >
                                         <span>Pay on Arrival</span>
@@ -300,13 +300,13 @@ export function HotelBookingModal({
                             </div>
                         </div>
 
-                        <DialogFooter className="gap-2 pt-2 border-t">
+                        <DialogFooter className="gap-2 pt-2 border-t border-[#D2CABC]">
                             <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={onClose}
                                 disabled={isSubmittingBooking}
-                                className="text-xs text-slate-700 font-semibold"
+                                className="h-10 px-4 text-xs font-semibold text-[#686259] hover:text-[#1A1916] border border-[#D2CABC] bg-[#EDE8DF] hover:bg-[#DBD5C8] rounded-sm"
                             >
                                 Cancel
                             </Button>
@@ -314,11 +314,11 @@ export function HotelBookingModal({
                                 size="sm"
                                 onClick={handleConfirmBooking}
                                 disabled={isSubmittingBooking}
-                                className="bg-[#003580] hover:bg-[#002244] text-white text-xs font-semibold gap-1.5 shadow-sm rounded-xl px-5 h-9"
+                                className="h-10 px-5 bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] text-xs font-semibold gap-1.5 shadow-sm rounded-sm"
                             >
                                 {isSubmittingBooking ? (
                                     <>
-                                        <Loader2 size={13} className="animate-spin" />
+                                        <Loader2 size={13} className="animate-spin text-[#EDE8DF]" />
                                         Processing...
                                     </>
                                 ) : (

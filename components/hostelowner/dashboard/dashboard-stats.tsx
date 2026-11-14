@@ -158,8 +158,8 @@ export default function DashboardStats() {
                                 onClick={() => setSelectedStream(tab.id)}
                                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                                     isSelected
-                                        ? "bg-white text-blue-600 shadow-xs border border-blue-200"
-                                        : "bg-white/60 text-slate-500 hover:text-slate-800 hover:bg-white border border-border/60"
+                                        ? "bg-[#1F1E1B] text-white shadow-xs border border-[#1F1E1B]"
+                                        : "bg-[#DBD5C8]/80 text-[#5A544A] hover:text-[#1A1916] hover:bg-[#DBD5C8] border border-[#D2CABC]"
                                 }`}
                             >
                                 <Icon className="w-3.5 h-3.5" />
@@ -173,9 +173,9 @@ export default function DashboardStats() {
             {/* Stats Cards Row */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {/* Selector Card for Booking Stats */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-border flex flex-col justify-between group hover:border-primary/30 transition-all duration-200 relative">
+                <div className="bg-[#E5DFD4] p-6 rounded-xl shadow-xs border border-[#D2CABC] flex flex-col justify-between group hover:border-[#1F1E1B]/30 transition-all duration-200 relative">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                        <p className="text-xs font-bold text-[#686259] uppercase tracking-widest">
                             {currentMetric.label}
                         </p>
 
@@ -186,7 +186,7 @@ export default function DashboardStats() {
                                     e.stopPropagation();
                                     setIsDropdownOpen(!isDropdownOpen);
                                 }}
-                                className="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md hover:bg-primary/15 transition-colors cursor-pointer whitespace-nowrap"
+                                className="flex items-center gap-1 text-[10px] font-bold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2.5 py-1 rounded-md hover:bg-[#DBD5C8]/80 transition-colors cursor-pointer whitespace-nowrap"
                             >
                                 SWITCH{" "}
                                 <ChevronDown
@@ -204,14 +204,14 @@ export default function DashboardStats() {
                                             setIsDropdownOpen(false);
                                         }}
                                     />
-                                    <div className="absolute right-0 top-full mt-1 bg-white border border-border rounded-lg shadow-xl py-1 z-[50] min-w-[130px] animate-in fade-in slide-in-from-top-1">
+                                    <div className="absolute right-0 top-full mt-1 bg-[#E5DFD4] border border-[#D2CABC] rounded-lg shadow-xl py-1 z-[50] min-w-[130px] animate-in fade-in slide-in-from-top-1">
                                         <button
                                             type="button"
                                             onClick={(e) => handleSelect("total", e)}
                                             className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "total"
-                                                    ? "text-primary bg-primary/10"
-                                                    : "text-foreground hover:bg-muted/50"
+                                                    ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
+                                                    : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
                                             }`}
                                         >
                                             Total Bookings
@@ -221,8 +221,8 @@ export default function DashboardStats() {
                                             onClick={(e) => handleSelect("active", e)}
                                             className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "active"
-                                                    ? "text-primary bg-primary/10"
-                                                    : "text-foreground hover:bg-muted/50"
+                                                    ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
+                                                    : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
                                             }`}
                                         >
                                             Active Bookings
@@ -232,8 +232,8 @@ export default function DashboardStats() {
                                             onClick={(e) => handleSelect("cancelled", e)}
                                             className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "cancelled"
-                                                    ? "text-primary bg-primary/10"
-                                                    : "text-foreground hover:bg-muted/50"
+                                                    ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
+                                                    : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
                                             }`}
                                         >
                                             Cancelled
@@ -246,14 +246,14 @@ export default function DashboardStats() {
 
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col">
-                            <h2 className="text-3xl font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors">
+                            <h2 className="text-3xl font-extrabold text-[#1A1916] tracking-tight group-hover:text-[#1F1E1B] transition-colors">
                                 {isLoading ? "..." : currentMetric.value}
                             </h2>
-                            <p className="text-[10px] font-medium text-muted-foreground mt-1 italic leading-tight">
+                            <p className="text-[10px] font-medium text-[#686259] mt-1 italic leading-tight">
                                 {currentMetric.notation}
                             </p>
                         </div>
-                        <div className="text-3xl bg-muted/40 group-hover:bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 border border-transparent group-hover:border-primary/20">
+                        <div className="text-3xl bg-[#DBD5C8] group-hover:bg-[#1F1E1B]/10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 border border-transparent group-hover:border-[#1F1E1B]/20">
                             {currentMetric.icon}
                         </div>
                     </div>

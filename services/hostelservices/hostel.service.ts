@@ -1,6 +1,7 @@
 import { HostelListItem, HostelDetail, HostelImage, DefaultHostelImage } from "@/types/hostel.types";
 import { authApiClient } from "@/lib/api/auth-client";
 import { env } from "@/config/env";
+import { collectAllPages } from "@/lib/api/paginated";
 
 const API_BASE_URL = typeof window !== 'undefined' ? '' : env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -69,19 +70,20 @@ function processDefaultImages(
 // }
 export async function getHostels(): Promise<HostelListItem[]> {
     // const res = await fetch(`${API_BASE_URL}/api/hostels/`, {
-    const res = await fetch(`${API_BASE_URL}/api/hostels/hostels/`, {
-        next: { revalidate: 60 },
+    // Backend is paginated: read every page so filters, sorting and the
+    // 9-per-page grid work across all hostels, not just the first page.
+    const hostels = await collectAllPages<HostelListItem>(async (page, pageSize) => {
+        const res = await fetch(
+            `${API_BASE_URL}/api/hostels/hostels/?page=${page}&page_size=${pageSize}`,
+            { next: { revalidate: 60 } }
+        );
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch hostels");
+        }
+
+        return res.json();
     });
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch hostels");
-    }
-
-    const data = await res.json();
-
-    const hostels: HostelListItem[] = Array.isArray(data)
-        ? data
-        : data?.results || [];
 
     return hostels.map((hostel) => ({
         ...hostel,
