@@ -77,11 +77,11 @@ export default function BookingPieChart({
     const confirmedPercent = sum > 0 ? Math.round((confirmedCount / sum) * 100) : 0;
     const cancelledPercent = sum > 0 ? 100 - confirmedPercent : 0;
 
-    // SVG Geometry for prominent high-impact donut chart
-    const size = 240;
-    const center = size / 2; // 120
-    const strokeWidth = 24;
-    const radius = 92;
+    // SVG Geometry for balanced compact donut chart
+    const size = 190;
+    const center = size / 2; // 95
+    const strokeWidth = 18;
+    const radius = 74;
     const circumference = 2 * Math.PI * radius;
 
     const confirmedOffset = circumference - (confirmedCount / (sum || 1)) * circumference;
@@ -108,44 +108,44 @@ export default function BookingPieChart({
         return Math.max(max, 2);
     }, [filteredTimeline]);
 
-    // Stream buttons metadata
+    // Stream buttons metadata (Hostels disabled to match unified property stats)
     const streamTabs = [
         { id: "all" as StreamFilter, label: "All Properties", icon: Layers },
-        { id: "hostel" as StreamFilter, label: "Hostels", icon: Building2 },
+        // { id: "hostel" as StreamFilter, label: "Hostels", icon: Building2 },
         { id: "hotel" as StreamFilter, label: "Hotels", icon: Hotel },
         { id: "vacation_rental" as StreamFilter, label: "Vacation Rentals", icon: Home },
     ];
 
     return (
-        <Card className="relative overflow-hidden border border-[#D2CABC] bg-[#E5DFD4] shadow-xs rounded-xl">
+        <Card className="relative overflow-hidden border border-[#D2CABC] bg-[#E5DFD4] shadow-xs rounded-md">
             {/* Ambient background aura */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-black/5 via-black/2 to-transparent -mr-28 -mt-28 pointer-events-none blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-black/5 to-transparent -ml-24 -mb-24 pointer-events-none blur-2xl" />
 
-            <CardHeader className="pb-3.5 relative z-10 border-b border-[#D2CABC]">
-                <div className="flex flex-col gap-3">
+            <CardHeader className="p-3 sm:p-4 pb-2 sm:pb-2.5 relative z-10 border-b border-[#D2CABC]">
+                <div className="flex flex-col gap-2.5">
                     {/* Top Row: Title, Stream Category Selector & Switcher */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div className="space-y-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                        <div className="space-y-0.5">
                             <div className="flex items-center gap-2">
-                                <span className="p-2 rounded-lg bg-[#DBD5C8] text-[#1F1E1B] shadow-2xs">
-                                    <Activity className="w-4 h-4" />
+                                <span className="p-1.5 rounded-md bg-[#DBD5C8] text-[#1F1E1B] shadow-2xs">
+                                    <Activity className="w-3.5 h-3.5" />
                                 </span>
-                                <CardTitle className="text-base font-bold text-[#1A1916]">Booking Analytics</CardTitle>
+                                <CardTitle className="text-sm sm:text-base font-bold text-[#1A1916]">Booking Analytics</CardTitle>
                             </div>
-                            <CardDescription className="text-xs text-[#686259] font-normal">
+                            <CardDescription className="text-[11px] sm:text-xs text-[#686259] font-normal">
                                 Real database statistics across your property streams
                             </CardDescription>
                         </div>
 
                         {/* Top Right Controls: Views & Rates */}
-                        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
-                            {/* Interactive View Switcher: Donut vs Bar Graph (Smooth soft-corner pill container) */}
-                            <div className="inline-flex p-1 rounded-lg bg-[#DBD5C8]/80 border border-[#D2CABC]">
+                        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                            {/* Interactive View Switcher: Donut vs Bar Graph (Clean rectangular styling) */}
+                            <div className="inline-flex p-0.5 rounded-md bg-[#DBD5C8]/80 border border-[#D2CABC]">
                                 <button
                                     type="button"
                                     onClick={() => setChartView("donut")}
-                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
+                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all duration-200 ${
                                         chartView === "donut"
                                             ? "bg-[#1F1E1B] text-white shadow-xs"
                                             : "text-[#5A544A] hover:text-[#1A1916]"
@@ -158,7 +158,7 @@ export default function BookingPieChart({
                                 <button
                                     type="button"
                                     onClick={() => setChartView("bar")}
-                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
+                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all duration-200 ${
                                         chartView === "bar"
                                             ? "bg-[#1F1E1B] text-white shadow-xs"
                                             : "text-[#5A544A] hover:text-[#1A1916]"
@@ -171,7 +171,7 @@ export default function BookingPieChart({
                             </div>
 
                             {!isLoading && sum > 0 && (
-                                <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#DBD5C8] border border-[#D2CABC] rounded-lg text-[#1F1E1B] text-xs font-semibold shadow-2xs">
+                                <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#DBD5C8] border border-[#D2CABC] rounded-md text-[#1F1E1B] text-xs font-semibold shadow-2xs">
                                     <TrendingUp className="w-3.5 h-3.5 text-[#1F1E1B]" />
                                     <span>{confirmedPercent}% Success</span>
                                 </div>
@@ -179,9 +179,9 @@ export default function BookingPieChart({
                         </div>
                     </div>
 
-                    {/* Second Row: Property Stream Tabs (Smooth soft-corner buttons matching dashboard) */}
+                    {/* Second Row: Property Stream Tabs (Clean rectangular buttons matching dashboard) */}
                     <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#D2CABC] flex-wrap">
-                        <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
+                        <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                             {streamTabs.map((tab) => {
                                 const TabIcon = tab.icon;
                                 const isSelected = streamFilter === tab.id;
@@ -190,7 +190,7 @@ export default function BookingPieChart({
                                         key={tab.id}
                                         type="button"
                                         onClick={() => setStreamFilter(tab.id)}
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                                             isSelected
                                                 ? "bg-[#1F1E1B] text-white border border-[#1F1E1B] shadow-2xs"
                                                 : "text-[#5A544A] hover:text-[#1A1916] hover:bg-[#DBD5C8]/50 border border-transparent"
@@ -203,15 +203,15 @@ export default function BookingPieChart({
                             })}
                         </div>
 
-                        {/* Date Range Filter (Soft-corner rounded-lg container) */}
+                        {/* Date Range Filter (Clean rectangular container) */}
                         {chartView === "bar" && (
-                            <div className="inline-flex p-1 rounded-lg bg-[#DBD5C8]/80 border border-[#D2CABC] text-[11px]">
+                            <div className="inline-flex p-0.5 rounded-md bg-[#DBD5C8]/80 border border-[#D2CABC] text-[11px]">
                                 {(["all", "30d", "7d"] as const).map((filter) => (
                                     <button
                                         key={filter}
                                         type="button"
                                         onClick={() => setTimeFilter(filter)}
-                                        className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+                                        className={`px-2 py-0.5 rounded-sm font-semibold transition-all ${
                                             timeFilter === filter
                                                 ? "bg-[#1F1E1B] text-white shadow-xs border border-[#1F1E1B]"
                                                 : "text-[#5A544A] hover:text-[#1A1916]"
@@ -248,9 +248,9 @@ export default function BookingPieChart({
                     </div>
                 ) : (
                     /* Strict Side-by-Side Flex Layout: Left Chart | Border Divider | Right Data Metrics */
-                    <div className="flex flex-col md:flex-row items-stretch w-full min-h-[300px]">
-                        {/* LEFT SECTION: Prominent Large Chart */}
-                        <div className="flex-1 p-6 md:p-8 flex flex-col items-center justify-center min-w-0">
+                    <div className="flex flex-col md:flex-row items-stretch w-full min-h-[250px]">
+                        {/* LEFT SECTION: Balanced Compact Chart */}
+                        <div className="flex-1 p-4 sm:p-5 md:p-6 flex flex-col items-center justify-center min-w-0">
                             <AnimatePresence mode="wait">
                                 {chartView === "donut" ? (
                                     <motion.div
@@ -344,28 +344,28 @@ export default function BookingPieChart({
 
                                         {/* Center Display with clean bold hierarchy */}
                                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#686259] uppercase">
+                                            <span className="text-[10px] font-bold tracking-widest text-[#686259] uppercase">
                                                 Total Bookings
                                             </span>
-                                            <span className="text-4xl font-black text-[#1A1916] tracking-tight leading-none my-1">
+                                            <span className="text-2xl md:text-3xl font-black text-[#1A1916] tracking-tight leading-none my-0.5">
                                                 {sum}
                                             </span>
-                                            <span className="text-xs font-semibold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2.5 py-0.5 rounded-md mt-1">
+                                            <span className="text-[11px] font-semibold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2 py-0.5 rounded-sm mt-0.5">
                                                 {confirmedPercent}% active rate
                                             </span>
                                         </div>
                                     </motion.div>
                                 ) : (
-                                    /* REAL-WORLD TIMELINE BAR GRAPH WITH SOFT RECTANGULAR EDGES */
+                                    /* REAL-WORLD TIMELINE BAR GRAPH WITH CRISP RECTANGULAR EDGES */
                                     <motion.div
                                         key={`bar-${streamFilter}-${timeFilter}`}
                                         initial={{ opacity: 0, y: 8 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -8 }}
                                         transition={{ duration: 0.25 }}
-                                        className="w-full max-w-lg flex flex-col justify-between h-full py-1"
+                                        className="w-full max-w-md flex flex-col justify-between h-full py-1"
                                     >
-                                        <div className="flex items-center justify-between mb-3 px-1">
+                                        <div className="flex items-center justify-between mb-2.5 px-1">
                                             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
                                                 <Calendar className="w-3.5 h-3.5 text-[#1F1E1B]" />
                                                 <span>
@@ -385,11 +385,11 @@ export default function BookingPieChart({
                                         </div>
 
                                         {filteredTimeline.length === 0 ? (
-                                            <div className="h-48 flex items-center justify-center text-xs text-slate-400 italic">
+                                            <div className="h-36 sm:h-40 flex items-center justify-center text-xs text-slate-400 italic">
                                                 No timeline records for this selection
                                             </div>
                                         ) : (
-                                            <div className="flex items-stretch gap-2 h-48 w-full pt-2">
+                                            <div className="flex items-stretch gap-2 h-36 sm:h-40 w-full pt-1">
                                                 {/* Y-Axis Value Labels */}
                                                 <div className="flex flex-col justify-between text-[10px] font-semibold text-slate-400 select-none pb-7 pt-1 text-right pr-1 w-6 shrink-0">
                                                     <span>{maxDayTotal}</span>
@@ -417,15 +417,15 @@ export default function BookingPieChart({
                                                                     className="flex-1 flex flex-col items-center h-full justify-end group relative px-0.5"
                                                                 >
                                                                     {/* Tooltip on hover */}
-                                                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute -top-8 bg-slate-900 text-white text-[10px] py-1 px-2.5 rounded-md shadow-md pointer-events-none whitespace-nowrap z-30">
+                                                                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute -top-8 bg-slate-900 text-white text-[10px] py-1 px-2.5 rounded-sm shadow-md pointer-events-none whitespace-nowrap z-30">
                                                                         {item.label || item.date}: {item.confirmed}{" "}
                                                                         confirmed, {item.cancelled} cancelled
                                                                     </div>
 
                                                                     {/* Dual Rectangular Bars container with crisp rectangular notation */}
-                                                                    <div className="w-full flex items-end justify-center gap-1 h-full">
+                                                                    <div className="w-full flex items-end justify-center gap-0.5 sm:gap-1 h-full">
                                                                         {/* Confirmed Column */}
-                                                                        <div className="w-3 sm:w-4.5 bg-slate-100 h-full flex items-end">
+                                                                        <div className="w-2.5 sm:w-3.5 bg-slate-100 h-full flex items-end rounded-xs">
                                                                             <motion.div
                                                                                 initial={{ height: 0 }}
                                                                                 animate={{
@@ -443,11 +443,11 @@ export default function BookingPieChart({
                                                                                     ease: "easeOut",
                                                                                     delay: idx * 0.04,
                                                                                 }}
-                                                                                className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+                                                                                className="w-full bg-[#1F1E1B] hover:bg-[#33312B] transition-colors rounded-xs"
                                                                             />
                                                                         </div>
                                                                         {/* Cancelled Column */}
-                                                                        <div className="w-3 sm:w-4.5 bg-slate-100 h-full flex items-end">
+                                                                        <div className="w-2.5 sm:w-3.5 bg-slate-100 h-full flex items-end rounded-xs">
                                                                             <motion.div
                                                                                 initial={{ height: 0 }}
                                                                                 animate={{
@@ -465,7 +465,7 @@ export default function BookingPieChart({
                                                                                     ease: "easeOut",
                                                                                     delay: 0.08 + idx * 0.04,
                                                                                 }}
-                                                                                className="w-full bg-rose-500 hover:bg-rose-600 transition-colors"
+                                                                                className="w-full bg-rose-500 hover:bg-rose-600 transition-colors rounded-xs"
                                                                             />
                                                                         </div>
                                                                     </div>
@@ -502,21 +502,21 @@ export default function BookingPieChart({
                         <div className="w-full md:w-px h-px md:h-auto bg-gradient-to-r md:bg-gradient-to-b from-transparent via-[#D2CABC] to-transparent self-stretch" />
 
                         {/* RIGHT SECTION: Compact Data Breakdown & Health Card */}
-                        <div className="w-full md:w-[280px] lg:w-[320px] p-5 md:p-6 flex flex-col justify-center gap-3 shrink-0 bg-[#DBD5C8]/40">
-                            {/* Stream Indicator Pill (Matching app soft corners) */}
-                            <div className="px-3 py-1.5 rounded-lg bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between text-[11px]">
+                        <div className="w-full md:w-[260px] lg:w-[280px] p-3.5 sm:p-4 md:p-4.5 flex flex-col justify-center gap-2.5 shrink-0 bg-[#DBD5C8]/40">
+                            {/* Stream Indicator Pill (Clean rectangular container) */}
+                            <div className="px-2.5 py-1 rounded-md bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between text-[11px]">
                                 <span className="text-[#686259] font-medium">Viewing Stream</span>
                                 <span className="font-bold text-[#1F1E1B]">
                                     {streamTabs.find((t) => t.id === streamFilter)?.label}
                                 </span>
                             </div>
 
-                            {/* Confirmed Metric Card (Matching app rounded-lg/rounded-xl) */}
-                            <div className="p-3.5 rounded-xl border border-[#D2CABC] bg-[#E5DFD4] hover:border-[#1F1E1B] transition-all duration-200 shadow-2xs">
-                                <div className="flex items-center justify-between gap-3 mb-1.5">
+                            {/* Confirmed Metric Card (Clean rectangular container) */}
+                            <div className="p-2.5 sm:p-3 rounded-md border border-[#D2CABC] bg-[#E5DFD4] hover:border-[#1F1E1B] transition-all duration-200 shadow-2xs">
+                                <div className="flex items-center justify-between gap-2.5 mb-1">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-lg bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center shrink-0">
-                                            <CheckCircle2 className="w-4 h-4" />
+                                        <div className="w-6 h-6 rounded-md bg-[#DBD5C8] text-[#1F1E1B] flex items-center justify-center shrink-0">
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-bold text-[#1A1916] leading-none">Confirmed</p>
@@ -528,9 +528,9 @@ export default function BookingPieChart({
                                         <span className="text-[10px] text-[#686259] ml-1">({confirmedPercent}%)</span>
                                     </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-full overflow-hidden">
+                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-xs overflow-hidden">
                                     <motion.div
-                                        className="h-full bg-[#1F1E1B] rounded-full"
+                                        className="h-full bg-[#1F1E1B] rounded-xs"
                                         initial={{ width: 0 }}
                                         animate={{ width: `${confirmedPercent}%` }}
                                         transition={{ duration: 0.9, ease: "easeOut" }}
@@ -538,12 +538,12 @@ export default function BookingPieChart({
                                 </div>
                             </div>
 
-                            {/* Cancelled Metric Card (Matching app rounded-lg/rounded-xl) */}
-                            <div className="p-3.5 rounded-xl border border-[#D2CABC] bg-[#E5DFD4] hover:border-rose-300 transition-all duration-200 shadow-2xs">
-                                <div className="flex items-center justify-between gap-3 mb-1.5">
+                            {/* Cancelled Metric Card (Clean rectangular container) */}
+                            <div className="p-2.5 sm:p-3 rounded-md border border-[#D2CABC] bg-[#E5DFD4] hover:border-rose-300 transition-all duration-200 shadow-2xs">
+                                <div className="flex items-center justify-between gap-2.5 mb-1">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                                            <XCircle className="w-4 h-4" />
+                                        <div className="w-6 h-6 rounded-md bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                                            <XCircle className="w-3.5 h-3.5" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-bold text-[#1A1916] leading-none">Cancelled</p>
@@ -555,9 +555,9 @@ export default function BookingPieChart({
                                         <span className="text-[10px] text-[#686259] ml-1">({cancelledPercent}%)</span>
                                     </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-full overflow-hidden">
+                                <div className="w-full h-1.5 bg-[#DBD5C8] rounded-xs overflow-hidden">
                                     <motion.div
-                                        className="h-full bg-rose-500 rounded-full"
+                                        className="h-full bg-rose-500 rounded-xs"
                                         initial={{ width: 0 }}
                                         animate={{ width: `${cancelledPercent}%` }}
                                         transition={{ duration: 0.9, ease: "easeOut" }}
@@ -566,7 +566,7 @@ export default function BookingPieChart({
                             </div>
 
                             {/* Short, Compact Health Pill */}
-                            <div className="p-2.5 rounded-lg bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between shadow-2xs">
+                            <div className="p-2 rounded-md bg-[#DBD5C8] border border-[#D2CABC] flex items-center justify-between shadow-2xs">
                                 <span className="text-[11px] font-medium text-[#686259] flex items-center gap-1.5">
                                     <Sparkles className="w-3.5 h-3.5 text-[#7A5C28] shrink-0" />
                                     Health Status

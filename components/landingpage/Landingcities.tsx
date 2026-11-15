@@ -17,33 +17,33 @@ interface CityCardItem {
 const defaultCities: CityCardItem[] = [
   {
     city_name: "Hyderabad",
-    count_text: "120+ Hostels",
-    price_text: "From ₹3,443/mo",
-    areas: "Madhapur, Gachibowli, Ameerpet",
+    count_text: "120+ Hotels & Villas",
+    price_text: "From ₹2,499/night",
+    areas: "Banjara Hills, Gachibowli, Jubilee Hills",
   },
   {
     city_name: "Bangalore",
-    count_text: "95+ Hostels",
-    price_text: "From ₹4,200/mo",
-    areas: "Koramangala, HSR, Indiranagar",
+    count_text: "95+ Hotels & Villas",
+    price_text: "From ₹2,800/night",
+    areas: "Indiranagar, Koramangala, Whitefield",
   },
   {
     city_name: "Pune",
-    count_text: "74+ Hostels",
-    price_text: "From ₹3,800/mo",
-    areas: "Viman Nagar, Kothrud, Hinjewadi",
+    count_text: "74+ Vacation Stays",
+    price_text: "From ₹2,200/night",
+    areas: "Koregaon Park, Viman Nagar, Hinjewadi",
   },
   {
     city_name: "Mumbai",
-    count_text: "88+ Hostels",
-    price_text: "From ₹5,500/mo",
-    areas: "Andheri, Powai, Navi Mumbai",
+    count_text: "88+ Hotels & Suites",
+    price_text: "From ₹3,500/night",
+    areas: "Bandra, Colaba, Juhu",
   },
   {
     city_name: "Chennai",
-    count_text: "60+ Hostels",
-    price_text: "From ₹3,200/mo",
-    areas: "OMR, Velachery, Guindy",
+    count_text: "60+ Beach Stays & Villas",
+    price_text: "From ₹2,500/night",
+    areas: "ECR, Besant Nagar, OMR",
   },
 ];
 
@@ -130,7 +130,7 @@ export default function LandingCities({ data }: LandingCitiesProps) {
                   {c.price_text}
                 </span>
                 <span className="text-[10px] text-slate-400">
-                  Hostel Stays
+                  Hotels &amp; Villas
                 </span>
               </div>
             </div>

@@ -24,6 +24,7 @@ export interface GuestProfileAPIResponse {
     aadhaar_file_name: string | null;
     aadhaar_file_url: string | null;
     id_verification_status: "unverified" | "pending" | "verified" | "rejected";
+    share_id_with_host?: boolean;
     verified_at: string | null;
     rejection_reason: string | null;
     is_email_verified: boolean;

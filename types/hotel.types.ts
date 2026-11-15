@@ -74,6 +74,15 @@ export interface HotelBooking {
     status: HotelBookingStatus;
     status_display: string;
     guest_details: HotelGuest | null;
+    guest_id_document?: {
+        has_document: boolean;
+        is_shared: boolean;
+        status: "unverified" | "pending" | "verified" | "rejected";
+        aadhaar_number?: string | null;
+        file_name?: string | null;
+        file_url?: string | null;
+        verified_at?: string | null;
+    } | null;
     payment_details: HotelPayment | null;
     cancellation_details: HotelCancellation | null;
     created_at: string;

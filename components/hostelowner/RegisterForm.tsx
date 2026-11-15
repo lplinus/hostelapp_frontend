@@ -102,11 +102,11 @@ export default function RegisterForm() {
   };
 
   const features = [
-    { icon: CalendarCheck, label: "Instant Hostel Booking" },
-    { icon: CheckCircle2, label: "Verified Listings" },
-    { icon: Star, label: "Food & Daily Services" },
-    { icon: Shield, label: "Laundry & Complaints" },
-    { icon: MapPin, label: "Smart Digital Check-in" },
+    { icon: CalendarCheck, label: "Instant Stay Booking" },
+    { icon: CheckCircle2, label: "100% Verified Stays" },
+    { icon: Star, label: "Luxury & Comfort" },
+    { icon: Shield, label: "Secure Digital Checkout" },
+    { icon: MapPin, label: "Top Prime Locations" },
   ];
 
   return (
@@ -120,20 +120,16 @@ export default function RegisterForm() {
       >
         {/* Background Image */}
         <Image
-          src="/images/hostel-login-hero.webp"
-          alt="Hostel App Showcase"
+          src="/images/vacation-rental-hero.jpg"
+          alt="Luxury Vacation Rental Villa Showcase"
           fill
           priority
-          className="object-cover"
+          quality={95}
+          className="object-cover object-center"
         />
 
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1F1E1B]/90 via-[#2A2824]/85 to-[#141311]/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Subtle decorative orbs */}
-        <div className="absolute top-20 left-16 w-60 h-60 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-32 right-20 w-52 h-52 rounded-full bg-stone-500/10 blur-3xl pointer-events-none" />
+        {/* Natural Scrim - Zero color tinting, allows 100% true original photo colors to shine */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/45 pointer-events-none" />
 
         {/* Content on top */}
         <div className="relative z-10 flex flex-col justify-between p-8 xl:p-10 h-full w-full">
@@ -153,13 +149,13 @@ export default function RegisterForm() {
               Your Complete
               <br />
               <span className="bg-gradient-to-r from-amber-200 via-stone-200 to-amber-200 bg-clip-text text-transparent">
-                Hostel Living
+                Vacation Stay
               </span>
               <br />
               Experience.
             </h1>
             <p className="text-stone-200 text-sm font-medium leading-relaxed">
-              Join verified student and working-professional accommodations with hassle-free booking.
+              Explore handpicked private villas, beachfront escapes, and luxury vacation homes across India.
             </p>
           </div>
 
@@ -212,7 +208,7 @@ export default function RegisterForm() {
           {/* Back Button */}
           <button
             type="button"
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/")}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#686259] hover:text-[#1F1E1B] transition-colors mb-3 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />

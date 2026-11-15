@@ -54,23 +54,23 @@ export default function HotelOwnerManagement() {
     return (
         <div className="space-y-6">
             {/* Top Tabs */}
-            <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-6">
-                <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs">
-                    <button type="button" onClick={() => h.handleTabChange("properties")} className={cn("flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer", h.activeTab === "properties" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 sm:pb-3 mb-4 sm:mb-6">
+                <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs w-full sm:w-auto max-w-full overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
+                    <button type="button" onClick={() => h.handleTabChange("properties")} className={cn("flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap", h.activeTab === "properties" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
                         <Building2 size={15} className={h.activeTab === "properties" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                        <span>Hotel Properties</span>
+                        <span className="sm:hidden">Hotels</span><span className="hidden sm:inline">Hotel Properties</span>
                         <span className={cn("text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-colors", h.activeTab === "properties" ? "bg-indigo-50 text-[#312E81] dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" : "bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300")}>{h.isMounted ? h.hotels.length : 0}</span>
                     </button>
 
-                    <button type="button" onClick={() => h.handleTabChange("rooms")} className={cn("flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer", h.activeTab === "rooms" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
+                    <button type="button" onClick={() => h.handleTabChange("rooms")} className={cn("flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap", h.activeTab === "rooms" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
                         <BedDouble size={15} className={h.activeTab === "rooms" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                        <span>Rooms & Units</span>
+                        <span className="sm:hidden">Rooms</span><span className="hidden sm:inline">Rooms & Units</span>
                         <span className={cn("text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-colors", h.activeTab === "rooms" ? "bg-[#312E81] text-white" : "bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300")}>{h.isMounted ? h.totalRoomsCount : 0}</span>
                     </button>
 
-                    <button type="button" onClick={() => h.handleTabChange("bookings")} className={cn("flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer", h.activeTab === "bookings" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
+                    <button type="button" onClick={() => h.handleTabChange("bookings")} className={cn("flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap", h.activeTab === "bookings" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
                         <Calendar size={15} className={h.activeTab === "bookings" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                        <span>Hotel Bookings</span>
+                        <span className="sm:hidden">Bookings</span><span className="hidden sm:inline">Hotel Bookings</span>
                         {h.hotelBookings.length > 0 && (
                             <span className={cn("text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-colors", h.activeTab === "bookings" ? "bg-indigo-50 text-[#312E81] dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" : "bg-indigo-100 dark:bg-indigo-950 text-[#312E81] dark:text-indigo-300")}>{h.hotelBookings.length}</span>
                         )}
@@ -190,7 +190,7 @@ export default function HotelOwnerManagement() {
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
                         <div className="flex items-center gap-2">
                             <Select value={h.selectedCityId} onValueChange={(val) => h.setSelectedCityId(val)}>
-                                <SelectTrigger className="h-9 w-[190px] text-xs bg-card border-border font-medium"><SelectValue placeholder="All Cities" /></SelectTrigger>
+                                <SelectTrigger className="h-9 w-full sm:w-[190px] text-xs bg-card border-border font-medium"><SelectValue placeholder="All Cities" /></SelectTrigger>
                                 <SelectContent className="max-h-60 overflow-y-auto">
                                     <SelectItem value="all">All Cities ({h.isMounted ? h.hotels.length : 0})</SelectItem>
                                     {h.cities.map((c) => (<SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>))}

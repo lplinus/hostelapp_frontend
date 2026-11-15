@@ -5,6 +5,7 @@ import Image from "next/image";
 import VacationRentalGrid from "./vacation-rental-grid";
 import VacationRentalFiltersSidebar, { VacationRentalFilterState } from "./vacation-rental-filters-sidebar";
 import type { VacationRental } from "@/types/vacationrental.types";
+import { getVacationRentals } from "@/services/vacanatinalrentalservices/vacationrental.service";
 import {
     Search,
     X,
@@ -51,6 +52,7 @@ const CATEGORY_TABS = [
 
 export default function VacationRentalsLayout({ rentals }: VacationRentalsLayoutProps) {
     const [filters, setFilters] = useState<VacationRentalFilterState>(INITIAL_FILTERS);
+    const [backendRentals, setBackendRentals] = useState<VacationRental[] | null>(null);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<string>("all");
     const [isFiltering, setIsFiltering] = useState(false);
@@ -63,16 +65,54 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
         }
 
         setIsFiltering(true);
-        const timer = setTimeout(() => {
-            setIsFiltering(false);
+        const timer = setTimeout(async () => {
+            try {
+                const params: Record<string, string | number | boolean | undefined> = {};
+                if (filters.searchQuery.trim()) {
+                    params.search = filters.searchQuery.trim();
+                }
+                const activeCategory = activeTab !== "all" ? activeTab : "";
+                const selectedCats = filters.categories.length > 0 ? filters.categories.join(",") : activeCategory;
+                if (selectedCats) {
+                    params.category = selectedCats;
+                }
+                if (filters.maxPrice < 35000) {
+                    params.max_price = filters.maxPrice;
+                }
+                if (filters.minBedrooms > 0) {
+                    params.min_bedrooms = filters.minBedrooms;
+                }
+                if (filters.instantBookOnly) {
+                    params.instant_book = true;
+                }
+                if (filters.petsAllowedOnly) {
+                    params.allows_pets = true;
+                }
+                if (filters.superhostOnly) {
+                    params.is_superhost = true;
+                }
+                if (filters.selectedAmenities.length > 0) {
+                    params.amenities = filters.selectedAmenities.join(",");
+                }
+
+                const res = await getVacationRentals(params);
+                if (Array.isArray(res)) {
+                    setBackendRentals(res);
+                }
+            } catch (err) {
+                console.error("Backend filtering request failed, using client fallback:", err);
+            } finally {
+                setIsFiltering(false);
+            }
         }, 300);
 
         return () => clearTimeout(timer);
     }, [filters, activeTab]);
 
-    // Dynamic Filter Engine
+    // Dynamic Filter Engine (operates on backend results or initial rentals fallback)
+    const baseRentals = backendRentals ?? rentals;
     const filteredRentals = useMemo(() => {
-        return rentals.filter((rental) => {
+        return baseRentals.filter((rental) => {
             // 1. Search Query
             if (filters.searchQuery.trim()) {
                 const q = filters.searchQuery.toLowerCase();
@@ -138,11 +178,25 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
 
             return true;
         });
-    }, [rentals, filters, activeTab]);
+    }, [baseRentals, filters, activeTab]);
+
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (filters.categories.length > 0) count += filters.categories.length;
+        if (filters.maxPrice < 35000) count += 1;
+        if (filters.minBedrooms > 0) count += 1;
+        if (filters.instantBookOnly) count += 1;
+        if (filters.petsAllowedOnly) count += 1;
+        if (filters.superhostOnly) count += 1;
+        if (filters.selectedAmenities.length > 0) count += filters.selectedAmenities.length;
+        if (filters.searchQuery.trim()) count += 1;
+        return count;
+    }, [filters]);
 
     const handleResetFilters = () => {
         setFilters(INITIAL_FILTERS);
         setActiveTab("all");
+        setBackendRentals(null);
     };
 
     return (
@@ -206,28 +260,48 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                 </div>
             </section>
 
-            {/* 2. CATEGORY PILLS BAR (Flush underneath Hero) */}
+            {/* 2. CATEGORY PILLS BAR + STICKY MOBILE FILTER (Sticky at Top) */}
             <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto py-3 scrollbar-none no-scrollbar">
-                        {CATEGORY_TABS.map((tab) => {
-                            const Icon = tab.icon;
-                            const isActive = activeTab === tab.key;
-                            return (
-                                <button
-                                    key={tab.key}
-                                    onClick={() => setActiveTab(tab.key)}
-                                    className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                                        isActive
-                                            ? "bg-[#1E1B4B] text-white shadow-xs"
-                                            : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-                                    }`}
-                                >
-                                    <Icon size={14} className={isActive ? "text-rose-300" : "text-slate-500"} />
-                                    <span>{tab.label}</span>
-                                </button>
-                            );
-                        })}
+                    <div className="flex items-center justify-between gap-2.5 py-2.5 sm:py-3">
+                        {/* Mobile Sticky Filter Button */}
+                        <button
+                            type="button"
+                            onClick={() => setIsMobileFilterOpen(true)}
+                            className="lg:hidden shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-[#1E1B4B] text-white shadow-xs hover:bg-[#312E81] active:scale-95 transition-all cursor-pointer"
+                        >
+                            <SlidersHorizontal size={13} className="text-rose-300" />
+                            <span>Filters</span>
+                            {activeFiltersCount > 0 && (
+                                <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center">
+                                    {activeFiltersCount}
+                                </span>
+                            )}
+                        </button>
+
+                        <div className="h-5 w-px bg-slate-200 lg:hidden shrink-0" />
+
+                        {/* Category Tabs */}
+                        <div className="flex-1 min-w-0 flex items-center justify-start md:justify-center gap-2 overflow-x-auto scrollbar-none no-scrollbar">
+                            {CATEGORY_TABS.map((tab) => {
+                                const Icon = tab.icon;
+                                const isActive = activeTab === tab.key;
+                                return (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() => setActiveTab(tab.key)}
+                                        className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                                            isActive
+                                                ? "bg-[#1E1B4B] text-white shadow-xs"
+                                                : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+                                        }`}
+                                    >
+                                        <Icon size={14} className={isActive ? "text-rose-300" : "text-slate-500"} />
+                                        <span>{tab.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -240,17 +314,18 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                         <VacationRentalGrid
                             rentals={filteredRentals}
                             isFiltering={isFiltering}
-                            onOpenMobileFilter={() => setIsMobileFilterOpen(true)}
                             onResetFilters={handleResetFilters}
                         />
                     </div>
 
-                    {/* Desktop Sidebar (Right Column - 280px) */}
-                    <div className="hidden lg:block w-[280px] shrink-0 sticky top-32">
+                    {/* Desktop Sidebar (Right Column - 280px, Sticky & Self-Contained) */}
+                    <div className="hidden lg:block w-[280px] shrink-0 sticky top-32 self-start">
                         <VacationRentalFiltersSidebar
                             filters={filters}
                             onFilterChange={setFilters}
                             onResetFilters={handleResetFilters}
+                            totalCount={rentals.length}
+                            filteredCount={filteredRentals.length}
                         />
                     </div>
                 </div>
@@ -289,6 +364,8 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                             filters={filters}
                             onFilterChange={setFilters}
                             onResetFilters={handleResetFilters}
+                            totalCount={rentals.length}
+                            filteredCount={filteredRentals.length}
                             isDrawerMode={true}
                         />
                     </div>

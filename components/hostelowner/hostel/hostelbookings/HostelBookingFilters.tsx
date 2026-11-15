@@ -52,10 +52,10 @@ export default function HostelBookingFilters({
             </div>
 
             {/* View Toggle Tabs */}
-            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl w-fit overflow-x-auto border border-border/40">
+            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl w-fit max-w-full overflow-x-auto border border-border/40 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                 <button
                     onClick={() => setView("bookings")}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap ${
                         view === "bookings"
                             ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -76,7 +76,7 @@ export default function HostelBookingFilters({
                 </button>
                 <button
                     onClick={() => setView("inquiries")}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 whitespace-nowrap ${
                         view === "inquiries"
                             ? "bg-primary text-primary-foreground shadow-xs font-semibold"
                             : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -88,7 +88,7 @@ export default function HostelBookingFilters({
 
             {/* Filters Section */}
             <div className="bg-card p-4 rounded-xl border border-border/50 shadow-xs flex flex-wrap md:flex-nowrap gap-3 items-end">
-                <div className="flex-1 min-w-[220px] space-y-1.5">
+                <div className="w-full md:w-auto md:flex-1 md:min-w-[220px] space-y-1.5">
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                         <Search size={12} /> Search Bookings
                     </label>
@@ -111,7 +111,7 @@ export default function HostelBookingFilters({
                     </div>
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="flex-1 min-w-[120px] md:flex-none space-y-1.5">
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                         <Calendar size={12} /> Date (From)
                     </label>
@@ -123,7 +123,7 @@ export default function HostelBookingFilters({
                     />
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="flex-1 min-w-[120px] md:flex-none space-y-1.5">
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                         <Calendar size={12} /> Date (To)
                     </label>

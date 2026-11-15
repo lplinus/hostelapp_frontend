@@ -48,6 +48,7 @@ function mapApiProfileToFrontend(
         aadhaarFileName: api.aadhaar_file_name || undefined,
         aadhaarFileUrl: api.aadhaar_file_url || undefined,
         idVerificationStatus: api.id_verification_status,
+        shareIdWithHost: api.share_id_with_host ?? false,
         isEmailVerified: api.is_email_verified,
         isPhoneVerified: api.is_phone_verified,
         verifiedAt: api.verified_at || undefined,
@@ -112,6 +113,7 @@ function mapFrontendToApi(
         emergency_contact_phone: profile.emergencyContactPhone || undefined,
         emergency_contact_relation: profile.emergencyContactRelation || undefined,
         aadhaar_number: profile.aadhaarNumber || undefined,
+        share_id_with_host: profile.shareIdWithHost,
     };
 }
 

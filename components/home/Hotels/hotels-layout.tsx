@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import HotelGrid from "./hotel-grid";
 import HotelFiltersSidebar, { HotelFilterState } from "./hotel-filters-sidebar";
 import { Hotel } from "@/types/hotel.types";
+import { getHotels } from "@/services/hotelservices/hotel.service";
 import { Search, X, Sparkles, SlidersHorizontal } from "lucide-react";
 import {
     Sheet,
@@ -23,7 +24,7 @@ const INITIAL_FILTERS: HotelFilterState = {
     searchQuery: "",
     starRatings: [],
     hotelTypes: [],
-    maxPrice: 15000,
+    maxPrice: 250000,
     freeCancellationOnly: false,
     petsAllowedOnly: false,
     selectedAmenities: [],
@@ -31,6 +32,7 @@ const INITIAL_FILTERS: HotelFilterState = {
 
 export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
     const [filters, setFilters] = useState<HotelFilterState>(INITIAL_FILTERS);
+    const [backendHotels, setBackendHotels] = useState<Hotel[] | null>(null);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [isFiltering, setIsFiltering] = useState(false);
     const isInitialMount = useRef(true);
@@ -42,16 +44,49 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
         }
 
         setIsFiltering(true);
-        const timer = setTimeout(() => {
-            setIsFiltering(false);
+        const timer = setTimeout(async () => {
+            try {
+                const params: Record<string, string | number | boolean | undefined> = {};
+                if (filters.searchQuery.trim()) {
+                    params.search = filters.searchQuery.trim();
+                }
+                if (filters.starRatings.length > 0) {
+                    params.star_rating = filters.starRatings.join(",");
+                }
+                if (filters.hotelTypes.length > 0) {
+                    params.hotel_type = filters.hotelTypes.join(",");
+                }
+                if (filters.maxPrice < 250000) {
+                    params.max_price = filters.maxPrice;
+                }
+                if (filters.freeCancellationOnly) {
+                    params.free_cancellation = true;
+                }
+                if (filters.petsAllowedOnly) {
+                    params.allows_pets = true;
+                }
+                if (filters.selectedAmenities.length > 0) {
+                    params.amenities = filters.selectedAmenities.join(",");
+                }
+
+                const res = await getHotels(params);
+                if (Array.isArray(res)) {
+                    setBackendHotels(res);
+                }
+            } catch (err) {
+                console.error("Backend filtering request failed, using client fallback:", err);
+            } finally {
+                setIsFiltering(false);
+            }
         }, 300);
 
         return () => clearTimeout(timer);
     }, [filters]);
 
-    // Dynamic Filter Engine
+    // Dynamic Filter Engine (operates on backend results or initial hotels fallback)
+    const baseHotels = backendHotels ?? hotels;
     const filteredHotels = useMemo(() => {
-        return hotels.filter((hotel) => {
+        return baseHotels.filter((hotel) => {
             // 1. Search Query (name, area, city, tagline)
             if (filters.searchQuery.trim()) {
                 const query = filters.searchQuery.toLowerCase();
@@ -109,10 +144,23 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
 
             return true;
         });
-    }, [hotels, filters]);
+    }, [baseHotels, filters]);
+
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (filters.starRatings.length > 0) count += filters.starRatings.length;
+        if (filters.hotelTypes.length > 0) count += filters.hotelTypes.length;
+        if (filters.maxPrice < 250000) count += 1;
+        if (filters.freeCancellationOnly) count += 1;
+        if (filters.petsAllowedOnly) count += 1;
+        if (filters.selectedAmenities.length > 0) count += filters.selectedAmenities.length;
+        if (filters.searchQuery.trim()) count += 1;
+        return count;
+    }, [filters]);
 
     const handleResetFilters = () => {
         setFilters(INITIAL_FILTERS);
+        setBackendHotels(null);
     };
 
     return (
@@ -211,11 +259,10 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                                         onClick={() => {
                                             setFilters((prev) => ({ ...prev, searchQuery: city }));
                                         }}
-                                        className={`px-2.5 py-1 rounded-md backdrop-blur-sm border transition-all font-medium text-xs active:scale-95 ${
-                                            filters.searchQuery.toLowerCase() === city.toLowerCase()
-                                                ? "bg-white text-[#0F172A] border-white font-semibold"
-                                                : "bg-white/10 hover:bg-white/20 text-white border-white/10"
-                                        }`}
+                                        className={`px-2.5 py-1 rounded-md backdrop-blur-sm border transition-all font-medium text-xs active:scale-95 ${filters.searchQuery.toLowerCase() === city.toLowerCase()
+                                            ? "bg-white text-[#0F172A] border-white font-semibold"
+                                            : "bg-white/10 hover:bg-white/20 text-white border-white/10"
+                                            }`}
                                     >
                                         {city}
                                     </button>
@@ -227,36 +274,42 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
             </section>
 
             {/* MAIN CONTENT AREA */}
-            <div id="hotels-listing-section" className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 scroll-mt-6">
-                {/* Mobile Filter Toggle */}
-                <div className="lg:hidden mb-4 flex items-center justify-between bg-white p-3 rounded-2xl border border-slate-200/90 shadow-2xs">
-                    <span className="text-xs font-bold text-slate-800">
-                        {filteredHotels.length} Stays Available
-                    </span>
-                    <button
-                        type="button"
-                        onClick={() => setIsMobileFilterOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1E1B4B] text-white text-xs font-semibold shadow-xs hover:bg-[#312E81] transition-colors cursor-pointer"
-                    >
-                        <SlidersHorizontal size={14} className="text-white" />
-                        <span>Filter Stays</span>
-                    </button>
+            <div id="hotels-listing-section" className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-24 sm:pb-16 scroll-mt-6">
+                {/* Mobile Filter Toggle - Sticky at Top */}
+                <div className="lg:hidden sticky top-16 z-20 -mx-4 px-4 py-2 sm:-mx-6 sm:px-6 bg-slate-50/95 backdrop-blur-md border-b border-slate-200/80 mb-4 transition-all">
+                    <div className="bg-white p-2.5 sm:p-3 rounded-xl border border-slate-200/90 shadow-xs flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800">
+                            {filteredHotels.length} Stays Available
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => setIsMobileFilterOpen(true)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E1B4B] text-white text-xs font-semibold shadow-xs hover:bg-[#312E81] active:scale-95 transition-all cursor-pointer"
+                        >
+                            <SlidersHorizontal size={13} className="text-indigo-300" />
+                            <span>Filter Stays</span>
+                            {activeFiltersCount > 0 && (
+                                <span className="w-4 h-4 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                    {activeFiltersCount}
+                                </span>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-12 gap-8">
                     {/* LEFT / MAIN LISTINGS GRID (8 cols on lg) */}
                     <div className="col-span-12 lg:col-span-8">
                         <HotelGrid
                             hotels={filteredHotels}
                             isFiltering={isFiltering}
                             onResetFilters={handleResetFilters}
-                            onOpenFilter={() => setIsMobileFilterOpen(true)}
                         />
                     </div>
 
-                    {/* RIGHT / STICKY FILTER SIDEBAR (4 cols on lg) */}
-                    <div className="hidden lg:block lg:col-span-4">
-                        <div className="sticky top-24">
+                    {/* RIGHT / STICKY FILTER SIDEBAR (4 cols on lg) - Stretches full grid height so sticky locks in place */}
+                    <div className="hidden lg:block lg:col-span-4 h-full">
+                        <div className="sticky top-20">
                             <HotelFiltersSidebar
                                 filters={filters}
                                 onFilterChange={setFilters}
@@ -269,7 +322,7 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                 </div>
             </div>
 
-            {/* OFF-CANVAS RIGHT-SIDE SLIDE-OVER DRAWER (Uniform with Vacation Rentals) */}
+            {/* OFF-CANVAS RIGHT-SIDE SLIDE-OVER DRAWER (Fully Mobile-Optimized) */}
             <Sheet open={isMobileFilterOpen} onOpenChange={setIsMobileFilterOpen}>
                 <SheetContent
                     side="right"
@@ -277,27 +330,45 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                     className="w-full sm:max-w-md p-0 flex flex-col h-full bg-white border-l border-slate-200 shadow-2xl gap-0 z-50 overflow-hidden"
                 >
                     {/* Sticky Header */}
-                    <SheetHeader className="sticky top-0 z-10 bg-white/95 backdrop-blur-md px-5 py-4 border-b border-slate-200 flex flex-row items-center justify-between space-y-0 shrink-0">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-[#312E81] flex items-center justify-center">
+                    <SheetHeader className="sticky top-0 z-10 bg-white/95 backdrop-blur-md px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100 flex flex-row items-center justify-between space-y-0 shrink-0">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-[#312E81] flex items-center justify-center shrink-0">
                                 <SlidersHorizontal className="w-4 h-4 text-[#312E81]" />
                             </div>
-                            <div>
-                                <SheetTitle className="text-base font-extrabold text-slate-950 tracking-tight">
-                                    Filter Stays
-                                </SheetTitle>
-                                <p className="text-[11px] font-semibold text-slate-500">
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                    <SheetTitle className="text-sm sm:text-base font-extrabold text-slate-950 tracking-tight truncate">
+                                        Filter Stays
+                                    </SheetTitle>
+                                    {activeFiltersCount > 0 && (
+                                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full shrink-0">
+                                            {activeFiltersCount} active
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="text-[11px] font-semibold text-slate-500 truncate">
                                     {filteredHotels.length} of {hotels.length} stays available
                                 </p>
                             </div>
                         </div>
-                        <SheetClose className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer" aria-label="Close filters">
-                            <X className="w-5 h-5" />
-                        </SheetClose>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                            {activeFiltersCount > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={handleResetFilters}
+                                    className="text-xs font-semibold text-[#1E1B4B] hover:underline cursor-pointer"
+                                >
+                                    Reset
+                                </button>
+                            )}
+                            <SheetClose className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer" aria-label="Close filters">
+                                <X className="w-5 h-5" />
+                            </SheetClose>
+                        </div>
                     </SheetHeader>
 
                     {/* Scrollable Body */}
-                    <div className="flex-1 overflow-y-auto px-5 py-5 overscroll-contain">
+                    <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                         <HotelFiltersSidebar
                             filters={filters}
                             onFilterChange={setFilters}
@@ -308,19 +379,24 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                         />
                     </div>
 
-                    {/* Sticky Bottom Actions */}
-                    <div className="sticky bottom-0 z-10 bg-white/95 backdrop-blur-md border-t border-slate-200 px-5 py-3.5 flex items-center gap-3 shrink-0 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+                    {/* Sticky Bottom Actions (With safe-area inset & proper clearance) */}
+                    <div className="sticky bottom-0 z-10 bg-white/95 backdrop-blur-md border-t border-slate-100 px-4 sm:px-5 py-3 sm:py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] flex items-center gap-2.5 sm:gap-3 shrink-0 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
                         <button
                             type="button"
                             onClick={handleResetFilters}
-                            className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-slate-950 hover:bg-slate-100 rounded-xl transition-colors border border-slate-200 cursor-pointer"
+                            disabled={activeFiltersCount === 0}
+                            className={`px-3.5 py-2.5 text-xs font-bold rounded-lg transition-colors border cursor-pointer ${
+                                activeFiltersCount > 0
+                                    ? "text-slate-800 hover:text-slate-950 hover:bg-slate-100 border-slate-200"
+                                    : "text-slate-300 border-slate-100 cursor-not-allowed opacity-60"
+                            }`}
                         >
                             Reset All
                         </button>
                         <SheetClose asChild>
                             <button
                                 type="button"
-                                className="flex-1 py-2.5 px-4 bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md active:scale-98 cursor-pointer text-center"
+                                className="flex-1 py-2.5 px-4 bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-md active:scale-98 cursor-pointer text-center"
                             >
                                 Show {filteredHotels.length} Stays
                             </button>

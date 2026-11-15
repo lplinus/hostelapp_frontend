@@ -73,8 +73,6 @@ export default function DashboardStats() {
                 return "Total Hotels";
             case "vacation_rental":
                 return "Vacation Rentals";
-            case "hostel":
-                return "Total Hostels";
             default:
                 return "All Properties";
         }
@@ -86,8 +84,6 @@ export default function DashboardStats() {
                 return "Rental Units";
             case "hotel":
                 return "Hotel Rooms";
-            case "hostel":
-                return "Hostel Rooms";
             default:
                 return "Total Rooms";
         }
@@ -99,8 +95,6 @@ export default function DashboardStats() {
                 return "🏨";
             case "vacation_rental":
                 return "🏡";
-            case "hostel":
-                return "🏢";
             default:
                 return "🏛️";
         }
@@ -138,16 +132,16 @@ export default function DashboardStats() {
 
     const streamTabs = [
         { id: "all" as StreamTab, label: "All Stats", icon: Layers },
-        { id: "hostel" as StreamTab, label: "Hostels", icon: Building2 },
+        // { id: "hostel" as StreamTab, label: "Hostels", icon: Building2 },
         { id: "hotel" as StreamTab, label: "Hotels", icon: Hotel },
         { id: "vacation_rental" as StreamTab, label: "Vacation Rentals", icon: Home },
     ];
 
     return (
-        <div className="space-y-4">
-            {/* Stream Category Filter Bar (Matching application soft-corner buttons) */}
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+        <div className="space-y-3 sm:space-y-3.5">
+            {/* Stream Category Filter Bar (Touch-friendly switcher with clean rectangular styling) */}
+            <div className="flex items-center justify-between gap-2.5 flex-wrap">
+                <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch] w-full sm:w-auto">
                     {streamTabs.map((tab) => {
                         const Icon = tab.icon;
                         const isSelected = selectedStream === tab.id;
@@ -156,7 +150,7 @@ export default function DashboardStats() {
                                 key={tab.id}
                                 type="button"
                                 onClick={() => setSelectedStream(tab.id)}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-md text-xs font-semibold transition-all duration-200 shrink-0 select-none active:scale-95 ${
                                     isSelected
                                         ? "bg-[#1F1E1B] text-white shadow-xs border border-[#1F1E1B]"
                                         : "bg-[#DBD5C8]/80 text-[#5A544A] hover:text-[#1A1916] hover:bg-[#DBD5C8] border border-[#D2CABC]"
@@ -171,26 +165,26 @@ export default function DashboardStats() {
             </div>
 
             {/* Stats Cards Row */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2.5 sm:gap-3.5 md:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Selector Card for Booking Stats */}
-                <div className="bg-[#E5DFD4] p-6 rounded-xl shadow-xs border border-[#D2CABC] flex flex-col justify-between group hover:border-[#1F1E1B]/30 transition-all duration-200 relative">
-                    <div className="flex justify-between items-start mb-2">
-                        <p className="text-xs font-bold text-[#686259] uppercase tracking-widest">
+                <div className="bg-[#E5DFD4] p-3 sm:p-4 md:p-4 rounded-md shadow-xs border border-[#D2CABC] flex flex-col justify-between group hover:border-[#1F1E1B]/30 transition-all duration-200 relative">
+                    <div className="flex justify-between items-start mb-1.5 gap-1">
+                        <p className="text-[11px] sm:text-xs font-bold text-[#686259] uppercase tracking-wider truncate">
                             {currentMetric.label}
                         </p>
 
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <button
                                 type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setIsDropdownOpen(!isDropdownOpen);
                                 }}
-                                className="flex items-center gap-1 text-[10px] font-bold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2.5 py-1 rounded-md hover:bg-[#DBD5C8]/80 transition-colors cursor-pointer whitespace-nowrap"
+                                className="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-[#1F1E1B] bg-[#DBD5C8] border border-[#D2CABC] px-2 py-0.5 rounded-md hover:bg-[#DBD5C8]/80 transition-colors cursor-pointer whitespace-nowrap active:scale-95"
                             >
                                 SWITCH{" "}
                                 <ChevronDown
-                                    size={10}
+                                    size={11}
                                     className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
                                 />
                             </button>
@@ -204,11 +198,11 @@ export default function DashboardStats() {
                                             setIsDropdownOpen(false);
                                         }}
                                     />
-                                    <div className="absolute right-0 top-full mt-1 bg-[#E5DFD4] border border-[#D2CABC] rounded-lg shadow-xl py-1 z-[50] min-w-[130px] animate-in fade-in slide-in-from-top-1">
+                                    <div className="absolute right-0 top-full mt-1 bg-[#E5DFD4] border border-[#D2CABC] rounded-md shadow-xl py-1 z-[50] min-w-[130px] animate-in fade-in slide-in-from-top-1">
                                         <button
                                             type="button"
                                             onClick={(e) => handleSelect("total", e)}
-                                            className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                                            className={`w-full text-left px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "total"
                                                     ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
                                                     : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
@@ -219,7 +213,7 @@ export default function DashboardStats() {
                                         <button
                                             type="button"
                                             onClick={(e) => handleSelect("active", e)}
-                                            className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                                            className={`w-full text-left px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "active"
                                                     ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
                                                     : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
@@ -230,7 +224,7 @@ export default function DashboardStats() {
                                         <button
                                             type="button"
                                             onClick={(e) => handleSelect("cancelled", e)}
-                                            className={`w-full text-left px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                                            className={`w-full text-left px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                                                 selectedMetric === "cancelled"
                                                     ? "text-[#1F1E1B] bg-[#DBD5C8] font-bold"
                                                     : "text-[#1A1916] hover:bg-[#DBD5C8]/50"
@@ -244,16 +238,16 @@ export default function DashboardStats() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <div className="flex flex-col">
-                            <h2 className="text-3xl font-extrabold text-[#1A1916] tracking-tight group-hover:text-[#1F1E1B] transition-colors">
+                    <div className="flex items-center justify-between gap-2 mt-1.5">
+                        <div className="flex flex-col min-w-0">
+                            <h2 className="text-xl sm:text-2xl md:text-[22px] font-extrabold text-[#1A1916] tracking-tight group-hover:text-[#1F1E1B] transition-colors truncate">
                                 {isLoading ? "..." : currentMetric.value}
                             </h2>
-                            <p className="text-[10px] font-medium text-[#686259] mt-1 italic leading-tight">
+                            <p className="text-[10px] sm:text-[11px] font-medium text-[#686259] mt-0.5 italic leading-tight truncate">
                                 {currentMetric.notation}
                             </p>
                         </div>
-                        <div className="text-3xl bg-[#DBD5C8] group-hover:bg-[#1F1E1B]/10 w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-200 border border-transparent group-hover:border-[#1F1E1B]/20">
+                        <div className="text-xl sm:text-2xl bg-[#DBD5C8] group-hover:bg-[#1F1E1B]/10 w-9 h-9 sm:w-10 sm:h-10 rounded-md flex items-center justify-center transition-all duration-200 border border-transparent group-hover:border-[#1F1E1B]/20 shrink-0">
                             {currentMetric.icon}
                         </div>
                     </div>

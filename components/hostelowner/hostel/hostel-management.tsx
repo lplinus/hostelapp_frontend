@@ -19,12 +19,12 @@ export default function HostelManagement() {
     return (
         <div className="flex min-h-screen bg-muted/30">
             <DashboardSidebar />
-            <main className="flex-1 p-6 space-y-6">
+            <main className="flex-1 p-3.5 sm:p-6 space-y-4 sm:space-y-6 pb-24 md:pb-6 min-w-0">
                 <DashboardHeader />
                 <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <div>
-                            <h2 className="text-2xl font-bold tracking-tight text-foreground">My Hostels</h2>
+                    <div className="flex justify-between items-center gap-3 mb-6">
+                        <div className="min-w-0">
+                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">My Hostels</h2>
                             <p className="text-sm text-muted-foreground">Manage your hostel listings, details, and media</p>
                         </div>
                         <button
@@ -33,7 +33,7 @@ export default function HostelManagement() {
                                 h.setEditingHostel(null);
                                 h.setUploadingFor(null);
                             }}
-                            className="bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all font-semibold cursor-pointer"
+                            className="bg-primary text-primary-foreground py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all font-semibold cursor-pointer shrink-0 whitespace-nowrap"
                         >
                             {h.isCreating ? "Cancel" : "Add Hostel"}
                         </button>
@@ -111,7 +111,7 @@ export default function HostelManagement() {
 
                     {/* Pagination */}
                     {h.totalPages > 1 && (
-                        <div className="flex justify-center gap-2 mt-4">
+                        <div className="flex flex-wrap justify-center gap-2 mt-4">
                             <button
                                 disabled={h.currentPage === 1}
                                 onClick={() => h.setCurrentPage(prev => prev - 1)}

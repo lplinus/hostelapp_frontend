@@ -59,7 +59,7 @@ export default function LandingFeatures({ data }: LandingFeaturesProps) {
         <SectionReveal>
           <div className="max-w-2xl mx-auto text-center mb-6 sm:mb-8">
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-              {data?.features_eyebrow || "Why Choose Hostel In"}
+              {data?.features_eyebrow || "Why Book With Us"}
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight mb-2">
@@ -71,7 +71,7 @@ export default function LandingFeatures({ data }: LandingFeaturesProps) {
 
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
               {data?.features_subtitle ||
-                "Re-imagining the student hostel experience with verified safety, honest rates, and instant reservations."}
+                "Curated hotels and private vacation homes with verified amenities, transparent pricing, and instant reservations."}
             </p>
           </div>
         </SectionReveal>

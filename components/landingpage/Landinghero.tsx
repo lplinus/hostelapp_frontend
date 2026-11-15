@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Star, MapPin, ShieldCheck, Sparkles } from "lucide-react";
@@ -9,14 +11,14 @@ interface LandingHeroProps {
 
 export default function LandingHero({ data }: LandingHeroProps) {
   return (
-    <section className="relative w-full pt-6 sm:pt-8 pb-6 sm:pb-8 font-inter bg-[#F8FAFC]">
+    <section className="relative w-full pt-6 sm:pt-8 pb-6 sm:pb-8 font-inter bg-[#F8FAFC]" suppressHydrationWarning>
       {/* Main Rounded Container - Refined Dark Navy Theme with hero1 image */}
       <div className="mx-4 sm:mx-6 lg:mx-8 rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#0F172A] border border-slate-800/80 relative">
         {/* HIGH CLARITY NATURE HERO IMAGE BACKGROUND & OPTIMIZED SCRIM */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src="/images/hero-landing-nature.webp"
-            alt="Scenic Nature Retreat & Hostels Across India"
+            alt="Scenic Hotels, Resorts & Vacation Rentals Across India"
             fill
             priority
             quality={85}
@@ -31,63 +33,69 @@ export default function LandingHero({ data }: LandingHeroProps) {
         {/* Content - Spacious, balanced & elevated */}
         <div className="relative z-10 flex flex-col justify-center items-center text-center px-6 sm:px-12 lg:px-16 py-16 sm:py-20 lg:py-24">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 border border-white/20 rounded-full mb-6 backdrop-blur-md">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 border border-white/20 rounded-full mb-6 backdrop-blur-md"
+            suppressHydrationWarning
+          >
             <Sparkles className="w-4 h-4 text-amber-300" />
             <span className="text-xs font-semibold tracking-wider uppercase text-white drop-shadow-sm">
-              {data?.hero_badge || "India's Most Trusted Student Hub"}
+              {data?.hero_badge || "India's Best Hotels & Vacation Rentals"}
             </span>
           </div>
 
           {/* Heading - High clarity presence & strong typography */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12] max-w-4xl mb-5 drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
-            {data?.hero_title_main || "Find Your Perfect"}{" "}
+            {data?.hero_title_main || "Discover the Best"}{" "}
             <span className="text-slate-100 font-extrabold underline decoration-slate-400 underline-offset-4">
-              {data?.hero_title_italic || "Student Hostel"}
+              {data?.hero_title_italic || "Hotels & Vacation Rentals"}
             </span>{" "}
             <span className="text-white/95">
-              {data?.hero_title_footer || "Near Your Campus"}
+              {data?.hero_title_footer || "for Your Next Stay"}
             </span>
           </h1>
 
           {/* Description */}
           <p className="text-base sm:text-lg md:text-xl text-slate-100 max-w-2xl mb-8 font-normal leading-relaxed mx-auto drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">
             {data?.hero_description ||
-              "Verified student hostels with verified pricing, zero brokerage, and instant confirmation across 25+ prime cities."}
+              "Explore top-rated luxury hotels, boutique stays, and private vacation rentals with verified amenities, transparent pricing, and instant confirmation."}
           </p>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
             <Link
-              href={data?.hero_primary_cta_url || "/home"}
+              href="/hotels"
               className="inline-flex justify-center items-center gap-2.5 bg-white text-[#0F172A] hover:bg-slate-100 font-semibold px-8 py-3.5 rounded-xl transition-all shadow-sm active:scale-95 text-base w-full sm:w-auto"
             >
-              {data?.hero_primary_cta_text || "Explore Hostels"}
+              Explore Hotels
               <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
-              href={data?.hero_secondary_cta_url || "#cities"}
+              href={data?.hero_secondary_cta_url || "/vacanationalrental"}
               className="inline-flex justify-center items-center gap-2.5 bg-white/10 hover:bg-white/15 border border-white/15 text-white font-medium px-8 py-3.5 rounded-xl transition-all active:scale-95 text-base w-full sm:w-auto"
             >
-              {data?.hero_secondary_cta_text || "View Destinations"}
+              {data?.hero_secondary_cta_text || "Vacation Rentals"}
             </Link>
           </div>
 
           {/* Trust Row */}
-          <div className="flex flex-wrap gap-x-10 gap-y-4 items-center justify-center text-slate-400 text-sm font-medium tracking-wide w-full mt-12 sm:mt-14 border-t border-white/10 pt-6">
-            <div className="flex items-center gap-2">
+          <div
+            className="flex flex-wrap gap-x-10 gap-y-4 items-center justify-center text-slate-400 text-sm font-medium tracking-wide w-full mt-12 sm:mt-14 border-t border-white/10 pt-6"
+            suppressHydrationWarning
+          >
+            <div className="flex items-center gap-2" suppressHydrationWarning>
               <ShieldCheck size={18} className="text-emerald-400" />
-              <span className="text-slate-200">100% Pre-Verified</span>
+              <span className="text-slate-200">100% Pre-Verified Stays</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" suppressHydrationWarning>
               <MapPin size={18} className="text-slate-200" />
-              <span className="text-slate-200">25+ Major Cities</span>
+              <span className="text-slate-200">30+ Top Destinations</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" suppressHydrationWarning>
               <Star size={18} className="text-amber-400 fill-amber-400" />
-              <span className="text-slate-200">4.9 Avg Student Rating</span>
+              <span className="text-slate-200">4.9★ Average Guest Rating</span>
             </div>
           </div>
         </div>

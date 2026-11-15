@@ -156,7 +156,7 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
 
         setIsCheckingAvailability(true);
         const startTime = Date.now();
-        const MIN_WAIT_MS = 6000;
+        const MIN_WAIT_MS = 4000;
 
         try {
             const res = await checkHotelAvailability({
@@ -751,8 +751,8 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                         />
                     </div>
 
-                    {/* RIGHT COLUMN: Sticky Reservation Card */}
-                    <div className="col-span-12 lg:col-span-4 lg:self-start lg:sticky lg:top-[124px] z-20 w-full max-w-[380px] ml-auto">
+                    {/* RIGHT COLUMN: Sticky Reservation Card (Desktop Only - Mobile Uses Sticky Bottom Bar) */}
+                    <div className="hidden lg:block lg:col-span-4 lg:self-start lg:sticky lg:top-[124px] z-20 w-full max-w-[380px] ml-auto">
                         <div
                             id="hotel-booking-card"
                             className={`bg-[#E5DFD4] rounded-2xl border transition-all duration-300 p-6 shadow-xs space-y-5 ${

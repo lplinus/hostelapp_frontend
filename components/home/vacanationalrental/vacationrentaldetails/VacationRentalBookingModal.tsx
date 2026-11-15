@@ -157,8 +157,8 @@ export function VacationRentalBookingModal({
                                     asChild
                                     className="bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] text-xs font-semibold rounded-sm h-10 px-4"
                                 >
-                                    <Link href="/vacanrentalbooking">
-                                        View in Dashboard Folio
+                                    <Link href="/home/guestprofile?tab=bookings">
+                                        View in Guest Profile
                                     </Link>
                                 </Button>
                                 <Button

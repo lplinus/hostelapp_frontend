@@ -296,7 +296,7 @@ export default function UserOrders() {
                         </div>
 
                         {/* Status Filters Center */}
-                        <div className="flex-1 flex justify-center items-center gap-1 overflow-x-auto w-full md:w-auto order-first md:order-none py-1 md:py-0 border-b md:border-b-0 border-border/50">
+                        <div className="flex-1 flex justify-center items-center gap-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch] w-full md:w-auto order-first md:order-none py-1 md:py-0 border-b md:border-b-0 border-border/50">
                             {statusFilters.map((status) => (
                                 <button
                                     key={status}

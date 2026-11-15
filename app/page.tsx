@@ -75,7 +75,7 @@ export default async function LandingPage() {
       <main className="antialiased font-sans bg-white text-stone-900 overflow-hidden">
         {/* Full-width premium sections */}
         <LandingHero data={landingData} />
-        
+
         {/* Below the fold components - Loaded dynamically with Suspense */}
         <Suspense fallback={<div className="h-40 bg-slate-50 animate-pulse" />}>
           <LandingStats stats={landingData?.stats} />

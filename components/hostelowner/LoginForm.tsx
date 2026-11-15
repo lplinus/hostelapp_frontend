@@ -53,7 +53,7 @@ export default function LoginForm() {
   };
 
   const features = [
-    { icon: MapPin, label: "Find Hostels Nearby" },
+    { icon: MapPin, label: "Prime City Locations" },
     { icon: CalendarCheck, label: "Instant Booking" },
     { icon: Star, label: "Verified Reviews" },
     { icon: Shield, label: "Secure Payments" },
@@ -70,20 +70,16 @@ export default function LoginForm() {
       >
         {/* Background Image */}
         <Image
-          src="/images/hostel-login-hero.webp"
-          alt="Hostel App Showcase"
+          src="/images/hotel-login-hero.jpg"
+          alt="Luxury Hotel & Suites Showcase"
           fill
           priority
-          className="object-cover"
+          quality={95}
+          className="object-cover object-center"
         />
 
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1F1E1B]/90 via-[#2A2824]/85 to-[#141311]/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Subtle decorative orbs */}
-        <div className="absolute top-20 left-16 w-60 h-60 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-32 right-20 w-52 h-52 rounded-full bg-stone-500/10 blur-3xl pointer-events-none" />
+        {/* Natural Scrim - Zero color tinting, allows 100% true original photo colors to shine */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/45 pointer-events-none" />
 
         {/* Content on top */}
         <div className="relative z-10 flex flex-col justify-between p-10 xl:p-12 h-full w-full">
@@ -103,13 +99,13 @@ export default function LoginForm() {
               Your Perfect
               <br />
               <span className="bg-gradient-to-r from-amber-200 via-stone-200 to-amber-200 bg-clip-text text-transparent">
-                Hostel Stay
+                Hotel Stay
               </span>
               <br />
               Awaits.
             </h1>
             <p className="text-stone-200 text-sm font-medium leading-relaxed">
-              Discover, compare, and book verified hostels across the country — all from one dashboard.
+              Discover, compare, and book verified hotels, luxury suites, and boutique stays — all in one place.
             </p>
           </div>
 
@@ -143,7 +139,7 @@ export default function LoginForm() {
           {/* Back Button */}
           <button
             type="button"
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/")}
             className="flex items-center gap-2 text-sm font-semibold text-[#686259] hover:text-[#1F1E1B] transition-colors mb-6 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />

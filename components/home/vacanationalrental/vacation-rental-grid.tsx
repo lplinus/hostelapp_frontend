@@ -36,7 +36,7 @@ export default function VacationRentalGrid({
     const [sortBy, setSortBy] = useState<string>("featured");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [isSortLoading, setIsSortLoading] = useState(false);
-    const itemsPerPage = 9;
+    const itemsPerPage = 12;
 
     const handleSortChange = (value: string) => {
         setSortBy(value);
@@ -192,11 +192,10 @@ export default function VacationRentalGrid({
                             <button
                                 key={page}
                                 onClick={() => handlePageChange(page)}
-                                className={`w-8 h-8 rounded-lg text-xs font-bold transition-none ${
-                                    currentPage === page
-                                        ? "bg-[#1E1B4B] text-white"
-                                        : "border border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
-                                }`}
+                                className={`w-8 h-8 rounded-lg text-xs font-bold transition-none ${currentPage === page
+                                    ? "bg-[#1E1B4B] text-white"
+                                    : "border border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
+                                    }`}
                             >
                                 {page}
                             </button>

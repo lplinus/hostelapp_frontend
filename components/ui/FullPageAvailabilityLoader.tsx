@@ -69,7 +69,7 @@ export function FullPageAvailabilityLoader({
                             <motion.div
                                 initial={{ width: "0%" }}
                                 animate={{ width: "95%" }}
-                                transition={{ duration: 5.8, ease: "easeInOut" }}
+                                transition={{ duration: 3.8, ease: "easeInOut" }}
                                 className="h-full bg-[#1F1E1B] rounded-xs"
                             />
                         </div>

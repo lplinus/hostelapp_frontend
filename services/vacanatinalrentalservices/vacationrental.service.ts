@@ -93,16 +93,34 @@ export const checkVacationRentalAvailability = async (
     );
 };
 
+export interface PaginatedResult<T> {
+    count: number;
+    total_pages: number;
+    current_page: number;
+    page_size: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
 export const getVacationRentals = async (
     params?: Record<string, string | number | boolean | undefined>
 ): Promise<VacationRental[]> => {
     // Backend is paginated: read every page so filters, sorting and the
-    // 9-per-page grid work across all rentals, not just the first page.
+    // 10-per-page grid work across all rentals, not just the first page.
     return collectAllPages<VacationRental>((page, pageSize) =>
         apiClient.get<any>("/api/vacanationrentals/properties/", {
             params: { page_size: pageSize, ...params, page },
         })
     );
+};
+
+export const getVacationRentalsPaginated = async (
+    params?: Record<string, string | number | boolean | undefined>
+): Promise<PaginatedResult<VacationRental>> => {
+    return apiClient.get<PaginatedResult<VacationRental>>("/api/vacanationrentals/properties/", {
+        params: { page_size: 10, ...params },
+    });
 };
 
 export const getVacationRentalBySlug = async (

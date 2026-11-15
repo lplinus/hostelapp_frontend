@@ -464,7 +464,7 @@ export default function RoomEditModal({
                                     <Sparkles size={11} className="text-amber-500" />
                                     Quick Autofill Templates:
                                 </span>
-                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                                     {activeTemplates.map((tmpl) => (
                                         <button
                                             key={tmpl.label}

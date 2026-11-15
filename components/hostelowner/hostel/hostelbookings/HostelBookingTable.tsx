@@ -99,7 +99,7 @@ export default function HostelBookingTable({
                                 .map((b) => (
                                     <tr
                                         key={b.id}
-                                        className="hover:bg-muted/30 transition-colors cursor-pointer"
+                                        className="group hover:bg-muted/30 transition-colors cursor-pointer"
                                         onClick={() => onSelectBooking(b)}
                                     >
                                         {/* Booking ID */}
@@ -226,7 +226,7 @@ export default function HostelBookingTable({
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    className="h-8 text-xs gap-1 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                                                    className="h-8 text-xs gap-1 border border-border/80 text-foreground bg-card/60 hover:bg-[#1F1E1B] hover:text-[#EDE8DF] hover:border-[#1F1E1B] group-hover:bg-[#1F1E1B] group-hover:text-[#EDE8DF] group-hover:border-[#1F1E1B] dark:hover:bg-[#2A2926] dark:hover:text-[#EDE8DF] dark:hover:border-[#3D3A34] dark:group-hover:bg-[#2A2926] dark:group-hover:text-[#EDE8DF] dark:group-hover:border-[#3D3A34] transition-all cursor-pointer shadow-2xs"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         onSelectBooking(b);

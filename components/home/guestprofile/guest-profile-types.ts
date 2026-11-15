@@ -19,6 +19,7 @@ export interface GuestProfile {
     aadhaarFileUrl?: string;
     aadhaarFileName?: string;
     idVerificationStatus?: "unverified" | "pending" | "verified" | "rejected";
+    shareIdWithHost?: boolean;
     isEmailVerified?: boolean;
     isPhoneVerified?: boolean;
     verifiedAt?: string;

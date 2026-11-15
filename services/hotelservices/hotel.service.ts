@@ -9,6 +9,16 @@ import type {
     HotelBookingQueryParams
 } from "@/types/hotel.types";
 
+export interface PaginatedResult<T> {
+    count: number;
+    total_pages: number;
+    current_page: number;
+    page_size: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
 export const getMyHotels = async (): Promise<Hotel[]> => {
     const data = await authApiClient.get<any>("/api/hotels/properties/my-hotels/");
     if (Array.isArray(data)) return data;
@@ -20,12 +30,20 @@ export const getHotels = async (
     params?: Record<string, string | number | boolean | undefined>
 ): Promise<Hotel[]> => {
     // Backend is paginated: read every page so filters, sorting and the
-    // 9-per-page grid work across all hotels, not just the first page.
+    // 10-per-page grid work across all hotels, not just the first page.
     return collectAllPages<Hotel>((page, pageSize) =>
         apiClient.get<any>("/api/hotels/properties/", {
             params: { page_size: pageSize, ...params, page },
         })
     );
+};
+
+export const getHotelsPaginated = async (
+    params?: Record<string, string | number | boolean | undefined>
+): Promise<PaginatedResult<Hotel>> => {
+    return apiClient.get<PaginatedResult<Hotel>>("/api/hotels/properties/", {
+        params: { page_size: 10, ...params },
+    });
 };
 
 export const getHotelBySlug = async (

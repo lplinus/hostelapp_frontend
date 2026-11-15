@@ -91,7 +91,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
                 <div className="flex items-center gap-2.5 flex-wrap">
                     <Select value={r.selectedHostelFilter} onValueChange={r.setSelectedHostelFilter}>
-                        <SelectTrigger className="h-9 w-[190px] text-xs bg-card border-border font-medium rounded-lg">
+                        <SelectTrigger className="h-9 flex-1 min-w-0 sm:flex-none sm:w-[190px] text-xs bg-card border-border font-medium rounded-lg">
                             <SelectValue placeholder="All Hostels" />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
@@ -103,7 +103,7 @@ export default function RoomsContainer({ initialGroupedRooms }: RoomsContainerPr
                     </Select>
 
                     <Select value={r.priceView} onValueChange={(v) => r.setPriceView(v as "monthly" | "daily")}>
-                        <SelectTrigger className="h-9 w-[140px] text-xs bg-card border-border font-medium rounded-lg">
+                        <SelectTrigger className="h-9 flex-1 min-w-0 sm:flex-none sm:w-[140px] text-xs bg-card border-border font-medium rounded-lg">
                             <SelectValue placeholder="View Price" />
                         </SelectTrigger>
                         <SelectContent>

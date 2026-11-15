@@ -24,7 +24,7 @@ export default function HotelGrid({
     const [sortBy, setSortBy] = useState<SortOption>("recommended");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [isSortLoading, setIsSortLoading] = useState(false);
-    const itemsPerPage = 9;
+    const itemsPerPage = 10;
 
     const handleSortChange = (value: SortOption) => {
         setSortBy(value);

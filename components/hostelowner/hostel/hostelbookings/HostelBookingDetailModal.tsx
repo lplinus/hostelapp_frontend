@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -10,7 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, User, Phone, Receipt, Check } from "lucide-react";
+import {
+    Building2,
+    User,
+    Phone,
+    Receipt,
+    Check,
+    ShieldCheck,
+    FileCheck2,
+    ExternalLink,
+    Lock,
+    AlertCircle,
+    Eye,
+    X,
+} from "lucide-react";
 import { type Booking } from "@/services/booking.service";
 import {
     formatDate,
@@ -35,12 +49,15 @@ export default function HostelBookingDetailModal({
     onCheckIn,
     isCheckingIn,
 }: HostelBookingDetailModalProps) {
+    const [previewDoc, setPreviewDoc] = useState<{ url: string; name: string } | null>(null);
+
     if (!booking) return null;
 
     const statusMeta = getStatusMeta(booking.status);
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <>
+            <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg sm:rounded-lg border border-border/80 shadow-2xl p-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth overscroll-contain [-webkit-overflow-scrolling:touch]">
                 <DialogHeader className="border-b pb-4">
                     <div className="flex items-center justify-between gap-2">
@@ -162,6 +179,75 @@ export default function HostelBookingDetailModal({
                         </div>
                     </div>
 
+                    {/* Guest Identity Verification / Aadhaar Card */}
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                <ShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" />
+                                Identity Verification (Aadhaar Card)
+                            </h4>
+                            {booking.guest_id_document?.is_shared ? (
+                                <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 gap-1 text-[10px] font-medium">
+                                    <Check size={11} /> Authorized by Guest
+                                </Badge>
+                            ) : booking.guest_id_document?.has_document ? (
+                                <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-200 gap-1 text-[10px] font-medium">
+                                    <Lock size={10} /> Consent Not Granted
+                                </Badge>
+                            ) : (
+                                <Badge variant="outline" className="text-muted-foreground gap-1 text-[10px]">
+                                    Not Uploaded
+                                </Badge>
+                            )}
+                        </div>
+
+                        <div className="p-3.5 rounded-lg border border-border/50 bg-card text-xs space-y-2.5">
+                            {booking.guest_id_document?.is_shared ? (
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-md border border-emerald-200/60 dark:border-emerald-900/50">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-9 h-9 rounded bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                                            <FileCheck2 size={18} />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-foreground text-xs flex items-center gap-1.5">
+                                                <span>Aadhaar Document:</span>
+                                                <span className="font-mono text-emerald-800 dark:text-emerald-200">
+                                                    {booking.guest_id_document.aadhaar_number || "Verified on file"}
+                                                </span>
+                                            </div>
+                                            <p className="text-[11px] text-muted-foreground mt-0.5">
+                                                {booking.guest_id_document.file_name || "Guest_Aadhaar_Proof"} &bull; Instant Check-in Verified
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {booking.guest_id_document.file_url && (
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="h-8 text-xs gap-1.5 bg-background hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 shrink-0 cursor-pointer"
+                                            onClick={() => setPreviewDoc({
+                                                url: booking.guest_id_document!.file_url!,
+                                                name: booking.guest_id_document!.file_name || "Guest_Aadhaar_Document"
+                                            })}
+                                        >
+                                            <Eye size={13} /> View Aadhaar <ExternalLink size={11} />
+                                        </Button>
+                                    )}
+                                </div>
+                            ) : booking.guest_id_document?.has_document ? (
+                                <div className="flex items-center gap-2 text-muted-foreground text-[11px] py-1">
+                                    <Lock size={13} className="text-amber-500 shrink-0" />
+                                    <span>The guest has uploaded their government ID, but has not granted authorization to share the document copy.</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-muted-foreground text-[11px] py-1">
+                                    <AlertCircle size={13} className="text-muted-foreground shrink-0" />
+                                    <span>No government ID uploaded by guest yet. Physical ID verification may be requested at check-in.</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     {/* Pricing Breakdown */}
                     <div className="space-y-2">
                         <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -235,6 +321,63 @@ export default function HostelBookingDetailModal({
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        {/* In-App Document Viewer Dialog */}
+        <Dialog open={!!previewDoc} onOpenChange={(open) => !open && setPreviewDoc(null)}>
+            <DialogContent className="max-w-4xl w-[94vw] h-[88vh] flex flex-col p-0 rounded-sm border border-border/80 shadow-2xl bg-card overflow-hidden">
+                <DialogHeader className="px-5 py-3.5 border-b border-border/60 bg-muted/20 flex flex-row items-center justify-between space-y-0 shrink-0">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                            <FileCheck2 size={16} />
+                        </div>
+                        <div>
+                            <DialogTitle className="text-sm font-semibold text-foreground tracking-tight">
+                                {previewDoc?.name || "Guest Identity Document"}
+                            </DialogTitle>
+                            <DialogDescription className="text-[11px] text-muted-foreground">
+                                In-App Document Viewer • Authorized Guest Aadhaar
+                            </DialogDescription>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] font-medium border-amber-500/30 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 gap-1 rounded-sm py-0.5 px-2 select-none">
+                            <Lock size={10} /> View-Only • Privacy Protected
+                        </Badge>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPreviewDoc(null)}
+                            className="h-8 w-8 p-0 rounded-sm text-muted-foreground hover:text-foreground"
+                        >
+                            <X size={15} />
+                        </Button>
+                    </div>
+                </DialogHeader>
+
+                <div className="flex-1 bg-zinc-950/5 relative overflow-hidden flex items-center justify-center p-3">
+                    {previewDoc && (
+                        previewDoc.url.toLowerCase().endsWith(".pdf") ? (
+                            <iframe
+                                src={`${previewDoc.url}#toolbar=0`}
+                                className="w-full h-full rounded-sm border border-border/50 bg-white"
+                                title="Guest Document Preview"
+                            />
+                        ) : (
+                            <div className="max-w-full max-h-full flex items-center justify-center overflow-auto p-2">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={previewDoc.url}
+                                    alt="Aadhaar Document"
+                                    className="max-w-full max-h-[75vh] object-contain rounded-sm border border-border/50 shadow-md bg-white"
+                                />
+                            </div>
+                        )
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+        </>
     );
 }
 

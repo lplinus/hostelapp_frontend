@@ -78,6 +78,15 @@ export interface VacationRentalBooking {
     status: VacationRentalBookingStatus;
     status_display: string;
     guest_details: VacationRentalGuest | null;
+    guest_id_document?: {
+        has_document: boolean;
+        is_shared: boolean;
+        status: "unverified" | "pending" | "verified" | "rejected";
+        aadhaar_number?: string | null;
+        file_name?: string | null;
+        file_url?: string | null;
+        verified_at?: string | null;
+    } | null;
     pricing_details: VacationRentalPricing | null;
     cancellation_details: VacationRentalCancellation | null;
     created_at: string;

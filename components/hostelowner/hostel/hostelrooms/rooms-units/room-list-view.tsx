@@ -249,7 +249,7 @@ export default function RoomListView({
                     </div>
 
                     {/* Search Input */}
-                    <div className="relative flex-1 min-w-[200px]">
+                    <div className="relative flex-1 sm:min-w-[200px]">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Search room name, bed type, category..."
@@ -273,7 +273,7 @@ export default function RoomListView({
                 <div className="flex flex-wrap items-center gap-2">
                     {/* Category Filter */}
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="h-9 w-[130px] text-xs bg-background">
+                        <SelectTrigger className="h-9 flex-1 min-w-0 sm:flex-none sm:w-[130px] text-xs bg-background">
                             <SelectValue placeholder="Category" />
                         </SelectTrigger>
                         <SelectContent>
@@ -289,7 +289,7 @@ export default function RoomListView({
 
                     {/* Bed Type Filter */}
                     <Select value={selectedBedType} onValueChange={setSelectedBedType}>
-                        <SelectTrigger className="h-9 w-[120px] text-xs bg-background">
+                        <SelectTrigger className="h-9 flex-1 min-w-0 sm:flex-none sm:w-[120px] text-xs bg-background">
                             <SelectValue placeholder="Bed Type" />
                         </SelectTrigger>
                         <SelectContent>

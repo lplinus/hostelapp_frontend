@@ -93,15 +93,15 @@ export default function VacationRentalManagement({
             {/* Sub-tab Navigation */}
             {!hideSubTabs && (
                 <div className="flex items-center justify-between border-b border-border/80 pb-3">
-                    <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs">
-                        <button type="button" onClick={() => setActiveTab("properties")} className={cn("flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer", activeTab === "properties" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
+                    <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs w-full sm:w-auto max-w-full overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
+                        <button type="button" onClick={() => setActiveTab("properties")} className={cn("flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap", activeTab === "properties" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
                             <Palmtree size={15} className={activeTab === "properties" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                            <span>Vacation Properties</span>
+                            <span className="sm:hidden">Rentals</span><span className="hidden sm:inline">Vacation Properties</span>
                             <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 rounded-md font-bold">{v.isMounted ? v.rentals.length : 0}</Badge>
                         </button>
-                        <button type="button" onClick={() => setActiveTab("rooms")} className={cn("flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer", activeTab === "rooms" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
+                        <button type="button" onClick={() => setActiveTab("rooms")} className={cn("flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap", activeTab === "rooms" ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800")}>
                             <BedDouble size={15} className={activeTab === "rooms" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                            <span>Rooms & Units</span>
+                            <span className="sm:hidden">Rooms</span><span className="hidden sm:inline">Rooms & Units</span>
                             <Badge className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-[#312E81] text-white">{v.isMounted ? v.rentals.length : 0}</Badge>
                         </button>
                     </div>
@@ -164,14 +164,14 @@ export default function VacationRentalManagement({
                         </div>
                         <div className="flex items-center gap-2">
                             <Select value={v.selectedCityId} onValueChange={v.setSelectedCityId}>
-                                <SelectTrigger className="h-9 text-xs w-[140px] sm:w-[160px]"><SelectValue placeholder="All Cities" /></SelectTrigger>
+                                <SelectTrigger className="h-9 text-xs flex-1 min-w-0 sm:flex-none sm:w-[160px]"><SelectValue placeholder="All Cities" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Cities</SelectItem>
                                     {v.cities.map((c) => (<SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>))}
                                 </SelectContent>
                             </Select>
                             <Select value={v.selectedCategory} onValueChange={v.setSelectedCategory}>
-                                <SelectTrigger className="h-9 text-xs w-[140px] sm:w-[160px]"><SelectValue placeholder="All Categories" /></SelectTrigger>
+                                <SelectTrigger className="h-9 text-xs flex-1 min-w-0 sm:flex-none sm:w-[160px]"><SelectValue placeholder="All Categories" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Categories</SelectItem>
                                     {CATEGORIES.map((cat) => (<SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>))}

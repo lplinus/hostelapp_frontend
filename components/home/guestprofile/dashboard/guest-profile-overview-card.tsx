@@ -32,10 +32,10 @@ export default function GuestProfileOverviewCard({
     const [revealPhone, setRevealPhone] = useState(false);
 
     return (
-        <div className="bg-card border border-border/80 rounded-lg p-5 sm:p-6 shadow-2xs space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-border/60">
+        <div className="bg-card border border-border/80 rounded-lg p-4 sm:p-6 shadow-2xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/60">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center shrink-0">
                         <User size={16} />
                     </div>
                     <div>
@@ -51,7 +51,7 @@ export default function GuestProfileOverviewCard({
                     variant="outline"
                     size="sm"
                     onClick={onGoToProfile}
-                    className="text-xs font-semibold h-8 rounded-md gap-1.5 cursor-pointer hover:bg-muted"
+                    className="text-xs font-semibold h-8 rounded-md gap-1.5 cursor-pointer hover:bg-muted self-start sm:self-auto shrink-0"
                 >
                     <Edit3 size={12} />
                     <span>Manage Full Profile</span>

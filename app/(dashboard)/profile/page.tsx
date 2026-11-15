@@ -176,7 +176,7 @@ export default function ProfilePage() {
             ) : (
                 user?.role === 'vendor' ? <VendorSidebar /> : <DashboardSidebar />
             )}
-            <main className="flex-1 p-6 space-y-6">
+            <main className="flex-1 p-3.5 sm:p-6 space-y-4 sm:space-y-6 pb-24 md:pb-6 min-w-0">
                 <DashboardHeader />
                 <div className="flex-1 max-w-[1400px] w-full mx-auto space-y-6">
                     <div className="w-full bg-card p-6 md:p-8 rounded-sm shadow-xs border border-border/40">

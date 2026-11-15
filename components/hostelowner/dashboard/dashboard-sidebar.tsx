@@ -22,7 +22,8 @@ import {
     Loader2,
     Palmtree,
     DollarSign,
-    Bot
+    Bot,
+    Menu
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -160,8 +161,8 @@ function DashboardSidebarContent() {
                             closeMobile={() => setIsOpenMobile(false)}
                         />
 
-                        {/* 2. Marketplace Dropdown (Merchants, Kirana, My Orders) */}
-                        <SidebarDropdown
+                        {/* 2. Marketplace Dropdown (Hidden as requested) */}
+                        {/* <SidebarDropdown
                             label="Marketplace"
                             icon={ShoppingBag}
                             pathname={pathname}
@@ -173,9 +174,9 @@ function DashboardSidebarContent() {
                                 { label: "My Orders", href: "/usermarketplace/myorders", icon: Package },
                             ]}
                             closeMobile={() => setIsOpenMobile(false)}
-                        />
+                        /> */}
 
-                        {/* 3. Property Dropdown (Hostels, Hotels, Rooms, Vacation Rentals) */}
+                        {/* 3. Property Dropdown (Hotels, Vacation Rentals) */}
                         <SidebarDropdown
                             label="Property"
                             icon={Building2}
@@ -183,9 +184,9 @@ function DashboardSidebarContent() {
                             searchParams={searchParams}
                             showFull={showFull}
                             items={[
-                                { label: "Hostels", href: "/hostel", icon: Building2 },
+                                // { label: "Hostels", href: "/hostel", icon: Building2 },
                                 { label: "Hotels", href: "/hotel?tab=property", icon: Hotel },
-                                { label: "Rooms", href: "/rooms", icon: BedDouble },
+                                // { label: "Rooms", href: "/rooms", icon: BedDouble },
                                 { label: "Vacation Rentals", href: "/vacanrentalbooking?tab=property", icon: Palmtree },
                             ]}
                             closeMobile={() => setIsOpenMobile(false)}
@@ -199,7 +200,7 @@ function DashboardSidebarContent() {
                             searchParams={searchParams}
                             showFull={showFull}
                             items={[
-                                { label: "Hostel Bookings", href: "/bookings", icon: CalendarCheck },
+                                // { label: "Hostel Bookings", href: "/bookings", icon: CalendarCheck },
                                 { label: "Hotel Bookings", href: "/hotel?tab=bookings", icon: Hotel },
                                 { label: "Vacation Stays", href: "/vacanrentalbooking?tab=bookings", icon: Palmtree },
                             ]}
@@ -302,6 +303,100 @@ function DashboardSidebarContent() {
                         )}
                     </div>
                 </aside>
+
+                {/* MOBILE BOTTOM APP DOCK (Native mobile app experience) */}
+                <nav
+                    aria-label="Mobile Owner Dock"
+                    className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#EDE8DF]/95 backdrop-blur-md border-t border-[#D2CABC] px-3 py-2 flex items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.06)]"
+                >
+                    {/* 1. Overview */}
+                    <Link
+                        href="/dashboard"
+                        className={cn(
+                            "flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all select-none active:scale-95",
+                            pathname === "/dashboard"
+                                ? "text-[#1F1E1B] font-bold"
+                                : "text-[#686259] hover:text-[#1A1916]"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            pathname === "/dashboard" ? "bg-[#DBD5C8]" : "bg-transparent"
+                        )}>
+                            <LayoutDashboard size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">Overview</span>
+                    </Link>
+
+                    {/* 2. Hotels */}
+                    <Link
+                        href="/hotel?tab=property"
+                        className={cn(
+                            "flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all select-none active:scale-95",
+                            pathname === "/hotel" && searchParams?.get("tab") !== "bookings"
+                                ? "text-[#1F1E1B] font-bold"
+                                : "text-[#686259] hover:text-[#1A1916]"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            pathname === "/hotel" && searchParams?.get("tab") !== "bookings" ? "bg-[#DBD5C8]" : "bg-transparent"
+                        )}>
+                            <Hotel size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">Hotels</span>
+                    </Link>
+
+                    {/* 3. Vacation Rentals */}
+                    <Link
+                        href="/vacanrentalbooking?tab=property"
+                        className={cn(
+                            "flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all select-none active:scale-95",
+                            pathname === "/vacanrentalbooking"
+                                ? "text-[#1F1E1B] font-bold"
+                                : "text-[#686259] hover:text-[#1A1916]"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            pathname === "/vacanrentalbooking" ? "bg-[#DBD5C8]" : "bg-transparent"
+                        )}>
+                            <Palmtree size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">Rentals</span>
+                    </Link>
+
+                    {/* 4. Bookings */}
+                    <Link
+                        href="/hotel?tab=bookings"
+                        className={cn(
+                            "flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all select-none active:scale-95",
+                            searchParams?.get("tab") === "bookings"
+                                ? "text-[#1F1E1B] font-bold"
+                                : "text-[#686259] hover:text-[#1A1916]"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-lg transition-colors",
+                            searchParams?.get("tab") === "bookings" ? "bg-[#DBD5C8]" : "bg-transparent"
+                        )}>
+                            <CalendarCheck size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">Bookings</span>
+                    </Link>
+
+                    {/* 5. More */}
+                    <button
+                        type="button"
+                        onClick={() => setIsOpenMobile(true)}
+                        className="flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-[#686259] hover:text-[#1A1916] transition-all select-none cursor-pointer active:scale-95"
+                    >
+                        <div className="p-1.5 rounded-lg bg-transparent">
+                            <Menu size={20} />
+                        </div>
+                        <span className="text-xs font-semibold">More</span>
+                    </button>
+                </nav>
             </>
         </TooltipProvider>
     );

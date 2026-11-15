@@ -144,7 +144,7 @@ export default function HotelCard({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="pt-2 border-t border-border/60 flex items-center justify-between gap-2">
+                    <div className="pt-2 border-t border-border/60 flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5">
                             <Button size="sm" className="text-xs h-8 px-3 gap-1.5 bg-[#312E81] text-white font-semibold rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] transition-colors" onClick={() => setPhotoModalHotel(hotel)}>
                                 <ImageIcon size={12} className="text-white" /> Photos ({imagesCount})

@@ -51,7 +51,7 @@ export function DashboardBookingTable({
         <>
             {/* Filter Tabs & Search Bar */}
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                <div className="flex items-center gap-1.5 overflow-x-auto md:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                     {statusOptions.map((opt) => {
                         const isSelected = selectedStatus === opt.key;
                         const count =
@@ -275,7 +275,7 @@ export function DashboardBookingTable({
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    className="h-7 text-xs gap-1 group-hover:border-primary/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                                                    className="h-7 text-xs gap-1 border border-border/80 text-foreground bg-card/60 hover:bg-[#1F1E1B] hover:text-[#EDE8DF] hover:border-[#1F1E1B] group-hover:bg-[#1F1E1B] group-hover:text-[#EDE8DF] group-hover:border-[#1F1E1B] dark:hover:bg-[#2A2926] dark:hover:text-[#EDE8DF] dark:hover:border-[#3D3A34] dark:group-hover:bg-[#2A2926] dark:group-hover:text-[#EDE8DF] dark:group-hover:border-[#3D3A34] transition-all cursor-pointer shadow-2xs"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setSelectedBooking(b);

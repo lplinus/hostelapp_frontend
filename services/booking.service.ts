@@ -28,6 +28,15 @@ export interface Booking {
     stay_duration?: 'none' | '1_month' | '2_months' | '3_months' | '4_months' | '5_months' | 'gt_5_months';
     created_at?: string;
     payment_id?: string;
+    guest_id_document?: {
+        has_document: boolean;
+        is_shared: boolean;
+        status: "unverified" | "pending" | "verified" | "rejected";
+        aadhaar_number?: string | null;
+        file_name?: string | null;
+        file_url?: string | null;
+        verified_at?: string | null;
+    } | null;
     payment_status?: string;
     payment_method?: 'online' | 'on_arrival';
 }

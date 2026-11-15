@@ -24,23 +24,23 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 const defaultStats: LandingStatData[] = [
   {
-    number: "500+",
-    label: "Verified Hostels",
+    number: "850+",
+    label: "Hotels & Vacation Villas",
     icon_name: "Home",
   },
   {
-    number: "10K+",
-    label: "Happy Students",
+    number: "45K+",
+    label: "Satisfied Guests",
     icon_name: "Users",
   },
   {
-    number: "25+",
-    label: "Prime Cities",
+    number: "30+",
+    label: "Prime Destinations",
     icon_name: "Map",
   },
   {
     number: "4.9★",
-    label: "Customer Trust",
+    label: "Guest Satisfaction",
     icon_name: "Star",
   },
 ];

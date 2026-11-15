@@ -50,13 +50,13 @@ export default function HotelCard({ hotel }: HotelCardProps) {
     return (
         <div
             onMouseLeave={() => setIsAmenitiesExpanded(false)}
-            className="group bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-slate-300/90 overflow-hidden transition-all duration-200 w-full"
+            className="group bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-lg hover:border-slate-300/90 overflow-hidden transition-all duration-200 w-full"
         >
             <div className="flex flex-col md:flex-row items-stretch">
                 {/* 1. COMPACT LUXURY IMAGE CONTAINER (Clickable & No Zoom on Hover) */}
                 <Link
                     href={`/hotels/${hotel.slug}`}
-                    className="relative block w-full md:w-[240px] lg:w-[260px] h-52 md:h-auto min-h-[200px] md:min-h-[210px] bg-slate-100 shrink-0 overflow-hidden cursor-pointer"
+                    className="relative block w-full md:w-[240px] lg:w-[260px] aspect-[16/10] sm:aspect-[16/9] md:aspect-auto h-48 sm:h-52 md:h-auto min-h-[190px] md:min-h-[210px] bg-slate-100 shrink-0 overflow-hidden cursor-pointer"
                 >
                     {imageUrl ? (
                         <Image
@@ -91,7 +91,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                     </div>
 
                     {/* Star Rating Badge (BOTTOM-LEFT - Glossy rectangular finish) */}
-                    <div className="absolute bottom-2.5 left-2.5 bg-white/85 backdrop-blur-md border border-white/60 shadow-xs px-2 py-0.5 rounded-xs flex items-center gap-1 text-slate-900 z-10 pointer-events-none">
+                    <div className="absolute bottom-2.5 left-2.5 bg-white/90 backdrop-blur-md border border-white/70 shadow-xs px-2 py-0.5 rounded-xs flex items-center gap-1 text-slate-900 z-10 pointer-events-none">
                         <div className="flex items-center gap-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
@@ -107,7 +107,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                 </Link>
 
                 {/* 2. MIDDLE & RIGHT CONTENT WRAPPER */}
-                <div className="flex-1 p-4 sm:p-5 flex flex-col md:flex-row justify-between gap-4 min-w-0">
+                <div className="flex-1 p-3.5 sm:p-4 md:p-5 flex flex-col md:flex-row justify-between gap-3 sm:gap-4 min-w-0">
                     {/* MIDDLE: Hotel Info & Specs */}
                     <div className="flex-1 flex flex-col justify-between min-w-0 gap-2">
                         <div className="space-y-1.5">
@@ -149,17 +149,17 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
                             {/* Amenities Chips */}
                             {hotel.amenities_list && hotel.amenities_list.length > 0 && (
-                                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-0.5">
                                     {(isAmenitiesExpanded
                                         ? hotel.amenities_list
                                         : hotel.amenities_list.slice(0, 3)
                                     ).map((amenity) => (
                                         <span
                                             key={amenity.id}
-                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-50 border border-slate-200/80 text-[10px] font-medium text-slate-700"
+                                            className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded bg-slate-50 border border-slate-200/80 text-[10px] font-medium text-slate-700 max-w-[150px] truncate"
                                         >
                                             <CheckCircle2 size={10} className="text-[#312E81] shrink-0" />
-                                            {amenity.name}
+                                            <span className="truncate">{amenity.name}</span>
                                         </span>
                                     ))}
 
@@ -196,13 +196,13 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
                             {/* Room Preview */}
                             {hotel.room_types && hotel.room_types.length > 0 && (
-                                <div className="flex items-center gap-1.5 text-xs text-slate-600 pt-0.5">
+                                <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-600 pt-0.5">
                                     <BedDouble size={13} className="text-[#312E81] shrink-0" />
-                                    <span className="font-semibold text-slate-800 text-[11px]">
+                                    <span className="font-semibold text-slate-800 text-[11px] truncate max-w-[160px] sm:max-w-none">
                                         {hotel.room_types[0].category_display || hotel.room_types[0].name}
                                     </span>
                                     <span className="text-slate-300">•</span>
-                                    <span className="text-slate-500 text-[11px]">
+                                    <span className="text-slate-500 text-[11px] truncate">
                                         {hotel.room_types[0].bed_display || "King/Queen Bed"}
                                     </span>
                                 </div>
@@ -210,18 +210,20 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                         </div>
 
                         {/* Timing Info */}
-                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 pt-1">
-                            <Clock size={11} className="text-slate-400 shrink-0" />
-                            <span>Check-in: {hotel.check_in_time ? hotel.check_in_time.slice(0, 5) : "14:00"}</span>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-slate-400 pt-0.5">
+                            <div className="inline-flex items-center gap-1">
+                                <Clock size={11} className="text-slate-400 shrink-0" />
+                                <span>Check-in: {hotel.check_in_time ? hotel.check_in_time.slice(0, 5) : "14:00"}</span>
+                            </div>
                             <span>•</span>
                             <span>Check-out: {hotel.check_out_time ? hotel.check_out_time.slice(0, 5) : "11:00"}</span>
                         </div>
                     </div>
 
                     {/* RIGHT SIDE: Dedicated Pricing & Action Panel */}
-                    <div className="md:w-[190px] lg:w-[210px] md:border-l md:border-slate-100 md:pl-4 flex flex-col justify-between items-start md:items-end text-left md:text-right shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 gap-3">
+                    <div className="w-full md:w-[200px] lg:w-[220px] md:border-l md:border-slate-100 md:pl-4 flex flex-col justify-between items-stretch md:items-end text-left md:text-right shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 gap-3">
                         {/* Rating block */}
-                        <div className="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-2">
+                        <div className="flex items-center md:items-end justify-between md:justify-end w-full gap-2">
                             <div className="text-left md:text-right">
                                 <span className="text-xs font-bold text-slate-800 block leading-tight">
                                     {ratingLabel}
@@ -230,13 +232,13 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                                     {hotel.rating_count ? `${hotel.rating_count} reviews` : "Verified reviews"}
                                 </span>
                             </div>
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#312E81] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#1E1B4B] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
                                 {ratingDisplay}
                             </div>
                         </div>
 
-                        {/* Price & Action Button */}
-                        <div className="flex md:flex-col items-end justify-between w-full md:w-auto gap-2 md:gap-2.5">
+                        {/* Price & Action Button (Side-by-side on mobile, cleanly stacked on desktop) */}
+                        <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-end w-full gap-3 md:gap-2.5">
                             <div className="text-left md:text-right">
                                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                                     Starting Tariff
@@ -251,7 +253,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
                             <Link
                                 href={`/hotels/${hotel.slug}`}
-                                className="w-full inline-flex items-center justify-center px-6 py-2.5 rounded-sm bg-[#312E81] hover:bg-[#1E1B4B] text-white text-xs font-semibold tracking-wider text-center transition-all shadow-xs shrink-0 uppercase active:scale-[0.98]"
+                                className="w-auto md:w-full min-w-[110px] sm:min-w-[120px] inline-flex items-center justify-center px-4 sm:px-6 py-2.5 rounded-lg bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs font-bold tracking-wider text-center transition-all shadow-xs shrink-0 uppercase active:scale-[0.98]"
                             >
                                 Reserve
                             </Link>

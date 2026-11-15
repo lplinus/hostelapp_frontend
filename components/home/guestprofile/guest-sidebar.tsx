@@ -12,6 +12,8 @@ import {
     Loader2,
     CalendarCheck,
     Globe,
+    Hotel,
+    Menu,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -64,9 +66,9 @@ export default function GuestSidebar() {
             label: 'My Bookings',
         },
         {
-            href: '/home',
-            icon: Globe,
-            label: 'Explore & Book Stays',
+            href: '/hotels',
+            icon: Hotel,
+            label: 'Explore Hotels',
         },
     ];
 
@@ -232,6 +234,95 @@ export default function GuestSidebar() {
                         )}
                     </div>
                 </aside>
+
+                {/* MOBILE BOTTOM APP DOCK (Native mobile app experience, matches Owner Dashboard) */}
+                <nav
+                    aria-label="Mobile Guest Dock"
+                    className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-card/95 backdrop-blur-md border-t border-border/80 px-2 py-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.06)]"
+                >
+                    {/* 1. Overview */}
+                    <Link
+                        href="/home/guestprofile"
+                        className={cn(
+                            "flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition-all select-none active:scale-95",
+                            currentTab === "dashboard"
+                                ? "text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-md transition-colors",
+                            currentTab === "dashboard" ? "bg-primary/10 text-primary" : "bg-transparent"
+                        )}>
+                            <LayoutDashboard size={19} />
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold">Overview</span>
+                    </Link>
+
+                    {/* 2. My Bookings */}
+                    <Link
+                        href="/home/guestprofile?tab=bookings"
+                        className={cn(
+                            "flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition-all select-none active:scale-95",
+                            currentTab === "bookings"
+                                ? "text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-md transition-colors",
+                            currentTab === "bookings" ? "bg-primary/10 text-primary" : "bg-transparent"
+                        )}>
+                            <CalendarCheck size={19} />
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold">Bookings</span>
+                    </Link>
+
+                    {/* 3. Profile & KYC */}
+                    <Link
+                        href="/home/guestprofile?tab=profile"
+                        className={cn(
+                            "flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition-all select-none active:scale-95",
+                            currentTab === "profile"
+                                ? "text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <div className={cn(
+                            "p-1.5 rounded-md transition-colors",
+                            currentTab === "profile" ? "bg-primary/10 text-primary" : "bg-transparent"
+                        )}>
+                            <UserCircle size={19} />
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold">Profile</span>
+                    </Link>
+
+                    {/* 4. Explore Stays */}
+                    <Link
+                        href="/home/hotels"
+                        className={cn(
+                            "flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition-all select-none active:scale-95",
+                            "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        <div className="p-1.5 rounded-md bg-transparent">
+                            <Hotel size={19} />
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold">Explore</span>
+                    </Link>
+
+                    {/* 5. Menu / More */}
+                    <button
+                        type="button"
+                        onClick={() => setIsOpenMobile(true)}
+                        className="flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg text-muted-foreground hover:text-foreground transition-all select-none cursor-pointer active:scale-95"
+                    >
+                        <div className="p-1.5 rounded-md bg-transparent">
+                            <Menu size={19} />
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold">More</span>
+                    </button>
+                </nav>
             </>
         </TooltipProvider>
     );

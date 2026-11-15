@@ -21,21 +21,21 @@ export function DashboardTopTabs({
     hostedBookingsCount,
 }: DashboardTopTabsProps) {
     return (
-        <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-6">
-            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs">
+        <div className="flex items-center justify-between border-b border-border/80 pb-2.5 sm:pb-3 mb-4 sm:mb-6">
+            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs w-full sm:w-auto max-w-full overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                 {/* 1. Vacation Properties */}
                 <button
                     type="button"
                     onClick={() => handleTabChange("properties")}
                     className={cn(
-                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                        "flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap",
                         localTab === "properties"
                             ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
                             : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                     )}
                 >
                     <Palmtree size={15} className={localTab === "properties" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                    <span>Vacation Properties</span>
+                    <span className="sm:hidden">Rentals</span><span className="hidden sm:inline">Vacation Properties</span>
                     <span
                         className={cn(
                             "text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-colors",
@@ -53,14 +53,14 @@ export function DashboardTopTabs({
                     type="button"
                     onClick={() => handleTabChange("rooms")}
                     className={cn(
-                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                        "flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap",
                         localTab === "rooms"
                             ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
                             : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                     )}
                 >
                     <BedDouble size={15} className={localTab === "rooms" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                    <span>Rooms & Units</span>
+                    <span className="sm:hidden">Rooms</span><span className="hidden sm:inline">Rooms & Units</span>
                     <span
                         className={cn(
                             "text-[10px] px-1.5 py-0.5 rounded-md font-bold transition-colors",
@@ -78,14 +78,14 @@ export function DashboardTopTabs({
                     type="button"
                     onClick={() => handleTabChange("bookings")}
                     className={cn(
-                        "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer",
+                        "flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap",
                         localTab === "bookings"
                             ? "bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
                             : "text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                     )}
                 >
                     <Calendar size={15} className={localTab === "bookings" ? "text-[#312E81] dark:text-indigo-400" : ""} />
-                    <span>Vacation Stays (Bookings)</span>
+                    <span className="sm:hidden">Bookings</span><span className="hidden sm:inline">Vacation Stays (Bookings)</span>
                     {hostedBookingsCount > 0 && (
                         <span
                             className={cn(

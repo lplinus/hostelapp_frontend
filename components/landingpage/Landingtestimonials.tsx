@@ -8,16 +8,16 @@ interface LandingTestimonialsProps {
 
 const defaultTestimonials = [
   {
-    text: "Found an amazing verified hostel in Hyderabad within 10 minutes. The pricing was totally transparent with zero hidden costs.",
-    name: "Rahul S.",
-    role: "Engineering Student, Hyderabad",
-    initial: "R",
+    text: "Booked a stunning private villa in Goa for our family holiday. The booking was seamless, pricing was completely transparent, and the property was pristine.",
+    name: "Aarav Sharma",
+    role: "Holiday Traveler, Mumbai",
+    initial: "A",
   },
   {
-    text: "Unbeatable prices and a smooth booking process. My room has high-speed WiFi, clean meals, and AC exactly as described.",
-    name: "Priya M.",
-    role: "MBA Student, Bangalore",
-    initial: "P",
+    text: "Found a premium boutique hotel in Bangalore for my business trip. Instant digital check-in, high-speed Wi-Fi, and spacious rooms exactly as advertised.",
+    name: "Meera Kapoor",
+    role: "Business Guest, Delhi",
+    initial: "M",
   },
 ];
 

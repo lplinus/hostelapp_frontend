@@ -159,8 +159,8 @@ export function HotelBookingModal({
                                 asChild
                                 className="h-10 px-4 bg-[#1F1E1B] hover:bg-[#2C2A26] text-[#EDE8DF] text-xs font-semibold rounded-sm"
                             >
-                                <Link href="/hotelbooking">
-                                    View in Dashboard Folio
+                                <Link href="/home/guestprofile?tab=bookings">
+                                    View in Guest Profile
                                 </Link>
                             </Button>
                             <Button

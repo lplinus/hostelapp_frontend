@@ -41,6 +41,10 @@ import {
     ArrowUpRight,
     Ban,
     DollarSign,
+    FileCheck2,
+    ExternalLink,
+    Lock,
+    Eye,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -93,6 +97,7 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState<HotelBookingStatus | "all">("all");
     const [selectedBooking, setSelectedBooking] = useState<HotelBooking | null>(null);
+    const [previewDoc, setPreviewDoc] = useState<{ url: string; name: string } | null>(null);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
 
@@ -229,16 +234,16 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
     ];
 
     const renderTopTabs = () => (
-        <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-6">
-            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs">
+        <div className="flex items-center justify-between border-b border-border/80 pb-2.5 sm:pb-3 mb-4 sm:mb-6">
+            <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-lg border border-border/80 shadow-2xs w-full sm:w-auto max-w-full overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch]">
                 {/* 1. Hotel Properties */}
                 <button
                     type="button"
                     onClick={() => router.replace("/hotel?tab=property")}
-                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                 >
                     <Building2 size={15} />
-                    <span>Hotel Properties</span>
+                    <span className="sm:hidden">Hotels</span><span className="hidden sm:inline">Hotel Properties</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {isMounted ? hotels.length : 0}
                     </span>
@@ -248,10 +253,10 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                 <button
                     type="button"
                     onClick={() => router.replace("/hotel?tab=rooms")}
-                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap text-muted-foreground hover:text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800"
                 >
                     <BedDouble size={15} />
-                    <span>Rooms & Units</span>
+                    <span className="sm:hidden">Rooms</span><span className="hidden sm:inline">Rooms & Units</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {isMounted ? totalRoomsCount : 0}
                     </span>
@@ -260,10 +265,10 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                 {/* 3. Hotel Bookings */}
                 <button
                     type="button"
-                    className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition-all cursor-pointer flex-1 sm:flex-none justify-center min-w-0 sm:shrink-0 whitespace-nowrap bg-white dark:bg-card text-foreground font-bold shadow-xs border border-border"
                 >
                     <Calendar size={15} className="text-[#312E81] dark:text-indigo-400" />
-                    <span>Hotel Bookings</span>
+                    <span className="sm:hidden">Bookings</span><span className="hidden sm:inline">Hotel Bookings</span>
                     {bookings.length > 0 && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-indigo-50 text-[#312E81] dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                             {bookings.length}
@@ -278,9 +283,9 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
         <div className="space-y-6">
             {!hideTopTabs && renderTopTabs()}
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex flex-row items-center justify-between gap-3">
+                <div className="min-w-0">
+                    <div className="hidden sm:flex items-center gap-2 mb-1.5">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                             <Sparkles size={12} className="text-amber-500" />
                             Luxury & Suites
@@ -289,11 +294,12 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                             Hotel Reservations
                         </span>
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
                         Hotel Bookings
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                        Manage your hotel stays, room reservations, invoices, and payment receipts.
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                        <span className="sm:hidden">Reservations & receipts</span>
+                        <span className="hidden sm:inline">Manage your hotel stays, room reservations, invoices, and payment receipts.</span>
                     </p>
                 </div>
 
@@ -306,7 +312,7 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                         className="gap-2 text-xs"
                     >
                         <RefreshCw size={13} className={isRefetching ? "animate-spin" : ""} />
-                        Refresh
+                        <span className="hidden sm:inline">Refresh</span>
                     </Button>
 
                     <Button
@@ -316,7 +322,8 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                     >
                         <Link href="/city">
                             <Hotel size={14} />
-                            Explore Hotels
+                            <span className="sm:hidden">Explore</span>
+                            <span className="hidden sm:inline">Explore Hotels</span>
                         </Link>
                     </Button>
                 </div>
@@ -388,7 +395,7 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
             {/* Filter Tabs & Search Controls */}
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
                 {/* Status Tabs */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                <div className="flex items-center gap-1.5 overflow-x-auto md:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth [-webkit-overflow-scrolling:touch] w-0 min-w-full md:w-auto md:min-w-0">
                     {statusOptions.map((opt) => {
                         const isSelected = selectedStatus === opt.key;
                         const count =
@@ -401,15 +408,15 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                                 key={opt.key}
                                 onClick={() => setSelectedStatus(opt.key)}
                                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 shrink-0 ${isSelected
-                                        ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                                        : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                                    ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                                    : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                                     }`}
                             >
                                 <span>{opt.label}</span>
                                 <span
                                     className={`px-1.5 py-0.2 rounded-full text-[10px] ${isSelected
-                                            ? "bg-primary-foreground/20 text-primary-foreground"
-                                            : "bg-muted text-muted-foreground"
+                                        ? "bg-primary-foreground/20 text-primary-foreground"
+                                        : "bg-muted text-muted-foreground"
                                         }`}
                                 >
                                     {count}
@@ -499,7 +506,7 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                     </div>
                 </Card>
             ) : (
-                <div className="border border-border/50 rounded-xl bg-card overflow-hidden shadow-xs">
+                <div className="border border-border/50 rounded-xl bg-card overflow-hidden shadow-xs w-0 min-w-full">
                     <Table>
                         <TableHeader className="bg-muted/40">
                             <TableRow className="hover:bg-transparent">
@@ -617,7 +624,7 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                className="h-7 text-xs gap-1 group-hover:border-primary/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                                                className="h-7 text-xs gap-1 border border-border/80 text-foreground bg-card/60 hover:bg-[#1F1E1B] hover:text-[#EDE8DF] hover:border-[#1F1E1B] group-hover:bg-[#1F1E1B] group-hover:text-[#EDE8DF] group-hover:border-[#1F1E1B] dark:hover:bg-[#2A2926] dark:hover:text-[#EDE8DF] dark:hover:border-[#3D3A34] dark:group-hover:bg-[#2A2926] dark:group-hover:text-[#EDE8DF] dark:group-hover:border-[#3D3A34] transition-all cursor-pointer shadow-2xs"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setSelectedBooking(b);
@@ -744,6 +751,74 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                                                 <p className="text-xs text-foreground italic mt-0.5">
                                                     "{selectedBooking.guest_details.special_requests}"
                                                 </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Guest Identity Verification / Aadhaar Card */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                            <ShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" /> Identity Verification (Aadhaar Card)
+                                        </h4>
+                                        {selectedBooking.guest_id_document?.is_shared ? (
+                                            <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 gap-1 text-[10px] font-medium">
+                                                <CheckCircle2 size={11} /> Authorized by Guest
+                                            </Badge>
+                                        ) : selectedBooking.guest_id_document?.has_document ? (
+                                            <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-200 gap-1 text-[10px] font-medium">
+                                                <Lock size={10} /> Consent Not Granted
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="text-muted-foreground gap-1 text-[10px]">
+                                                Not Uploaded
+                                            </Badge>
+                                        )}
+                                    </div>
+
+                                    <div className="p-3.5 rounded-lg border border-border/50 bg-card text-xs space-y-2.5">
+                                        {selectedBooking.guest_id_document?.is_shared ? (
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-md border border-emerald-200/60 dark:border-emerald-900/50">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="w-9 h-9 rounded bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                                                        <FileCheck2 size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-semibold text-foreground text-xs flex items-center gap-1.5">
+                                                            <span>Aadhaar Document:</span>
+                                                            <span className="font-mono text-emerald-800 dark:text-emerald-200">
+                                                                {selectedBooking.guest_id_document.aadhaar_number || "Verified on file"}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                                                            {selectedBooking.guest_id_document.file_name || "Guest_Aadhaar_Proof"} &bull; Instant Check-in Verified
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {selectedBooking.guest_id_document.file_url && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="h-8 text-xs gap-1.5 bg-background hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 shrink-0 cursor-pointer"
+                                                        onClick={() => setPreviewDoc({
+                                                            url: selectedBooking.guest_id_document!.file_url!,
+                                                            name: selectedBooking.guest_id_document!.file_name || "Guest_Aadhaar_Document",
+                                                        })}
+                                                    >
+                                                        <Eye size={13} /> View Aadhaar <ExternalLink size={11} />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        ) : selectedBooking.guest_id_document?.has_document ? (
+                                            <div className="flex items-center gap-2 text-muted-foreground text-[11px] py-1">
+                                                <Lock size={13} className="text-amber-500 shrink-0" />
+                                                <span>The guest has uploaded their government ID, but has not granted authorization to share the document copy.</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2 text-muted-foreground text-[11px] py-1">
+                                                <AlertCircle size={13} className="text-muted-foreground shrink-0" />
+                                                <span>No government ID uploaded by guest yet. Physical ID verification may be requested at check-in.</span>
                                             </div>
                                         )}
                                     </div>
@@ -906,6 +981,62 @@ export default function HotelBookingDashboard({ hideTopTabs = false }: HotelBook
                             {cancelMutation.isPending ? "Cancelling..." : "Confirm Cancellation"}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* In-App Document Viewer Dialog */}
+            <Dialog open={!!previewDoc} onOpenChange={(open) => !open && setPreviewDoc(null)}>
+                <DialogContent className="max-w-4xl w-[94vw] h-[88vh] flex flex-col p-0 rounded-sm border border-border/80 shadow-2xl bg-card overflow-hidden">
+                    <DialogHeader className="px-5 py-3.5 border-b border-border/60 bg-muted/20 flex flex-row items-center justify-between space-y-0 shrink-0">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                                <FileCheck2 size={16} />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-sm font-semibold text-foreground tracking-tight">
+                                    {previewDoc?.name || "Guest Identity Document"}
+                                </DialogTitle>
+                                <DialogDescription className="text-[11px] text-muted-foreground">
+                                    In-App Document Viewer • Authorized Guest Aadhaar
+                                </DialogDescription>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-[10px] font-medium border-amber-500/30 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 gap-1 rounded-sm py-0.5 px-2 select-none">
+                                <Lock size={10} /> View-Only • Privacy Protected
+                            </Badge>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setPreviewDoc(null)}
+                                className="h-8 w-8 p-0 rounded-sm text-muted-foreground hover:text-foreground"
+                            >
+                                <X size={15} />
+                            </Button>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="flex-1 bg-zinc-950/5 relative overflow-hidden flex items-center justify-center p-3">
+                        {previewDoc && (
+                            previewDoc.url.toLowerCase().endsWith(".pdf") ? (
+                                <iframe
+                                    src={`${previewDoc.url}#toolbar=0`}
+                                    className="w-full h-full rounded-sm border border-border/50 bg-white"
+                                    title="Guest Document Preview"
+                                />
+                            ) : (
+                                <div className="max-w-full max-h-full flex items-center justify-center overflow-auto p-2">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={previewDoc.url}
+                                        alt="Aadhaar Document"
+                                        className="max-w-full max-h-[75vh] object-contain rounded-sm border border-border/50 shadow-md bg-white"
+                                    />
+                                </div>
+                            )
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
