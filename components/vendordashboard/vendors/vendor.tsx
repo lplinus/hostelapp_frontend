@@ -7,6 +7,7 @@ import { Vendor, Product, Order } from '@/types/marketplace.types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { CustomStarIcon } from '@/components/ui/custom-icons';
 import {
     Search,
     Store,
@@ -402,9 +403,9 @@ export default function VendorsPage() {
                                         </div>
 
                                         <div className="space-y-2 mb-4">
-                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                             <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                 {[1, 2, 3, 4, 5].map(i => (
-                                                    <Star key={i} size={10} className="fill-amber-400 text-amber-400" />
+                                                    <CustomStarIcon key={i} className="w-2.5 h-2.5 shrink-0" fill="#070707" />
                                                 ))}
                                                 <span className="text-[10px] text-muted-foreground ml-1">4.9</span>
                                             </div>

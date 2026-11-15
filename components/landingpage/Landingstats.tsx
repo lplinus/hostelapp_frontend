@@ -7,6 +7,8 @@ interface LandingStatData {
   icon_name: string;
 }
 
+import { CustomStarIcon } from "@/components/ui/custom-icons";
+
 interface LandingStatsProps {
   stats?: LandingStatData[];
 }
@@ -39,7 +41,7 @@ const defaultStats: LandingStatData[] = [
     icon_name: "Map",
   },
   {
-    number: "4.9★",
+    number: "4.9",
     label: "Guest Satisfaction",
     icon_name: "Star",
   },
@@ -55,18 +57,26 @@ export default function LandingStats({ stats }: LandingStatsProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {displayStats.map((s, idx) => {
               const Icon = ICON_MAP[s.icon_name] || Home;
+              const isStarStat = s.icon_name === "Star" || s.label.toLowerCase().includes("satisfaction") || s.number.includes("★");
               return (
                 <div
                   key={idx}
                   className="flex items-center gap-3.5 p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 hover:border-black hover:shadow-md transition-all duration-200 cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#0F172A] shrink-0">
-                    <Icon className="w-5 h-5 text-slate-700" />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isStarStat ? "bg-slate-100" : "bg-slate-100"}`}>
+                    {isStarStat ? (
+                      <CustomStarIcon className="w-5 h-5 shrink-0" fill="#070707" />
+                    ) : (
+                      <Icon className="w-5 h-5 text-slate-700" />
+                    )}
                   </div>
 
                   <div className="min-w-0">
-                    <div className="text-xl sm:text-2xl font-bold tracking-tight text-[#0F172A] leading-tight">
-                      {s.number}
+                    <div className="text-xl sm:text-2xl font-bold tracking-tight text-[#0F172A] leading-tight flex items-center gap-1">
+                      <span>{s.number.replace("★", "")}</span>
+                      {isStarStat && (
+                        <CustomStarIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="#070707" />
+                      )}
                     </div>
                     <div className="text-xs text-slate-500 font-medium truncate mt-0.5">
                       {s.label}

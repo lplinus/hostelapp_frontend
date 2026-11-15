@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Hotel } from "@/types/hotel.types";
 import { isExternalImage } from "@/lib/utils";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 
 interface HotelCardProps {
     readonly hotel: Hotel;
@@ -94,9 +95,10 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                     <div className="absolute bottom-2.5 left-2.5 bg-white/90 backdrop-blur-md border border-white/70 shadow-xs px-2 py-0.5 rounded-xs flex items-center gap-1 text-slate-900 z-10 pointer-events-none">
                         <div className="flex items-center gap-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
+                                <CustomStarIcon
                                     key={i}
-                                    className={`w-2.5 h-2.5 ${i < starCount ? "fill-amber-400 text-amber-400" : "fill-slate-300 text-slate-300"}`}
+                                    className="w-2.5 h-2.5 shrink-0"
+                                    fill={i < starCount ? "#070707" : "#CBD5E1"}
                                 />
                             ))}
                         </div>
@@ -232,8 +234,9 @@ export default function HotelCard({ hotel }: HotelCardProps) {
                                     {hotel.rating_count ? `${hotel.rating_count} reviews` : "Verified reviews"}
                                 </span>
                             </div>
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#1E1B4B] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
-                                {ratingDisplay}
+                            <div className="h-7 sm:h-8 px-2 rounded-md bg-[#1E1B4B] text-white flex items-center justify-center gap-1 text-xs font-bold shrink-0 shadow-xs">
+                                <span>{ratingDisplay}</span>
+                                <CustomStarIcon className="w-3 h-3 shrink-0" fill="#FFFFFF" />
                             </div>
                         </div>
 

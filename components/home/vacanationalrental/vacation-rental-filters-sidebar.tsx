@@ -3,6 +3,7 @@
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
+import { CustomLightningBoltIcon, CustomPetIcon } from "@/components/ui/custom-icons";
 import {
     Sparkles,
     RotateCcw,
@@ -228,7 +229,7 @@ export default function VacationRentalFiltersSidebar({
                     <div className="space-y-2">
                         <label className="flex items-center justify-between py-0.5 cursor-pointer">
                             <div className="flex items-center gap-1.5">
-                                <Zap size={13} className="text-emerald-600 fill-current" />
+                                <CustomLightningBoltIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                 <span className="text-[11px] font-medium text-slate-700">Instant Book Only</span>
                             </div>
                             <Switch
@@ -241,7 +242,7 @@ export default function VacationRentalFiltersSidebar({
 
                         <label className="flex items-center justify-between py-0.5 cursor-pointer">
                             <div className="flex items-center gap-1.5">
-                                <PawPrint size={13} className="text-amber-600" />
+                                <CustomPetIcon className="w-3.5 h-3.5 shrink-0" stroke="#070707" />
                                 <span className="text-[11px] font-medium text-slate-700">Allows Pets</span>
                             </div>
                             <Switch

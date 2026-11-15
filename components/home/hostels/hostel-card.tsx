@@ -11,6 +11,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { isExternalImage, cn } from "@/lib/utils";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 
 export interface HostelCardProps {
   readonly id: string;
@@ -119,7 +120,7 @@ export default function HostelCard({
               <>
                 <span className="text-neutral-400 font-normal shrink-0">·</span>
                 <span className="inline-flex items-center gap-0.5 font-medium text-black shrink-0">
-                  <Star className="w-3.5 h-3.5 fill-black text-black shrink-0 inline mb-0.5" />
+                  <CustomStarIcon className="w-3.5 h-3.5 shrink-0 inline mb-0.5" fill="#070707" />
                   <span>{rating.toFixed(rating % 1 === 0 ? 1 : 2)}</span>
                 </span>
               </>

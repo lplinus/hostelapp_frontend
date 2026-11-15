@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import {
     CalendarDays,
     Building2,
@@ -12,7 +13,6 @@ import {
     CheckCircle2,
     Clock,
     XCircle,
-    Star,
     Loader2,
     ChevronRight,
     ExternalLink,
@@ -452,8 +452,8 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                         <TableCell className="py-3.5 px-4 text-right">
                                             <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                                                 {b.hasReviewed ? (
-                                                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/80 px-2 py-0.5 rounded-sm">
-                                                        <Star size={11} className="fill-amber-400 text-amber-400" />
+                                                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-900 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-sm">
+                                                        <CustomStarIcon className="w-3 h-3 shrink-0" fill="#070707" />
                                                         {b.reviewRating ? `${b.reviewRating}★` : "Reviewed"}
                                                     </span>
                                                 ) : (b.status === "completed" || b.status === "active") ? (
@@ -463,7 +463,7 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                                         onClick={() => handleOpenReviewModal(b)}
                                                         className="h-7 text-[11px] font-semibold bg-[#312E81] hover:bg-[#1E1B4B] text-white gap-1 px-2.5 rounded-sm transition-all active:scale-95 cursor-pointer shadow-2xs"
                                                     >
-                                                        <Star size={11} className="fill-amber-300 text-amber-300" />
+                                                        <CustomStarIcon className="w-3 h-3 shrink-0" fill="#FFFFFF" />
                                                         Rate Stay
                                                     </Button>
                                                 ) : null}
@@ -542,8 +542,8 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                     </button>
 
                                     {b.hasReviewed ? (
-                                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/80 px-2 py-0.5 rounded-sm">
-                                            <Star size={11} className="fill-amber-400 text-amber-400" />
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-900 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-sm">
+                                            <CustomStarIcon className="w-3 h-3 shrink-0" fill="#070707" />
                                             {b.reviewRating ? `${b.reviewRating}★` : "Reviewed"}
                                         </span>
                                     ) : (b.status === "completed" || b.status === "active") ? (
@@ -553,7 +553,7 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                             onClick={() => handleOpenReviewModal(b)}
                                             className="h-7 text-[11px] font-semibold bg-[#312E81] hover:bg-[#1E1B4B] text-white gap-1 px-2.5 rounded-sm transition-all active:scale-95 cursor-pointer shadow-2xs"
                                         >
-                                            <Star size={11} className="fill-amber-300 text-amber-300" />
+                                            <CustomStarIcon className="w-3 h-3 shrink-0" fill="#FFFFFF" />
                                             Rate Stay
                                         </Button>
                                     ) : null}
@@ -687,13 +687,9 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                                         }
                                                         className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                                                     >
-                                                        <Star
-                                                            size={18}
-                                                            className={`${
-                                                                star <= hotelRatings[cat.key as keyof typeof hotelRatings]
-                                                                    ? "fill-amber-400 text-amber-400"
-                                                                    : "text-slate-300 fill-slate-100"
-                                                            }`}
+                                                        <CustomStarIcon
+                                                            className="w-4 h-4 shrink-0"
+                                                            fill={star <= hotelRatings[cat.key as keyof typeof hotelRatings] ? "#070707" : "#CBD5E1"}
                                                         />
                                                     </button>
                                                 ))}
@@ -726,13 +722,9 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                                         }
                                                         className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                                                     >
-                                                        <Star
-                                                            size={17}
-                                                            className={`${
-                                                                star <= rentalRatings[cat.key as keyof typeof rentalRatings]
-                                                                    ? "fill-amber-400 text-amber-400"
-                                                                    : "text-slate-300 fill-slate-100"
-                                                            }`}
+                                                        <CustomStarIcon
+                                                            className="w-4 h-4 shrink-0"
+                                                            fill={star <= rentalRatings[cat.key as keyof typeof rentalRatings] ? "#070707" : "#CBD5E1"}
                                                         />
                                                     </button>
                                                 ))}
@@ -761,13 +753,9 @@ export default function GuestBookingsList({ bookings: initialBookings }: GuestBo
                                                         }
                                                         className="hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                                                     >
-                                                        <Star
-                                                            size={18}
-                                                            className={`${
-                                                                star <= hostelRatings[cat.key as keyof typeof hostelRatings]
-                                                                    ? "fill-amber-400 text-amber-400"
-                                                                    : "text-slate-300 fill-slate-100"
-                                                            }`}
+                                                        <CustomStarIcon
+                                                            className="w-4 h-4 shrink-0"
+                                                            fill={star <= hostelRatings[cat.key as keyof typeof hostelRatings] ? "#070707" : "#CBD5E1"}
                                                         />
                                                     </button>
                                                 ))}

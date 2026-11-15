@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Star, ShieldCheck, ChevronRight, ChevronLeft, MessageSquare } from "lucide-react";
+import { ShieldCheck, ChevronRight, ChevronLeft, MessageSquare } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import {
     Dialog,
     DialogContent,
@@ -137,7 +138,7 @@ export default function VacationRentalReviews({
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-1 text-xs font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200/80">
-                                                    <Star size={12} className="fill-amber-400 text-amber-400" />
+                                                    <CustomStarIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                                     <span>{typeof rev.rating === "number" ? rev.rating.toFixed(1) : rev.rating}</span>
                                                 </div>
                                             </div>
@@ -214,7 +215,7 @@ export default function VacationRentalReviews({
                                 </div>
 
                                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 bg-slate-50 px-2 py-0.5 rounded border border-slate-200 shrink-0">
-                                    <Star size={11} className="fill-amber-400 text-amber-400" />
+                                    <CustomStarIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                     <span>{typeof rev.rating === "number" ? rev.rating.toFixed(1) : rev.rating}</span>
                                 </div>
                             </div>

@@ -120,7 +120,7 @@ export default function RegisterForm() {
       >
         {/* Background Image */}
         <Image
-          src="/images/vacation-rental-hero.jpg"
+          src="/images/vacation-rental-hero.webp"
           alt="Luxury Vacation Rental Villa Showcase"
           fill
           priority
@@ -206,7 +206,7 @@ export default function RegisterForm() {
 
         <div className="w-full max-w-md relative z-10 my-auto py-2">
           {/* Back Button */}
-          <button
+          <button 
             type="button"
             onClick={() => router.push("/")}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#686259] hover:text-[#1F1E1B] transition-colors mb-3 group cursor-pointer"

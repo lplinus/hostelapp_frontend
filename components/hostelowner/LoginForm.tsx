@@ -68,9 +68,9 @@ export default function LoginForm() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="hidden lg:flex lg:w-[40%] xl:w-[38%] h-full relative overflow-hidden shrink-0 select-none"
       >
-        {/* Background Image */}
+        {/* Background Image */} 
         <Image
-          src="/images/hotel-login-hero.jpg"
+          src="/images/hotel-login-hero.webp"
           alt="Luxury Hotel & Suites Showcase"
           fill
           priority

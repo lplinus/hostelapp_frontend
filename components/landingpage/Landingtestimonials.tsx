@@ -1,5 +1,5 @@
 import SectionReveal from "@/components/ui/section-reveal";
-import { Star } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { LandingPageResponse } from "@/lib/api/types";
 
 interface LandingTestimonialsProps {
@@ -54,9 +54,9 @@ export default function LandingTestimonials({ data }: LandingTestimonialsProps) 
                 className="flex flex-col justify-between p-4 sm:p-5 bg-white rounded-2xl border border-slate-200/80 hover:border-black hover:shadow-md transition-all duration-200 cursor-pointer"
               >
                 <div>
-                  <div className="flex gap-1 text-amber-400 mb-2.5">
+                  <div className="flex gap-1 mb-2.5">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" />
+                      <CustomStarIcon key={i} className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                     ))}
                   </div>
 

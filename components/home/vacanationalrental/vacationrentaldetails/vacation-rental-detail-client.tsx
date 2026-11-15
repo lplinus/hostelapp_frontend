@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CustomStarIcon, CustomLightningBoltIcon, CustomPetIcon } from "@/components/ui/custom-icons";
 import {
     MapPin,
-    Star,
     Sparkles,
     CheckCircle2,
     Clock,
@@ -413,41 +413,19 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 </div>
             </div>
 
-            {/* 2. TITLE & HEADER DETAILS */}
+            {/* 2. TITLE & LOCATION HEADER (Name & Location Only Above Image) */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-4">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-slate-100 text-slate-800 border border-slate-200/90 shadow-2xs">
-                                {rental.category_display || rental.category || "Entire Place"}
-                            </span>
-                            {rental.is_superhost && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs">
-                                    Superhost
-                                </span>
-                            )}
-                        </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-slate-950 tracking-tight leading-snug">
-                            {rental.title}
-                        </h1>
-                        <p className="text-sm text-slate-800 font-medium flex items-center gap-1.5 pt-0.5">
-                            <MapPin size={14} className="text-[#312E81] shrink-0" />
-                            <span>
-                                {rental.address ? `${rental.address}, ` : ""}
-                                {rental.city_name || "India"}
-                            </span>
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
-                            <Star size={15} className="fill-amber-400 text-amber-400" />
-                            <span className="font-bold text-slate-950 text-sm">
-                                {rating.toFixed(2)}
-                            </span>
-                            <span className="text-slate-600 text-xs font-medium">({reviewCount} reviews)</span>
-                        </div>
-                    </div>
+                <div className="space-y-1.5">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-950 tracking-tight leading-snug">
+                        {rental.title}
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-700 font-semibold flex items-center gap-1.5">
+                        <MapPin size={15} className="text-[#312E81] shrink-0" />
+                        <span>
+                            {rental.address ? `${rental.address}, ` : ""}
+                            {rental.city_name || "India"}
+                        </span>
+                    </p>
                 </div>
             </div>
 
@@ -460,13 +438,12 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                             setActiveGalleryIndex(0);
                             setIsGalleryModalOpen(true);
                         }}
-                        className={`${
-                            images.length === 1
-                                ? "md:col-span-12"
-                                : images.length === 2
+                        className={`${images.length === 1
+                            ? "md:col-span-12"
+                            : images.length === 2
                                 ? "md:col-span-6"
                                 : "md:col-span-8"
-                        } relative h-72 md:h-full bg-slate-200 overflow-hidden cursor-pointer group`}
+                            } relative h-72 md:h-full bg-slate-200 overflow-hidden cursor-pointer group`}
                     >
                         {primaryImg?.image ? (
                             <Image
@@ -553,7 +530,45 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 </div>
             </div>
 
-            {/* 4. MAIN TWO-COLUMN BODY */}
+            {/* 4. PROPERTY OVERVIEW & RATING BAR (Moved Below Photo Gallery) */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-md border border-slate-200/90 shadow-2xs">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-wider uppercase bg-slate-100 text-slate-800 border border-slate-200/90 shadow-2xs">
+                            {rental.category_display || rental.category || "Entire Place"}
+                        </span>
+                        {rental.is_superhost && (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-wider uppercase bg-amber-50 text-amber-900 border border-amber-300/80 shadow-2xs">
+                                Superhost
+                            </span>
+                        )}
+                        {rental.instant_book && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-wider uppercase bg-amber-50 text-amber-900 border border-amber-300/80 shadow-2xs">
+                                <CustomLightningBoltIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
+                                Instant Book
+                            </span>
+                        )}
+                        {rental.allows_pets && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs">
+                                <CustomPetIcon className="w-3.5 h-3.5 shrink-0" stroke="#070707" />
+                                Pet-Friendly
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1 rounded-md shadow-2xs">
+                            <CustomStarIcon className="w-4 h-4 shrink-0" fill="#070707" />
+                            <span className="font-bold text-slate-950 text-sm">
+                                {rating.toFixed(2)}
+                            </span>
+                            <span className="text-slate-600 text-xs font-medium">({reviewCount} reviews)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* 5. MAIN TWO-COLUMN BODY */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 xl:gap-10 items-start">
                     {/* LEFT COLUMN: Property Highlights, Host, Description, Specs & Rules */}
@@ -718,7 +733,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                                 </div>
 
                                 <div className="flex items-center gap-1 text-xs font-bold text-[#1A1916]">
-                                    <Star size={13} className="fill-amber-400 text-amber-400" />
+                                    <CustomStarIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                     <span>{rating.toFixed(2)}</span>
                                     <span className="text-[#686259] font-medium">({reviewCount})</span>
                                 </div>

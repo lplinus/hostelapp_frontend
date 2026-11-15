@@ -22,6 +22,7 @@ import {
 import type { VacationRental } from "@/types/vacationrental.types";
 import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
+import { CustomStarIcon, CustomLightningBoltIcon, CustomPetIcon } from "@/components/ui/custom-icons";
 
 interface VacationRentalCardProps {
     readonly rental: VacationRental;
@@ -142,7 +143,7 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
                         </div>
 
                         <div className="flex items-center gap-1 font-semibold text-slate-900 shrink-0">
-                            <Star size={13} className="fill-amber-400 text-amber-400" />
+                            <CustomStarIcon className="w-3.5 h-3.5 text-[#070707] fill-[#070707] shrink-0" />
                             <span>{rating.toFixed(2)}</span>
                             <span className="text-slate-400 font-normal">({reviewCount})</span>
                         </div>
@@ -185,13 +186,15 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
                         </span>
 
                         {rental.instant_book && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs shrink-0">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs text-[10px] font-bold tracking-wider uppercase bg-amber-50 text-amber-900 border border-amber-300/80 shadow-2xs shrink-0">
+                                <CustomLightningBoltIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                 Instant Book
                             </span>
                         )}
 
                         {rental.allows_pets && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs shrink-0">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs text-[10px] font-semibold tracking-wider uppercase bg-emerald-50 text-emerald-800 border border-emerald-200/70 shadow-2xs shrink-0">
+                                <CustomPetIcon className="w-3.5 h-3.5 shrink-0" stroke="#070707" />
                                 Pet-Friendly
                             </span>
                         )}

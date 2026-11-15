@@ -4,9 +4,9 @@ import type { Hotel } from "@/types/hotel.types";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { TabType } from "./hotel-management-types";
 import { toLocalMediaPath } from "@/lib/utils";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import {
     Hotel as HotelIcon,
-    Star,
     MapPin,
     Clock,
     BedDouble,
@@ -92,7 +92,7 @@ export default function HotelCard({
                         <div className="flex items-center gap-1" title={`${hotel.star_rating || 5} Star Hotel`}>
                             <div className="flex items-center gap-0.5">
                                 {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star key={i} size={12} className={i < (hotel.star_rating || 5) ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-300 dark:fill-slate-800 dark:text-slate-700"} />
+                                    <CustomStarIcon key={i} className="w-3 h-3 shrink-0" fill={i < (hotel.star_rating || 5) ? "#070707" : "#CBD5E1"} />
                                 ))}
                             </div>
                             <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 ml-0.5">

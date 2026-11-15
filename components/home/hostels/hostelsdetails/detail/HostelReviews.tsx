@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, FormEvent } from "react";
-import { MessageSquarePlus, Star, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
+import { MessageSquarePlus, ShieldCheck, ChevronRight, ChevronLeft } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -282,12 +283,9 @@ export default function HostelReviews({
                                                     onClick={() => setReviewForm({ ...reviewForm, [cat.field]: star })}
                                                     className="transition-transform hover:scale-110 active:scale-90"
                                                 >
-                                                    <Star
-                                                        size={22}
-                                                        className={`${star <= ratingValue
-                                                            ? "fill-amber-400 text-amber-400"
-                                                            : "text-gray-300 fill-gray-100"
-                                                            }`}
+                                                    <CustomStarIcon
+                                                        className="w-5 h-5 shrink-0"
+                                                        fill={star <= ratingValue ? "#070707" : "#D1D5DB"}
                                                     />
                                                 </button>
                                             )

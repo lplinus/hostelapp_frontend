@@ -1,6 +1,7 @@
 "use client";
 
-import { Star, RotateCcw, Filter, Check, Sparkles } from "lucide-react";
+import { RotateCcw, Filter, Check, Sparkles } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 
@@ -152,10 +153,10 @@ export default function HotelFiltersSidebar({
                                         />
                                         <div className="flex items-center gap-0.5">
                                             {Array.from({ length: 5 }).map((_, i) => (
-                                                <Star
+                                                <CustomStarIcon
                                                     key={i}
-                                                    size={isDrawerMode ? 13 : 11}
-                                                    className={i < star ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}
+                                                    className={isDrawerMode ? "w-3.5 h-3.5 shrink-0" : "w-3 h-3 shrink-0"}
+                                                    fill={i < star ? "#070707" : "#E2E8F0"}
                                                 />
                                             ))}
                                         </div>

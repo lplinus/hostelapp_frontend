@@ -42,13 +42,13 @@ export async function getSEO(page: string) {
         const canonical = `https://hostelin.online/${pagePath}${pagePath ? "/" : ""}`;
 
         return {
-            meta_title: "Affordable Student Hostels Across India | Hostel In",
+            meta_title: "Best Hotels & Vacation Rentals Across India | StayNest",
             meta_description:
-                "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, read real reviews and book your perfect hostel near campus with Hostel In.",
-            meta_keywords: "student hostels in India, affordable hostels India, hostel booking platform, verified hostels near college, budget student hostels, safe hostels for students, hostel accommodation India, find hostels near me, hostelin hostels",
+                "Discover verified luxury hotels, boutique stays, and vacation rentals across India's premier destinations. Compare prices, explore amenities, and book your stay with StayNest.",
+            meta_keywords: "hotels in India, vacation rentals, luxury villas, boutique stays, hotel booking platform, verified hotels, resort booking",
             canonical_url: canonical,
-            og_title: "Affordable Student Hostels Across India | Hostel In",
-            og_description: "Discover safe and verified student hostels across India. Hostel In helps students compare hostels, explore amenities and book their perfect stay near campus.",
+            og_title: "Best Hotels & Vacation Rentals Across India | StayNest",
+            og_description: "Discover verified luxury hotels, boutique stays, and vacation rentals across India's premier destinations with StayNest.",
             og_image: "https://hostelin.online/images/og-home.jpg",
             robots_directives: "index, follow",
             is_indexed: true,

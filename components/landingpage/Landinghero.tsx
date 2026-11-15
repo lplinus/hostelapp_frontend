@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Star, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { LandingPageResponse } from "@/lib/api/types";
 
 interface LandingHeroProps {
@@ -94,8 +95,8 @@ export default function LandingHero({ data }: LandingHeroProps) {
             </div>
 
             <div className="flex items-center gap-2" suppressHydrationWarning>
-              <Star size={18} className="text-amber-400 fill-amber-400" />
-              <span className="text-slate-200">4.9★ Average Guest Rating</span>
+              <CustomStarIcon className="w-4 h-4 shrink-0" fill="#FFFFFF" />
+              <span className="text-slate-200">4.9 Average Guest Rating</span>
             </div>
           </div>
         </div>

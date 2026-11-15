@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Compass, Calendar, Star, Award } from "lucide-react";
+import { Compass, Calendar, Award } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import type { GuestProfile } from "../guest-profile-types";
 
@@ -59,7 +60,7 @@ export default function GuestProfileStats({ stats }: GuestProfileStatsProps) {
                         <p className="text-[10px] text-muted-foreground/80 truncate">Community ratings</p>
                     </div>
                     <div className="w-8 h-8 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                        <Star size={15} />
+                        <CustomStarIcon className="w-4 h-4 shrink-0" fill="currentColor" />
                     </div>
                 </CardContent>
             </Card>

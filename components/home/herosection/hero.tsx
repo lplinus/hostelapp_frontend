@@ -524,7 +524,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
 
           {/* [SEARCH BAR POSITIONING] - Positioned slightly higher via negative margin & tighter flow */}
           <div className="w-full max-w-4xl mx-auto relative z-30 -mt-1 md:-mt-1.5 overflow-visible">
-            <div className={`relative z-30 bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-black rounded-lg transition-all duration-200 overflow-visible ${isExpanded ? "p-3 md:p-2.5" : "p-1.5 md:p-2"}`}>
+            <div className={`relative z-30 bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-black rounded transition-all duration-200 overflow-visible ${isExpanded ? "p-3 md:p-2.5" : "p-1.5 md:p-2"}`}>
 
               {/* COMPACT TRIGGER (Mobile) */}
               {!isExpanded && (
@@ -533,11 +533,11 @@ export default function Hero({ title, subtitle }: HeroProps) {
                     setIsExpanded(true);
                     if (locationError) setLocationError(null);
                   }}
-                  className={`flex md:hidden items-center justify-between w-full px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${locationError ? "border border-rose-500 bg-rose-50/20" : ""
+                  className={`flex md:hidden items-center justify-between w-full px-4 py-2.5 rounded cursor-pointer transition-colors ${locationError ? "border border-rose-500 bg-rose-50/20" : ""
                     }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${locationError ? "bg-rose-100 text-rose-600" : "bg-indigo-50 text-[#312E81]"
+                    <div className={`w-9 h-9 rounded flex items-center justify-center ${locationError ? "bg-rose-100 text-rose-600" : "bg-indigo-50 text-[#312E81]"
                       }`}>
                       {locationError ? <AlertCircle size={16} strokeWidth={2.5} /> : <Search size={16} strokeWidth={2.5} />}
                     </div>
@@ -562,7 +562,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                   onClick={() => {
                     setActiveField("location");
                   }}
-                  className={`w-full md:flex-[1.4] relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all text-left ${locationError
+                  className={`w-full md:flex-[1.4] relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded border transition-all text-left ${locationError
                     ? "border-rose-500 ring-2 ring-rose-500/20 bg-rose-50/10"
                     : activeField === "location" || openDropdown === "location"
                       ? "border-black ring-1 ring-black bg-white"
@@ -664,7 +664,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                       setOpenDropdown("dates");
                       setDateSelectingMode("checkIn");
                     }}
-                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${activeField === "checkIn" || (openDropdown === "dates" && dateSelectingMode === "checkIn")
+                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded border transition-all cursor-pointer text-left ${activeField === "checkIn" || (openDropdown === "dates" && dateSelectingMode === "checkIn")
                       ? "border-black ring-1 ring-black bg-white"
                       : "border-gray-200 hover:border-gray-300 bg-white"
                       }`}
@@ -697,7 +697,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                       setOpenDropdown("dates");
                       setDateSelectingMode("checkOut");
                     }}
-                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded-md border transition-all cursor-pointer text-left ${activeField === "checkOut" || (openDropdown === "dates" && dateSelectingMode === "checkOut")
+                    className={`w-1/2 relative flex items-center px-3 py-1.5 md:py-2 gap-2 group rounded border transition-all cursor-pointer text-left ${activeField === "checkOut" || (openDropdown === "dates" && dateSelectingMode === "checkOut")
                       ? "border-black ring-1 ring-black bg-white"
                       : "border-gray-200 hover:border-gray-300 bg-white"
                       }`}
@@ -858,7 +858,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                     setActiveField("guests");
                     setOpenDropdown(openDropdown === "guests" ? null : "guests");
                   }}
-                  className={`w-full md:flex-1 relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded-md border transition-all cursor-pointer text-left ${activeField === "guests" || openDropdown === "guests"
+                  className={`w-full md:flex-1 relative flex items-center px-3.5 md:px-4 py-2 md:py-2 gap-2.5 group rounded border transition-all cursor-pointer text-left ${activeField === "guests" || openDropdown === "guests"
                     ? "border-black ring-1 ring-black bg-white"
                     : "border-gray-200 hover:border-gray-300 bg-white"
                     }`}
@@ -1022,7 +1022,7 @@ export default function Hero({ title, subtitle }: HeroProps) {
                       e.stopPropagation();
                       handleSearch();
                     }}
-                    className="w-full md:w-auto bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium h-11 md:h-11 px-6 md:px-7 rounded-md transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-indigo-950/20"
+                    className="w-full md:w-auto bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium h-11 md:h-11 px-6 md:px-7 rounded transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-indigo-950/20"
                   >
                     <Search size={17} strokeWidth={2.5} />
                     <span className="text-sm md:text-[15px] font-medium">Search</span>

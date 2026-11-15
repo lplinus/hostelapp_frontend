@@ -6,7 +6,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, MapPin, ExternalLink, Search } from "lucide-react";
+import { MapPin, ExternalLink, Search } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { CityHostel } from "@/types/hostel.types";
 import { toLocalMediaPath } from "@/lib/utils";
 import { CITY_COORDINATES, getHostelCoordinates } from "./hostel-coordinates";
@@ -288,7 +289,7 @@ export default function HostelListingMapInner({
                                             className="object-cover"
                                         />
                                         <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/70 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
-                                            <Star size={11} className="fill-amber-400 text-amber-400" />
+                                            <CustomStarIcon className="w-3 h-3 shrink-0" fill="#FFFFFF" />
                                             <span>{hostel.rating ? Number(hostel.rating).toFixed(1) : "New"}</span>
                                         </div>
                                     </div>

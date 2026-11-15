@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Star, Building2, Navigation, Copy, Check } from "lucide-react";
+import { MapPin, Building2, Navigation, Copy, Check } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import { toast } from "sonner";
 
 interface Landmark {
@@ -119,7 +120,7 @@ export default function HostelLocation({
                                 className="flex items-center gap-2 py-2 px-3 rounded-full bg-white border border-gray-300 text-sm hover:border-indigo-300 transition-colors cursor-default group"
                             >
                                 {landmark.is_popular ? (
-                                    <Star size={13} className="fill-amber-400 text-amber-400" />
+                                    <CustomStarIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                                 ) : (
                                     <Building2 size={13} className="text-gray-700 group-hover:text-[#312E81] transition-colors" />
                                 )}

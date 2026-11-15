@@ -3,9 +3,9 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 import {
     MapPin,
-    Star,
     Sparkles,
     CheckCircle2,
     Clock,
@@ -374,11 +374,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                 setIsSaved(!isSaved);
                                 toast.success(isSaved ? "Removed from saved stays" : "Saved to your favorites!");
                             }}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-none shadow-2xs font-semibold ${
-                                isSaved
-                                    ? "bg-red-50 border-red-200 text-red-600"
-                                    : "border-slate-200 bg-white hover:bg-slate-50 text-slate-700"
-                            }`}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-none shadow-2xs font-semibold ${isSaved
+                                ? "bg-red-50 border-red-200 text-red-600"
+                                : "border-slate-200 bg-white hover:bg-slate-50 text-slate-700"
+                                }`}
                         >
                             <Heart size={13} className={isSaved ? "fill-red-600 text-red-600" : ""} />
                             {isSaved ? "Saved" : "Save"}
@@ -388,51 +387,14 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
-                {/* 2. HOTEL HEADER */}
-                <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                        {/* Luxury Badge */}
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase bg-[#312E81] text-white">
-                            <Sparkles size={11} className="text-amber-300" />
-                            {hotel.hotel_type_display || hotel.hotel_type || "Luxury Hotel"}
-                        </span>
-
-                        {/* Full 5-Star Rating */}
-                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold">
-                            <div className="flex items-center gap-0.5">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={13}
-                                        className={i < starCount ? "fill-amber-400 text-amber-400" : "fill-slate-300 text-slate-300"}
-                                    />
-                                ))}
-                            </div>
-                            <span className="ml-1 text-[11px] font-extrabold text-amber-800">
-                                {hotel.star_rating || 5}-Star Rated
-                            </span>
-                        </div>
-
-                        {hotel.is_verified && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-indigo-50 text-[#312E81] border border-indigo-200/80 text-[11px] font-bold">
-                                <ShieldCheck size={13} className="text-[#312E81]" />
-                                Verified Property
-                            </span>
-                        )}
-                    </div>
-
+                {/* 2. HOTEL HEADER (Name & Location Only Above Image) */}
+                <div className="space-y-1.5">
                     <h1 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold text-slate-950 tracking-tight leading-snug">
                         {hotel.name}
                     </h1>
 
-                    {hotel.tagline && (
-                        <p className="text-sm sm:text-base text-slate-800 italic font-medium">
-                            &ldquo;{hotel.tagline}&rdquo;
-                        </p>
-                    )}
-
-                    <div className="flex items-center gap-1.5 text-xs text-slate-800 font-semibold pt-1">
-                        <MapPin size={14} className="text-[#312E81] shrink-0" />
+                    <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 font-semibold">
+                        <MapPin size={15} className="text-[#312E81] shrink-0" />
                         <span>{[hotel.area_name, hotel.city_name].filter(Boolean).join(", ") || hotel.city_name || "Premier Location"}</span>
                     </div>
                 </div>
@@ -503,7 +465,47 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     )}
                 </div>
 
-                {/* 4. KEY HIGHLIGHTS BAR */}
+                {/* 4. PROPERTY OVERVIEW & BADGES (Moved Below Photo Gallery) */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-md border border-slate-200/90 shadow-2xs">
+                    <div className="flex flex-wrap items-center gap-2">
+                        {/* Luxury Badge */}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-wider uppercase bg-[#312E81] text-white shadow-2xs">
+                            <Sparkles size={11} className="text-amber-300" />
+                            {hotel.hotel_type_display || hotel.hotel_type || "Luxury Hotel"}
+                        </span>
+
+                        {/* Full 5-Star Rating */}
+                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-slate-50 text-slate-900 border border-slate-200 text-xs font-bold shadow-2xs">
+                            <div className="flex items-center gap-0.5">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <CustomStarIcon
+                                        key={i}
+                                        className="w-3.5 h-3.5 shrink-0"
+                                        fill={i < starCount ? "#070707" : "#CBD5E1"}
+                                    />
+                                ))}
+                            </div>
+                            <span className="ml-1 text-[11px] font-extrabold text-slate-800">
+                                {hotel.star_rating || 5}-Star Rated
+                            </span>
+                        </div>
+
+                        {hotel.is_verified && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-indigo-50 text-[#312E81] border border-indigo-200/80 text-[11px] font-bold shadow-2xs">
+                                <ShieldCheck size={13} className="text-[#312E81]" />
+                                Verified Property
+                            </span>
+                        )}
+                    </div>
+
+                    {hotel.tagline && (
+                        <p className="text-xs sm:text-sm text-slate-600 italic font-medium">
+                            &ldquo;{hotel.tagline}&rdquo;
+                        </p>
+                    )}
+                </div>
+
+                {/* 5. KEY HIGHLIGHTS BAR */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs shadow-xs">
                     <div className="flex items-center gap-2.5">
                         <Clock className="w-5 h-5 text-[#312E81] shrink-0" />
@@ -567,11 +569,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                                         return (
                                             <div
                                                 key={room.id}
-                                                className={`p-3.5 sm:px-4 sm:py-3 rounded-xl border transition-all duration-200 ${
-                                                    isSelected
-                                                        ? "border-[#312E81] bg-indigo-50/40 ring-1 ring-[#312E81] shadow-xs"
-                                                        : "border-slate-200 bg-white hover:border-slate-300"
-                                                }`}
+                                                className={`p-3.5 sm:px-4 sm:py-3 rounded-xl border transition-all duration-200 ${isSelected
+                                                    ? "border-[#312E81] bg-indigo-50/40 ring-1 ring-[#312E81] shadow-xs"
+                                                    : "border-slate-200 bg-white hover:border-slate-300"
+                                                    }`}
                                             >
                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                                                     {/* Left: Suite Details & Specs */}
@@ -640,11 +641,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
 
                                                         <button
                                                             onClick={() => handleSelectAndBookRoom(room)}
-                                                            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-sm text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 ${
-                                                                isSelected
-                                                                    ? "bg-[#312E81] text-white shadow-xs ring-2 ring-[#312E81]/25"
-                                                                    : "border border-[#312E81] bg-white text-[#312E81] hover:bg-[#312E81] hover:text-white"
-                                                            }`}
+                                                            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-sm text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 ${isSelected
+                                                                ? "bg-[#312E81] text-white shadow-xs ring-2 ring-[#312E81]/25"
+                                                                : "border border-[#312E81] bg-white text-[#312E81] hover:bg-[#312E81] hover:text-white"
+                                                                }`}
                                                         >
                                                             {isSelected ? "Selected" : "Reserve"}
                                                         </button>
@@ -755,11 +755,10 @@ export default function HotelDetailClient({ hotel }: HotelDetailClientProps) {
                     <div className="hidden lg:block lg:col-span-4 lg:self-start lg:sticky lg:top-[124px] z-20 w-full max-w-[380px] ml-auto">
                         <div
                             id="hotel-booking-card"
-                            className={`bg-[#E5DFD4] rounded-2xl border transition-all duration-300 p-6 shadow-xs space-y-5 ${
-                                highlightBooking
-                                    ? "border-[#1F1E1B] ring-2 ring-[#1F1E1B]/20 shadow-md"
-                                    : "border-[#D2CABC]"
-                            }`}
+                            className={`bg-[#E5DFD4] rounded-2xl border transition-all duration-300 p-6 shadow-xs space-y-5 ${highlightBooking
+                                ? "border-[#1F1E1B] ring-2 ring-[#1F1E1B]/20 shadow-md"
+                                : "border-[#D2CABC]"
+                                }`}
                         >
                             <div className="flex items-baseline justify-between pb-3 border-b border-[#D2CABC]">
                                 <div>

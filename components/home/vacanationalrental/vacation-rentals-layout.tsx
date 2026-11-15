@@ -52,6 +52,7 @@ const CATEGORY_TABS = [
 
 export default function VacationRentalsLayout({ rentals }: VacationRentalsLayoutProps) {
     const [filters, setFilters] = useState<VacationRentalFilterState>(INITIAL_FILTERS);
+    const [searchInput, setSearchInput] = useState(filters.searchQuery);
     const [backendRentals, setBackendRentals] = useState<VacationRental[] | null>(null);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<string>("all");
@@ -114,14 +115,21 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
     const filteredRentals = useMemo(() => {
         return baseRentals.filter((rental) => {
             // 1. Search Query
-            if (filters.searchQuery.trim()) {
-                const q = filters.searchQuery.toLowerCase();
-                const titleMatch = rental.title.toLowerCase().includes(q);
-                const cityMatch = rental.city_name?.toLowerCase().includes(q);
-                const areaMatch = rental.area_name?.toLowerCase().includes(q);
-                const taglineMatch = rental.tagline?.toLowerCase().includes(q);
-                if (!titleMatch && !cityMatch && !areaMatch && !taglineMatch) {
-                    return false;
+            if (!backendRentals && filters.searchQuery.trim()) {
+                const stopWords = new Set(["vacation", "rentals", "rental", "in", "near", "at", "for", "with", "best", "top", "stay", "stays"]);
+                const tokens = filters.searchQuery
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, " ")
+                    .split(/\s+/)
+                    .filter((t) => t.length > 1 && !stopWords.has(t));
+
+                const searchableText = `${rental.title} ${rental.area_name || ""} ${rental.city_name || ""} ${rental.tagline || ""} ${rental.address || ""}`.toLowerCase();
+                if (tokens.length > 0) {
+                    const matchesAny = tokens.some((t) => searchableText.includes(t));
+                    if (!matchesAny) return false;
+                } else {
+                    const q = filters.searchQuery.toLowerCase();
+                    if (!searchableText.includes(q)) return false;
                 }
             }
 
@@ -229,30 +237,44 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                         Discover luxury waterfront estates, misty mountain cabins, and heritage havelis across India with verified hosts and instant booking.
                     </p>
 
-                    {/* Integrated Quick Search Bar */}
+                    {/* Integrated Quick Search Bar - Crisp rectangular modern design */}
                     <div className="max-w-2xl mx-auto pt-3">
-                        <div className="relative bg-white rounded-2xl shadow-xl p-1.5 flex items-center gap-2 border border-slate-200">
+                        <div className="relative bg-white rounded-md shadow-xl p-1.5 flex items-center gap-2 border border-slate-300 focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all">
                             <div className="pl-3 text-slate-400 flex items-center">
                                 <Search size={18} />
                             </div>
                             <input
                                 type="text"
                                 placeholder="Search by destination (Goa, Udaipur, Mumbai...), villa name or area..."
-                                value={filters.searchQuery}
-                                onChange={(e) =>
-                                    setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
-                                }
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        setFilters((prev) => ({ ...prev, searchQuery: searchInput.trim() }));
+                                    }
+                                }}
                                 className="w-full text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none bg-transparent pr-2"
                             />
-                            {filters.searchQuery && (
+                            {searchInput && (
                                 <button
-                                    onClick={() => setFilters((prev) => ({ ...prev, searchQuery: "" }))}
-                                    className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full"
+                                    type="button"
+                                    onClick={() => {
+                                        setSearchInput("");
+                                        setFilters((prev) => ({ ...prev, searchQuery: "" }));
+                                    }}
+                                    className="p-1.5 text-slate-400 hover:text-slate-600 rounded"
                                 >
                                     <X size={15} />
                                 </button>
                             )}
-                            <button className="px-5 py-2.5 rounded-xl bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs sm:text-sm font-semibold transition-colors shrink-0 shadow-sm">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFilters((prev) => ({ ...prev, searchQuery: searchInput.trim() }));
+                                }}
+                                className="px-5 py-2.5 rounded bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs sm:text-sm font-semibold transition-colors shrink-0 shadow-sm"
+                            >
                                 Search
                             </button>
                         </div>

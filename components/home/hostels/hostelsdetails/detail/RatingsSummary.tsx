@@ -1,6 +1,7 @@
 "use client";
 
-import { Star, MapPin, UtensilsCrossed, Armchair, ShieldCheck, Sparkles } from "lucide-react";
+import { MapPin, UtensilsCrossed, Armchair, ShieldCheck, Sparkles } from "lucide-react";
+import { CustomStarIcon } from "@/components/ui/custom-icons";
 
 interface KeyInfoProps {
     ratingAvg: number;
@@ -42,7 +43,7 @@ export default function RatingsSummary({
                 </div>
                 <span className="text-gray-400 hidden sm:inline">·</span>
                 <div className="flex items-center gap-1.5">
-                    <Star size={14} className="fill-amber-400 text-amber-400" />
+                    <CustomStarIcon className="w-3.5 h-3.5 shrink-0" fill="#070707" />
                     <span className="text-sm font-bold text-black">{ratingAvg.toFixed(1)}</span>
                     <span className="text-sm text-gray-800 font-medium">({ratingCount} reviews)</span>
                 </div>

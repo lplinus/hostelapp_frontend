@@ -32,6 +32,7 @@ const INITIAL_FILTERS: HotelFilterState = {
 
 export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
     const [filters, setFilters] = useState<HotelFilterState>(INITIAL_FILTERS);
+    const [searchInput, setSearchInput] = useState(filters.searchQuery);
     const [backendHotels, setBackendHotels] = useState<Hotel[] | null>(null);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [isFiltering, setIsFiltering] = useState(false);
@@ -88,14 +89,21 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
     const filteredHotels = useMemo(() => {
         return baseHotels.filter((hotel) => {
             // 1. Search Query (name, area, city, tagline)
-            if (filters.searchQuery.trim()) {
-                const query = filters.searchQuery.toLowerCase();
-                const matchesName = hotel.name.toLowerCase().includes(query);
-                const matchesArea = hotel.area_name?.toLowerCase().includes(query);
-                const matchesCity = hotel.city_name?.toLowerCase().includes(query);
-                const matchesTagline = hotel.tagline?.toLowerCase().includes(query);
-                if (!matchesName && !matchesArea && !matchesCity && !matchesTagline) {
-                    return false;
+            if (!backendHotels && filters.searchQuery.trim()) {
+                const stopWords = new Set(["hotel", "hotels", "in", "near", "at", "for", "with", "best", "top", "stay", "stays"]);
+                const tokens = filters.searchQuery
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, " ")
+                    .split(/\s+/)
+                    .filter((t) => t.length > 1 && !stopWords.has(t));
+
+                const searchableText = `${hotel.name} ${hotel.area_name || ""} ${hotel.city_name || ""} ${hotel.tagline || ""} ${hotel.address || ""}`.toLowerCase();
+                if (tokens.length > 0) {
+                    const matchesAny = tokens.some((t) => searchableText.includes(t));
+                    if (!matchesAny) return false;
+                } else {
+                    const query = filters.searchQuery.toLowerCase();
+                    if (!searchableText.includes(query)) return false;
                 }
             }
 
@@ -209,26 +217,37 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                             Reserve verified luxury suites, boutique stays, and executive business hotels with daily check-ins and world-class service.
                         </p>
 
-                        {/* [PLAIN SEARCH BAR] - Centered in middle, exact same width (max-w-4xl) as home hero */}
+                        {/* [RECTANGULAR SEARCH BAR] - Crisp rectangular layout with clean edges */}
                         <div className="w-full max-w-4xl mx-auto relative z-30">
-                            <div className="relative flex items-center bg-white rounded-lg p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-slate-200 focus-within:border-black focus-within:ring-2 focus-within:ring-indigo-400/30 transition-all">
+                            <div className="relative flex items-center bg-white rounded-md p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-slate-300 focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all">
                                 <div className="pl-3.5 pr-2 text-slate-400 shrink-0">
                                     <Search className="w-5 h-5 text-slate-400" />
                                 </div>
                                 <input
                                     type="text"
                                     placeholder="Search by hotel name, city (e.g. Hyderabad), area, or landmark..."
-                                    value={filters.searchQuery}
-                                    onChange={(e) =>
-                                        setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
-                                    }
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            setFilters((prev) => ({ ...prev, searchQuery: searchInput.trim() }));
+                                            const section = document.getElementById("hotels-listing-section");
+                                            if (section) {
+                                                section.scrollIntoView({ behavior: "smooth" });
+                                            }
+                                        }
+                                    }}
                                     className="w-full py-2.5 sm:py-3 pr-3 text-slate-900 placeholder:text-slate-400 text-sm md:text-[15px] font-medium bg-transparent border-0 focus:outline-none"
                                 />
-                                {filters.searchQuery && (
+                                {searchInput && (
                                     <button
                                         type="button"
-                                        onClick={() => setFilters((prev) => ({ ...prev, searchQuery: "" }))}
-                                        className="p-1.5 mr-1 text-slate-400 hover:text-slate-700 rounded-full transition-colors"
+                                        onClick={() => {
+                                            setSearchInput("");
+                                            setFilters((prev) => ({ ...prev, searchQuery: "" }));
+                                        }}
+                                        className="p-1.5 mr-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
                                         aria-label="Clear search"
                                     >
                                         <X size={18} />
@@ -237,12 +256,13 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                                 <button
                                     type="button"
                                     onClick={() => {
+                                        setFilters((prev) => ({ ...prev, searchQuery: searchInput.trim() }));
                                         const section = document.getElementById("hotels-listing-section");
                                         if (section) {
                                             section.scrollIntoView({ behavior: "smooth" });
                                         }
                                     }}
-                                    className="hidden sm:inline-flex items-center gap-2 px-6 py-2.5 bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-sm rounded-md transition-all shadow-md active:scale-95 shrink-0"
+                                    className="hidden sm:inline-flex items-center gap-2 px-6 py-2.5 bg-[#312E81] hover:bg-[#1E1B4B] text-white font-medium text-sm rounded transition-all shadow-md active:scale-95 shrink-0"
                                 >
                                     <Search size={16} strokeWidth={2.5} />
                                     <span>Search</span>
@@ -257,6 +277,7 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                                         key={city}
                                         type="button"
                                         onClick={() => {
+                                            setSearchInput(city);
                                             setFilters((prev) => ({ ...prev, searchQuery: city }));
                                         }}
                                         className={`px-2.5 py-1 rounded-md backdrop-blur-sm border transition-all font-medium text-xs active:scale-95 ${filters.searchQuery.toLowerCase() === city.toLowerCase()

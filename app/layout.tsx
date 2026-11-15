@@ -51,11 +51,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://hostelin.online"
   ),
   title: {
-    default: "Hostel In | Affordable Student Hostels Across India",
-    template: "%s | Hostel In",
+    default: "StayNest | Best Hotels & Vacation Rentals Across India",
+    template: "%s | StayNest",
   },
-  description: "Find verified and affordable student hostels across India's major cities. Compare prices, explore amenities, and book your perfect hostel with Hostel In.",
-  keywords: ["student hostels India", "hostel booking", "affordable hostels", "verified hostels"],
+  description: "Find verified and luxury hotels, resorts, and vacation rentals across India's premier destinations with StayNest.",
+  keywords: ["hotels India", "vacation rentals", "resorts booking", "verified villas"],
   robots: {
     index: true,
     follow: true,
