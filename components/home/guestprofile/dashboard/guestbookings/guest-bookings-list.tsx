@@ -40,7 +40,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { authApiClient } from "@/lib/api/auth-client";
-import type { GuestTripSummary } from "../guest-profile-types";
+import type { GuestTripSummary } from "../../guest-profile-types";
 
 interface GuestBookingsListProps {
     bookings: GuestTripSummary[];

@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { UserCircle, Menu, Sparkles } from "lucide-react";
+import { UserCircle, Menu, Sparkles, ShieldCheck, ShieldAlert } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { authApiClient } from "@/lib/api/auth-client";
+import { getMyDocuments } from "@/services/document-verification.service";
 import { useAuth } from "@/hooks/useAuth";
 import { toLocalMediaPath } from "@/lib/utils";
 import NotificationBell from "@/components/hostelowner/notification/NotificationBell";
@@ -30,6 +31,16 @@ export default function DashboardHeader() {
         refetchInterval: 5000,
         retry: false
     });
+
+    const { data: docVerification } = useQuery({
+        queryKey: ["myDocuments"],
+        queryFn: getMyDocuments,
+        enabled: !!user,
+        retry: false,
+        staleTime: 30000,
+    });
+
+    const isOwnerVerified = Boolean(user?.is_verified || docVerification?.status === "verified");
 
     const displayName = isMounted ? (user?.first_name || user?.username || "Owner") : "Owner";
 
@@ -95,8 +106,30 @@ export default function DashboardHeader() {
                 </div>
             </div>
 
-            {/* Right: Notifications + Profile */}
+            {/* Right: Verification Status + Notifications + Profile */}
             <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                {isMounted && (
+                    isOwnerVerified ? (
+                        <Link
+                            href="/mydocuements"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-100/90 hover:bg-emerald-200 border border-emerald-300 text-emerald-900 text-[11px] font-bold shadow-xs transition-all shrink-0"
+                            title="Owner Account Verified by Super Admin"
+                        >
+                            <ShieldCheck size={13} className="text-emerald-700" />
+                            <span>Verified</span>
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/mydocuements"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#DBD5C8] hover:bg-[#D2CABC] border border-[#D2CABC] text-[#1A1916] text-[11px] font-bold shadow-xs transition-all shrink-0 group"
+                            title="Account Unverified - Click to upload documents for verification"
+                        >
+                            <ShieldAlert size={13} className="text-amber-700 group-hover:scale-105 transition-transform" />
+                            <span>Unverified</span>
+                        </Link>
+                    )
+                )}
+
                 <NotificationBell />
 
                 <div className="h-4 w-px bg-[#D2CABC] hidden sm:block" />

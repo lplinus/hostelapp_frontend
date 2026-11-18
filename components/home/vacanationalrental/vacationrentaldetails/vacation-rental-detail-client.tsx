@@ -39,6 +39,21 @@ import { isExternalImage } from "@/lib/utils";
 import { toast } from "sonner";
 import { VacationRentalBookingModal } from "./VacationRentalBookingModal";
 import { VacationRentalMobileBookingBar } from "./VacationRentalMobileBookingBar";
+
+function formatTime(timeStr?: string): string {
+    if (!timeStr) return "";
+    try {
+        const [hPart, mPart] = timeStr.split(":");
+        const h = parseInt(hPart, 10);
+        if (isNaN(h)) return timeStr;
+        const m = mPart ? mPart.slice(0, 2) : "00";
+        const ampm = h >= 12 ? "PM" : "AM";
+        const formattedHour = h % 12 === 0 ? 12 : h % 12;
+        return `${formattedHour}:${m} ${ampm}`;
+    } catch {
+        return timeStr;
+    }
+}
 import { FullPageAvailabilityLoader } from "@/components/ui/FullPageAvailabilityLoader";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { validateIndianMobile } from "@/lib/validation";
@@ -77,6 +92,8 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
         next.setDate(next.getDate() + 3);
         return next.toISOString().split("T")[0];
     });
+    const [checkInTime, setCheckInTime] = useState<string>("");
+    const [checkOutTime, setCheckOutTime] = useState<string>("");
 
     const [adults, setAdults] = useState<number>(2);
     const [children, setChildren] = useState<number>(0);
@@ -249,6 +266,17 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
         const proceedBookingSubmission = async (razorpayPaymentId?: string) => {
             setIsSubmittingBooking(true);
             try {
+                const timePreferences = [
+                    checkInTime ? `Est. Arrival: ${checkInTime}` : "",
+                    checkOutTime ? `Est. Departure: ${checkOutTime}` : "",
+                ].filter(Boolean).join(", ");
+
+                const combinedRequests = [
+                    timePreferences ? `[Timing: ${timePreferences}]` : "",
+                    specialRequests.trim(),
+                    razorpayPaymentId ? `[Razorpay ID: ${razorpayPaymentId}]` : "",
+                ].filter(Boolean).join(" ");
+
                 const booking = await createVacationRentalBooking({
                     rental_id: rental.id,
                     check_in_date: checkInDate,
@@ -260,7 +288,7 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                     children,
                     infants,
                     pets,
-                    special_requests: specialRequests.trim() + (razorpayPaymentId ? ` [Razorpay ID: ${razorpayPaymentId}]` : ""),
+                    special_requests: combinedRequests,
                     payment_method: paymentMethod,
                 });
 
@@ -901,7 +929,13 @@ export default function VacationRentalDetailClient({ rental }: VacationRentalDet
                 confirmedBooking={confirmedBooking}
                 setConfirmedBooking={setConfirmedBooking}
                 checkInDate={checkInDate}
+                setCheckInDate={setCheckInDate}
+                checkInTime={checkInTime}
+                setCheckInTime={setCheckInTime}
                 checkOutDate={checkOutDate}
+                setCheckOutDate={setCheckOutDate}
+                checkOutTime={checkOutTime}
+                setCheckOutTime={setCheckOutTime}
                 numberOfNights={numberOfNights}
                 pricingCalculation={pricingCalculation}
                 guestName={guestName}

@@ -33,6 +33,8 @@ export default function ConditionalFooter() {
         pathname.startsWith("/adsense/") ||
         pathname === "/Aiassitance" ||
         pathname.startsWith("/Aiassitance/") ||
+        pathname === "/mydocuements" ||
+        pathname.startsWith("/mydocuements/") ||
         pathname === "/notification" ||
         pathname.startsWith("/notification/") ||
         pathname === "/help&support" ||

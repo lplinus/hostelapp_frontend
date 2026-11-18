@@ -130,9 +130,9 @@ function LocationMarker({
                         transform: "translateX(-50%)",
                         zIndex: 1000,
                     }}
-                    className="bg-white border border-slate-200 px-3.5 py-1.5 rounded-full shadow-lg text-xs font-medium text-blue-600 flex items-center gap-2"
+                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-md shadow-lg text-xs font-medium text-blue-600 dark:text-blue-400 flex items-center gap-2"
                 >
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 dark:text-blue-400" />
                     <span>Resolving address...</span>
                 </div>
             )}
@@ -141,7 +141,7 @@ function LocationMarker({
 }
 
 /**
- * Compact address search bar overlay.
+ * Compact address search bar overlay centered horizontally.
  */
 function AddressSearchBar({
     onSelectLocation
@@ -228,10 +228,10 @@ function AddressSearchBar({
     return (
         <div
             ref={containerRef}
-            className="absolute top-3 left-3 right-3 sm:right-auto z-[1000] w-auto sm:w-[380px]"
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] w-[92%] sm:w-[440px]"
         >
-            <div className="flex items-center bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden">
-                <div className="pl-3 pr-1 text-slate-400">
+            <div className="flex items-center bg-white dark:bg-slate-800 rounded-md shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="pl-3 pr-1 text-slate-400 dark:text-slate-500">
                     <Search className="w-4 h-4" />
                 </div>
                 <input
@@ -241,12 +241,12 @@ function AddressSearchBar({
                     onPaste={handlePaste}
                     onKeyDown={handleKeyDown}
                     placeholder="Search or paste address..."
-                    className="flex-1 py-2 px-2 text-xs text-slate-800 bg-transparent outline-none placeholder:text-slate-400 font-sans"
+                    className="flex-1 py-2 px-2 text-xs text-slate-800 dark:text-slate-100 bg-transparent outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 font-sans"
                     autoFocus
                 />
                 {isSearching && (
                     <div className="px-2.5">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600 dark:text-blue-400" />
                     </div>
                 )}
                 {!isSearching && searchText.length >= 3 && (
@@ -262,13 +262,13 @@ function AddressSearchBar({
 
             {/* Suggestions dropdown */}
             {showDropdown && suggestions.length > 0 && (
-                <div className="mt-1 bg-white rounded-lg shadow-xl border border-slate-200 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                <div className="mt-1 bg-white dark:bg-slate-800 rounded-md shadow-xl border border-slate-200 dark:border-slate-700 max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700">
                     {suggestions.map((s, i) => (
                         <button
                             key={`${s.lat}-${s.lng}-${i}`}
                             type="button"
                             onClick={() => handleSelectSuggestion(s)}
-                            className="flex items-start gap-2 w-full p-2.5 text-left text-xs text-slate-700 hover:bg-blue-50 transition-colors"
+                            className="flex items-start gap-2 w-full p-2.5 text-left text-xs text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors"
                         >
                             <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" />
                             <span className="line-clamp-2 leading-relaxed">{s.displayName}</span>
@@ -296,19 +296,19 @@ const HotelMapPicker: React.FC<HotelMapPickerProps> = ({ lat, lng, onChange, onC
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 sm:p-4">
             <div
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden border border-slate-200"
+                className="bg-white dark:bg-slate-900 rounded-md shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800"
                 style={{ height: "490px", maxHeight: "82vh" }}
             >
                 {/* Compact Modal Header */}
-                <div className="px-4 py-2.5 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <div className="px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80 shrink-0">
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-900">Select Hotel Location on Map</h3>
-                        <p className="text-xs text-slate-500">Search address or drag the marker to pinpoint exact location.</p>
+                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Select Hotel Location on Map</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Search address or drag the marker to pinpoint exact location.</p>
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-7 h-7 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors"
+                        className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                         title="Close"
                     >
                         <X className="w-4 h-4" />
@@ -338,12 +338,12 @@ const HotelMapPicker: React.FC<HotelMapPickerProps> = ({ lat, lng, onChange, onC
                 </div>
 
                 {/* Compact Modal Footer */}
-                <div className="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-between items-center shrink-0">
-                    <p className="text-[11px] text-slate-500">Tip: Zoom in or drag pin for building-level precision</p>
+                <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 flex justify-between items-center shrink-0">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Tip: Zoom in or drag pin for building-level precision</p>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-md shadow-sm transition"
                     >
                         Confirm Location
                     </button>

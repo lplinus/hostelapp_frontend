@@ -130,6 +130,8 @@ export default function Header() {
     pathname.startsWith("/adsense/") ||
     pathname === "/Aiassitance" ||
     pathname.startsWith("/Aiassitance/") ||
+    pathname === "/mydocuements" ||
+    pathname.startsWith("/mydocuements/") ||
     pathname.startsWith("/vendordashboard") ||
     pathname.startsWith("/usermarketplace") ||
     pathname === "/login" ||

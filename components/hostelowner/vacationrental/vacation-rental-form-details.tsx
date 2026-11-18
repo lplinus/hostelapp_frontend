@@ -112,7 +112,7 @@ export default function VacationRentalFormDetails({
                                         const imgUrl = toLocalMediaPath(img.image);
                                         return (
                                             <div key={img.id || index} className="relative h-24 rounded-lg overflow-hidden border border-slate-200 shadow-2xs group bg-slate-100">
-                                                {imgUrl ? (<Image src={imgUrl} alt={img.caption || `Property photo ${index + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />) : null}
+                                                {imgUrl ? (<Image src={imgUrl} alt={img.caption || `Property photo ${index + 1}`} fill className="object-cover" />) : null}
                                                 {img.is_primary && (<span className="absolute bottom-1.5 left-1.5 bg-[#312E81] text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">Cover</span>)}
                                                 <button type="button" onClick={async () => { if (confirm("Remove this photo from the property?")) { await handleDeletePhoto(img.id); } }} title="Delete photo" className="absolute top-1.5 right-1.5 bg-black/75 hover:bg-rose-600 text-white rounded-md p-1 transition-colors shadow-xs cursor-pointer opacity-90 group-hover:opacity-100">
                                                     <Trash2 size={12} />

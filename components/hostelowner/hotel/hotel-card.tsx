@@ -46,7 +46,7 @@ export default function HotelCard({
                     <img
                         src={toLocalMediaPath(coverImg) || coverImg}
                         alt={hotel.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                             const target = e.currentTarget;
                             if (target.src.includes("ik.imagekit.io") && !target.src.includes("tr=")) {
@@ -154,7 +154,17 @@ export default function HotelCard({
                             </Button>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <Button size="icon" className="w-8 h-8 bg-[#312E81] text-white rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] flex items-center justify-center transition-colors" onClick={() => startEdit(hotel)} title="Edit Hotel">
+                            <Button
+                                size="icon"
+                                className="w-8 h-8 bg-[#312E81] text-white rounded-md border border-[#312E81] shadow-2xs cursor-pointer hover:bg-[#1E1B4B] flex items-center justify-center transition-colors"
+                                onClick={() => {
+                                    startEdit(hotel);
+                                    if (typeof window !== "undefined") {
+                                        window.scrollTo({ top: 0, behavior: "smooth" });
+                                    }
+                                }}
+                                title="Edit Hotel"
+                            >
                                 <Pencil size={13} className="text-white" />
                             </Button>
                             <Button size="icon" className="w-8 h-8 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 rounded-md border border-rose-200 dark:border-rose-900 cursor-pointer flex items-center justify-center hover:bg-rose-600 hover:text-white transition-colors shrink-0" disabled={deleteMutation.isPending} onClick={() => { if (confirm(`Are you sure you want to delete ${hotel.name}?`)) { deleteMutation.mutate(hotel.id); } }} title="Delete Hotel">

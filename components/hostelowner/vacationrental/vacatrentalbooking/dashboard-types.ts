@@ -98,6 +98,21 @@ export const formatDate = (dateStr: string) => {
     });
 };
 
+export const formatTime = (timeStr?: string) => {
+    if (!timeStr) return "";
+    try {
+        const [hPart, mPart] = timeStr.split(":");
+        const h = parseInt(hPart, 10);
+        if (isNaN(h)) return timeStr;
+        const m = mPart ? mPart.slice(0, 2) : "00";
+        const ampm = h >= 12 ? "PM" : "AM";
+        const formattedHour = h % 12 === 0 ? 12 : h % 12;
+        return `${formattedHour}:${m} ${ampm}`;
+    } catch {
+        return timeStr;
+    }
+};
+
 export const formatCurrency = (val: string | number) => {
     const num = typeof val === "string" ? parseFloat(val) : val;
     if (isNaN(num)) return "₹0";

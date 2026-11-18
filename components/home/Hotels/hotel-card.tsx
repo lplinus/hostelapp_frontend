@@ -10,7 +10,8 @@ import {
     Clock,
     BedDouble,
     ShieldCheck,
-    Building2
+    Building2,
+    Sparkles
 } from "lucide-react";
 import { Hotel } from "@/types/hotel.types";
 import { isExternalImage } from "@/lib/utils";
@@ -80,6 +81,11 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
                     {/* BADGES ON IMAGE (TOP-LEFT - Glossy rectangular with less soft corners) */}
                     <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10 pointer-events-none">
+                        {hotel.is_sponsored && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xs text-[9px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-xs border border-amber-400 backdrop-blur-md">
+                                <Sparkles size={10} className="fill-slate-950 text-slate-950" /> Sponsored
+                            </span>
+                        )}
                         <span className="inline-flex items-center px-2 py-0.5 rounded-xs text-[9px] font-semibold tracking-wider uppercase bg-white/85 text-slate-900 shadow-xs border border-white/60 backdrop-blur-md">
                             {typeLabel}
                         </span>

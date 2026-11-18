@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { getStatusVariant, formatDate, formatCurrency } from "./dashboard-types";
+import { getStatusVariant, formatDate, formatCurrency, formatTime } from "./dashboard-types";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 interface DashboardBookingDetailDialogProps {
@@ -86,11 +86,17 @@ export function DashboardBookingDetailDialog({
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-border/40 text-xs">
                                     <div>
                                         <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">Check-In</span>
-                                        <span className="font-semibold text-foreground">{formatDate(selectedBooking.check_in_date)}</span>
+                                        <span className="font-semibold text-foreground">
+                                            {formatDate(selectedBooking.check_in_date)}
+                                            {selectedBooking.check_in_time ? ` (${formatTime(selectedBooking.check_in_time)})` : ""}
+                                        </span>
                                     </div>
                                     <div>
                                         <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">Check-Out</span>
-                                        <span className="font-semibold text-foreground">{formatDate(selectedBooking.check_out_date)}</span>
+                                        <span className="font-semibold text-foreground">
+                                            {formatDate(selectedBooking.check_out_date)}
+                                            {selectedBooking.check_out_time ? ` (${formatTime(selectedBooking.check_out_time)})` : ""}
+                                        </span>
                                     </div>
                                     <div>
                                         <span className="text-[10px] text-muted-foreground uppercase tracking-wider block font-medium">Headcount</span>

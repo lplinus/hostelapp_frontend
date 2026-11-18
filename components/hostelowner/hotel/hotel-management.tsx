@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { toLocalMediaPath, cn } from "@/lib/utils";
@@ -50,6 +51,16 @@ const HotelMapPicker = dynamic(() => import("./hotel-map-picker"), {
 
 export default function HotelOwnerManagement() {
     const h = useHotelManagement();
+    const hotelFormRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (h.isCreating || h.editingHotel) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setTimeout(() => {
+                hotelFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 60);
+        }
+    }, [h.isCreating, h.editingHotel]);
 
     return (
         <div className="space-y-6">
@@ -171,19 +182,21 @@ export default function HotelOwnerManagement() {
 
                     {/* ADD / EDIT HOTEL FORM */}
                     {h.isCreating && (
-                        <HotelForm
-                            formData={h.formData} setFormData={h.setFormData}
-                            editingHotel={h.editingHotel} setEditingHotel={h.setEditingHotel}
-                            setIsCreating={h.setIsCreating} handleFormSubmit={h.handleFormSubmit}
-                            hotelMutation={h.hotelMutation} cities={h.cities}
-                            filteredAreas={h.filteredAreas} amenitiesList={h.amenitiesList}
-                            formImagePreviews={h.formImagePreviews}
-                            handleFormImageChange={h.handleFormImageChange}
-                            removeFormImage={h.removeFormImage}
-                            photoDeleteMutation={h.photoDeleteMutation}
-                            handleLocationChange={h.handleLocationChange}
-                            setIsMapOpen={h.setIsMapOpen}
-                        />
+                        <div ref={hotelFormRef} className="scroll-mt-6">
+                            <HotelForm
+                                formData={h.formData} setFormData={h.setFormData}
+                                editingHotel={h.editingHotel} setEditingHotel={h.setEditingHotel}
+                                setIsCreating={h.setIsCreating} handleFormSubmit={h.handleFormSubmit}
+                                hotelMutation={h.hotelMutation} cities={h.cities}
+                                filteredAreas={h.filteredAreas} amenitiesList={h.amenitiesList}
+                                formImagePreviews={h.formImagePreviews}
+                                handleFormImageChange={h.handleFormImageChange}
+                                removeFormImage={h.removeFormImage}
+                                photoDeleteMutation={h.photoDeleteMutation}
+                                handleLocationChange={h.handleLocationChange}
+                                setIsMapOpen={h.setIsMapOpen}
+                            />
+                        </div>
                     )}
 
                     {/* Filter and Search Bar */}

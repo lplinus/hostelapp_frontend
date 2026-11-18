@@ -77,9 +77,9 @@ export default function AiAssistantChat() {
     return (
         <div className="space-y-6">
             {/* Header info */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-xl border border-border shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-md border border-border shadow-xs">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-xs">
+                    <div className="w-10 h-10 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-xs">
                         <Bot size={22} />
                     </div>
                     <div>
@@ -89,7 +89,7 @@ export default function AiAssistantChat() {
                         </p>
                     </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200/80 rounded-lg text-xs font-semibold self-start sm:self-auto">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200/80 rounded-md text-xs font-semibold self-start sm:self-auto">
                     <Sparkles size={13} />
                     <span>Gemini 2.5 Pro Engine</span>
                 </div>
@@ -97,7 +97,7 @@ export default function AiAssistantChat() {
 
             {/* Main Chat Interface */}
             <div className="grid gap-6 lg:grid-cols-4">
-                <Card className="lg:col-span-3 rounded-xl border border-border shadow-2xs flex flex-col h-[520px]">
+                <Card className="lg:col-span-3 rounded-md border border-border shadow-2xs flex flex-col h-[520px]">
                     <CardHeader className="py-3 px-5 border-b border-border/60">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -118,15 +118,15 @@ export default function AiAssistantChat() {
                                 className={`flex gap-3 ${m.sender === "user" ? "justify-end" : "justify-start"}`}
                             >
                                 {m.sender === "ai" && (
-                                    <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                                    <div className="w-8 h-8 rounded-md bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
                                         <Bot size={16} />
                                     </div>
                                 )}
                                 <div
-                                    className={`p-3.5 rounded-xl max-w-lg text-xs leading-relaxed shadow-2xs ${
+                                    className={`p-3.5 rounded-md max-w-lg text-xs leading-relaxed shadow-2xs ${
                                         m.sender === "user"
-                                            ? "bg-blue-600 text-white rounded-br-xs"
-                                            : "bg-slate-50 border border-slate-100 text-slate-800 rounded-bl-xs"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-slate-50 border border-slate-100 text-slate-800"
                                     }`}
                                 >
                                     <p>{m.text}</p>
@@ -159,13 +159,13 @@ export default function AiAssistantChat() {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleSend()}
                             placeholder="Ask Copilot anything about your bookings, pricing, or guest messages..."
-                            className="flex-1 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-xs text-slate-800 focus:outline-hidden focus:border-blue-500 shadow-2xs"
+                            className="flex-1 bg-white border border-slate-200 rounded-md px-3.5 py-2 text-xs text-slate-800 focus:outline-hidden focus:border-blue-500 shadow-2xs"
                         />
                         <button
                             type="button"
                             onClick={() => handleSend()}
                             disabled={!input.trim()}
-                            className="px-3.5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs"
+                            className="px-3.5 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
                         >
                             <Send size={14} />
                         </button>
@@ -174,7 +174,7 @@ export default function AiAssistantChat() {
 
                 {/* Sidebar Quick Prompts & Knowledge Info */}
                 <div className="space-y-4">
-                    <Card className="rounded-xl border border-border shadow-2xs">
+                    <Card className="rounded-md border border-border shadow-2xs">
                         <CardHeader className="py-3 px-4 border-b border-border/60">
                             <CardTitle className="text-xs font-bold flex items-center gap-1.5">
                                 <Zap size={14} className="text-amber-500" />
@@ -187,7 +187,7 @@ export default function AiAssistantChat() {
                                     key={i}
                                     type="button"
                                     onClick={() => handleSend(prompt)}
-                                    className="w-full text-left p-2.5 rounded-lg border border-slate-100 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 text-[11px] font-medium text-slate-700 transition-all leading-snug cursor-pointer"
+                                    className="w-full text-left p-2.5 rounded-md border border-slate-100 bg-slate-50/50 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 text-[11px] font-medium text-slate-700 transition-all leading-snug cursor-pointer"
                                 >
                                     {prompt}
                                 </button>
@@ -195,7 +195,7 @@ export default function AiAssistantChat() {
                         </CardContent>
                     </Card>
 
-                    <Card className="rounded-xl border border-border shadow-2xs bg-gradient-to-br from-purple-50/30 to-blue-50/30">
+                    <Card className="rounded-md border border-border shadow-2xs bg-gradient-to-br from-purple-50/30 to-blue-50/30">
                         <CardHeader className="py-3 px-4">
                             <CardTitle className="text-xs font-bold flex items-center gap-1.5 text-purple-700">
                                 <HelpCircle size={14} />

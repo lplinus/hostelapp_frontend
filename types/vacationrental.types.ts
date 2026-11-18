@@ -73,6 +73,8 @@ export interface VacationRentalBooking {
     owner_email?: string;
     check_in_date: string;
     check_out_date: string;
+    check_in_time?: string;
+    check_out_time?: string;
     number_of_nights: number;
     total_price: string;
     status: VacationRentalBookingStatus;
@@ -154,6 +156,8 @@ export interface VacationRental {
     is_featured: boolean;
     is_verified: boolean;
     is_active: boolean;
+    is_sponsored?: boolean;
+    campaign_id?: number | string;
     og_image?: string;
     images?: VacationRentalImage[];
     reviews?: Array<{
@@ -180,6 +184,8 @@ export interface VacationRentalBookingInput {
     rental_id: string;
     check_in_date: string;
     check_out_date: string;
+    check_in_time?: string;
+    check_out_time?: string;
     guest_name: string;
     guest_email: string;
     mobile_number: string;

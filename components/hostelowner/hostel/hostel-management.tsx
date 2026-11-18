@@ -6,15 +6,23 @@ import HostelForm from "./hostel-form";
 import HostelMediaGallery from "./hostel-media-gallery";
 import HostelTable from "./hostel-table";
 import { useHostelManagement } from "./hostel-hooks";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function HostelManagement() {
     const h = useHostelManagement();
     const [mounted, setMounted] = useState(false);
+    const editSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (h.editingHostel || h.isCreating || h.uploadingFor) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            editSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, [h.editingHostel, h.isCreating, h.uploadingFor]);
 
     return (
         <div className="flex min-h-screen bg-muted/30">
@@ -40,50 +48,52 @@ export default function HostelManagement() {
                     </div>
 
                     {/* Forms */}
-                    {h.isCreating && (
-                        <HostelForm
-                            onSubmit={h.handleCreateSubmit}
-                            onCancel={() => h.setIsCreating(false)}
-                            isPending={h.createMutation.isPending}
-                            cities={h.cities}
-                            areas={h.areas}
-                            states={h.states}
-                            amenities={h.amenities}
-                        />
-                    )}
+                    <div ref={editSectionRef} className="scroll-mt-6">
+                        {h.isCreating && (
+                            <HostelForm
+                                onSubmit={h.handleCreateSubmit}
+                                onCancel={() => h.setIsCreating(false)}
+                                isPending={h.createMutation.isPending}
+                                cities={h.cities}
+                                areas={h.areas}
+                                states={h.states}
+                                amenities={h.amenities}
+                            />
+                        )}
 
-                    {h.editingHostel && (
-                        <HostelForm
-                            initialData={h.editingHostel}
-                            onSubmit={h.handleEditSubmit}
-                            onCancel={() => h.setEditingHostel(null)}
-                            isPending={h.updateMutation.isPending}
-                            cities={h.cities}
-                            areas={h.areas}
-                            states={h.states}
-                            amenities={h.amenities}
-                        />
-                    )}
+                        {h.editingHostel && (
+                            <HostelForm
+                                initialData={h.editingHostel}
+                                onSubmit={h.handleEditSubmit}
+                                onCancel={() => h.setEditingHostel(null)}
+                                isPending={h.updateMutation.isPending}
+                                cities={h.cities}
+                                areas={h.areas}
+                                states={h.states}
+                                amenities={h.amenities}
+                            />
+                        )}
 
-                    {/* Image Upload Form */}
-                    {h.uploadingFor && (
-                        <HostelMediaGallery
-                            uploadingFor={h.uploadingFor}
-                            hostels={h.hostels}
-                            storageSettings={h.storageSettings}
-                            imagePreviews={h.imagePreviews}
-                            uploadFormRef={h.uploadFormRef}
-                            handleImageChange={h.handleImageChange}
-                            handleImageUpload={h.handleImageUpload}
-                            imageUploadMutation={h.imageUploadMutation}
-                            imageUpdateMutation={h.imageUpdateMutation}
-                            imageDeleteMutation={h.imageDeleteMutation}
-                            onClose={() => {
-                                h.clearPreviewsAndForm();
-                                h.setUploadingFor(null);
-                            }}
-                        />
-                    )}
+                        {/* Image Upload Form */}
+                        {h.uploadingFor && (
+                            <HostelMediaGallery
+                                uploadingFor={h.uploadingFor}
+                                hostels={h.hostels}
+                                storageSettings={h.storageSettings}
+                                imagePreviews={h.imagePreviews}
+                                uploadFormRef={h.uploadFormRef}
+                                handleImageChange={h.handleImageChange}
+                                handleImageUpload={h.handleImageUpload}
+                                imageUploadMutation={h.imageUploadMutation}
+                                imageUpdateMutation={h.imageUpdateMutation}
+                                imageDeleteMutation={h.imageDeleteMutation}
+                                onClose={() => {
+                                    h.clearPreviewsAndForm();
+                                    h.setUploadingFor(null);
+                                }}
+                            />
+                        )}
+                    </div>
 
                     {/* Hostels Table */}
                     <HostelTable
@@ -99,13 +109,19 @@ export default function HostelManagement() {
                             h.setEditingHostel(hostel);
                             h.setIsCreating(false);
                             h.setUploadingFor(null);
-                            globalThis.scrollTo({ top: 0, behavior: "smooth" });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                            setTimeout(() => {
+                                editSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }, 50);
                         }}
                         onUploadImages={(hostelId) => {
                             h.setUploadingFor(hostelId);
                             h.setEditingHostel(null);
                             h.setIsCreating(false);
-                            globalThis.scrollTo({ top: 0, behavior: "smooth" });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                            setTimeout(() => {
+                                editSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }, 50);
                         }}
                     />
 

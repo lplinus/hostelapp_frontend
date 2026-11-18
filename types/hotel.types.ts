@@ -190,6 +190,8 @@ export interface Hotel {
     is_toprated: boolean;
     is_verified: boolean;
     is_active: boolean;
+    is_sponsored?: boolean;
+    campaign_id?: number | string;
     og_image?: string;
     images?: HotelImage[];
     room_types?: HotelRoomType[];

@@ -383,7 +383,7 @@ export default function RoomListView({
                                         <img
                                             src={coverUrl}
                                             alt={room.name}
-                                            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
+                                            className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 const target = e.currentTarget;
                                                 target.src = "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80";

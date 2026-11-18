@@ -5,8 +5,8 @@ import { User, MapPin, Shield, Calendar, Phone, Mail, FileText, CheckCircle2, Ey
 import { Badge } from "@/components/ui/badge";
 import { maskEmail, maskPhone } from "../mask-utils";
 import GuestProfileForm from "./guest-profile-form";
-import GuestAadhaarCard from "./guest-aadhaar-card";
-import type { GuestProfile } from "../guest-profile-types";
+import GuestAadhaarCard from "./guestdocuments/guest-aadhaar-card";
+import type { GuestProfile, GuestTripSummary } from "../guest-profile-types";
 
 interface GuestProfileDetailsSectionProps {
     profile: GuestProfile;
@@ -15,6 +15,7 @@ interface GuestProfileDetailsSectionProps {
     onSave: (e: React.FormEvent) => void;
     isSaving: boolean;
     onAadhaarUpdate: (updated: Partial<GuestProfile>) => void;
+    bookings?: GuestTripSummary[];
 }
 
 export default function GuestProfileDetailsSection({
@@ -24,6 +25,7 @@ export default function GuestProfileDetailsSection({
     onSave,
     isSaving,
     onAadhaarUpdate,
+    bookings = [],
 }: GuestProfileDetailsSectionProps) {
     const [isEditingPersonal, setIsEditingPersonal] = useState(false);
     const [revealEmail, setRevealEmail] = useState(false);
@@ -158,6 +160,7 @@ export default function GuestProfileDetailsSection({
                 <GuestAadhaarCard
                     profile={profile}
                     onUploadSuccess={onAadhaarUpdate}
+                    bookings={bookings}
                 />
             </div>
         </div>

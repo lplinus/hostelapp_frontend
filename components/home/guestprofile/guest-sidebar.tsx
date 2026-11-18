@@ -14,6 +14,7 @@ import {
     Globe,
     Hotel,
     Menu,
+    Settings,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -69,6 +70,11 @@ export default function GuestSidebar() {
             href: '/hotels',
             icon: Hotel,
             label: 'Explore Hotels',
+        },
+        {
+            href: '/home/guestprofile/settings',
+            icon: Settings,
+            label: 'Settings',
         },
     ];
 
@@ -140,11 +146,17 @@ export default function GuestSidebar() {
                             const Icon = item.icon;
                             const isTabProfile = item.href.includes("tab=profile");
                             const isTabBookings = item.href.includes("tab=bookings");
-                            const isActive = isTabProfile
-                                ? currentTab === "profile"
+                            const isSettings = item.href === "/home/guestprofile/settings";
+                            const isExplore = item.href === "/hotels";
+                            const isActive = isSettings
+                                ? pathname === "/home/guestprofile/settings"
+                                : isExplore
+                                ? pathname === "/hotels"
+                                : isTabProfile
+                                ? currentTab === "profile" && pathname === "/home/guestprofile"
                                 : isTabBookings
-                                ? currentTab === "bookings"
-                                : currentTab === "dashboard";
+                                ? currentTab === "bookings" && pathname === "/home/guestprofile"
+                                : currentTab === "dashboard" && pathname === "/home/guestprofile";
 
                             return (
                                 <div key={item.href}>
@@ -245,14 +257,14 @@ export default function GuestSidebar() {
                         href="/home/guestprofile"
                         className={cn(
                             "flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg transition-all select-none active:scale-95",
-                            currentTab === "dashboard"
+                            currentTab === "dashboard" && pathname === "/home/guestprofile"
                                 ? "text-primary font-bold"
                                 : "text-muted-foreground hover:text-foreground"
                         )}
                     >
                         <div className={cn(
                             "p-1.5 rounded-md transition-colors",
-                            currentTab === "dashboard" ? "bg-primary/10 text-primary" : "bg-transparent"
+                            currentTab === "dashboard" && pathname === "/home/guestprofile" ? "bg-primary/10 text-primary" : "bg-transparent"
                         )}>
                             <LayoutDashboard size={19} />
                         </div>

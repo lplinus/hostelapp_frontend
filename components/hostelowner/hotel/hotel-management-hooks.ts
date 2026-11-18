@@ -216,6 +216,9 @@ export function useHotelManagement() {
             amenities: hotel.amenities_list?.map((a) => a.id) || [],
         });
         setFormImageFiles([]); setFormImagePreviews([]); setIsCreating(true);
+        if (typeof window !== "undefined") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
     };
 
     const handleLocationChange = (newLat: number, newLng: number, newAddress: string) => {

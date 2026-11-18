@@ -33,7 +33,7 @@ export default function VacationRentalPropertyCard({
             {/* Cover Image */}
             <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
                 {coverUrl ? (
-                    <Image src={coverUrl} alt={rental.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={coverUrl} alt={rental.title} fill className="object-cover" />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-1 bg-slate-50">
                         <Palmtree size={32} className="opacity-40" />

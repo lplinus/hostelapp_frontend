@@ -1,10 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Zap, Loader2 } from "lucide-react";
+import { ChevronUp, ChevronDown, Calendar, Users, X, ShieldCheck, Zap, Loader2, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import type { VacationRental } from "@/types/vacationrental.types";
+
+function formatTime(timeStr?: string): string {
+    if (!timeStr) return "";
+    try {
+        const [hPart, mPart] = timeStr.split(":");
+        const h = parseInt(hPart, 10);
+        if (isNaN(h)) return timeStr;
+        const m = mPart ? mPart.slice(0, 2) : "00";
+        const ampm = h >= 12 ? "PM" : "AM";
+        const formattedHour = h % 12 === 0 ? 12 : h % 12;
+        return `${formattedHour}:${m} ${ampm}`;
+    } catch {
+        return timeStr;
+    }
+}
 
 interface VacationRentalMobileBookingBarProps {
     rental: VacationRental;

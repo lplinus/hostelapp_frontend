@@ -8,8 +8,8 @@ import GuestProfileStats from "./guest-profile-stats";
 import GuestProfileOverviewCard from "./guest-profile-overview-card";
 import GuestProfileDetailsSection from "./guest-profile-details-section";
 import GuestProfileForm from "./guest-profile-form";
-import GuestAadhaarCard from "./guest-aadhaar-card";
-import GuestBookingsList from "./guest-bookings-list";
+import GuestAadhaarCard from "./guestdocuments/guest-aadhaar-card";
+import GuestBookingsList from "./guestbookings/guest-bookings-list";
 import type { GuestProfile, GuestTripSummary } from "../guest-profile-types";
 import {
     getGuestProfile,
@@ -29,6 +29,22 @@ function mapApiProfileToFrontend(
         ? new Date(api.created_at).getFullYear().toString()
         : new Date().getFullYear().toString();
 
+    const documentsMapped = (api.documents || []).map((d) => ({
+        id: d.id,
+        isPrimaryGuest: d.is_primary_guest,
+        memberName: d.member_name,
+        documentType: d.document_type,
+        documentTypeName: d.document_type_name,
+        documentNumber: d.document_number || undefined,
+        fileUrl: d.file_url,
+        fileName: d.file_name,
+        fileSize: d.file_size,
+        bookingReference: d.booking_reference || undefined,
+        verificationStatus: d.verification_status,
+        createdAt: d.created_at,
+        updatedAt: d.updated_at,
+    }));
+
     return {
         id: api.id,
         fullName: api.full_name || api.username || "",
@@ -44,6 +60,8 @@ function mapApiProfileToFrontend(
         emergencyContactName: api.emergency_contact_name || undefined,
         emergencyContactPhone: api.emergency_contact_phone || undefined,
         emergencyContactRelation: api.emergency_contact_relation || undefined,
+        maxDocumentUploads: api.max_document_uploads ?? 6,
+        documents: documentsMapped,
         aadhaarNumber: api.aadhaar_number || undefined,
         aadhaarFileName: api.aadhaar_file_name || undefined,
         aadhaarFileUrl: api.aadhaar_file_url || undefined,
@@ -209,6 +227,12 @@ export default function GuestProfileContainer() {
         fetchData();
     }, [fetchData]);
 
+    useEffect(() => {
+        if (activeTab === "settings") {
+            router.replace("/home/guestprofile/settings");
+        }
+    }, [activeTab, router]);
+
     // ── Edit handlers ──────────────────────────────────────────────────────
     const handleToggleEdit = () => {
         if (!isEditing && profile) {
@@ -299,6 +323,7 @@ export default function GuestProfileContainer() {
                         onSave={handleSave}
                         isSaving={isSaving}
                         onAadhaarUpdate={handleAadhaarUpdate}
+                        bookings={bookings}
                     />
                 </div>
             ) : (

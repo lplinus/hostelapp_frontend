@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import VacationRentalGrid from "./vacation-rental-grid";
 import VacationRentalFiltersSidebar, { VacationRentalFilterState } from "./vacation-rental-filters-sidebar";
+import VacationRentalAdBanner from "./vacanational_addbanner/vacation-rental-ad-banner";
 import type { VacationRental } from "@/types/vacationrental.types";
 import { getVacationRentals } from "@/services/vacanatinalrentalservices/vacationrental.service";
 import {
@@ -188,6 +189,64 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
         });
     }, [baseRentals, filters, activeTab]);
 
+    // Top 4 Sponsored Vacation Rentals (dynamically loaded & location-aware)
+    const [sponsoredRentals, setSponsoredRentals] = useState<VacationRental[]>([]);
+
+    const handleSponsoredRentalsLoaded = useCallback((campaigns: any[]) => {
+        const top4 = (campaigns || []).slice(0, 4);
+        const mapped: VacationRental[] = [];
+
+        for (const c of top4) {
+            const existing = baseRentals.find(
+                (r) => String(r.id) === String(c.vacation_rental) || (c.target_property_slug && r.slug === c.target_property_slug)
+            );
+            if (existing) {
+                mapped.push({
+                    ...existing,
+                    is_sponsored: true,
+                    campaign_id: c.id,
+                });
+            } else if (c.target_property_title && c.target_property_slug) {
+                mapped.push({
+                    id: String(c.vacation_rental || c.id),
+                    title: c.target_property_title,
+                    slug: c.target_property_slug,
+                    city_name: c.target_property_city || "Destination",
+                    address: c.target_property_address || c.target_property_city || "",
+                    price_per_night: String(c.target_property_price || "0"),
+                    rating_avg: String(c.target_property_rating || "5.0"),
+                    category: "villa",
+                    category_display: "Luxury Villa",
+                    images: c.property_image_url ? [{ id: 1, image: c.property_image_url, is_primary: true }] : [],
+                    is_sponsored: true,
+                    campaign_id: c.id,
+                    is_active: true,
+                    is_featured: true,
+                    is_verified: true,
+                    is_superhost: true,
+                    bedrooms: 2,
+                    bathrooms: 2,
+                    max_guests: 4,
+                    instant_bookable: true,
+                    allows_pets: true,
+                    cancellation_policy: "flexible",
+                    check_in_time: "15:00",
+                    check_out_time: "11:00",
+                    rating_count: 18,
+                });
+            }
+        }
+        setSponsoredRentals(mapped);
+    }, [baseRentals]);
+
+    // Combine Top 4 Sponsored Rentals at the beginning with non-duplicate organic listings
+    const finalRentals = useMemo(() => {
+        if (!sponsoredRentals.length) return filteredRentals;
+        const sponsoredIds = new Set(sponsoredRentals.map((s) => String(s.id)));
+        const nonDuplicateFiltered = filteredRentals.filter((r) => !sponsoredIds.has(String(r.id)));
+        return [...sponsoredRentals, ...nonDuplicateFiltered];
+    }, [sponsoredRentals, filteredRentals]);
+
     const activeFiltersCount = useMemo(() => {
         let count = 0;
         if (filters.categories.length > 0) count += filters.categories.length;
@@ -282,6 +341,12 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                 </div>
             </section>
 
+            {/* DYNAMIC TOP ROTATING AD BANNER (Location-Aware) */}
+            <VacationRentalAdBanner
+                activeCity={filters.searchQuery}
+                onSponsoredLoaded={handleSponsoredRentalsLoaded}
+            />
+
             {/* 2. CATEGORY PILLS BAR + STICKY MOBILE FILTER (Sticky at Top) */}
             <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -334,7 +399,7 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                     {/* Results Grid (Left Column - Flexible) */}
                     <div className="flex-1 min-w-0">
                         <VacationRentalGrid
-                            rentals={filteredRentals}
+                            rentals={finalRentals}
                             isFiltering={isFiltering}
                             onResetFilters={handleResetFilters}
                         />
@@ -347,7 +412,7 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                             onFilterChange={setFilters}
                             onResetFilters={handleResetFilters}
                             totalCount={rentals.length}
-                            filteredCount={filteredRentals.length}
+                            filteredCount={finalRentals.length}
                         />
                     </div>
                 </div>
@@ -371,7 +436,7 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                                     Filter Vacation Rentals
                                 </SheetTitle>
                                 <p className="text-[11px] font-semibold text-slate-500">
-                                    {filteredRentals.length} of {rentals.length} properties available
+                                    {finalRentals.length} of {rentals.length} properties available
                                 </p>
                             </div>
                         </div>
@@ -387,7 +452,7 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                             onFilterChange={setFilters}
                             onResetFilters={handleResetFilters}
                             totalCount={rentals.length}
-                            filteredCount={filteredRentals.length}
+                            filteredCount={finalRentals.length}
                             isDrawerMode={true}
                         />
                     </div>
@@ -406,7 +471,7 @@ export default function VacationRentalsLayout({ rentals }: VacationRentalsLayout
                                 type="button"
                                 className="flex-1 py-2.5 px-4 bg-[#1E1B4B] hover:bg-[#312E81] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md active:scale-98 cursor-pointer text-center"
                             >
-                                Show {filteredRentals.length} Properties
+                                Show {finalRentals.length} Properties
                             </button>
                         </SheetClose>
                     </div>

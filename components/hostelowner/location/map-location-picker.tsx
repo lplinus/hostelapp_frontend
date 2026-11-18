@@ -128,7 +128,7 @@ function LocationMarker({
                     background: "#ffffff",
                     border: "1px solid #e2e8f0",
                     padding: "6px 14px",
-                    borderRadius: "8px",
+                    borderRadius: "6px",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
                     fontSize: "13px",
                     fontWeight: 500,
@@ -247,17 +247,18 @@ function AddressSearchBar({
             style={{
                 position: "absolute",
                 top: "12px",
-                left: "12px",
-                right: "12px",
+                left: "50%",
+                transform: "translateX(-50%)",
                 zIndex: 1000,
-                maxWidth: "500px",
+                width: "calc(100% - 32px)",
+                maxWidth: "440px",
             }}
         >
             <div style={{
                 display: "flex",
                 alignItems: "center",
                 background: "white",
-                borderRadius: "10px",
+                borderRadius: "6px",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.18)",
                 overflow: "hidden",
                 border: "1px solid #e5e7eb",
@@ -320,7 +321,7 @@ function AddressSearchBar({
                             fontSize: "13px",
                             fontWeight: 600,
                             fontFamily: "inherit",
-                            borderRadius: "0 8px 8px 0",
+                            borderRadius: "0 6px 6px 0",
                             height: "100%",
                         }}
                     >
@@ -334,7 +335,7 @@ function AddressSearchBar({
                 <div style={{
                     marginTop: "4px",
                     background: "white",
-                    borderRadius: "10px",
+                    borderRadius: "6px",
                     boxShadow: "0 4px 16px rgba(0,0,0,0.16)",
                     border: "1px solid #e5e7eb",
                     maxHeight: "240px",
@@ -401,17 +402,17 @@ const MapLocationPicker: React.FC<MapLocationPickerProps> = ({ lat, lng, onChang
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 sm:p-4">
             <div
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden border border-slate-200"
+                className="bg-white dark:bg-slate-900 rounded-md shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800"
                 style={{ height: "490px", maxHeight: "82vh" }}
             >
-                <div className="px-4 py-2.5 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <div className="px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80 shrink-0">
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-900">Select Location on Map</h3>
-                        <p className="text-xs text-slate-500">Paste an address in the search bar, or click/drag the marker on the map.</p>
+                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Select Location on Map</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Paste an address in the search bar, or click/drag the marker on the map.</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-7 h-7 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors text-sm font-semibold"
+                        className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm font-semibold"
                         title="Close"
                     >
                         ✕
@@ -438,11 +439,11 @@ const MapLocationPicker: React.FC<MapLocationPickerProps> = ({ lat, lng, onChang
                     <AddressSearchBar onSelectLocation={handleSearchSelect} />
                 </div>
 
-                <div className="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-between items-center shrink-0">
-                    <p className="text-[11px] text-slate-500">Tip: Zoom in or drag pin for building-level precision</p>
+                <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 flex justify-between items-center shrink-0">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Tip: Zoom in or drag pin for building-level precision</p>
                     <button
                         onClick={onClose}
-                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-semibold rounded-md shadow-sm transition"
                     >
                         Confirm Location
                     </button>

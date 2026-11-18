@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import Providers from "./providers";
 import { Toaster } from "sonner";
 import ChatWidget from "@/components/chat/ChatWidget";
+import DashboardThemeWatcher from "@/components/theme/DashboardThemeWatcher";
 
 
 const geistSans = Geist({
@@ -89,15 +90,35 @@ export default async function RootLayout({
   const isAuthenticated = hasRefreshToken || hasAccessToken;
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <JsonLd data={generateOrganizationSchema()} />
         <JsonLd data={generateWebsiteSchema()} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const p = window.location.pathname;
+                const isDash = p === '/dashboard' || p.startsWith('/dashboard/') || p === '/settings' || p.startsWith('/settings/') || p === '/rooms' || p.startsWith('/rooms/') || p === '/bookings' || p.startsWith('/bookings/') || p === '/hotel' || p.startsWith('/hotel/') || p === '/hostel' || p.startsWith('/hostel/') || p.startsWith('/vacanrentalbooking') || p.startsWith('/subscription') || p.startsWith('/notification') || p.startsWith('/vendordashboard') || p.startsWith('/usermarketplace') || p === '/home/guestprofile' || p.startsWith('/home/guestprofile');
+                if (isDash) {
+                  const key = p.startsWith('/home/guestprofile') ? 'guest-theme-preference' : 'owner-theme-preference';
+                  const saved = localStorage.getItem(key) || 'system';
+                  const isDark = saved === 'dark' || (saved === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (isDark) document.documentElement.classList.add('dark');
+                  else document.documentElement.classList.remove('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${inter.variable} antialiased font-sans`}
       >
         <Providers isAuthenticated={isAuthenticated}>
+          <DashboardThemeWatcher />
           <Header />
           {children}
           <ConditionalFooter />

@@ -87,14 +87,19 @@ export default function VacationRentalCard({ rental }: VacationRentalCardProps) 
                     )}
                 </Link>
 
-                {/* SUPERHOST BADGE (Glossy rectangular finish with less soft corners, no icon) */}
-                {rental.is_superhost && (
-                    <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+                {/* TOP-LEFT BADGES (Sponsored & Superhost) */}
+                <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex flex-col gap-1">
+                    {rental.is_sponsored && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xs text-[9px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-xs border border-amber-400 backdrop-blur-md">
+                            <Sparkles size={10} className="fill-slate-950 text-slate-950" /> Sponsored
+                        </span>
+                    )}
+                    {rental.is_superhost && (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-xs text-[9px] font-semibold tracking-wider uppercase bg-white/85 text-slate-900 shadow-xs border border-white/60 backdrop-blur-md">
                             Superhost
                         </span>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* WISHLIST BUTTON */}
                 <button

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import HotelGrid from "./hotel-grid";
 import HotelFiltersSidebar, { HotelFilterState } from "./hotel-filters-sidebar";
+import HotelAdBanner from "./addbanner/hotel-ad-banner";
 import { Hotel } from "@/types/hotel.types";
 import { getHotels } from "@/services/hotelservices/hotel.service";
 import { Search, X, Sparkles, SlidersHorizontal } from "lucide-react";
@@ -154,6 +155,61 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
         });
     }, [baseHotels, filters]);
 
+    // Top 4 Sponsored Hotels (dynamically loaded & location-aware)
+    const [sponsoredHotels, setSponsoredHotels] = useState<Hotel[]>([]);
+
+    const handleSponsoredHotelsLoaded = useCallback((campaigns: any[]) => {
+        const top4 = (campaigns || []).slice(0, 4);
+        const mapped: Hotel[] = [];
+
+        for (const c of top4) {
+            const existing = baseHotels.find(
+                (h) => String(h.id) === String(c.hotel) || (c.target_property_slug && h.slug === c.target_property_slug)
+            );
+            if (existing) {
+                mapped.push({
+                    ...existing,
+                    is_sponsored: true,
+                    campaign_id: c.id,
+                });
+            } else if (c.target_property_title && c.target_property_slug) {
+                mapped.push({
+                    id: String(c.hotel || c.id),
+                    name: c.target_property_title,
+                    slug: c.target_property_slug,
+                    city_name: c.target_property_city || "City",
+                    address: c.target_property_address || c.target_property_city || "",
+                    starting_price_per_night: String(c.target_property_price || "0"),
+                    rating_avg: String(c.target_property_rating || "5.0"),
+                    star_rating: 5,
+                    hotel_type: "hotel",
+                    hotel_type_display: "Hotel",
+                    images: c.property_image_url ? [{ id: 1, image: c.property_image_url, is_primary: true }] : [],
+                    is_sponsored: true,
+                    campaign_id: c.id,
+                    is_active: true,
+                    is_featured: true,
+                    is_toprated: true,
+                    is_verified: true,
+                    allows_pets: false,
+                    cancellation_policy: "free_cancellation",
+                    check_in_time: "14:00",
+                    check_out_time: "11:00",
+                    rating_count: 28,
+                });
+            }
+        }
+        setSponsoredHotels(mapped);
+    }, [baseHotels]);
+
+    // Combine Top 4 Sponsored Hotels at the beginning with non-duplicate organic listings
+    const finalHotels = useMemo(() => {
+        if (!sponsoredHotels.length) return filteredHotels;
+        const sponsoredIds = new Set(sponsoredHotels.map((s) => String(s.id)));
+        const nonDuplicateFiltered = filteredHotels.filter((h) => !sponsoredIds.has(String(h.id)));
+        return [...sponsoredHotels, ...nonDuplicateFiltered];
+    }, [sponsoredHotels, filteredHotels]);
+
     const activeFiltersCount = useMemo(() => {
         let count = 0;
         if (filters.starRatings.length > 0) count += filters.starRatings.length;
@@ -294,13 +350,19 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                 </div>
             </section>
 
+            {/* DYNAMIC TOP ROTATING AD BANNER (Location-Aware) */}
+            <HotelAdBanner
+                activeCity={filters.searchQuery}
+                onSponsoredLoaded={handleSponsoredHotelsLoaded}
+            />
+
             {/* MAIN CONTENT AREA */}
-            <div id="hotels-listing-section" className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-24 sm:pb-16 scroll-mt-6">
+            <div id="hotels-listing-section" className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-24 sm:pb-16 scroll-mt-6">
                 {/* Mobile Filter Toggle - Sticky at Top */}
                 <div className="lg:hidden sticky top-16 z-20 -mx-4 px-4 py-2 sm:-mx-6 sm:px-6 bg-slate-50/95 backdrop-blur-md border-b border-slate-200/80 mb-4 transition-all">
                     <div className="bg-white p-2.5 sm:p-3 rounded-xl border border-slate-200/90 shadow-xs flex items-center justify-between">
                         <span className="text-xs font-bold text-slate-800">
-                            {filteredHotels.length} Stays Available
+                            {finalHotels.length} Stays Available
                         </span>
                         <button
                             type="button"
@@ -322,7 +384,7 @@ export default function HotelsLayout({ hotels }: HotelsLayoutProps) {
                     {/* LEFT / MAIN LISTINGS GRID (8 cols on lg) */}
                     <div className="col-span-12 lg:col-span-8">
                         <HotelGrid
-                            hotels={filteredHotels}
+                            hotels={finalHotels}
                             isFiltering={isFiltering}
                             onResetFilters={handleResetFilters}
                         />

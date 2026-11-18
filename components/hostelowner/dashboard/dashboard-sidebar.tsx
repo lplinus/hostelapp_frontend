@@ -23,7 +23,8 @@ import {
     Palmtree,
     DollarSign,
     Bot,
-    Menu
+    Menu,
+    FileCheck
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -240,7 +241,18 @@ function DashboardSidebarContent() {
                             closeMobile={() => setIsOpenMobile(false)}
                         />
 
-                        {/* 8. Settings */}
+                        {/* 8. My Documents */}
+                        <SidebarLink
+                            href="/mydocuements"
+                            icon={FileCheck}
+                            label="My Documents"
+                            pathname={pathname}
+                            searchParams={searchParams}
+                            showFull={showFull}
+                            closeMobile={() => setIsOpenMobile(false)}
+                        />
+
+                        {/* 9. Settings */}
                         <SidebarLink
                             href="/settings"
                             icon={Settings}

@@ -131,7 +131,14 @@ export default function GuestProfileOverviewCard({
             <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                     <FileText size={13} className="text-muted-foreground" />
-                    Identity Document: <strong className="text-foreground">{profile.aadhaarFileName ? "Aadhaar Card uploaded" : "No document uploaded"}</strong>
+                    Identity Documents:{" "}
+                    <strong className="text-foreground">
+                        {profile.documents && profile.documents.length > 0
+                            ? `${profile.documents.length} document${profile.documents.length > 1 ? "s" : ""} uploaded`
+                            : profile.aadhaarFileName
+                            ? profile.aadhaarFileName
+                            : "No document uploaded"}
+                    </strong>
                 </span>
                 <button
                     onClick={onGoToProfile}
